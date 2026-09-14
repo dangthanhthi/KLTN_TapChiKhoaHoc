@@ -106,6 +106,139 @@
   .btn-download { display: inline-flex; align-items: center; gap: 6px; background: var(--sky-050); color: #1da1f2; border: 1px solid var(--sky-200); padding: 6px 14px; border-radius: 4px; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: all .15s; }
   .btn-download:hover { background: #1da1f2; color: #ffffff; border-color: #1da1f2; }
 
+  /* DIAGRAM FIGURES */
+  .diagram-figure {
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0 28px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .diagram-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .diagram-title-badge {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink-900);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .diagram-title-badge svg {
+    color: #1da1f2;
+    flex-shrink: 0;
+  }
+  .diagram-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .btn-diagram-tool {
+    background: var(--sky-050);
+    color: #1da1f2;
+    border: 1px solid var(--sky-200);
+    border-radius: 4px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .15s;
+  }
+  .btn-diagram-tool:hover {
+    background: #1da1f2;
+    color: #ffffff;
+    border-color: #1da1f2;
+  }
+  .diagram-img-wrap {
+    background: #fafcff;
+    border: 1px solid #f1f5f9;
+    border-radius: 6px;
+    padding: 16px;
+    text-align: center;
+    cursor: zoom-in;
+    max-height: 480px;
+    overflow: auto;
+  }
+  .diagram-img-wrap img {
+    max-width: 100%;
+    height: auto;
+    display: inline-block;
+  }
+  .diagram-caption {
+    margin-top: 14px;
+    font-size: 13px;
+    color: var(--ink-500);
+    text-align: center;
+    line-height: 1.5;
+  }
+  .diagram-caption strong {
+    color: var(--ink-700);
+  }
+
+  /* LIGHTBOX MODAL CHO SƠ ĐỒ */
+  .diagram-modal {
+    display: none;
+    position: fixed;
+    z-index: 100000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    box-sizing: border-box;
+  }
+  .diagram-modal.active {
+    display: flex;
+  }
+  .diagram-modal-content {
+    background: #fff;
+    border-radius: 8px;
+    max-width: 95vw;
+    max-height: 92vh;
+    overflow: auto;
+    position: relative;
+    padding: 24px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+  .diagram-modal-content img {
+    max-width: 100%;
+    height: auto;
+  }
+  .diagram-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    font-size: 26px;
+    color: #475569;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    line-height: 1;
+    z-index: 10;
+  }
+  .diagram-modal-close:hover {
+    color: #ef4444;
+  }
+
   footer { background: #1da1f2; padding: 32px 24px; text-align: center; font-size: 13px; color: #ffffff; margin-top: 40px; box-shadow: 0 -2px 10px rgba(29,161,242,0.15); }
   footer .flinks { margin-top: 12px; }
   footer .flinks a { margin: 0 14px; color: rgba(255,255,255,0.9); font-weight: 600; }
@@ -267,6 +400,32 @@
       <h1 class="page-title">Quy trình đăng bài khoa học</h1>
       <div class="page-subtitle">Chu trình xuất bản 6 giai đoạn nghiêm ngặt đảm bảo chất lượng học thuật cao nhất</div>
 
+      <!-- SƠ ĐỒ 1: QUY TRÌNH XUẤT BẢN TỔNG THỂ -->
+      <figure class="diagram-figure">
+        <div class="diagram-toolbar">
+          <div class="diagram-title-badge">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+            Sơ đồ 1: Quy trình Xuất bản Học thuật Tổng thể (6 Giai đoạn)
+          </div>
+          <div class="diagram-actions">
+            <button type="button" class="btn-diagram-tool" onclick="openDiagramModal('assets/images/So_Do_1_Quy_Trinh_Xuat_Ban_Tong_The.png', 'Sơ đồ 1: Quy trình Xuất bản Học thuật Tổng thể (6 Giai đoạn)')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              Xem phóng to
+            </button>
+            <a href="assets/images/So_Do_1_Quy_Trinh_Xuat_Ban_Tong_The.svg" target="_blank" class="btn-diagram-tool">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Mở Vector SVG
+            </a>
+          </div>
+        </div>
+        <div class="diagram-img-wrap" onclick="openDiagramModal('assets/images/So_Do_1_Quy_Trinh_Xuat_Ban_Tong_The.png', 'Sơ đồ 1: Quy trình Xuất bản Học thuật Tổng thể (6 Giai đoạn)')">
+          <img src="assets/images/So_Do_1_Quy_Trinh_Xuat_Ban_Tong_The.png" alt="Sơ đồ 1: Quy trình Xuất bản Học thuật Tổng thể 6 Giai đoạn" loading="lazy">
+        </div>
+        <figcaption class="diagram-caption">
+          <strong>Hình 1:</strong> Sơ đồ luồng xử lý toàn diện từ lúc tác giả nộp bản thảo &rarr; kiểm tra sơ duyệt &amp; quét Turnitin &rarr; phản biện kín 2 chiều &rarr; quyết định biên tập &rarr; biên tập bản bông (Galley Proof) &rarr; cấp mã DOI và phát hành trực tuyến Open Access.
+        </figcaption>
+      </figure>
+
       <div class="workflow-list">
         <div class="wf-step-card">
           <div class="wf-step-num">1</div>
@@ -346,10 +505,62 @@
         </ul>
       </div>
 
+      <!-- SƠ ĐỒ 2: QUY TRÌNH PHẢN BIỆN CHI TIẾT -->
+      <figure class="diagram-figure">
+        <div class="diagram-toolbar">
+          <div class="diagram-title-badge">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Sơ đồ 2: Quy trình Phản biện Chuyên môn Độc lập Kín 2 Chiều
+          </div>
+          <div class="diagram-actions">
+            <button type="button" class="btn-diagram-tool" onclick="openDiagramModal('assets/images/So_Do_2_Quy_Trinh_Phan_Bien_Chi_Tiet.png', 'Sơ đồ 2: Quy trình Phản biện Chuyên môn Độc lập Kín 2 Chiều')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              Xem phóng to
+            </button>
+            <a href="assets/images/So_Do_2_Quy_Trinh_Phan_Bien_Chi_Tiet.svg" target="_blank" class="btn-diagram-tool">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Mở Vector SVG
+            </a>
+          </div>
+        </div>
+        <div class="diagram-img-wrap" onclick="openDiagramModal('assets/images/So_Do_2_Quy_Trinh_Phan_Bien_Chi_Tiet.png', 'Sơ đồ 2: Quy trình Phản biện Chuyên môn Độc lập Kín 2 Chiều')">
+          <img src="assets/images/So_Do_2_Quy_Trinh_Phan_Bien_Chi_Tiet.png" alt="Sơ đồ 2: Quy trình Phản biện Chuyên môn Độc lập Kín 2 Chiều" loading="lazy">
+        </div>
+        <figcaption class="diagram-caption">
+          <strong>Hình 2:</strong> Chi tiết các nhánh thẩm định độc lập của 02 chuyên gia, tiêu chí đánh giá, 4 mức kết luận và chu trình phản biện vòng 2 đối chứng bản giải trình tác giả.
+        </figcaption>
+      </figure>
+
       <div class="rule-card">
         <h3>3. Cơ chế mời Chuyên gia phản biện thứ 3 (Third Reviewer)</h3>
         <p>Trường hợp 2 phản biện có ý kiến trái ngược nhau (ví dụ 1 chuyên gia Chấp nhận đăng và 1 chuyên gia Đề nghị từ chối), Tổng biên tập sẽ chỉ định <strong>Chuyên gia phản biện thứ 3</strong> để đánh giá độc lập hoặc đưa ra Ban Thường trực Hội đồng biên tập bỏ phiếu quyết định cuối cùng.</p>
       </div>
+
+      <!-- SƠ ĐỒ 3: QUY TRÌNH MỜI CHUYÊN GIA THỨ 3 -->
+      <figure class="diagram-figure">
+        <div class="diagram-toolbar">
+          <div class="diagram-title-badge">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Sơ đồ 3: Quy trình Mời Chuyên gia Phản biện thứ 3 &amp; Giải quyết Bất đồng Ý kiến
+          </div>
+          <div class="diagram-actions">
+            <button type="button" class="btn-diagram-tool" onclick="openDiagramModal('assets/images/So_Do_3_Quy_Trinh_Moi_Chuyen_Gia_Thu_3.png', 'Sơ đồ 3: Quy trình Mời Chuyên gia Phản biện thứ 3 &amp; Giải quyết Bất đồng Ý kiến')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              Xem phóng to
+            </button>
+            <a href="assets/images/So_Do_3_Quy_Trinh_Moi_Chuyen_Gia_Thu_3.svg" target="_blank" class="btn-diagram-tool">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Mở Vector SVG
+            </a>
+          </div>
+        </div>
+        <div class="diagram-img-wrap" onclick="openDiagramModal('assets/images/So_Do_3_Quy_Trinh_Moi_Chuyen_Gia_Thu_3.png', 'Sơ đồ 3: Quy trình Mời Chuyên gia Phản biện thứ 3 &amp; Giải quyết Bất đồng Ý kiến')">
+          <img src="assets/images/So_Do_3_Quy_Trinh_Moi_Chuyen_Gia_Thu_3.png" alt="Sơ đồ 3: Quy trình Mời Chuyên gia Phản biện thứ 3" loading="lazy">
+        </div>
+        <figcaption class="diagram-caption">
+          <strong>Hình 3:</strong> Quy trình xử lý bất đồng đối nghịch: BTV phân tích bản chất &rarr; Lập Tờ trình đề xuất &rarr; TBT phê duyệt chỉ định Chuyên gia thứ 3 (trọng tài độc lập) &rarr; Đưa ra phán quyết theo nguyên tắc đa số (2/3).
+        </figcaption>
+      </figure>
     </div>
 
     <!-- TAB 3: THỂ LỆ VIẾT VÀ GỬI BÀI -->
@@ -484,6 +695,7 @@
   </div>
 </footer>
 
+<script src="journal-interactions.js"></script>
 <script>
   function switchTab(tabName) {
     const tabs = ['submission', 'review', 'format', 'templates'];
@@ -508,6 +720,47 @@
     if (hash && ['submission', 'review', 'format', 'templates'].includes(hash)) {
       switchTab(hash);
     }
+  });
+
+  // LIGHTBOX PHÓNG TO SƠ ĐỒ
+  function openDiagramModal(src, title) {
+    let modal = document.getElementById('diagram-lightbox');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'diagram-lightbox';
+      modal.className = 'diagram-modal';
+      modal.innerHTML = `
+        <div class="diagram-modal-content">
+          <button type="button" class="diagram-modal-close" onclick="closeDiagramModal()">&times;</button>
+          <div style="font-size:14.5px;font-weight:700;color:var(--ink-900);margin-bottom:14px;padding-right:30px;text-align:left;" id="diagram-modal-title"></div>
+          <div style="max-height:80vh;overflow:auto;border:1px solid #e2e8f0;border-radius:4px;padding:12px;background:#f8fafc;">
+            <img id="diagram-modal-img" src="" alt="Sơ đồ quy trình phóng to" style="max-width:100%;height:auto;display:block;margin:0 auto;">
+          </div>
+          <div style="margin-top:12px;display:flex;justify-content:flex-end;gap:10px;">
+            <a id="diagram-modal-svg" href="" target="_blank" class="btn-diagram-tool">Mở tệp Vector SVG chất lượng cao &rarr;</a>
+          </div>
+        </div>
+      `;
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeDiagramModal();
+      });
+      document.body.appendChild(modal);
+    }
+    document.getElementById('diagram-modal-title').innerText = title;
+    document.getElementById('diagram-modal-img').src = src;
+    const svgPath = src.replace('.png', '.svg');
+    const svgBtn = document.getElementById('diagram-modal-svg');
+    if (svgBtn) svgBtn.href = svgPath;
+    modal.classList.add('active');
+  }
+
+  function closeDiagramModal() {
+    const modal = document.getElementById('diagram-lightbox');
+    if (modal) modal.classList.remove('active');
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeDiagramModal();
   });
 </script>
 
