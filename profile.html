@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bàn làm việc Tác giả & Quản lý Bản thảo · Tạp chí Khoa học</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="journal-interactions.css">
+
+<style>
+  :root {
+    --serif: 'Source Serif 4', Georgia, serif;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --sky-050: #F3F8FD;
+    --sky-100: #E1EFFB;
+    --sky-200: #C9DFF4;
+    --sky-600: #1da1f2;
+    --sky-700: #0d8ddc;
+    --ink-900: #16202B;
+    --ink-700: #3D4A57;
+    --ink-500: #6B7684;
+    --line: #E1E9F1;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    background: #ffffff;
+    color: var(--ink-900);
+    line-height: 1.5;
+  }
+
+  a { text-decoration: none; color: inherit; }
+  .wrap { max-width: 1360px; margin: 0 auto; padding: 0 20px; }
+
+  /* HEADER BANNER */
+  .header-bar { background: #1da1f2; color: #ffffff; box-shadow: 0 2px 10px rgba(29,161,242,0.18); }
+  header { padding: 22px 0 10px; text-align: center; }
+  header .name { font-family: var(--serif); font-size: 27px; letter-spacing: -.01em; font-weight: 600; color: #ffffff; }
+  header .tagline { font-size: 11px; letter-spacing: .08em; color: rgba(255,255,255,0.85); font-weight: 500; }
+
+  nav.navbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 0 14px; }
+  .nav-links { display: flex; gap: 22px; font-size: 13px; font-weight: 500; }
+  .nav-links a { color: rgba(255,255,255,0.88); padding: 4px 0; transition: color .15s; }
+  .nav-links a:hover { color: #ffffff; }
+  .nav-links a.on { color: #ffffff; font-weight: 700; }
+  .nav-actions { display: flex; align-items: center; gap: 14px; }
+
+  /* BREADCRUMB */
+  .breadcrumb-bar { background: var(--sky-050); border-bottom: 1px solid var(--line); padding: 12px 0; font-size: 12px; color: var(--ink-500); }
+  .breadcrumb-bar a { color: var(--sky-600); font-weight: 500; }
+  .breadcrumb-bar a:hover { text-decoration: underline; }
+  .breadcrumb-bar span.sep { margin: 0 8px; color: var(--sky-200); }
+
+  /* WORKBENCH SPEC-SHEET HEADER (Anti-AI-slop: Viền liền phân cấp, typography vững chãi) */
+  .workbench-header {
+    padding: 28px 0 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .workbench-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .workbench-tag {
+    font-size: 11px;
+    font-weight: 700;
+    color: #1da1f2;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .workbench-title-row h1 {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--ink-900);
+    line-height: 1.2;
+  }
+  .workbench-title-row .author-meta-sub {
+    font-size: 13.5px;
+    color: var(--ink-500);
+    margin-top: 6px;
+  }
+  .workbench-title-row .author-meta-sub strong { color: var(--ink-700); }
+
+  .btn-submit-new-paper {
+    background: #1da1f2;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 13.5px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all .2s;
+  }
+  .btn-submit-new-paper:hover { background: #0d8ddc; }
+
+  /* METRICS BAR (Hallmark Spec-sheet Style: Bảng số liệu phân cách bằng đường kẻ mỏng) */
+  .metrics-spec-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: #ffffff;
+    margin: 24px 0 32px;
+  }
+  @media (max-width: 800px) {
+    .metrics-spec-strip { grid-template-columns: 1fr 1fr; }
+  }
+  .metric-spec-cell {
+    padding: 18px 22px;
+    border-right: 1px solid var(--line);
+  }
+  .metric-spec-cell:last-child { border-right: none; }
+  .metric-spec-cell .lbl {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink-500);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .metric-spec-cell .val {
+    font-family: var(--serif);
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--ink-900);
+    line-height: 1;
+  }
+  .metric-spec-cell .desc {
+    font-size: 11.5px;
+    color: var(--ink-500);
+    margin-top: 5px;
+  }
+
+  /* WORKBENCH TWO-COLUMN GRID */
+  .workbench-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 36px;
+    align-items: start;
+    margin-bottom: 48px;
+  }
+  @media (max-width: 992px) {
+    .workbench-grid { grid-template-columns: 1fr; }
+  }
+
+  /* SECTION TITLE (Underline accent chuẩn như trang chủ) */
+  .sec-heading {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink-900);
+    margin-bottom: 18px;
+    padding-bottom: 8px;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .sec-heading::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 32px;
+    height: 2px;
+    background: #1da1f2;
+  }
+
+  /* SUBMISSION ROW CARDS (Phong cách bài bản, rõ 6 giai đoạn) */
+  .sub-item-card {
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 20px 22px;
+    margin-bottom: 16px;
+    background: #ffffff;
+    transition: border-color .2s;
+  }
+  .sub-item-card:hover { border-color: #1da1f2; }
+
+  .sub-header-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .sub-code-badge {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 12px;
+    font-weight: 700;
+    color: #1da1f2;
+    background: var(--sky-050);
+    padding: 3px 8px;
+    border-radius: 3px;
+    border: 1px solid var(--sky-200);
+  }
+  .sub-stage-badge {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 3px;
+  }
+  .stage-published { background: #e6f7ec; color: #0e7039; border: 1px solid #bbf0cb; }
+  .stage-review { background: #fef9e7; color: #8f6004; border: 1px solid #fae69e; }
+  .stage-revision { background: #fdf2f2; color: #9f1818; border: 1px solid #f8b4b4; }
+
+  .sub-item-card h3 {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    line-height: 1.35;
+  }
+  .sub-item-card h3 a { color: var(--ink-900); }
+  .sub-item-card h3 a:hover { color: #1da1f2; }
+
+  .sub-meta-specs {
+    display: flex;
+    gap: 18px;
+    font-size: 12px;
+    color: var(--ink-500);
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .sub-meta-specs span b { color: var(--ink-700); }
+
+  /* TIMELINE STEPPER TRACKER (6 giai đoạn chuẩn KLTN) */
+  .workflow-progress-tracker {
+    background: #f8fafc;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    gap: 8px;
+    overflow-x: auto;
+  }
+  .wf-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    font-size: 11px;
+    color: var(--ink-500);
+    position: relative;
+    flex: 1;
+    min-width: 75px;
+  }
+  .wf-step .step-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #cbd5e1;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .wf-step.completed { color: #0e7039; font-weight: 600; }
+  .wf-step.completed .step-dot { background: #10b981; }
+  .wf-step.current { color: #1da1f2; font-weight: 700; }
+  .wf-step.current .step-dot { background: #1da1f2; box-shadow: 0 0 0 3px rgba(29, 161, 242, 0.2); }
+  .wf-step.current-alert { color: #b91c1c; font-weight: 700; }
+  .wf-step.current-alert .step-dot { background: #ef4444; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2); }
+
+  .sub-action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+    font-size: 13px;
+  }
+  .sub-action-bar .note { font-size: 12px; color: var(--ink-500); }
+  .btn-action-view { color: #1da1f2; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
+  .btn-action-view:hover { text-decoration: underline; }
+  .btn-action-revise {
+    background: #b91c1c;
+    color: #ffffff;
+    padding: 6px 14px;
+    border-radius: 3px;
+    font-weight: 700;
+    font-size: 12px;
+  }
+  .btn-action-revise:hover { background: #991b1b; }
+
+  /* SIDEBAR SPEC-SHEET BOXES */
+  .side-spec-card {
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 24px;
+    background: #ffffff;
+  }
+  .side-spec-card h4 {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    position: relative;
+    color: var(--ink-900);
+  }
+  .side-spec-card h4::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 24px;
+    height: 2px;
+    background: #1da1f2;
+  }
+  .spec-entry {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .spec-entry:first-child { padding-top: 0; }
+  .spec-entry:last-child { border-bottom: none; padding-bottom: 0; }
+  .spec-entry .lbl { font-size: 11px; font-weight: 600; color: var(--ink-500); text-transform: uppercase; margin-bottom: 3px; }
+  .spec-entry .val { font-size: 13px; font-weight: 600; color: var(--ink-900); }
+
+  /* MODAL PROFILE & PASSWORD */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(22, 32, 43, 0.6); z-index: 10000;
+    display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box-edit {
+    background: #fff; width: 100%; max-width: 520px; border-radius: 4px; border: 1px solid var(--line);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15); padding: 24px;
+  }
+  .modal-box-edit h3 {
+    font-family: var(--serif); font-size: 20px; font-weight: 600; margin-bottom: 16px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--line); color: var(--ink-900);
+  }
+  .form-group-modal { margin-bottom: 14px; }
+  .form-group-modal label { display: block; font-size: 12.5px; font-weight: 600; color: var(--ink-700); margin-bottom: 5px; }
+  .form-control-modal {
+    width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 3px; font-size: 13px;
+  }
+  .modal-btn-row { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+  .btn-modal-cancel { background: #f1f5f9; border: none; padding: 8px 16px; border-radius: 3px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--ink-700); }
+  .btn-modal-save { background: #1da1f2; border: none; padding: 8px 18px; border-radius: 3px; cursor: pointer; font-size: 13px; font-weight: 700; color: #fff; }
+
+  /* FOOTER */
+  footer { background: #1da1f2; padding: 32px 24px; text-align: center; font-size: 13px; color: #ffffff; }
+  footer .flinks { margin-top: 12px; }
+  footer .flinks a { margin: 0 14px; color: rgba(255,255,255,0.9); font-weight: 600; }
+  footer .flinks a:hover { color: #ffffff; text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<!-- KHỐI BANNER & NAVBAR NỀN XANH (#1da1f2) -->
+<div class="header-bar">
+  <header class="masthead wrap">
+    <div class="name"><a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Tạp chí Khoa học</a></div>
+    <div class="tagline">NGHIÊN CỨU · CÔNG NGHỆ · CHUYỂN GIAO TRI THỨC</div>
+  </header>
+
+  <nav class="navbar wrap">
+    <div class="nav-links">
+      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html" style="display:inline-flex;align-items:center;gap:4px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        Trang chủ
+      </a>
+
+      <!-- TAB DROPDOWN: GIỚI THIỆU -->
+      <div class="nav-item-dropdown">
+        <span class="nav-dropdown-toggle">
+          GIỚI THIỆU
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </span>
+        <div class="nav-fields-menu">
+          <a href="about.html" class="field-menu-item">
+            <span>Giới thiệu về tạp chí</span>
+          </a>
+          <a href="publishing-policy.html" class="field-menu-item">
+            <span>Chính sách xuất bản</span>
+          </a>
+          <a href="editorial-board.html" class="field-menu-item">
+            <span>Hội đồng biên tập</span>
+          </a>
+          <a href="contact.html" class="field-menu-item">
+            <span>Nhân sự &amp; Liên hệ</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- TAB DROPDOWN: QUY TRÌNH - BIỂU MẪU -->
+      <div class="nav-item-dropdown">
+        <span class="nav-dropdown-toggle">
+          QUY TRÌNH - BIỂU MẪU
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </span>
+        <div class="nav-fields-menu">
+          <a href="guidelines.html#submission" class="field-menu-item">
+            <span>Quy trình đăng bài</span>
+          </a>
+          <a href="guidelines.html#review" class="field-menu-item">
+            <span>Quy trình phản biện</span>
+          </a>
+          <a href="guidelines.html#format" class="field-menu-item">
+            <span>Thể lệ viết và gửi bài</span>
+          </a>
+          <a href="guidelines.html#templates" class="field-menu-item">
+            <span>Các biểu mẫu download</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- TAB DROPDOWN: LĨNH VỰC KHOA HỌC -->
+      <div class="nav-item-dropdown">
+        <span class="nav-dropdown-toggle">
+          LĨNH VỰC KHOA HỌC
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </span>
+        <div class="nav-fields-menu">
+          <a href="article-detail.html" class="field-menu-item">
+            <span>Công nghệ thông tin</span>
+            <span class="badge-count">142</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Cơ khí – Tự động hóa</span>
+            <span class="badge-count">98</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Khoa học Môi trường</span>
+            <span class="badge-count">76</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Kinh tế – Quản trị</span>
+            <span class="badge-count">115</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Hóa học &amp; Công nghệ thực phẩm</span>
+            <span class="badge-count">84</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Khoa học Xã hội &amp; Nhân văn</span>
+            <span class="badge-count">62</span>
+          </a>
+          <div class="fields-menu-divider"></div>
+          <a href="archives.html" class="fields-menu-all">Xem tất cả các chuyên ngành &rarr;</a>
+        </div>
+      </div>
+
+      <a href="archives.html">Kho lưu trữ</a>
+    </div>
+    
+    <div class="nav-actions">
+      <a href="submit-paper.html" style="background:#ffffff;color:#1da1f2;padding:6px 14px;border-radius:4px;font-size:12.5px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.12);display:inline-flex;align-items:center;gap:6px;transition:all .2s;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Gửi bài báo
+      </a>
+
+      <div class="auth-links">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb-bar">
+  <div class="wrap">
+    <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Trang chủ</a>
+    <span class="sep">/</span>
+    <span style="color:var(--ink-700);">Bàn làm việc Tác giả &amp; Quản lý Bản thảo</span>
+  </div>
+</div>
+
+<!-- WORKBENCH HEADER (Chuẩn Editorial Workbench của Hallmark) -->
+<section class="workbench-header wrap">
+  <div class="workbench-title-row">
+    <div>
+      <span class="workbench-tag">PHÂN HỆ TÁC GIẢ · BÀN LÀM VIỆC TÒA SOẠN</span>
+      <h1 id="author-heading-name">Bàn làm việc: TS. Vũ Thị F</h1>
+      <div class="author-meta-sub">
+        Đơn vị: <strong id="author-sub-affil">Khoa Công nghệ Thông tin, Viện Nghiên cứu Khoa học &amp; Công nghệ</strong>
+        &nbsp;·&nbsp;
+        Mã ORCID: <strong id="author-sub-orcid">0000-0002-1825-0097</strong>
+      </div>
+    </div>
+
+    <div>
+      <a href="submit-paper.html" class="btn-submit-new-paper">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Gửi bản thảo mới &rarr;
+      </a>
+    </div>
+  </div>
+
+  <!-- CHỈ SỐ THỰC TẾ (METRICS SPEC-STRIP - KHÔNG CÓ ICON AI NỞ RỘ RẬP KHUÔN) -->
+  <div class="metrics-spec-strip">
+    <div class="metric-spec-cell">
+      <span class="lbl">Tổng số bản thảo</span>
+      <div class="val">03</div>
+      <div class="desc">Bản thảo đã nộp lên hệ thống</div>
+    </div>
+    <div class="metric-spec-cell">
+      <span class="lbl">Đang bình duyệt kín</span>
+      <div class="val" style="color:#b45309;">01</div>
+      <div class="desc">Vòng 2 · 02 Chuyên gia độc lập</div>
+    </div>
+    <div class="metric-spec-cell">
+      <span class="lbl">Chờ tác giả chỉnh sửa</span>
+      <div class="val" style="color:#b91c1c;">01</div>
+      <div class="desc">Thời hạn sửa đổi còn 14 ngày</div>
+    </div>
+    <div class="metric-spec-cell">
+      <span class="lbl">Đã công bố chính thức</span>
+      <div class="val" style="color:#0e7039;">01</div>
+      <div class="desc">Cấp DOI CrossRef · Tập 15 (Số 42)</div>
+    </div>
+  </div>
+</section>
+
+<!-- BỐ CỤC CHÍNH (EDITORIAL WORKBENCH: BẢN THẢO BÊN TRÁI + SPEC-SHEET BÊN PHẢI) -->
+<div class="wrap workbench-grid">
+  
+  <!-- CỘT TRÁI: DANH SÁCH BẢN THẢO VÀ TIẾN TRÌNH 6 GIAI ĐOẠN -->
+  <main>
+    <div class="sec-heading">
+      <span>Tiến trình xử lý các Bản thảo của bạn</span>
+      <span style="font-size:12px;color:var(--ink-500);font-family:var(--sans);font-weight:500;">Cập nhật thời gian thực</span>
+    </div>
+
+    <!-- BÀI BÁO 1: ĐÃ XUẤT BẢN HOÀN TẤT -->
+    <article class="sub-item-card">
+      <div class="sub-header-line">
+        <span class="sub-code-badge">MÃ BẢN THẢO: JST-2026-042</span>
+        <span class="sub-stage-badge stage-published">● Giai đoạn 6: Đã xuất bản chính thức</span>
+      </div>
+      <h3><a href="article-detail.html">Ứng dụng mô hình Transformer trong phân loại văn bản tiếng Việt quy mô lớn</a></h3>
+      <div class="sub-meta-specs">
+        <span>Chuyên ngành: <b>Khoa học máy tính &amp; Trí tuệ nhân tạo</b></span>
+        <span>Ngày nộp: <b>10/09/2026</b></span>
+        <span>DOI: <b>10.59876/jst.jsc.2026.42.04</b></span>
+      </div>
+
+      <!-- Tracker 6 giai đoạn -->
+      <div class="workflow-progress-tracker">
+        <div class="wf-step completed"><div class="step-dot">✓</div><span>1. Nộp bài</span></div>
+        <div class="wf-step completed"><div class="step-dot">✓</div><span>2. Sơ duyệt</span></div>
+        <div class="wf-step completed"><div class="step-dot">✓</div><span>3. Phản biện</span></div>
+        <div class="wf-step completed"><div class="step-dot">✓</div><span>4. Quyết định</span></div>
+        <div class="wf-step completed"><div class="step-dot">✓</div><span>5. Chế bản</span></div>
+        <div class="wf-step completed"><div class="step-dot">✓</div><span>6. Phát hành</span></div>
+      </div>
+
+      <div class="sub-action-bar">
+        <span class="note">Đã phát hành trong <strong>Tập 15, Số 42 (11/2026)</strong> · 1.420 lượt đọc</span>
+        <a href="article-detail.html" class="btn-action-view">Xem bài báo trên tạp chí &rarr;</a>
+      </div>
+    </article>
+
+    <!-- BÀI BÁO 2: YÊU CẦU CHỈNH SỬA PHẢN BIỆN (ACTION REQUIRED) -->
+    <article class="sub-item-card" style="border-left: 3px solid #b91c1c;">
+      <div class="sub-header-line">
+        <span class="sub-code-badge">MÃ BẢN THẢO: JST-2026-105</span>
+        <span class="sub-stage-badge stage-revision">⚠️ Giai đoạn 3: Yêu cầu Chỉnh sửa nhỏ</span>
+      </div>
+      <h3><a href="javascript:void(0)" onclick="openRevisionDialog()">Nghiên cứu kiến trúc vi dịch vụ phân tán cho hệ thống giám sát năng lượng mặt trời</a></h3>
+      <div class="sub-meta-specs">
+        <span>Chuyên ngành: <b>Cơ điện tử &amp; Tự động hóa</b></span>
+        <span>Hạn phản hồi: <b style="color:#b91c1c;">15/12/2026 (Còn 14 ngày)</b></span>
+        <span>Biên tập viên: <b>ThS. Trần Thị D</b></span>
+      </div>
+
+      <!-- Tracker 6 giai đoạn -->
+      <div class="workflow-progress-tracker">
+        <div class="wf-step completed"><div class="step-dot">✓</div><span>1. Nộp bài</span></div>
+        <div class="wf-step completed"><div class="step-dot">✓</div><span>2. Sơ duyệt</span></div>
+        <div class="wf-step current-alert"><div class="step-dot">!</div><span>3. Sửa đổi</span></div>
+        <div class="wf-step"><div class="step-dot">4</div><span>4. Quyết định</span></div>
+        <div class="wf-step"><div class="step-dot">5</div><span>5. Chế bản</span></div>
+        <div class="wf-step"><div class="step-dot">6</div><span>6. Phát hành</span></div>
+      </div>
+
+      <div class="sub-action-bar">
+        <span class="note">Hội đồng yêu cầu bổ sung bảng đối sánh hiệu năng hệ thống theo ý kiến Phản biện 1 &amp; 2.</span>
+        <button type="button" class="btn-action-revise" onclick="openRevisionDialog()">Xem nhận xét &amp; Nộp bản sửa &rarr;</button>
+      </div>
+    </article>
+
+    <!-- BÀI BÁO 3: ĐANG PHẢN BIỆN KÍN HAI CHIỀU -->
+    <article class="sub-item-card">
+      <div class="sub-header-line">
+        <span class="sub-code-badge">MÃ BẢN THẢO: JST-2026-089</span>
+        <span class="sub-stage-badge stage-review">⏳ Giai đoạn 3: Đang phản biện độc lập (Vòng 2)</span>
+      </div>
+      <h3><a href="javascript:void(0)" onclick="showToast('Bản thảo đang được 02 chuyên gia độc lập thẩm định.')">Tối ưu hóa thuật toán nhận diện chữ viết tay tiếng Việt dựa trên đồ thị tri thức</a></h3>
+      <div class="sub-meta-specs">
+        <span>Chuyên ngành: <b>Công nghệ thông tin</b></span>
+        <span>Gửi phản biện: <b>15/10/2026</b></span>
+        <span>Tỷ lệ Turnitin: <b>8% (Hợp lệ)</b></span>
+      </div>
+
+      <!-- Tracker 6 giai đoạn -->
+      <div class="workflow-progress-tracker">
+        <div class="wf-step completed"><div class="step-dot">✓</div><span>1. Nộp bài</span></div>
+        <div class="wf-step completed"><div class="step-dot">✓</div><span>2. Sơ duyệt</span></div>
+        <div class="wf-step current"><div class="step-dot">3</div><span>3. Phản biện</span></div>
+        <div class="wf-step"><div class="step-dot">4</div><span>4. Quyết định</span></div>
+        <div class="wf-step"><div class="step-dot">5</div><span>5. Chế bản</span></div>
+        <div class="wf-step"><div class="step-dot">6</div><span>6. Phát hành</span></div>
+      </div>
+
+      <div class="sub-action-bar">
+        <span class="note">02 Chuyên gia phản biện kín đang đánh giá theo 5 tiêu chí IMRaD. Dự kiến có kết quả trong 10 ngày.</span>
+        <a href="javascript:void(0)" onclick="alert('THÔNG TIN TIẾN ĐỘ BÌNH DUYỆT\n\n- Mã bản thảo: JST-2026-089\n- Trạng thái: 02/02 chuyên gia đã nhận lời mời và đang hoàn tất phiếu đánh giá.\n- Thời hạn hoàn thành: 25/11/2026.\n\nTòa soạn sẽ tự động gửi email cho tác giả ngay khi có tổng hợp nhận xét.')" class="btn-action-view">Xem chi tiết tiến trình &rarr;</a>
+      </div>
+    </article>
+
+  </main>
+
+  <!-- CỘT PHẢI: SPEC-SHEET HỒ SƠ & TIỆN ÍCH TÒA SOẠN -->
+  <aside>
+    <!-- THÔNG TIN LÝ LỊCH KHOA HỌC -->
+    <div class="side-spec-card">
+      <h4>Hồ sơ Tác giả (Author Spec)</h4>
+      <div class="spec-entry">
+        <div class="lbl">Họ và tên</div>
+        <div class="val" id="spec-name">TS. Vũ Thị F</div>
+      </div>
+      <div class="spec-entry">
+        <div class="lbl">Cơ quan công tác (Affiliation)</div>
+        <div class="val" id="spec-affil">Trường Đại học</div>
+      </div>
+      <div class="spec-entry">
+        <div class="lbl">Email học thuật</div>
+        <div class="val" id="spec-email">vuthif@journal.edu.vn</div>
+      </div>
+      <div class="spec-entry">
+        <div class="lbl">Mã định danh ORCID</div>
+        <div class="val" id="spec-orcid">0000-0002-1825-0097</div>
+      </div>
+      <div style="margin-top:16px;display:flex;gap:8px;">
+        <button type="button" onclick="openProfileEditModal()" style="flex:1;background:var(--sky-050);border:1px solid var(--sky-200);color:#1da1f2;padding:7px;border-radius:3px;font-size:12px;font-weight:700;cursor:pointer;">Cập nhật hồ sơ</button>
+        <button type="button" onclick="openPasswordModal()" style="flex:1;background:#fff;border:1px solid #cbd5e1;color:var(--ink-700);padding:7px;border-radius:3px;font-size:12px;font-weight:600;cursor:pointer;">Đổi mật khẩu</button>
+      </div>
+    </div>
+
+    <!-- KHUNG THỜI GIAN CHUẨN XUẤT BẢN JST -->
+    <div class="side-spec-card">
+      <h4>Quy chuẩn xuất bản JST</h4>
+      <div class="spec-entry">
+        <div class="lbl">Thời gian sơ duyệt</div>
+        <div class="val">Tối đa 03 ngày làm việc</div>
+      </div>
+      <div class="spec-entry">
+        <div class="lbl">Thời gian phản biện</div>
+        <div class="val">21 – 30 ngày (2 chuyên gia)</div>
+      </div>
+      <div class="spec-entry">
+        <div class="lbl">Kiểm soát trùng lặp</div>
+        <div class="val">Turnitin &lt; 20% (IMRaD)</div>
+      </div>
+      <div class="spec-entry">
+        <div class="lbl">Kỳ xuất bản kế tiếp</div>
+        <div class="val">Tập 15, Số 43 (Ngày 28/12/2026)</div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- DIALOG NỘP BẢN GIẢI TRÌNH CHỈNH SỬA (REVISION MODAL CHUYÊN NGHIỆP) -->
+<div class="modal-overlay" id="modal-revision">
+  <div class="modal-box-edit" style="max-width:600px;">
+    <h3>Nộp bản thảo chỉnh sửa &amp; Bản giải trình phản biện</h3>
+    <p style="font-size:12.5px;color:var(--ink-500);margin-bottom:16px;">
+      Mã bài: <strong>JST-2026-105</strong> · Chuyên san Cơ điện tử &amp; Tự động hóa
+    </p>
+
+    <div style="background:var(--sky-050);border:1px solid var(--sky-200);border-radius:4px;padding:12px;font-size:12.5px;color:var(--ink-700);margin-bottom:16px;line-height:1.5;">
+      <strong>Nhận xét từ Hội đồng:</strong> Tác giả cần bổ sung biểu đồ so sánh độ trễ truyền thông của kiến trúc vi dịch vụ và làm rõ phương pháp giải mã dữ liệu cảm biến năng lượng mặt trời.
+    </div>
+
+    <form onsubmit="handleSendRevision(event)">
+      <div class="form-group-modal">
+        <label>Bản giải trình chỉnh sửa (Response to Reviewers) <span style="color:#e02424;">*</span></label>
+        <textarea class="form-control-modal" rows="4" placeholder="Giải trình chi tiết từng điểm sửa đổi theo ý kiến của Chuyên gia phản biện 1 và 2..." required></textarea>
+      </div>
+
+      <div class="form-group-modal">
+        <label>Tệp bản thảo đã chỉnh sửa hoàn thiện (.docx / .pdf) <span style="color:#e02424;">*</span></label>
+        <input type="file" class="form-control-modal" required>
+      </div>
+
+      <div class="modal-btn-row">
+        <button type="button" class="btn-modal-cancel" onclick="closeRevisionDialog()">Hủy bỏ</button>
+        <button type="submit" class="btn-modal-save">Gửi bản sửa đổi cho Tòa soạn &rarr;</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL CẬP NHẬT HỒ SƠ -->
+<div class="modal-overlay" id="modal-edit-profile">
+  <div class="modal-box-edit">
+    <h3>Cập nhật lý lịch khoa học Tác giả</h3>
+    <form onsubmit="handleSaveProfile(event)">
+      <div class="form-group-modal">
+        <label>Họ và tên</label>
+        <input type="text" id="modal-input-name" class="form-control-modal" required>
+      </div>
+      <div class="form-group-modal">
+        <label>Cơ quan công tác / Trường đại học (Affiliation)</label>
+        <input type="text" id="modal-input-affil" class="form-control-modal" required>
+      </div>
+      <div class="form-group-modal">
+        <label>Mã định danh tác giả quốc tế ORCID (iD)</label>
+        <input type="text" id="modal-input-orcid" class="form-control-modal">
+      </div>
+      <div class="modal-btn-row">
+        <button type="button" class="btn-modal-cancel" onclick="closeProfileEditModal()">Hủy</button>
+        <button type="submit" class="btn-modal-save">Lưu hồ sơ</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL ĐỔI MẬT KHẨU -->
+<div class="modal-overlay" id="modal-change-pass">
+  <div class="modal-box-edit">
+    <h3>Thiết lập mật khẩu bảo mật</h3>
+    <form onsubmit="handleSavePass(event)">
+      <div class="form-group-modal">
+        <label>Mật khẩu hiện tại</label>
+        <input type="password" class="form-control-modal" required placeholder="••••••••">
+      </div>
+      <div class="form-group-modal">
+        <label>Mật khẩu mới</label>
+        <input type="password" id="p-new" class="form-control-modal" required placeholder="Tối thiểu 8 ký tự">
+      </div>
+      <div class="form-group-modal">
+        <label>Xác nhận lại mật khẩu mới</label>
+        <input type="password" id="p-conf" class="form-control-modal" required placeholder="Nhập lại mật khẩu mới">
+      </div>
+      <div class="modal-btn-row">
+        <button type="button" class="btn-modal-cancel" onclick="closePasswordModal()">Đóng</button>
+        <button type="submit" class="btn-modal-save">Cập nhật mật khẩu</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div>Tạp chí Khoa học · Tạp chí Nghiên cứu &amp; Phát triển Công nghệ · ISSN 1859-3097</div>
+    <div class="flinks">
+      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Trang chủ</a>
+      <a href="about.html">Về tạp chí</a>
+      <a href="guidelines.html">Thể lệ &amp; Quy trình nộp bài</a>
+      <a href="publishing-policy.html">Chính sách xuất bản</a>
+      <a href="editorial-board.html">Hội đồng biên tập</a>
+      <a href="contact.html">Liên hệ tòa soạn</a>
+    </div>
+  </div>
+</footer>
+
+<script src="journal-interactions.js"></script>
+<script>
+  // Khởi tạo thông tin từ phiên người dùng
+  document.addEventListener('DOMContentLoaded', () => {
+    syncUserData();
+  });
+
+  function syncUserData() {
+    const user = getCurrentUser() || {
+      hoTen: 'TS. Vũ Thị F',
+      email: 'vuthif@journal.edu.vn',
+      donVi: 'Khoa Công nghệ Thông tin, Viện Nghiên cứu Khoa học & Công nghệ',
+      orcid: '0000-0002-1825-0097'
+    };
+
+    document.getElementById('author-heading-name').innerText = 'Bàn làm việc: ' + user.hoTen;
+    document.getElementById('author-sub-affil').innerText = user.donVi;
+    document.getElementById('author-sub-orcid').innerText = user.orcid || '0000-0002-1825-0097';
+
+    document.getElementById('spec-name').innerText = user.hoTen;
+    document.getElementById('spec-affil').innerText = user.donVi;
+    document.getElementById('spec-email').innerText = user.email;
+    document.getElementById('spec-orcid').innerText = user.orcid || '—';
+  }
+
+  // Modals
+  function openProfileEditModal() {
+    const user = getCurrentUser();
+    document.getElementById('modal-input-name').value = user.hoTen;
+    document.getElementById('modal-input-affil').value = user.donVi;
+    document.getElementById('modal-input-orcid').value = user.orcid || '';
+    document.getElementById('modal-edit-profile').classList.add('open');
+  }
+  function closeProfileEditModal() { document.getElementById('modal-edit-profile').classList.remove('open'); }
+
+  function handleSaveProfile(e) {
+    e.preventDefault();
+    const user = getCurrentUser() || {};
+    user.hoTen = document.getElementById('modal-input-name').value;
+    user.donVi = document.getElementById('modal-input-affil').value;
+    user.orcid = document.getElementById('modal-input-orcid').value;
+    setCurrentUser(user);
+    syncUserData();
+    closeProfileEditModal();
+    showToast('Đã lưu thông tin lý lịch khoa học!');
+  }
+
+  function openPasswordModal() { document.getElementById('modal-change-pass').classList.add('open'); }
+  function closePasswordModal() { document.getElementById('modal-change-pass').classList.remove('open'); }
+
+  function handleSavePass(e) {
+    e.preventDefault();
+    const p1 = document.getElementById('p-new').value;
+    const p2 = document.getElementById('p-conf').value;
+    if (p1 !== p2) {
+      alert('Mật khẩu mới và xác nhận mật khẩu không trùng khớp!');
+      return;
+    }
+    closePasswordModal();
+    showToast('Đổi mật khẩu tài khoản thành công!');
+  }
+
+  function openRevisionDialog() { document.getElementById('modal-revision').classList.add('open'); }
+  function closeRevisionDialog() { document.getElementById('modal-revision').classList.remove('open'); }
+
+  function handleSendRevision(e) {
+    e.preventDefault();
+    closeRevisionDialog();
+    showToast('Đã gửi Bản giải trình & Tệp chỉnh sửa tới Ban Biên tập thành công!');
+  }
+</script>
+</body>
+</html>

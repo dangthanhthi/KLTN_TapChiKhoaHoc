@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nhân sự &amp; Liên hệ Tòa soạn · Tạp chí Khoa học</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="journal-interactions.css">
+
+<style>
+  :root {
+    --serif: 'Source Serif 4', Georgia, serif;
+    --sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --sky-050: #F3F8FD;
+    --sky-100: #E4EFFA;
+    --sky-200: #C9DFF4;
+    --sky-400: #8FB8E3;
+    --sky-500: #6699D1;
+    --sky-600: #4C7FB8;
+    --sky-700: #3A6497;
+    --ink-900: #16202B;
+    --ink-700: #3D4A57;
+    --ink-500: #6B7684;
+    --ink-300: #A9B2BC;
+    --white: #FFFFFF;
+    --line: #E1E9F1;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    background: var(--white);
+    color: var(--ink-900);
+    line-height: 1.6;
+  }
+
+  a { text-decoration: none; color: inherit; }
+  .wrap { max-width: 1360px; margin: 0 auto; padding: 0 20px; }
+
+  /* HEADER & NAVBAR AZURE BLUE */
+  .header-bar { background: #1da1f2; box-shadow: 0 2px 10px rgba(29,161,242,0.15); }
+  header.masthead { padding: 20px 0 16px; display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid rgba(255,255,255,0.25); }
+  header .name { font-family: var(--serif); font-size: 27px; letter-spacing: -.01em; font-weight: 600; color: #ffffff; }
+  header .tagline { font-size: 11px; letter-spacing: .08em; color: rgba(255,255,255,0.85); font-weight: 500; }
+
+  nav.navbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 0 14px; }
+  .nav-links { display: flex; gap: 20px; font-size: 13px; font-weight: 500; align-items: center; }
+  .nav-links a { color: rgba(255,255,255,0.88); padding: 4px 0; transition: color .15s; }
+  .nav-links a:hover { color: #ffffff; }
+  .nav-links a.on { color: #ffffff; font-weight: 700; }
+
+  .nav-actions { display: flex; align-items: center; gap: 14px; }
+  .auth-links { display: flex; align-items: center; gap: 8px; font-size: 12.5px; border-left: 1px solid rgba(255,255,255,0.25); padding-left: 12px; }
+  .auth-links a.login-btn { background: #ffffff; color: #1da1f2; border: 1px solid #ffffff; border-radius: 4px; padding: 5px 12px; font-weight: 700; text-decoration: none; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+  .auth-links a.register-btn { background: #ffffff; color: #1da1f2; border: 1px solid #ffffff; border-radius: 4px; padding: 5px 14px; font-weight: 700; text-decoration: none; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+
+  /* BREADCRUMB */
+  .breadcrumb-bar { background: var(--sky-050); border-bottom: 1px solid var(--line); padding: 12px 0; font-size: 12px; color: var(--ink-500); }
+  .breadcrumb-bar a { color: #1da1f2; font-weight: 500; }
+  .breadcrumb-bar a:hover { text-decoration: underline; }
+  .breadcrumb-bar span.sep { margin: 0 8px; color: var(--sky-200); }
+
+  /* MAIN LAYOUT */
+  .page-container { display: grid; grid-template-columns: 280px 1fr; gap: 36px; padding: 36px 0 64px; }
+  @media (max-width: 900px) {
+    .page-container { grid-template-columns: 1fr; }
+  }
+
+  /* SIDEBAR NAVIGATION */
+  .page-sidebar { position: sticky; top: 20px; align-self: start; background: #ffffff; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .sidebar-header { padding: 14px 18px; font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-500); border-bottom: 1px solid var(--line); background: #fafcff; }
+  .side-nav-link { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; font-size: 13.5px; font-weight: 600; color: var(--ink-700); border-left: 3px solid transparent; border-bottom: 1px solid #f1f5f9; transition: all .15s; }
+  .side-nav-link:hover { background: #f8fafc; color: #1da1f2; }
+  .side-nav-link.active { background: #f0f7ff; color: #1da1f2; border-left-color: #1da1f2; font-weight: 700; }
+  .side-nav-link svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+  /* MAIN CONTENT */
+  .main-content { background: #ffffff; border: 1px solid var(--line); border-radius: 8px; padding: 36px 42px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); min-height: 650px; }
+  .page-title { font-family: var(--serif); font-size: 28px; font-weight: 600; color: var(--ink-900); margin-bottom: 8px; }
+  .page-subtitle { font-size: 13.5px; color: var(--ink-500); margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--line); line-height: 1.5; }
+
+  /* CONTACT GRID */
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 36px; }
+  @media (max-width: 800px) {
+    .contact-grid { grid-template-columns: 1fr; }
+  }
+
+  .contact-card { background: #fafcff; border: 1px solid var(--line); border-radius: 6px; padding: 22px 24px; }
+  .contact-card-title { font-size: 15px; font-weight: 700; color: #1da1f2; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--line); padding-bottom: 10px; }
+  .contact-card-title svg { width: 18px; height: 18px; stroke: #1da1f2; fill: none; stroke-width: 2; }
+  .contact-item { font-size: 13.5px; color: var(--ink-700); margin-bottom: 10px; line-height: 1.5; }
+  .contact-item strong { color: var(--ink-900); }
+
+  /* PERSONNEL TABLE */
+  .personnel-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 12px; }
+  .personnel-table th { background: #fafcff; border: 1px solid var(--line); padding: 11px 16px; text-align: left; font-weight: 600; color: var(--ink-700); font-size: 12.5px; text-transform: uppercase; letter-spacing: 0.03em; }
+  .personnel-table td { border: 1px solid var(--line); padding: 12px 16px; vertical-align: middle; }
+  .personnel-table tr:hover { background: #fafcff; }
+  .staff-role { font-weight: 700; color: var(--ink-900); }
+  .staff-name { font-weight: 600; color: #1da1f2; }
+  .staff-email { color: #1da1f2; font-weight: 500; font-family: ui-monospace, monospace; font-size: 12.5px; }
+
+  /* CONTACT FORM */
+  .contact-form-box { background: var(--sky-050); border: 1px solid var(--sky-200); border-radius: 6px; padding: 26px 30px; margin-top: 32px; }
+  .contact-form-box h3 { font-size: 17px; font-weight: 700; color: var(--ink-900); margin-bottom: 6px; }
+  .contact-form-box p { font-size: 13px; color: var(--ink-500); margin-bottom: 20px; }
+  
+  .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 650px) {
+    .form-row-2 { grid-template-columns: 1fr; }
+  }
+  .form-group { margin-bottom: 16px; }
+  .form-group label { display: block; font-size: 12.5px; font-weight: 600; color: var(--ink-700); margin-bottom: 6px; }
+  .form-control { width: 100%; border: 1px solid var(--sky-200); border-radius: 4px; padding: 9px 12px; font-size: 13.5px; color: var(--ink-900); background: #ffffff; }
+  .form-control:focus { outline: none; border-color: #1da1f2; }
+  
+  .btn-submit-contact { background: #1da1f2; color: #ffffff; border: none; border-radius: 4px; padding: 11px 24px; font-size: 13.5px; font-weight: 700; cursor: pointer; transition: all .15s; }
+  .btn-submit-contact:hover { background: #0d8ddc; }
+
+  /* FOOTER */
+  footer { background: #1da1f2; padding: 32px 24px; text-align: center; font-size: 13px; color: #ffffff; margin-top: 40px; box-shadow: 0 -2px 10px rgba(29,161,242,0.15); }
+  footer .flinks { margin-top: 12px; }
+  footer .flinks a { margin: 0 14px; color: rgba(255,255,255,0.9); font-weight: 600; }
+  footer .flinks a:hover { color: #ffffff; text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<!-- KHỐI BANNER & NAVBAR NỀN XANH (#1da1f2) -->
+<div class="header-bar">
+  <header class="masthead wrap">
+    <div class="name"><a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Tạp chí Khoa học</a></div>
+    <div class="tagline">NGHIÊN CỨU · CÔNG NGHỆ · CHUYỂN GIAO TRI THỨC</div>
+  </header>
+
+  <nav class="navbar wrap">
+    <div class="nav-links">
+      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html" style="display:inline-flex;align-items:center;gap:4px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        Trang chủ
+      </a>
+
+      <!-- TAB DROPDOWN: GIỚI THIỆU -->
+      <div class="nav-item-dropdown">
+        <span class="nav-dropdown-toggle on">
+          GIỚI THIỆU
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </span>
+        <div class="nav-fields-menu">
+          <a href="about.html" class="field-menu-item">
+            <span>Giới thiệu về tạp chí</span>
+          </a>
+          <a href="publishing-policy.html" class="field-menu-item">
+            <span>Chính sách xuất bản</span>
+          </a>
+          <a href="editorial-board.html" class="field-menu-item">
+            <span>Hội đồng biên tập</span>
+          </a>
+          <a href="contact.html" class="field-menu-item" style="color:#1da1f2!important;font-weight:700;">
+            <span>Nhân sự &amp; Liên hệ</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- TAB DROPDOWN: QUY TRÌNH - BIỂU MẪU -->
+      <div class="nav-item-dropdown">
+        <span class="nav-dropdown-toggle">
+          QUY TRÌNH - BIỂU MẪU
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </span>
+        <div class="nav-fields-menu">
+          <a href="guidelines.html#submission" class="field-menu-item">
+            <span>Quy trình đăng bài</span>
+          </a>
+          <a href="guidelines.html#review" class="field-menu-item">
+            <span>Quy trình phản biện</span>
+          </a>
+          <a href="guidelines.html#format" class="field-menu-item">
+            <span>Thể lệ viết và gửi bài</span>
+          </a>
+          <a href="guidelines.html#templates" class="field-menu-item">
+            <span>Các biểu mẫu</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- TAB DROPDOWN: LĨNH VỰC KHOA HỌC -->
+      <div class="nav-item-dropdown">
+        <span class="nav-dropdown-toggle">
+          LĨNH VỰC KHOA HỌC
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </span>
+        <div class="nav-fields-menu">
+          <a href="article-detail.html" class="field-menu-item">
+            <span>Công nghệ thông tin</span>
+            <span class="badge-count">142</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Cơ khí – Tự động hóa</span>
+            <span class="badge-count">98</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Khoa học Môi trường</span>
+            <span class="badge-count">76</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Kinh tế – Quản trị</span>
+            <span class="badge-count">115</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Hóa học &amp; Công nghệ thực phẩm</span>
+            <span class="badge-count">84</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Khoa học Xã hội &amp; Nhân văn</span>
+            <span class="badge-count">62</span>
+          </a>
+          <div class="fields-menu-divider"></div>
+          <a href="archives.html" class="fields-menu-all">Xem tất cả các chuyên ngành &rarr;</a>
+        </div>
+      </div>
+
+      <a href="archives.html">Kho lưu trữ</a>
+    </div>
+
+    <!-- KHỐI PHẢI: NÚT NỘP BÀI + AUTH -->
+    <div class="nav-actions">
+      <a href="submit-paper.html" style="background:#ffffff;color:#1da1f2;padding:6px 14px;border-radius:4px;font-size:12.5px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.12);display:inline-flex;align-items:center;gap:6px;transition:all .2s;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Gửi bài báo
+      </a>
+      
+      <div class="auth-links">
+        <a href="login.html" class="login-btn">Đăng nhập</a>
+        <a href="register.html" class="register-btn">Đăng ký</a>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb-bar">
+  <div class="wrap">
+    <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Trang chủ</a>
+    <span class="sep">/</span>
+    <a href="about.html">Giới thiệu</a>
+    <span class="sep">/</span>
+    <span style="color:var(--ink-700);">Nhân sự &amp; Liên hệ Tòa soạn</span>
+  </div>
+</div>
+
+<!-- CONTAINER -->
+<div class="wrap page-container">
+  
+  <!-- SIDEBAR MENU -->
+  <aside class="page-sidebar">
+    <div class="sidebar-header">Chuyên mục Giới thiệu</div>
+    <a href="about.html" class="side-nav-link">
+      <span>Giới thiệu về Tạp chí</span>
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </a>
+    <a href="publishing-policy.html" class="side-nav-link">
+      <span>Chính sách xuất bản &amp; Đạo đức</span>
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </a>
+    <a href="editorial-board.html" class="side-nav-link">
+      <span>Hội đồng Biên tập</span>
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </a>
+    <a href="contact.html" class="side-nav-link active">
+      <span>Nhân sự &amp; Liên hệ Tòa soạn</span>
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <h1 class="page-title">Nhân sự Ban Thư ký &amp; Thông tin Liên hệ</h1>
+    <div class="page-subtitle">
+      Cơ quan tiếp nhận bản thảo, hướng dẫn tác giả, phản biện và hỗ trợ giải quyết các vấn đề kỹ thuật xuất bản.
+    </div>
+
+    <!-- CONTACT CARDS -->
+    <div class="contact-grid">
+      <div class="contact-card">
+        <div class="contact-card-title">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          VĂN PHÒNG TÒA SOẠN
+        </div>
+        <div class="contact-item"><strong>Địa chỉ trụ sở:</strong> Tòa nhà Tạp chí Khoa học, Trung tâm Nghiên cứu &amp; Phát triển Công nghệ, TP. Hồ Chí Minh</div>
+        <div class="contact-item"><strong>Điện thoại bàn:</strong> (028) 3816 1673 - Ext: 124, 126</div>
+        <div class="contact-item"><strong>Đường dây nóng (Hotline):</strong> 0908 123 456 (07:30 - 16:30)</div>
+        <div class="contact-item"><strong>Email tiếp nhận bản thảo:</strong> <a href="mailto:tapchikhoahoc@journal.edu.vn" style="color:var(--sky-600);font-weight:600;">tapchikhoahoc@journal.edu.vn</a></div>
+      </div>
+
+      <div class="contact-card">
+        <div class="contact-card-title">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          THỜI GIAN LÀM VIỆC &amp; HỖ TRỢ
+        </div>
+        <div class="contact-item"><strong>Các ngày trong tuần:</strong> Thứ Hai đến Thứ Sáu (Trừ ngày lễ, Tết)</div>
+        <div class="contact-item"><strong>Buổi sáng:</strong> 07:30 – 11:30</div>
+        <div class="contact-item"><strong>Buổi chiều:</strong> 13:00 – 17:00</div>
+        <div class="contact-item"><strong>Hệ thống nộp bài trực tuyến:</strong> Hoạt động 24/7 (tiếp nhận mọi thời điểm)</div>
+      </div>
+    </div>
+
+    <!-- PERSONNEL LIST -->
+    <h2 style="font-size:18px;font-weight:700;color:var(--ink-900);margin-bottom:12px;">Đội ngũ Nhân sự Ban Thư ký &amp; Biên tập Kỹ thuật</h2>
+    <table class="personnel-table">
+      <thead>
+        <tr>
+          <th style="width: 25%;">Vị trí công tác</th>
+          <th style="width: 35%;">Họ và tên</th>
+          <th style="width: 40%;">Email liên hệ &amp; Nhiệm vụ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="staff-role">Thư ký Tòa soạn</td>
+          <td class="staff-name">TS. Nguyễn Văn Hưng</td>
+          <td>
+            <div class="staff-email">hungnv@journal.edu.vn</div>
+            <div style="font-size:12px;color:var(--ink-500);margin-top:2px;">Phụ trách điều phối bản thảo và quản lý quy trình phản biện kín</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="staff-role">Thư ký Quản trị hệ thống</td>
+          <td class="staff-name">ThS. Lê Hoàng Long</td>
+          <td>
+            <div class="staff-email">longlh@journal.edu.vn</div>
+            <div style="font-size:12px;color:var(--ink-500);margin-top:2px;">Quản trị hạ tầng trực tuyến, tài khoản tác giả và chỉ mục DOI</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="staff-role">Biên tập viên Chế bản &amp; Mỹ thuật</td>
+          <td class="staff-name">ThS. Phạm Thanh Thảo</td>
+          <td>
+            <div class="staff-email">thaopt@journal.edu.vn</div>
+            <div style="font-size:12px;color:var(--ink-500);margin-top:2px;">Chế bản định dạng PDF/In ấn, kiểm tra thể thức và đọc bông kỹ thuật</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="staff-role">Biên tập viên tiếng Anh</td>
+          <td class="staff-name">ThS. Trần Vũ Lan Anh</td>
+          <td>
+            <div class="staff-email">anhtvl@journal.edu.vn</div>
+            <div style="font-size:12px;color:var(--ink-500);margin-top:2px;">Hiệu đính ngữ pháp tiêu đề, tóm tắt tiếng Anh (Abstract) và từ khóa</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- CONTACT FORM -->
+    <div class="contact-form-box">
+      <h3>Gửi yêu cầu hoặc thắc mắc đến Tòa soạn</h3>
+      <p>Điền thông tin vào mẫu dưới đây. Ban Thư ký sẽ phản hồi qua email trong vòng 24 giờ làm việc.</p>
+      
+      <form onsubmit="handleContactSubmit(event)">
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Họ và tên của bạn <span style="color:#ef4444;">*</span></label>
+            <input type="text" id="contact-name" class="form-control" required placeholder="Ví dụ: TS. Vũ Thị F">
+          </div>
+          <div class="form-group">
+            <label>Địa chỉ email nhận phản hồi <span style="color:#ef4444;">*</span></label>
+            <input type="email" id="contact-email" class="form-control" required placeholder="name@institution.edu.vn">
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label>Mã bản thảo (nếu có)</label>
+            <input type="text" id="contact-code" class="form-control" placeholder="Ví dụ: JST-2026-SUB9481">
+          </div>
+          <div class="form-group">
+            <label>Chủ đề liên hệ <span style="color:#ef4444;">*</span></label>
+            <select id="contact-subject" class="form-control" required>
+              <option value="tiendo">Tra cứu tiến độ phản biện bản thảo</option>
+              <option value="thethuc">Tư vấn quy cách trình bày bài báo</option>
+              <option value="doi">Hỗ trợ mã định danh số DOI / Bản quyền</option>
+              <option value="khac">Các vấn đề khác</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Nội dung chi tiết <span style="color:#ef4444;">*</span></label>
+          <textarea id="contact-message" class="form-control" rows="4" required placeholder="Ghi rõ nội dung câu hỏi hoặc yêu cầu cần tòa soạn hỗ trợ..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit-contact">Gửi thư liên hệ &rarr;</button>
+      </form>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div><strong>Tạp chí Khoa học · Tạp chí Nghiên cứu &amp; Phát triển Công nghệ</strong></div>
+    <div style="font-size: 11.5px; opacity: 0.9; margin-top: 4px;">Giấy phép xuất bản báo chí số 188/GP-BTTTT cấp bởi Bộ Thông tin và Truyền thông · ISSN 1859-3097</div>
+    <div class="flinks">
+      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Trang chủ</a>
+      <a href="about.html">Giới thiệu</a>
+      <a href="publishing-policy.html">Chính sách xuất bản</a>
+      <a href="editorial-board.html">Hội đồng biên tập</a>
+      <a href="guidelines.html">Quy trình - Biểu mẫu</a>
+      <a href="archives.html">Kho lưu trữ</a>
+      <a href="submit-paper.html">Nộp bài trực tuyến</a>
+      <a href="contact.html">Liên hệ</a>
+    </div>
+  </div>
+</footer>
+
+<script src="journal-interactions.js"></script>
+<script>
+  function handleContactSubmit(e) {
+    e.preventDefault();
+    const name = document.getElementById('contact-name').value.trim();
+    const email = document.getElementById('contact-email').value.trim();
+    showToast(`Đã gửi thư liên hệ từ ${name} thành công! Ban Thư ký sẽ phản hồi tới ${email}.`);
+    e.target.reset();
+  }
+</script>
+</body>
+</html>

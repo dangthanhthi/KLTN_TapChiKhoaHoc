@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chính sách Xuất bản &amp; Đạo đức Nghiên cứu · Tạp chí Khoa học</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="journal-interactions.css">
+
+<style>
+  :root {
+    --serif: 'Source Serif 4', Georgia, serif;
+    --sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --sky-050: #F3F8FD;
+    --sky-100: #E4EFFA;
+    --sky-200: #C9DFF4;
+    --sky-400: #8FB8E3;
+    --sky-500: #6699D1;
+    --sky-600: #4C7FB8;
+    --sky-700: #3A6497;
+    --ink-900: #16202B;
+    --ink-700: #3D4A57;
+    --ink-500: #6B7684;
+    --ink-300: #A9B2BC;
+    --white: #FFFFFF;
+    --line: #E1E9F1;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    background: var(--white);
+    color: var(--ink-900);
+    line-height: 1.65;
+  }
+
+  a { text-decoration: none; color: inherit; }
+  .wrap { max-width: 1360px; margin: 0 auto; padding: 0 20px; }
+
+  /* BREADCRUMB */
+  .breadcrumb-bar { background: var(--sky-050); border-bottom: 1px solid var(--line); padding: 12px 0; font-size: 12px; color: var(--ink-500); }
+  .breadcrumb-bar a { color: #1da1f2; font-weight: 500; }
+  .breadcrumb-bar a:hover { text-decoration: underline; }
+  .breadcrumb-bar span.sep { margin: 0 8px; color: var(--sky-200); }
+
+  /* MAIN LAYOUT */
+  .page-container { display: grid; grid-template-columns: 280px 1fr; gap: 36px; padding: 36px 0 64px; }
+  @media (max-width: 900px) {
+    .page-container { grid-template-columns: 1fr; }
+  }
+
+  /* SIDEBAR NAVIGATION */
+  .page-sidebar { position: sticky; top: 20px; align-self: start; background: #ffffff; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .sidebar-header { padding: 14px 18px; font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-500); border-bottom: 1px solid var(--line); background: #fafcff; }
+  .side-nav-link { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; font-size: 13.5px; font-weight: 600; color: var(--ink-700); border-left: 3px solid transparent; border-bottom: 1px solid #f1f5f9; transition: all .15s; }
+  .side-nav-link:hover { background: #f8fafc; color: #1da1f2; }
+  .side-nav-link.active { background: #f0f7ff; color: #1da1f2; border-left-color: #1da1f2; font-weight: 700; }
+  .side-nav-link svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+  /* MAIN CONTENT */
+  .main-content { background: #ffffff; border: 1px solid var(--line); border-radius: 8px; padding: 36px 42px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); min-height: 650px; }
+  .page-title { font-family: var(--serif); font-size: 28px; font-weight: 600; color: var(--ink-900); margin-bottom: 8px; }
+  .page-subtitle { font-size: 13.5px; color: var(--ink-500); margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+
+  /* POLICY CARD */
+  .policy-card { border: 1px solid var(--line); border-left: 4px solid #1da1f2; border-radius: 4px; padding: 22px 26px; background: #fff; margin-bottom: 22px; }
+  .policy-card h2 { font-size: 16px; font-weight: 700; color: var(--ink-900); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+  .policy-card p { font-size: 14px; color: var(--ink-700); margin-bottom: 10px; text-align: justify; }
+  .policy-card ul { margin-left: 20px; font-size: 13.5px; color: var(--ink-700); margin-bottom: 8px; }
+  .policy-card li { margin-bottom: 6px; }
+
+  /* BADGE PILL */
+  .policy-tag { display: inline-block; font-size: 11.5px; font-weight: 700; padding: 3px 8px; border-radius: 3px; background: var(--sky-050); color: #1da1f2; border: 1px solid var(--sky-200); margin-bottom: 8px; }
+
+  /* FOOTER */
+  footer { background: #1da1f2; padding: 32px 24px; text-align: center; font-size: 13px; color: #ffffff; margin-top: 40px; box-shadow: 0 -2px 10px rgba(29,161,242,0.15); }
+  footer .flinks { margin-top: 12px; }
+  footer .flinks a { margin: 0 14px; color: rgba(255,255,255,0.9); font-weight: 600; }
+  footer .flinks a:hover { color: #ffffff; text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<!-- KHỐI BANNER & NAVBAR NỀN XANH (#1da1f2) -->
+<div class="header-bar">
+  <header class="masthead wrap">
+    <div class="name"><a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Tạp chí Khoa học</a></div>
+    <div class="tagline">NGHIÊN CỨU · CÔNG NGHỆ · CHUYỂN GIAO TRI THỨC</div>
+  </header>
+
+  <nav class="navbar wrap">
+    <div class="nav-links">
+      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html" style="display:inline-flex;align-items:center;gap:4px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        Trang chủ
+      </a>
+
+      <!-- TAB DROPDOWN: GIỚI THIỆU -->
+      <div class="nav-item-dropdown">
+        <span class="nav-dropdown-toggle on">
+          GIỚI THIỆU
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </span>
+        <div class="nav-fields-menu">
+          <a href="about.html" class="field-menu-item">
+            <span>Giới thiệu về tạp chí</span>
+          </a>
+          <a href="publishing-policy.html" class="field-menu-item" style="color:#1da1f2!important;font-weight:700;">
+            <span>Chính sách xuất bản</span>
+          </a>
+          <a href="editorial-board.html" class="field-menu-item">
+            <span>Hội đồng biên tập</span>
+          </a>
+          <a href="contact.html" class="field-menu-item">
+            <span>Nhân sự &amp; Liên hệ</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- TAB DROPDOWN: QUY TRÌNH - BIỂU MẪU -->
+      <div class="nav-item-dropdown">
+        <span class="nav-dropdown-toggle">
+          QUY TRÌNH - BIỂU MẪU
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </span>
+        <div class="nav-fields-menu">
+          <a href="guidelines.html#submission" class="field-menu-item">
+            <span>Quy trình đăng bài</span>
+          </a>
+          <a href="guidelines.html#review" class="field-menu-item">
+            <span>Quy trình phản biện</span>
+          </a>
+          <a href="guidelines.html#format" class="field-menu-item">
+            <span>Thể lệ viết và gửi bài</span>
+          </a>
+          <a href="guidelines.html#templates" class="field-menu-item">
+            <span>Các biểu mẫu</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- TAB DROPDOWN: LĨNH VỰC KHOA HỌC -->
+      <div class="nav-item-dropdown">
+        <span class="nav-dropdown-toggle">
+          LĨNH VỰC KHOA HỌC
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </span>
+        <div class="nav-fields-menu">
+          <a href="article-detail.html" class="field-menu-item">
+            <span>Công nghệ thông tin</span>
+            <span class="badge-count">142</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Cơ khí – Tự động hóa</span>
+            <span class="badge-count">98</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Khoa học Môi trường</span>
+            <span class="badge-count">76</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Kinh tế – Quản trị</span>
+            <span class="badge-count">115</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Hóa học &amp; Công nghệ thực phẩm</span>
+            <span class="badge-count">84</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Khoa học Xã hội &amp; Nhân văn</span>
+            <span class="badge-count">62</span>
+          </a>
+          <div class="fields-menu-divider"></div>
+          <a href="archives.html" class="fields-menu-all">Xem tất cả các chuyên ngành &rarr;</a>
+        </div>
+      </div>
+
+      <a href="archives.html">Kho lưu trữ</a>
+    </div>
+
+    <!-- KHỐI PHẢI: NÚT NỘP BÀI + AUTH -->
+    <div class="nav-actions">
+      <a href="submit-paper.html" style="background:#ffffff;color:#1da1f2;padding:6px 14px;border-radius:4px;font-size:12.5px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.12);display:inline-flex;align-items:center;gap:6px;transition:all .2s;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Gửi bài báo
+      </a>
+      
+      <div class="auth-links">
+        <a href="login.html" class="login-btn">Đăng nhập</a>
+        <a href="register.html" class="register-btn">Đăng ký</a>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb-bar">
+  <div class="wrap">
+    <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Trang chủ</a>
+    <span class="sep">/</span>
+    <a href="about.html">Giới thiệu</a>
+    <span class="sep">/</span>
+    <span style="color:var(--ink-700);">Chính sách xuất bản &amp; Đạo đức nghiên cứu</span>
+  </div>
+</div>
+
+<!-- CONTAINER -->
+<div class="wrap page-container">
+  
+  <!-- SIDEBAR MENU -->
+  <aside class="page-sidebar">
+    <div class="sidebar-header">Chuyên mục Giới thiệu</div>
+    <a href="about.html" class="side-nav-link">
+      <span>Giới thiệu về Tạp chí</span>
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </a>
+    <a href="publishing-policy.html" class="side-nav-link active">
+      <span>Chính sách xuất bản &amp; Đạo đức</span>
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </a>
+    <a href="editorial-board.html" class="side-nav-link">
+      <span>Hội đồng Biên tập</span>
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </a>
+    <a href="contact.html" class="side-nav-link">
+      <span>Nhân sự &amp; Liên hệ Tòa soạn</span>
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <h1 class="page-title">Chính sách Xuất bản &amp; Đạo đức Nghiên cứu</h1>
+    <div class="page-subtitle">
+      Cam kết duy trì chuẩn mực cao nhất về liêm chính học thuật, đạo đức nghiên cứu quốc tế theo chuẩn COPE và bảo vệ quyền tác giả.
+    </div>
+
+    <!-- 1. OPEN ACCESS -->
+    <div class="policy-card">
+      <div class="policy-tag">OPEN ACCESS POLICY</div>
+      <h2>1. Chính sách Truy cập Mở (Open Access Policy)</h2>
+      <p>Tạp chí Khoa học áp dụng chính sách truy cập mở (Open Access) không giới hạn theo định dạng Gold Open Access. Toàn bộ các công trình nghiên cứu sau khi được phê duyệt và hoàn tất đọc bông xuất bản sẽ được đăng tải trực tuyến ngay lập tức với quyền truy cập miễn phí toàn cầu.</p>
+      <p>Người đọc được quyền sao chép, phân phối, trích dẫn nội dung bài báo cho các mục đích học tập, nghiên cứu phi thương mại mà không phải trả bất kỳ khoản phí nào, với điều kiện ghi rõ nguồn trích dẫn hợp lệ theo giấy phép Creative Commons CC BY-NC 4.0.</p>
+    </div>
+
+    <!-- 2. COPE ETHICS & PLAGIARISM -->
+    <div class="policy-card">
+      <div class="policy-tag">COPE &amp; RESEARCH INTEGRITY</div>
+      <h2>2. Chuẩn mực Đạo đức Nghiên cứu &amp; Phòng chống Đạo văn</h2>
+      <p>Tạp chí cam kết tuân thủ nghiêm ngặt các nguyên tắc cốt lõi của Ủy ban Đạo đức Xuất bản (Committee on Publication Ethics - COPE). Mọi hành vi gian lận dữ liệu, giả mạo kết quả thực nghiệm, xuất bản trùng lặp hoặc đạo văn dưới mọi hình thức đều bị nghiêm cấm.</p>
+      <ul>
+        <li><strong>Kiểm tra đạo văn tự động:</strong> 100% bản thảo nộp lên cổng thông tin đều bắt buộc phải qua hệ thống kiểm tra tương đồng (Turnitin / iThenticate).</li>
+        <li><strong>Ngưỡng tương đồng cho phép:</strong> Tỷ lệ trùng lặp tổng thể không được vượt quá <strong>20%</strong> và tỷ lệ trùng lặp với một nguồn tài liệu đơn lẻ không được vượt quá <strong>3%</strong>.</li>
+        <li><strong>Xử lý vi phạm:</strong> Nếu phát hiện đạo văn nghiêm trọng, bài báo sẽ bị từ chối ngay lập tức và tác giả sẽ bị đình chỉ quyền nộp bài trong thời hạn 12 tháng.</li>
+      </ul>
+    </div>
+
+    <!-- 3. DOUBLE-BLIND REVIEW -->
+    <div class="policy-card">
+      <div class="policy-tag">PEER REVIEW MODEL</div>
+      <h2>3. Quy chế Phản biện Kín hai chiều (Double-Blind Peer Review)</h2>
+      <p>Tất cả bài báo đáp ứng tiêu chuẩn sơ duyệt đều trải qua quy trình bình duyệt phản biện kín độc lập hai chiều (Double-Blind Peer Review):</p>
+      <ul>
+        <li>Tác giả không biết danh tính của các chuyên gia phản biện.</li>
+        <li>Người phản biện không biết danh tính, học hàm, học vị và cơ quan công tác của tác giả (tất cả thông tin nhận diện đều được gỡ bỏ trước khi chuyển giao).</li>
+        <li>Mỗi bài báo được thẩm định độc lập bởi ít nhất 02 nhà khoa học có uy tín và chuyên môn phù hợp nhất trong lĩnh vực.</li>
+        <li>Trường hợp có sự bất đồng ý kiến sâu sắc giữa 2 chuyên gia, Tòa soạn sẽ mời Chuyên gia phản biện thứ 3 độc lập trước khi Tổng biên tập đưa ra kết luận.</li>
+      </ul>
+    </div>
+
+    <!-- 4. COPYRIGHT & CONFLICT OF INTEREST -->
+    <div class="policy-card">
+      <div class="policy-tag">COPYRIGHT &amp; CONFLICTS</div>
+      <h2>4. Bản quyền &amp; Tuyên bố Xung đột Lợi ích</h2>
+      <p><strong>Bản quyền tác giả:</strong> Tác giả giữ bản quyền đối với bài báo và cấp cho Tạp chí quyền xuất bản lần đầu. Tác giả có thể chia sẻ phiên bản bài báo đã xuất bản (VoR - Version of Record) trên các kho lưu trữ học thuật của trường hoặc viện nghiên cứu.</p>
+      <p><strong>Xung đột lợi ích:</strong> Tác giả, người phản biện và biên tập viên phải minh bạch mọi mối quan hệ tài chính, cá nhân hoặc công việc có khả năng tác động đến tính khách quan của công trình nghiên cứu hoặc kết quả phản biện.</p>
+    </div>
+
+    <!-- 5. RETRACTION & CORRECTION -->
+    <div class="policy-card">
+      <div class="policy-tag">CORRECTIONS &amp; RETRACTIONS</div>
+      <h2>5. Chính sách Đính chính và Thu hồi Bài báo (Corrections &amp; Retractions)</h2>
+      <p>Tòa soạn duy trì tính toàn vẹn của hồ sơ học thuật. Trong trường hợp phát hiện các sai sót dữ liệu không chủ ý, Tạp chí sẽ ban hành thông báo đính chính (Corrigendum / Erratum). Trường hợp có bằng chứng không thể chối cãi về gian lận nghiên cứu hoặc đạo văn nghiêm trọng, bài báo sẽ bị thu hồi chính thức (Retraction Notice) và công khai trên toàn hệ thống.</p>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div><strong>Tạp chí Khoa học · Tạp chí Nghiên cứu &amp; Phát triển Công nghệ</strong></div>
+    <div style="font-size: 11.5px; opacity: 0.9; margin-top: 4px;">Giấy phép xuất bản báo chí số 188/GP-BTTTT cấp bởi Bộ Thông tin và Truyền thông · ISSN 1859-3097</div>
+    <div class="flinks">
+      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Trang chủ</a>
+      <a href="about.html">Giới thiệu</a>
+      <a href="publishing-policy.html">Chính sách xuất bản</a>
+      <a href="editorial-board.html">Hội đồng biên tập</a>
+      <a href="guidelines.html">Quy trình - Biểu mẫu</a>
+      <a href="archives.html">Kho lưu trữ</a>
+      <a href="submit-paper.html">Nộp bài trực tuyến</a>
+      <a href="contact.html">Liên hệ</a>
+    </div>
+  </div>
+</footer>
+
+<script src="journal-interactions.js"></script>
+</body>
+</html>

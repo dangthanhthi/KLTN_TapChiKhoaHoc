@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quy trình &amp; Biểu mẫu · Tạp chí Khoa học</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="journal-interactions.css">
+
+<style>
+  :root {
+    --serif: 'Source Serif 4', Georgia, serif;
+    --sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --sky-050: #F3F8FD;
+    --sky-100: #E4EFFA;
+    --sky-200: #C9DFF4;
+    --sky-400: #8FB8E3;
+    --sky-500: #6699D1;
+    --sky-600: #4C7FB8;
+    --sky-700: #3A6497;
+    --ink-900: #16202B;
+    --ink-700: #3D4A57;
+    --ink-500: #6B7684;
+    --ink-300: #A9B2BC;
+    --white: #FFFFFF;
+    --line: #E1E9F1;
+    --emerald-bg: #ecfdf5;
+    --emerald: #059669;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    background: var(--white);
+    color: var(--ink-900);
+    line-height: 1.6;
+  }
+
+  a { text-decoration: none; color: inherit; }
+  .wrap { max-width: 1360px; margin: 0 auto; padding: 0 20px; }
+
+  /* HEADER & NAVBAR AZURE BLUE */
+  .header-bar { background: #1da1f2; box-shadow: 0 2px 10px rgba(29,161,242,0.15); }
+  header.masthead { padding: 20px 0 16px; display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid rgba(255,255,255,0.25); }
+  header .name { font-family: var(--serif); font-size: 27px; letter-spacing: -.01em; font-weight: 600; color: #ffffff; }
+  header .tagline { font-size: 11px; letter-spacing: .08em; color: rgba(255,255,255,0.85); font-weight: 500; }
+
+  nav.navbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 0 14px; }
+  .nav-links { display: flex; gap: 20px; font-size: 13px; font-weight: 500; align-items: center; }
+  .nav-links a { color: rgba(255,255,255,0.88); padding: 4px 0; transition: color .15s; }
+  .nav-links a:hover { color: #ffffff; }
+  .nav-links a.on { color: #ffffff; font-weight: 700; }
+
+  .nav-actions { display: flex; align-items: center; gap: 14px; }
+  .auth-links { display: flex; align-items: center; gap: 8px; font-size: 12.5px; border-left: 1px solid rgba(255,255,255,0.25); padding-left: 12px; }
+  .auth-links a.login-btn { background: #ffffff; color: #1da1f2; border: 1px solid #ffffff; border-radius: 4px; padding: 5px 12px; font-weight: 700; text-decoration: none; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+  .auth-links a.register-btn { background: #ffffff; color: #1da1f2; border: 1px solid #ffffff; border-radius: 4px; padding: 5px 14px; font-weight: 700; text-decoration: none; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+
+  /* BREADCRUMB */
+  .breadcrumb-bar { background: var(--sky-050); border-bottom: 1px solid var(--line); padding: 12px 0; font-size: 12px; color: var(--ink-500); }
+  .breadcrumb-bar a { color: #1da1f2; font-weight: 500; }
+  .breadcrumb-bar a:hover { text-decoration: underline; }
+  .breadcrumb-bar span.sep { margin: 0 8px; color: var(--sky-200); }
+
+  /* LAYOUT */
+  .guidelines-container { display: grid; grid-template-columns: 280px 1fr; gap: 36px; padding: 36px 0 64px; }
+
+  /* SIDEBAR TABS */
+  .guidelines-sidebar { position: sticky; top: 20px; align-self: start; background: #ffffff; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+  .guidelines-sidebar-title { padding: 14px 18px; font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-500); border-bottom: 1px solid var(--line); background: #fafcff; }
+  .guidelines-nav-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; font-size: 13.5px; font-weight: 600; color: var(--ink-700); border-left: 3px solid transparent; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: all .15s; }
+  .guidelines-nav-item:hover { background: #f8fafc; color: #1da1f2; }
+  .guidelines-nav-item.active { background: #f0f7ff; color: #1da1f2; border-left-color: #1da1f2; font-weight: 700; }
+  .guidelines-nav-item svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+  /* CONTENT MAIN */
+  .guidelines-content { background: #ffffff; border: 1px solid var(--line); border-radius: 8px; padding: 36px 42px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); min-height: 600px; }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; animation: fadeIn 0.2s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .page-title { font-family: var(--serif); font-size: 28px; font-weight: 600; color: var(--ink-900); margin-bottom: 8px; }
+  .page-subtitle { font-size: 13.5px; color: var(--ink-500); margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+
+  /* WORKFLOW STEP BOXES */
+  .workflow-list { display: flex; flex-direction: column; gap: 16px; margin: 24px 0; }
+  .wf-step-card { display: flex; gap: 18px; border: 1px solid var(--line); border-radius: 6px; padding: 18px 20px; background: #fff; position: relative; }
+  .wf-step-num { width: 36px; height: 36px; border-radius: 50%; background: #1da1f2; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; }
+  .wf-step-body h3 { font-size: 16px; font-weight: 700; color: var(--ink-900); margin-bottom: 4px; }
+  .wf-step-body p { font-size: 13.5px; color: var(--ink-700); margin-bottom: 6px; }
+  .wf-step-meta { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #1da1f2; background: var(--sky-050); padding: 3px 8px; border-radius: 3px; }
+
+  /* REVIEW FLOW DIAGRAM / RULE BOX */
+  .rule-card { border-left: 4px solid #1da1f2; background: #fafcff; border-top: 1px solid var(--sky-100); border-right: 1px solid var(--sky-100); border-bottom: 1px solid var(--sky-100); border-radius: 0 6px 6px 0; padding: 18px 22px; margin-bottom: 20px; }
+  .rule-card h3 { font-size: 15px; font-weight: 700; color: var(--ink-900); margin-bottom: 8px; }
+  .rule-card p { font-size: 13.5px; color: var(--ink-700); margin-bottom: 8px; }
+
+  /* TEMPLATE DOWNLOAD TABLE */
+  .template-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+  .template-table th { background: #f8fafc; border: 1px solid var(--line); padding: 12px 16px; text-align: left; font-size: 13px; font-weight: 600; color: var(--ink-700); }
+  .template-table td { border: 1px solid var(--line); padding: 14px 16px; vertical-align: middle; font-size: 13.5px; }
+  .doc-name { font-weight: 600; color: var(--ink-900); display: flex; align-items: center; gap: 8px; }
+  .doc-name svg { width: 20px; height: 20px; stroke: #2563eb; fill: none; stroke-width: 2; flex-shrink: 0; }
+  .btn-download { display: inline-flex; align-items: center; gap: 6px; background: var(--sky-050); color: #1da1f2; border: 1px solid var(--sky-200); padding: 6px 14px; border-radius: 4px; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: all .15s; }
+  .btn-download:hover { background: #1da1f2; color: #ffffff; border-color: #1da1f2; }
+
+  footer { background: #1da1f2; padding: 32px 24px; text-align: center; font-size: 13px; color: #ffffff; margin-top: 40px; box-shadow: 0 -2px 10px rgba(29,161,242,0.15); }
+  footer .flinks { margin-top: 12px; }
+  footer .flinks a { margin: 0 14px; color: rgba(255,255,255,0.9); font-weight: 600; }
+  footer .flinks a:hover { color: #ffffff; text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<!-- KHỐI BANNER & NAVBAR NỀN XANH (#1da1f2) -->
+<div class="header-bar">
+  <header class="masthead wrap">
+    <div class="name"><a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Tạp chí Khoa học</a></div>
+    <div class="tagline">NGHIÊN CỨU · CÔNG NGHỆ · CHUYỂN GIAO TRI THỨC</div>
+  </header>
+
+  <nav class="navbar wrap">
+    <div class="nav-links">
+      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html" style="display:inline-flex;align-items:center;gap:4px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        Trang chủ
+      </a>
+
+      <!-- TAB DROPDOWN: GIỚI THIỆU -->
+      <div class="nav-item-dropdown">
+        <span class="nav-dropdown-toggle">
+          GIỚI THIỆU
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </span>
+        <div class="nav-fields-menu">
+          <a href="about.html" class="field-menu-item">
+            <span>Giới thiệu về tạp chí</span>
+          </a>
+          <a href="publishing-policy.html" class="field-menu-item">
+            <span>Chính sách xuất bản</span>
+          </a>
+          <a href="editorial-board.html" class="field-menu-item">
+            <span>Hội đồng biên tập</span>
+          </a>
+          <a href="contact.html" class="field-menu-item">
+            <span>Nhân sự &amp; Liên hệ</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- TAB DROPDOWN: QUY TRÌNH - BIỂU MẪU -->
+      <div class="nav-item-dropdown">
+        <span class="nav-dropdown-toggle on">
+          QUY TRÌNH - BIỂU MẪU
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </span>
+        <div class="nav-fields-menu">
+          <a href="guidelines.html#submission" class="field-menu-item" onclick="switchTab('submission')">
+            <span>Quy trình đăng bài</span>
+          </a>
+          <a href="guidelines.html#review" class="field-menu-item" onclick="switchTab('review')">
+            <span>Quy trình phản biện</span>
+          </a>
+          <a href="guidelines.html#format" class="field-menu-item" onclick="switchTab('format')">
+            <span>Thể lệ viết và gửi bài</span>
+          </a>
+          <a href="guidelines.html#templates" class="field-menu-item" onclick="switchTab('templates')">
+            <span>Các biểu mẫu</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- TAB DROPDOWN: LĨNH VỰC KHOA HỌC -->
+      <div class="nav-item-dropdown">
+        <span class="nav-dropdown-toggle">
+          LĨNH VỰC KHOA HỌC
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </span>
+        <div class="nav-fields-menu">
+          <a href="article-detail.html" class="field-menu-item">
+            <span>Công nghệ thông tin</span>
+            <span class="badge-count">142</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Cơ khí – Tự động hóa</span>
+            <span class="badge-count">98</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Khoa học Môi trường</span>
+            <span class="badge-count">76</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Kinh tế – Quản trị</span>
+            <span class="badge-count">115</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Hóa học &amp; Công nghệ thực phẩm</span>
+            <span class="badge-count">84</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Khoa học Xã hội &amp; Nhân văn</span>
+            <span class="badge-count">62</span>
+          </a>
+          <div class="fields-menu-divider"></div>
+          <a href="archives.html" class="fields-menu-all">Xem tất cả các chuyên ngành &rarr;</a>
+        </div>
+      </div>
+
+      <a href="archives.html">Kho lưu trữ</a>
+    </div>
+
+    <!-- KHỐI PHẢI: NÚT NỘP BÀI + AUTH -->
+    <div class="nav-actions">
+      <a href="submit-paper.html" style="background:#ffffff;color:#1da1f2;padding:6px 14px;border-radius:4px;font-size:12.5px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.12);display:inline-flex;align-items:center;gap:6px;transition:all .2s;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Gửi bài báo
+      </a>
+      
+      <div class="auth-links">
+        <a href="login.html" class="login-btn">Đăng nhập</a>
+        <a href="register.html" class="register-btn">Đăng ký</a>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb-bar">
+  <div class="wrap">
+    <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Trang chủ</a>
+    <span class="sep">/</span>
+    <span style="color:var(--ink-700);">Quy trình xuất bản &amp; Tải Biểu mẫu</span>
+  </div>
+</div>
+
+<!-- CONTAINER CHÍNH -->
+<div class="wrap guidelines-container">
+  
+  <!-- SIDEBAR MENU TABS -->
+  <aside class="guidelines-sidebar">
+    <div class="guidelines-sidebar-title">Mục lục hướng dẫn</div>
+    <div class="guidelines-nav-item active" id="btn-submission" onclick="switchTab('submission')">
+      <span>Quy trình đăng bài</span>
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </div>
+    <div class="guidelines-nav-item" id="btn-review" onclick="switchTab('review')">
+      <span>Quy trình phản biện</span>
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </div>
+    <div class="guidelines-nav-item" id="btn-format" onclick="switchTab('format')">
+      <span>Thể lệ viết và gửi bài</span>
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </div>
+    <div class="guidelines-nav-item" id="btn-templates" onclick="switchTab('templates')">
+      <span>Các biểu mẫu download</span>
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </div>
+  </aside>
+
+  <!-- NỘI DUNG TABS -->
+  <main class="guidelines-content">
+    
+    <!-- TAB 1: QUY TRÌNH ĐĂNG BÀI (6 BƯỚC) -->
+    <div id="tab-submission" class="tab-pane active">
+      <h1 class="page-title">Quy trình đăng bài khoa học</h1>
+      <div class="page-subtitle">Chu trình xuất bản 6 giai đoạn nghiêm ngặt đảm bảo chất lượng học thuật cao nhất</div>
+
+      <div class="workflow-list">
+        <div class="wf-step-card">
+          <div class="wf-step-num">1</div>
+          <div class="wf-step-body">
+            <h3>Nộp bản thảo trực tuyến</h3>
+            <p>Tác giả đăng ký tài khoản, khai báo thông tin bài viết theo chuẩn IMRaD, nộp file Word (.docx) đã ẩn danh và các tệp đính kèm dữ liệu thực nghiệm.</p>
+            <span class="wf-step-meta">⏱️ Thời gian xử lý: Ngay lập tức trên hệ thống</span>
+          </div>
+        </div>
+
+        <div class="wf-step-card">
+          <div class="wf-step-num">2</div>
+          <div class="wf-step-body">
+            <h3>Kiểm tra sơ bộ &amp; Quét trùng lặp Turnitin</h3>
+            <p>Thư ký tòa soạn kiểm tra tính phù hợp tôn chỉ mục đích, định dạng thể lệ bài viết và tỷ lệ trùng lặp. Bài viết hợp lệ sẽ được chuyển Tổng biên tập phân công chuyên ban.</p>
+            <span class="wf-step-meta">⏱️ Thời gian xử lý: 03 - 05 ngày làm việc</span>
+          </div>
+        </div>
+
+        <div class="wf-step-card">
+          <div class="wf-step-num">3</div>
+          <div class="wf-step-body">
+            <h3>Phản biện kín hai chiều (Peer Review)</h3>
+            <p>Bài báo được gửi thẩm định độc lập tới tối thiểu 02 chuyên gia phản biện am hiểu sâu về lĩnh vực nghiên cứu. Tác giả và chuyên gia không biết danh tính của nhau.</p>
+            <span class="wf-step-meta">⏱️ Thời gian thẩm định: 20 - 30 ngày</span>
+          </div>
+        </div>
+
+        <div class="wf-step-card">
+          <div class="wf-step-num">4</div>
+          <div class="wf-step-body">
+            <h3>Tác giả chỉnh sửa &amp; Giải trình phản biện</h3>
+            <p>Tác giả nhận thông báo kết quả (Chấp nhận, Sửa chữa nhỏ, Sửa chữa lớn hoặc Từ chối). Nộp lại bản thảo chỉnh sửa kèm Bảng giải trình chi tiết theo từng ý kiến phản biện.</p>
+            <span class="wf-step-meta">⏱️ Thời hạn sửa chữa: Tối đa 15 ngày</span>
+          </div>
+        </div>
+
+        <div class="wf-step-card">
+          <div class="wf-step-num">5</div>
+          <div class="wf-step-body">
+            <h3>Biên tập kỹ thuật &amp; Đọc bông (Proofreading)</h3>
+            <p>Biên tập viên định dạng trang in, chuẩn hóa trích dẫn tài liệu tham khảo, đối chiếu thuật ngữ tiếng Anh và gửi bản in thử (PDF Galley Proof) cho tác giả xác nhận lần cuối.</p>
+            <span class="wf-step-meta">⏱️ Thời gian hoàn tất: 05 - 07 ngày</span>
+          </div>
+        </div>
+
+        <div class="wf-step-card">
+          <div class="wf-step-num">6</div>
+          <div class="wf-step-body">
+            <h3>Cấp mã DOI &amp; Xuất bản chính thức</h3>
+            <p>Bài viết được cấp mã định danh quốc tế CrossRef DOI, đưa lên trang web tạp chí điện tử (Online First) và gom vào số ấn phẩm định kỳ tiếp theo.</p>
+            <span class="wf-step-meta">⏱️ Xuất bản trực tuyến: Ngay sau khi duyệt bản bông</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: QUY TRÌNH PHẢN BIỆN -->
+    <div id="tab-review" class="tab-pane">
+      <h1 class="page-title">Quy trình phản biện chuyên môn</h1>
+      <div class="page-subtitle">Phương thức thẩm định độc lập kín 2 chiều và cơ chế xử lý bất đồng học thuật</div>
+
+      <div class="rule-card">
+        <h3>1. Nguyên tắc phản biện độc lập kín 2 chiều</h3>
+        <p>Mỗi bài nộp hợp lệ được thẩm định độc lập bởi 02 nhà khoa học có học vị Tiến sĩ trở lên hoặc học hàm Phó Giáo sư, Giáo sư, không cùng đơn vị công tác trực tiếp với tác giả.</p>
+        <p>Phiếu đánh giá phản biện bao gồm 5 tiêu chí: (1) Tính cấp thiết và tính mới, (2) Cơ sở lý thuyết và phương pháp, (3) Giá trị thực nghiệm &amp; kết quả, (4) Trích dẫn tài liệu tham khảo, (5) Văn phong khoa học.</p>
+      </div>
+
+      <div class="rule-card">
+        <h3>2. Kết luận đánh giá của Chuyên gia phản biện</h3>
+        <p>Chuyên gia đưa ra 1 trong 4 mức đánh giá chính thức:</p>
+        <ul style="margin-left: 20px; font-size: 13.5px; color: var(--ink-700); line-height: 1.8;">
+          <li><strong>Chấp nhận đăng không cần sửa đổi (Accept):</strong> Bài viết đạt chất lượng xuất sắc.</li>
+          <li><strong>Chấp nhận sau khi sửa chữa nhỏ (Minor Revisions):</strong> Bổ sung trích dẫn, làm rõ câu chữ, giải thích thêm số liệu bảng biểu.</li>
+          <li><strong>Xem xét lại sau khi sửa chữa lớn (Major Revisions):</strong> Cần bổ sung thí nghiệm, thay đổi phương pháp hoặc tính toán lại mô hình. Phải phản biện vòng 2.</li>
+          <li><strong>Từ chối đăng (Reject):</strong> Không có tính mới, phương pháp sai lệch hoặc vi phạm liêm chính nghiên cứu.</li>
+        </ul>
+      </div>
+
+      <div class="rule-card">
+        <h3>3. Cơ chế mời Chuyên gia phản biện thứ 3 (Third Reviewer)</h3>
+        <p>Trường hợp 2 phản biện có ý kiến trái ngược nhau (ví dụ 1 chuyên gia Chấp nhận đăng và 1 chuyên gia Đề nghị từ chối), Tổng biên tập sẽ chỉ định <strong>Chuyên gia phản biện thứ 3</strong> để đánh giá độc lập hoặc đưa ra Ban Thường trực Hội đồng biên tập bỏ phiếu quyết định cuối cùng.</p>
+      </div>
+    </div>
+
+    <!-- TAB 3: THỂ LỆ VIẾT VÀ GỬI BÀI -->
+    <div id="tab-format" class="tab-pane">
+      <h1 class="page-title">Thể lệ viết và gửi bài báo khoa học</h1>
+      <div class="page-subtitle">Quy định chi tiết về cấu trúc bản thảo chuẩn IMRaD, định dạng phông chữ và trích dẫn</div>
+
+      <div class="rule-card">
+        <h3>1. Quy cách trình bày bản thảo</h3>
+        <ul style="margin-left: 20px; font-size: 13.5px; color: var(--ink-700); line-height: 1.8;">
+          <li><strong>Định dạng tệp:</strong> Microsoft Word (.docx), font chữ Times New Roman, cỡ chữ 11pt, giãn dòng Single (1.0).</li>
+          <li><strong>Dung lượng bài báo:</strong> Dao động từ 08 đến 15 trang chuẩn A4 (bao gồm toàn bộ bảng biểu, hình vẽ và tài liệu tham khảo).</li>
+          <li><strong>Lề trang:</strong> Top 2.5cm, Bottom 2.5cm, Left 3.0cm, Right 2.0cm. Tiêu đề các mục đánh số La Mã hoặc số Ả Rập phân cấp rõ ràng (1, 1.1, 1.1.1).</li>
+        </ul>
+      </div>
+
+      <div class="rule-card">
+        <h3>2. Cấu trúc bài báo khoa học chuẩn quốc tế (IMRaD)</h3>
+        <p>Bản thảo hoàn chỉnh bắt buộc bao gồm các phần theo thứ tự:</p>
+        <ol style="margin-left: 20px; font-size: 13.5px; color: var(--ink-700); line-height: 1.8;">
+          <li><strong>Tiêu đề bài báo (Title):</strong> Ngắn gọn, súc tích, phản ánh đúng nội dung chính (Tiếng Việt &amp; Tiếng Anh).</li>
+          <li><strong>Tóm tắt (Abstract):</strong> Từ 150 – 250 từ, nêu rõ bối cảnh, phương pháp, kết quả chính và đóng góp khoa học.</li>
+          <li><strong>Từ khóa (Keywords):</strong> Từ 4 đến 6 từ/cụm từ phản ánh lĩnh vực nghiên cứu.</li>
+          <li><strong>1. Đặt vấn đề (Introduction):</strong> Bối cảnh nghiên cứu, tổng quan các công trình liên quan và mục tiêu bài báo.</li>
+          <li><strong>2. Phương pháp nghiên cứu (Methods):</strong> Mô tả chi tiết dữ liệu, mô hình, thiết bị hoặc thuật toán thực hiện.</li>
+          <li><strong>3. Kết quả &amp; Thảo luận (Results and Discussion):</strong> Trình bày dữ liệu khách quan, so sánh với các công bố trước đó.</li>
+          <li><strong>4. Kết luận (Conclusion):</strong> Tóm lược kết quả đạt được, đóng góp mới và hướng phát triển tiếp theo.</li>
+          <li><strong>Tài liệu tham khảo (References):</strong> Trích dẫn theo chuẩn IEEE (cho ngành Kỹ thuật - Công nghệ) hoặc APA 7th (cho ngành Kinh tế - Xã hội).</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- TAB 4: CÁC BIỂU MẪU DOWNLOAD -->
+    <div id="tab-templates" class="tab-pane">
+      <h1 class="page-title">Danh mục biểu mẫu dành cho Tác giả &amp; Phản biện</h1>
+      <div class="page-subtitle">Tải về các mẫu văn bản chính thức phục vụ nộp bài, chỉnh sửa và chuyển giao bản quyền</div>
+
+      <table class="template-table">
+        <thead>
+          <tr>
+            <th style="width: 50%;">Tên biểu mẫu / Tài liệu</th>
+            <th style="width: 20%;">Định dạng &amp; Dung lượng</th>
+            <th style="width: 30%;">Tải về tệp tin</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="doc-name">
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                <span><strong>BM-01: Mẫu bài báo chuẩn (Paper Template)</strong><br><small style="color:var(--ink-500);">Định dạng sẵn phông chữ, khoảng cách, kiểu bảng biểu IMRaD</small></span>
+              </div>
+            </td>
+            <td>Word (.docx)<br><span style="color:var(--ink-500);font-size:12px;">Định dạng chuẩn Tạp chí</span></td>
+            <td>
+              <a href="templates/BM01_Mau_Bai_Bao_Template.docx" download class="btn-download">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Tải file .DOCX
+              </a>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="doc-name">
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                <span><strong>BM-02: Bản cam đoan quyền tác giả (Copyright Agreement)</strong><br><small style="color:var(--ink-500);">Kê khai danh sách tác giả, cam kết liêm chính học thuật và chuyển giao xuất bản</small></span>
+              </div>
+            </td>
+            <td>Word (.docx)<br><span style="color:var(--ink-500);font-size:12px;">Định dạng chuẩn Tạp chí</span></td>
+            <td>
+              <a href="templates/BM02_Ban_Cam_Doan_Quyen_Tac_Gia.docx" download class="btn-download">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Tải file .DOCX
+              </a>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="doc-name">
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                <span><strong>BM-03: Phiếu giải trình chỉnh sửa của Tác giả (Revision Response)</strong><br><small style="color:var(--ink-500);">Bảng đối chiếu từng góp ý của chuyên gia phản biện và nội dung chỉnh sửa</small></span>
+              </div>
+            </td>
+            <td>Word (.docx)<br><span style="color:var(--ink-500);font-size:12px;">Định dạng chuẩn Tạp chí</span></td>
+            <td>
+              <a href="templates/BM03_Bang_Giai_Trinh_Chinh_Sua_Tac_Gia.docx" download class="btn-download">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Tải file .DOCX
+              </a>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="doc-name">
+                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                <span><strong>BM-04: Phiếu nhận xét phản biện (Reviewer Evaluation Form)</strong><br><small style="color:var(--ink-500);">Mẫu tiêu chí đánh giá cho các chuyên gia phản biện độc lập</small></span>
+              </div>
+            </td>
+            <td>Word (.docx)<br><span style="color:var(--ink-500);font-size:12px;">Định dạng chuẩn Tạp chí</span></td>
+            <td>
+              <a href="templates/BM04_Phieu_Nhan_Xet_Phan_Bien.docx" download class="btn-download">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Tải file .DOCX
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div><strong>Tạp chí Khoa học · Tạp chí Nghiên cứu &amp; Phát triển Công nghệ</strong></div>
+    <div style="font-size: 11.5px; opacity: 0.9; margin-top: 4px;">Giấy phép xuất bản báo chí số 188/GP-BTTTT cấp bởi Bộ Thông tin và Truyền thông · ISSN 1859-3097</div>
+    <div class="flinks">
+      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Trang chủ</a>
+      <a href="about.html">Giới thiệu</a>
+      <a href="publishing-policy.html">Chính sách xuất bản</a>
+      <a href="editorial-board.html">Hội đồng biên tập</a>
+      <a href="guidelines.html">Quy trình - Biểu mẫu</a>
+      <a href="archives.html">Kho lưu trữ</a>
+      <a href="submit-paper.html">Nộp bài trực tuyến</a>
+      <a href="contact.html">Liên hệ</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function switchTab(tabName) {
+    const tabs = ['submission', 'review', 'format', 'templates'];
+    tabs.forEach(t => {
+      const pane = document.getElementById('tab-' + t);
+      const btn = document.getElementById('btn-' + t);
+      if (pane) pane.classList.remove('active');
+      if (btn) btn.classList.remove('active');
+    });
+
+    const activePane = document.getElementById('tab-' + tabName);
+    const activeBtn = document.getElementById('btn-' + tabName);
+    if (activePane) activePane.classList.add('active');
+    if (activeBtn) activeBtn.classList.add('active');
+
+    window.location.hash = tabName;
+  }
+
+  // Tự động chuyển tab theo URL hash
+  window.addEventListener('DOMContentLoaded', () => {
+    const hash = window.location.hash.replace('#', '');
+    if (hash && ['submission', 'review', 'format', 'templates'].includes(hash)) {
+      switchTab(hash);
+    }
+  });
+</script>
+
+</body>
+</html>

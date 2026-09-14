@@ -1,0 +1,6 @@
+{
+  "version": 2,
+  "rewrites": [
+    { "source": "/", "destination": "/UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html" }
+  ]
+}

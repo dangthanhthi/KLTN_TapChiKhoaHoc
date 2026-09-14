@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Trang chủ — Phong cách biên tập (Quanta-inspired)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="journal-interactions.css">
+<style>
+  :root{
+    --sky-050:#F3F8FD; --sky-100:#E4EFFA; --sky-200:#C9DFF4;
+    --sky-400:#8FB8E3; --sky-500:#6699D1; --sky-600:#4C7FB8; --sky-700:#3A6497;
+    --ink-900:#16202B; --ink-700:#3D4A57; --ink-500:#6B7684; --ink-300:#A9B2BC;
+    --white:#FFFFFF; --line:#E1E9F1;
+    --sans:'Inter',system-ui,sans-serif;
+    --serif:'Source Serif 4',Georgia,serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:var(--sans);background:var(--white);color:var(--ink-900);}
+  a{text-decoration:none;color:inherit;}
+  .wrap{max-width:1360px;margin:0 auto;padding:0 20px;}
+
+  /* ---------- HEADER BANNER WITH AZURE BLUE (#1da1f2) ---------- */
+  .header-bar{background:#1da1f2;color:#ffffff;box-shadow:0 2px 10px rgba(29,161,242,0.18);}
+  .masthead{padding:26px 20px 10px;text-align:center;}
+  .masthead .name{font-family:var(--serif);font-size:35px;font-weight:700;letter-spacing:.01em;color:#ffffff;text-shadow:0 1px 3px rgba(0,0,0,0.12);}
+  .masthead .tagline{font-size:12.5px;color:rgba(255,255,255,0.9);letter-spacing:.08em;margin-top:4px;font-weight:500;}
+
+  /* ---------- NAVBAR & HEADER CONTROLS ---------- */
+  .navbar{display:flex;align-items:center;justify-content:space-between;padding:12px 20px 16px;border-top:1px solid rgba(255,255,255,0.22);font-size:13.5px;font-weight:600;color:rgba(255,255,255,0.95);}
+  .nav-links{display:flex;align-items:center;gap:24px;}
+  .nav-links a{color:rgba(255,255,255,0.9);transition:color .2s;}
+  .nav-links a:hover{color:#ffffff;text-decoration:underline;}
+  .navbar a.on{color:#ffffff;font-weight:700;border-bottom:2px solid #ffffff;padding-bottom:2px;}
+  
+  .nav-actions{display:flex;align-items:center;gap:14px;}
+  
+  /* Cụm Đăng nhập & Đăng ký trên nền xanh */
+  .auth-links{display:flex;align-items:center;gap:8px;font-size:12.5px;border-left:1px solid rgba(255,255,255,0.25);padding-left:12px;}
+  .auth-links a.login-btn{background:#ffffff;color:#1da1f2;border:1px solid #ffffff;border-radius:4px;padding:5px 12px;font-weight:700;text-decoration:none;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,0.12);}
+  .auth-links a.login-btn:hover{background:#f0f7ff;color:#0d8ddc;transform:translateY(-1px);}
+  .auth-links a.register-btn{background:#ffffff;color:#1da1f2;border:1px solid #ffffff;border-radius:4px;padding:5px 14px;font-weight:700;text-decoration:none;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,0.12);}
+  .auth-links a.register-btn:hover{background:#f0f7ff;color:#0d8ddc;transform:translateY(-1px);}
+
+  /* ---------- HERO (PURE EDITORIAL SPLIT) ---------- */
+  .hero-section{padding:36px 0 28px;border-bottom:1px solid var(--line);}
+  .hero-grid{display:grid;grid-template-columns:1fr 340px;gap:48px;align-items:start;}
+  
+  /* Cột bài báo nổi bật bên trái - Phong cách Editorial thuần túy */
+  /* Cột bài báo nổi bật bên trái - Phong cách Editorial thuần túy */
+  .hero-media{border-radius:4px;height:310px;position:relative;display:flex;align-items:flex-end;padding:22px;overflow:hidden;background-size:cover;background-position:center;border:1px solid var(--line);}
+  .hero-media::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(22,32,43,0.1) 0%,rgba(22,32,43,0.7) 100%);z-index:1;}
+  .hero-media .cap{position:absolute;bottom:10px;right:14px;color:rgba(255,255,255,.85);font-size:11px;z-index:2;background:rgba(0,0,0,0.3);padding:2px 8px;border-radius:3px;}
+  .hero-tag{position:relative;z-index:2;display:inline-block;background:#1da1f2;color:#fff;font-size:11px;font-weight:700;letter-spacing:.05em;padding:4px 10px;border-radius:3px;}
+  
+  .hero-text{padding:18px 0 0;}
+  .hero-text h1{font-family:var(--serif);font-size:28px;line-height:1.3;font-weight:600;margin:0 0 10px;color:var(--ink-900);}
+  .hero-text h1 a:hover{color:#1da1f2;}
+  .hero-text .byline{font-size:13px;color:var(--ink-500);margin-bottom:10px;}
+  .hero-text .byline b{color:var(--ink-700);font-weight:600;}
+  .hero-text .dek{font-size:14.5px;color:var(--ink-700);line-height:1.58;margin:0;}
+  .hero-meta{display:flex;gap:16px;margin-top:14px;font-size:12px;color:var(--ink-500);}
+  .hero-meta a{color:#1da1f2;font-weight:600;}
+
+  /* Cột phụ bên phải - Tiêu đề thanh lịch không bị lệch mắt */
+  .hero-side-panel{display:flex;flex-direction:column;gap:24px;}
+  .side-headline{font-family:var(--serif);font-size:16px;font-weight:600;margin:0 0 14px;padding-bottom:8px;position:relative;color:var(--ink-900);}
+  .side-headline::after{content:'';position:absolute;left:0;bottom:0;width:32px;height:2px;background:#1da1f2;}
+  
+  /* Khối Số mới phát hành: Thẻ tạp chí thanh lịch, có thumbnail bìa */
+  .issue-editorial-box{background:#ffffff;border:1px solid var(--line);border-radius:4px;padding:18px;display:flex;gap:16px;align-items:flex-start;box-shadow:0 1px 3px rgba(0,0,0,0.03);}
+  .issue-cover-thumb{width:76px;min-width:76px;height:104px;border-radius:3px;overflow:hidden;border:1px solid var(--sky-200);box-shadow:0 2px 6px rgba(0,0,0,0.08);background:#f8fafc;position:relative;}
+  .issue-cover-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .issue-content{flex:1;}
+  .issue-tag-sub{font-size:10.5px;font-weight:700;letter-spacing:.05em;color:#1da1f2;text-transform:uppercase;margin-bottom:4px;display:block;}
+  .issue-editorial-box h3{font-family:var(--serif);font-size:17px;line-height:1.3;margin:0 0 6px;font-weight:600;color:var(--ink-900);}
+  .issue-editorial-box p{font-size:12.5px;color:var(--ink-700);line-height:1.45;margin:0 0 10px;}
+  .issue-editorial-box .meta-stats{font-size:11.5px;color:var(--ink-500);margin-bottom:10px;}
+  .issue-editorial-box a.link-issue{font-size:12.5px;font-weight:700;color:#1da1f2;display:inline-flex;align-items:center;gap:4px;}
+  .issue-editorial-box a.link-issue:hover{color:#0d8ddc;text-decoration:underline;}
+
+  .bulletin-item{padding:12px 0;border-bottom:1px solid var(--line);font-size:13px;line-height:1.45;}
+  .bulletin-item:first-child{padding-top:0;}
+  .bulletin-item:last-child{border-bottom:none;padding-bottom:0;}
+  .bulletin-item a{color:var(--ink-700);font-weight:600;}
+  .bulletin-item a:hover{color:#1da1f2;}
+  .bulletin-date{font-size:11.5px;color:var(--ink-500);margin-top:4px;}
+
+  /* ---------- MAIN GRID ---------- */
+  .main-grid{display:grid;grid-template-columns:1fr 340px;gap:48px;padding:40px 0 60px;}
+  .section-title{font-family:var(--serif);font-size:22px;font-weight:600;margin:0 0 22px;padding-bottom:12px;border-bottom:2px solid var(--ink-900);}
+
+  .feed-row{display:grid;grid-template-columns:220px 1fr;gap:22px;padding:26px 0;border-bottom:1px solid var(--line);}
+  .feed-row:first-child{padding-top:0;}
+  .feed-thumb{border-radius:4px;height:135px;position:relative;overflow:hidden;background-size:cover;background-position:center;border:1px solid var(--line);}
+  .feed-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .feed-tag{font-size:11.5px;font-weight:700;letter-spacing:.03em;color:var(--sky-700);margin-bottom:8px;display:block;}
+  .feed-row h3{font-family:var(--serif);font-size:20px;line-height:1.32;margin:0 0 8px;font-weight:600;}
+  .feed-row .byline{font-size:12.5px;color:var(--ink-500);margin-bottom:8px;}
+  .feed-row .byline b{color:var(--ink-700);font-weight:600;}
+  .feed-row .dek{font-size:14px;color:var(--ink-700);line-height:1.55;}
+  .feed-meta{display:flex;gap:14px;margin-top:10px;font-size:12px;color:var(--ink-500);}
+
+  /* ---------- SIDEBAR ---------- */
+  .side-block{margin-bottom:34px;}
+  .side-title{font-family:var(--serif);font-size:16px;font-weight:600;margin:0 0 16px;padding-bottom:10px;position:relative;color:var(--ink-900);}
+  .side-title::after{content:'';position:absolute;left:0;bottom:0;width:32px;height:2px;background:#1da1f2;}
+  
+  .most-read-item{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);align-items:flex-start;}
+  .most-read-item:first-child{padding-top:0;}
+  .most-read-item .n{font-family:var(--serif);font-size:24px;font-weight:700;color:#1da1f2;min-width:30px;line-height:1;margin-top:2px;}
+  .most-read-item .t{font-size:13.5px;font-weight:600;line-height:1.42;margin-bottom:4px;}
+  .most-read-item .t a{color:var(--ink-900);}
+  .most-read-item .t a:hover{color:#1da1f2;}
+  .most-read-item .a{font-size:11.5px;color:var(--ink-500);display:flex;gap:8px;align-items:center;}
+  .most-read-item .a span.reads{color:var(--ink-500);font-weight:500;}
+
+  /* Khối Thông tin Tòa soạn & Chỉ số khoa học (Chuẩn Spec-sheet, viền liền var(--line)) */
+  .journal-stats-card{background:#ffffff;border:1px solid var(--line);border-radius:4px;padding:16px;}
+  .stat-row{padding:8px 0;border-bottom:1px solid var(--line);}
+  .stat-row:first-child{padding-top:0;}
+  .stat-row:last-child{border-bottom:none;padding-bottom:0;}
+  .stat-row .lbl{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-500);margin-bottom:3px;}
+  .stat-row .val{display:block;font-size:13px;font-weight:700;color:var(--ink-900);}
+
+  /* Link xem tất cả bài báo ở đáy feed - Căn giữa, không gạch chân mặc định */
+  .feed-archive-link{margin-top:32px;padding-top:20px;border-top:1px solid var(--line);text-align:center;}
+  .feed-archive-link a{font-size:14px;font-weight:700;color:#1da1f2;text-decoration:none;display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:4px;transition:all .2s;}
+  .feed-archive-link a:hover{background:var(--sky-050);color:#0d8ddc;}
+
+  .newsletter-box{background:var(--sky-050);border:1px solid var(--sky-200);border-radius:4px;padding:16px;}
+  .newsletter-box .nl-head{font-size:12.5px;font-weight:700;color:var(--ink-900);margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+  .newsletter-box p{font-size:12px;color:var(--ink-700);line-height:1.5;margin:0 0 10px;}
+  .newsletter-box .input-group{display:flex;gap:6px;}
+  .newsletter-box input{flex:1;border:1px solid var(--sky-200);border-radius:3px;padding:8px 10px;font-size:12px;color:var(--ink-900);background:#fff;}
+  .newsletter-box input:focus{outline:none;border-color:#1da1f2;}
+  .newsletter-box button{background:#1da1f2;color:#fff;border:none;border-radius:3px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
+  .newsletter-box button:hover{background:#0d8ddc;}
+
+  /* Khối Hướng dẫn tác giả (Chuẩn phong cách tạp chí - Nền sáng hài hòa) */
+  .guide-editorial-box{background:var(--sky-050);border:1px solid var(--sky-200);border-radius:4px;padding:20px;}
+  .guide-editorial-box .guide-tag{font-size:11px;letter-spacing:.05em;color:#1da1f2;font-weight:700;margin-bottom:8px;text-transform:uppercase;display:block;}
+  .guide-editorial-box h4{font-family:var(--serif);font-size:18px;line-height:1.35;margin:0 0 10px;font-weight:600;color:var(--ink-900);}
+  .guide-editorial-box p{font-size:13px;color:var(--ink-700);line-height:1.55;margin:0 0 14px;}
+  .guide-editorial-box a{font-size:13px;font-weight:700;color:#1da1f2;display:inline-flex;align-items:center;gap:4px;}
+  .guide-editorial-box a:hover{color:#0d8ddc;text-decoration:underline;}
+
+  /* ---------- FOOTER WITH AZURE BLUE (#1da1f2) ---------- */
+  footer{background:#1da1f2;padding:32px 24px;text-align:center;font-size:13px;color:#ffffff;box-shadow:0 -2px 10px rgba(29,161,242,0.15);}
+  footer .flinks{margin-top:12px;}
+  footer .flinks a{margin:0 14px;color:rgba(255,255,255,0.9);font-weight:600;transition:all .2s;}
+  footer .flinks a:hover{color:#ffffff;text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<!-- KHỐI BANNER & NAVBAR NỀN XANH (#1da1f2) -->
+<div class="header-bar">
+  <header class="masthead wrap">
+    <div class="name">Tạp chí Khoa học</div>
+    <div class="tagline">NGHIÊN CỨU · CÔNG NGHỆ · CHUYỂN GIAO TRI THỨC</div>
+  </header>
+
+  <nav class="navbar wrap">
+    <div class="nav-links">
+      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html" class="on" style="display:inline-flex;align-items:center;gap:4px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        Trang chủ
+      </a>
+
+      <!-- TAB DROPDOWN: GIỚI THIỆU -->
+      <div class="nav-item-dropdown">
+        <span class="nav-dropdown-toggle">
+          GIỚI THIỆU
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </span>
+        <div class="nav-fields-menu">
+          <a href="about.html" class="field-menu-item">
+            <span>Giới thiệu về tạp chí</span>
+          </a>
+          <a href="publishing-policy.html" class="field-menu-item">
+            <span>Chính sách xuất bản</span>
+          </a>
+          <a href="editorial-board.html" class="field-menu-item">
+            <span>Hội đồng biên tập</span>
+          </a>
+          <a href="contact.html" class="field-menu-item">
+            <span>Nhân sự &amp; Liên hệ</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- TAB DROPDOWN: QUY TRÌNH - BIỂU MẪU -->
+      <div class="nav-item-dropdown">
+        <span class="nav-dropdown-toggle">
+          QUY TRÌNH - BIỂU MẪU
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </span>
+        <div class="nav-fields-menu">
+          <a href="guidelines.html#submission" class="field-menu-item">
+            <span>Quy trình đăng bài</span>
+          </a>
+          <a href="guidelines.html#review" class="field-menu-item">
+            <span>Quy trình phản biện</span>
+          </a>
+          <a href="guidelines.html#format" class="field-menu-item">
+            <span>Thể lệ viết và gửi bài</span>
+          </a>
+          <a href="guidelines.html#templates" class="field-menu-item">
+            <span>Các biểu mẫu</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- TAB DROPDOWN: LĨNH VỰC KHOA HỌC -->
+      <div class="nav-item-dropdown">
+        <span class="nav-dropdown-toggle">
+          LĨNH VỰC KHOA HỌC
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </span>
+        <div class="nav-fields-menu">
+          <a href="article-detail.html" class="field-menu-item">
+            <span>Công nghệ thông tin</span>
+            <span class="badge-count">142</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Cơ khí – Tự động hóa</span>
+            <span class="badge-count">98</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Khoa học Môi trường</span>
+            <span class="badge-count">76</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Kinh tế – Quản trị</span>
+            <span class="badge-count">115</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Hóa học &amp; Công nghệ thực phẩm</span>
+            <span class="badge-count">84</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Khoa học Xã hội &amp; Nhân văn</span>
+            <span class="badge-count">62</span>
+          </a>
+          <a href="archives.html" class="fields-menu-all">Xem tất cả các chuyên ngành &rarr;</a>
+        </div>
+      </div>
+
+      <a href="archives.html">Kho lưu trữ</a>
+    </div>
+    
+    <!-- KHỐI PHẢI: NÚT NỘP BÀI + AUTH -->
+    <div class="nav-actions">
+      <a href="submit-paper.html" style="background:#ffffff;color:#1da1f2;padding:6px 14px;border-radius:4px;font-size:12.5px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.12);display:inline-flex;align-items:center;gap:6px;transition:all .2s;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Gửi bài báo
+      </a>
+
+      <div class="auth-links">
+        <a href="login.html" class="login-btn">Đăng nhập</a>
+        <a href="register.html" class="register-btn">Đăng ký</a>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- KHỐI TIÊU ĐIỂM CHUẨN TẠP CHÍ HỌC THUẬT (EDITORIAL SPLIT) -->
+<section class="hero-section wrap">
+  <div class="hero-grid">
+    
+    <!-- Cột chính: Bài nghiên cứu nổi bật -->
+    <article>
+      <div class="hero-media" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80');">
+        <span class="hero-tag">CÔNG NGHỆ THÔNG TIN</span>
+        <span class="cap">Minh họa · Khoa học tính toán &amp; AI</span>
+      </div>
+      <div class="hero-text">
+        <h1><a href="article-detail.html">Ứng dụng mô hình Transformer trong phân loại văn bản tiếng Việt quy mô lớn</a></h1>
+        <div class="byline">Bởi <b>Vũ Thị F</b>, <b>Đặng Văn G</b> — Số 42, Tập 15 (2026)</div>
+        <p class="dek">Nghiên cứu đề xuất kiến trúc cải tiến giúp nâng cao 4,2% độ chính xác phân loại văn bản trên tập dữ liệu tiếng Việt quy mô lớn, đồng thời rút ngắn đáng kể thời gian huấn luyện.</p>
+        <div class="hero-meta">
+          <span>Ngày công bố: 28/11/2026</span>
+          <a href="article-detail.html">Tải PDF</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Cột phụ: Đồng bộ với tiêu chuẩn Sidebar bên dưới -->
+    <aside class="hero-side-panel">
+      <!-- Số báo mới -->
+      <div>
+        <h3 class="side-headline">Số mới phát hành</h3>
+        <div class="issue-editorial-box">
+          <div class="issue-cover-thumb">
+            <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=300&q=80" alt="Bìa ấn phẩm số 42" loading="lazy">
+          </div>
+          <div class="issue-content">
+            <span class="issue-tag-sub">Xuất bản định kỳ</span>
+            <h3>Tập 15, Số 42 (2026)</h3>
+            <p>Số chuyên đề đặc biệt về Trí tuệ nhân tạo, Chuyển đổi số và Kỹ thuật cơ khí.</p>
+            <div class="meta-stats">12 bài báo · Phản biện kín 2 chiều</div>
+            <a href="archives.html" class="link-issue">Xem toàn bộ số báo →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hướng dẫn tác giả (Đặt tại vị trí thông báo tòa soạn) -->
+      <div>
+        <h3 class="side-headline">Thông báo &amp; Hướng dẫn</h3>
+        <div class="guide-editorial-box">
+          <span class="guide-tag">DÀNH CHO TÁC GIẢ</span>
+          <h4>Quy trình nộp bài &amp; Phản biện</h4>
+          <p>Tìm hiểu thể lệ trình bày bản thảo, quy trình phản biện kín hai chiều 30 ngày và định dạng bài báo chuẩn học thuật.</p>
+          <a href="submit-paper.html">Xem chi tiết &amp; Nộp bài →</a>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</section>
+
+<div class="main-grid wrap">
+  <div class="feed">
+    <h2 class="section-title">Bài báo mới nhất</h2>
+
+    <div class="feed-row">
+      <div class="feed-thumb">
+        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=500&q=80" alt="Môi trường và Nông nghiệp" loading="lazy">
+      </div>
+      <div>
+        <span class="feed-tag">MÔI TRƯỜNG</span>
+        <h3><a href="article-detail.html">Đánh giá tác động của biến đổi khí hậu đến năng suất lúa Đồng bằng sông Cửu Long</a></h3>
+        <div class="byline">Bởi <b>Trần Thị H</b></div>
+        <div class="dek">Phân tích chuỗi dữ liệu 20 năm nhằm lượng hóa mức độ ảnh hưởng của các yếu tố khí hậu cực đoan đến sản lượng lúa vùng đồng bằng.</div>
+        <div class="feed-meta"><span>12/11/2026</span><a href="article-detail.html" style="color:#1da1f2;font-weight:600;">Tải PDF</a></div>
+      </div>
+    </div>
+
+    <div class="feed-row">
+      <div class="feed-thumb">
+        <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=500&q=80" alt="Cơ khí chính xác" loading="lazy">
+      </div>
+      <div>
+        <span class="feed-tag">CƠ KHÍ – TỰ ĐỘNG HÓA</span>
+        <h3><a href="article-detail.html">Tối ưu hóa thông số cắt gọt trong gia công hợp kim nhôm bằng phương pháp Taguchi</a></h3>
+        <div class="byline">Bởi <b>Nguyễn Văn K</b>, <b>Lý Thị M</b></div>
+        <div class="dek">Xác định bộ thông số cắt tối ưu thông qua kết hợp phương pháp Taguchi và phân tích phương sai, giúp giảm 18% thời gian gia công.</div>
+        <div class="feed-meta"><span>08/11/2026</span><a href="article-detail.html" style="color:#1da1f2;font-weight:600;">Tải PDF</a></div>
+      </div>
+    </div>
+
+    <div class="feed-row">
+      <div class="feed-thumb">
+        <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=500&q=80" alt="Khoa học máy tính" loading="lazy">
+      </div>
+      <div>
+        <span class="feed-tag">CÔNG NGHỆ THÔNG TIN</span>
+        <h3><a href="article-detail.html">Kỹ thuật tăng cường dữ liệu cho mô hình học sâu xử lý ngôn ngữ tiếng Việt</a></h3>
+        <div class="byline">Bởi <b>Trần Văn N</b></div>
+        <div class="dek">Khảo sát các kỹ thuật tăng cường dữ liệu văn bản nhằm cải thiện hiệu suất mô hình trong điều kiện dữ liệu huấn luyện hạn chế.</div>
+        <div class="feed-meta"><span>02/09/2026</span><a href="article-detail.html" style="color:#1da1f2;font-weight:600;">Tải PDF</a></div>
+      </div>
+    </div>
+
+    <div class="feed-row">
+      <div class="feed-thumb">
+        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=500&q=80" alt="Kinh tế và Tài chính" loading="lazy">
+      </div>
+      <div>
+        <span class="feed-tag">KINH TẾ – QUẢN TRỊ</span>
+        <h3><a href="article-detail.html">Tác động của chuyển đổi số đến hiệu quả hoạt động doanh nghiệp vừa và nhỏ</a></h3>
+        <div class="byline">Bởi <b>Phạm Thị Q</b>, <b>Ngô Văn R</b></div>
+        <div class="dek">Khảo sát 320 doanh nghiệp vừa và nhỏ cho thấy mối tương quan tích cực giữa mức độ chuyển đổi số và năng suất lao động.</div>
+        <div class="feed-meta"><span>28/08/2026</span><a href="article-detail.html" style="color:#1da1f2;font-weight:600;">Tải PDF</a></div>
+      </div>
+    </div>
+
+    <!-- Bài báo thứ 5: Khớp với bài #3 trong Đọc nhiều nhất để nội dung đồng bộ và cân bằng chiều cao 2 cột -->
+    <div class="feed-row" style="border-bottom:none">
+      <div class="feed-thumb">
+        <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=500&q=80" alt="Bảo mật Blockchain IoT" loading="lazy">
+      </div>
+      <div>
+        <span class="feed-tag">CÔNG NGHỆ THÔNG TIN</span>
+        <h3><a href="article-detail.html">Giải pháp bảo mật dữ liệu IoT dựa trên công nghệ blockchain</a></h3>
+        <div class="byline">Bởi <b>Đặng Thành Thi</b></div>
+        <div class="dek">Đề xuất giao thức đồng thuận nhẹ kết hợp mã hóa bất đối xứng tối ưu cho các thiết bị IoT giới hạn tài nguyên tính toán.</div>
+        <div class="feed-meta"><span>15/08/2026</span><a href="article-detail.html" style="color:#1da1f2;font-weight:600;">Tải PDF</a></div>
+      </div>
+    </div>
+
+    <!-- Dòng xem tất cả bài báo chuẩn tòa soạn ở đáy trang -->
+    <div class="feed-archive-link">
+      <a href="archives.html">Xem tất cả bài báo trong kho lưu trữ &rarr;</a>
+    </div>
+  </div>
+
+  <aside>
+    <!-- 1. Đọc nhiều nhất tuần qua (Đưa lên đầu, 1 điểm nhấn xanh duy nhất ở số thứ tự) -->
+    <div class="side-block">
+      <h3 class="side-title">Đọc nhiều nhất tuần qua</h3>
+      <div class="most-read-item">
+        <span class="n">01</span>
+        <div>
+          <div class="t"><a href="article-detail.html">Ứng dụng mô hình Transformer trong phân loại văn bản tiếng Việt</a></div>
+          <div class="a"><span>Vũ Thị F, Đặng Văn G</span> · <span class="reads">1.420 lượt đọc</span></div>
+        </div>
+      </div>
+      <div class="most-read-item">
+        <span class="n">02</span>
+        <div>
+          <div class="t"><a href="article-detail.html">Đánh giá tác động của biến đổi khí hậu đến năng suất lúa ĐBSCL</a></div>
+          <div class="a"><span>Trần Thị H</span> · <span class="reads">1.185 lượt đọc</span></div>
+        </div>
+      </div>
+      <div class="most-read-item">
+        <span class="n">03</span>
+        <div>
+          <div class="t"><a href="article-detail.html">Giải pháp bảo mật dữ liệu IoT dựa trên công nghệ blockchain</a></div>
+          <div class="a"><span>Đặng Thành Thi</span> · <span class="reads">940 lượt đọc</span></div>
+        </div>
+      </div>
+      <div class="most-read-item" style="border-bottom:none">
+        <span class="n">04</span>
+        <div>
+          <div class="t"><a href="article-detail.html">Tối ưu hóa thông số cắt gọt trong gia công hợp kim nhôm</a></div>
+          <div class="a"><span>Nguyễn Văn K, Lý Thị M</span> · <span class="reads">820 lượt đọc</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Thông tin xuất bản & Chỉ số khoa học (Spec-sheet chuẩn: nhãn trên, giá trị dưới, viền var(--line)) -->
+    <div class="side-block">
+      <h3 class="side-title">Hồ sơ ấn phẩm</h3>
+      <div class="journal-stats-card">
+        <div class="stat-row">
+          <span class="lbl">Mã chuẩn quốc tế</span>
+          <span class="val">p-ISSN 1859-3097</span>
+        </div>
+        <div class="stat-row">
+          <span class="lbl">Kỳ hạn xuất bản</span>
+          <span class="val">02 tháng / số (06 số / năm)</span>
+        </div>
+        <div class="stat-row">
+          <span class="lbl">Hình thức phản biện</span>
+          <span class="val">Kín hai chiều (Double-blind)</span>
+        </div>
+        <div class="stat-row">
+          <span class="lbl">Thời gian phản biện</span>
+          <span class="val">Trung bình 30 ngày</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Chỉ mục & Cơ sở dữ liệu (Badge phẳng xanh nhạt, không bóng đổ) -->
+    <div class="side-block">
+      <h3 class="side-title">Chỉ mục &amp; Cơ sở dữ liệu</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;padding-top:4px;">
+        <span style="font-size:11.5px;padding:5px 10px;background:var(--sky-050);border:1px solid var(--sky-200);border-radius:3px;color:var(--ink-700);font-weight:600;">Google Scholar</span>
+        <span style="font-size:11.5px;padding:5px 10px;background:var(--sky-050);border:1px solid var(--sky-200);border-radius:3px;color:var(--ink-700);font-weight:600;">CrossRef DOI</span>
+        <span style="font-size:11.5px;padding:5px 10px;background:var(--sky-050);border:1px solid var(--sky-200);border-radius:3px;color:var(--ink-700);font-weight:600;">Vietnam Citation Index</span>
+      </div>
+    </div>
+
+    <!-- 4. Nhận thông báo xuất bản (Thiết kế tinh gọn, nằm ở cuối) -->
+    <div class="side-block">
+      <div class="newsletter-box">
+        <div class="nl-head">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1da1f2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          Nhận thông báo bài báo mới
+        </div>
+        <p>Đăng ký nhận mục lục và trích yếu số mới phát hành định kỳ.</p>
+        <div class="input-group">
+          <input type="email" placeholder="Địa chỉ email của bạn...">
+          <button type="button">Đăng ký</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<footer>
+  <div>Tạp chí Khoa học · Tạp chí Nghiên cứu &amp; Phát triển Công nghệ · ISSN 1859-3097</div>
+  <div class="flinks">
+    <a href="about.html">Về tạp chí</a>
+    <a href="guidelines.html">Thể lệ &amp; Quy trình nộp bài</a>
+    <a href="publishing-policy.html">Đạo đức xuất bản</a>
+    <a href="editorial-board.html">Hội đồng biên tập</a>
+    <a href="contact.html">Liên hệ tòa soạn</a>
+  </div>
+</footer>
+
+<script src="journal-interactions.js"></script>
+</body>
+</html>

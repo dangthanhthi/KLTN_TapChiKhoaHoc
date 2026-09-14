@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chi tiết bài báo · Tạp chí Khoa học &amp; Công nghệ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="journal-interactions.css">
+
+<style>
+  :root {
+    --serif: 'Source Serif 4', Georgia, serif;
+    --sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --sky-050: #F3F8FD;
+    --sky-100: #E4EFFA;
+    --sky-200: #C9DFF4;
+    --sky-400: #8FB8E3;
+    --sky-500: #6699D1;
+    --sky-600: #4C7FB8;
+    --sky-700: #3A6497;
+    --ink-900: #16202B;
+    --ink-700: #3D4A57;
+    --ink-500: #6B7684;
+    --ink-300: #A9B2BC;
+    --white: #FFFFFF;
+    --line: #E1E9F1;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--sans);color:var(--ink-900);background:#fff;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:1360px;margin:0 auto;padding:0 20px;}
+
+  /* ---------- BREADCRUMB & METADATA BAR ---------- */
+  .breadcrumb-bar{background:var(--sky-050);border-bottom:1px solid var(--line);padding:12px 0;font-size:12px;color:var(--ink-500);}
+  .breadcrumb-bar a{color:#1da1f2;font-weight:500;}
+  .breadcrumb-bar a:hover{text-decoration:underline;}
+  .breadcrumb-bar span.sep{margin:0 8px;color:var(--sky-200);}
+
+  /* ---------- ARTICLE DETAIL LAYOUT ---------- */
+  .detail-grid{display:grid;grid-template-columns:1fr 340px;gap:48px;padding:36px 0 60px;}
+
+  /* Main Article Column */
+  .article-header{border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:28px;}
+  .article-badge{display:inline-block;background:var(--sky-050);color:#1da1f2;border:1px solid var(--sky-200);font-size:11px;font-weight:700;letter-spacing:.05em;padding:4px 10px;border-radius:3px;margin-bottom:14px;text-transform:uppercase;}
+  .article-title-vn{font-family:var(--serif);font-size:32px;line-height:1.26;font-weight:600;color:var(--ink-900);margin-bottom:12px;}
+  .article-title-en{font-family:var(--serif);font-size:22px;line-height:1.32;font-weight:400;color:var(--ink-700);margin-bottom:20px;}
+  
+  .author-list{display:flex;flex-wrap:wrap;gap:18px;margin-bottom:16px;font-size:14px;}
+  .author-item{display:flex;align-items:center;gap:6px;}
+  .author-name{font-weight:700;color:var(--ink-900);}
+  .author-affiliation{font-size:12px;color:var(--ink-500);background:var(--sky-050);padding:2px 6px;border-radius:3px;border:1px solid var(--sky-200);}
+  .author-orcid{color:#a6ce39;font-size:11px;font-weight:700;display:inline-flex;align-items:center;}
+
+  .article-pub-meta{display:flex;flex-wrap:wrap;gap:20px;font-size:12.5px;color:var(--ink-500);background:#fafcff;padding:12px 16px;border-radius:4px;border:1px solid var(--line);}
+  .article-pub-meta strong{color:var(--ink-700);}
+  .doi-link{color:#1da1f2;font-weight:600;}
+  .doi-link:hover{text-decoration:underline;}
+
+  /* Ảnh minh họa bài nghiên cứu nổi bật (Hero Figure) */
+  .article-hero-figure{margin:24px 0 28px;border-radius:6px;overflow:hidden;border:1px solid var(--line);background:#000;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+  .article-hero-figure img{width:100%;height:360px;object-fit:cover;display:block;}
+  .article-hero-figure figcaption{padding:10px 16px;background:#f8fafc;border-top:1px solid var(--line);font-size:12px;color:var(--ink-500);display:flex;justify-content:space-between;align-items:center;}
+  .article-hero-figure figcaption span.source{color:var(--ink-700);font-weight:600;}
+
+  /* Action Toolbar (Tải PDF, Trích dẫn, Chia sẻ) */
+  .action-toolbar{display:flex;gap:12px;margin:24px 0 32px;}
+  .btn-download-pdf{background:#1da1f2;color:#ffffff;padding:10px 22px;font-size:13.5px;font-weight:700;border-radius:4px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(29,161,242,0.25);transition:all .2s;}
+  .btn-download-pdf:hover{background:#0d8ddc;transform:translateY(-1px);}
+  .btn-cite{background:#ffffff;color:var(--ink-700);border:1px solid var(--line);padding:10px 18px;font-size:13px;font-weight:600;border-radius:4px;display:inline-flex;align-items:center;gap:6px;transition:all .2s;}
+  .btn-cite:hover{border-color:#1da1f2;color:#1da1f2;background:var(--sky-050);}
+
+  /* Content Sections */
+  .content-block{margin-bottom:32px;}
+  .block-heading{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--ink-900);margin-bottom:12px;padding-bottom:6px;position:relative;}
+  .block-heading::after{content:'';position:absolute;left:0;bottom:0;width:30px;height:2px;background:#1da1f2;}
+  
+  .abstract-body{font-size:14.5px;line-height:1.68;color:var(--ink-700);text-align:justify;margin-bottom:14px;}
+  .keywords-tag-list{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12.5px;margin-top:10px;}
+  .keyword-label{font-weight:700;color:var(--ink-900);}
+  .kw-tag{background:var(--sky-050);border:1px solid var(--sky-200);padding:3px 10px;border-radius:3px;color:var(--ink-700);}
+
+  /* References Box */
+  .ref-list{padding-left:22px;font-size:13px;line-height:1.65;color:var(--ink-700);}
+  .ref-list li{margin-bottom:10px;}
+
+  /* ---------- SIDEBAR COLUMN ---------- */
+  .side-card{background:#ffffff;border:1px solid var(--line);border-radius:4px;padding:20px;margin-bottom:28px;}
+  .side-card-title{font-family:var(--serif);font-size:16px;font-weight:600;color:var(--ink-900);margin-bottom:14px;padding-bottom:8px;position:relative;}
+  .side-card-title::after{content:'';position:absolute;left:0;bottom:0;width:32px;height:2px;background:#1da1f2;}
+
+  /* Journal Issue Mini Box */
+  .issue-mini-info{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px;}
+  .issue-mini-cover{width:64px;height:88px;border:1px solid var(--sky-200);border-radius:3px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,0.08);}
+  .issue-mini-cover img{width:100%;height:100%;object-fit:cover;display:block;}
+  .issue-mini-meta h4{font-family:var(--serif);font-size:15px;font-weight:600;margin-bottom:4px;}
+  .issue-mini-meta p{font-size:12px;color:var(--ink-500);line-height:1.4;}
+
+  /* Article History Timeline */
+  .timeline-list{list-style:none;padding:0;margin:0;}
+  .timeline-item{position:relative;padding-left:20px;padding-bottom:14px;font-size:12.5px;}
+  .timeline-item:last-child{padding-bottom:0;}
+  .timeline-item::before{content:'';position:absolute;left:4px;top:6px;width:7px;height:7px;border-radius:50%;background:#1da1f2;}
+  .timeline-item::after{content:'';position:absolute;left:7px;top:13px;width:1px;height:calc(100% - 7px);background:var(--sky-200);}
+  .timeline-item:last-child::after{display:none;}
+  .timeline-date{font-weight:700;color:var(--ink-900);}
+  .timeline-event{color:var(--ink-500);}
+
+  /* Metric Counter */
+  .metrics-box{display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:center;padding:12px;background:var(--sky-050);border:1px solid var(--sky-200);border-radius:4px;}
+  .metric-val{font-size:22px;font-weight:700;color:#1da1f2;font-family:var(--serif);}
+  .metric-lbl{font-size:11px;color:var(--ink-500);text-transform:uppercase;font-weight:600;}
+
+  /* Related Papers */
+  .related-item{padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;}
+  .related-item:last-child{border-bottom:none;padding-bottom:0;}
+  .related-item a{color:var(--ink-900);font-weight:600;line-height:1.4;display:block;margin-bottom:4px;}
+  .related-item a:hover{color:#1da1f2;}
+  .related-item span{font-size:11.5px;color:var(--ink-500);}
+
+  /* ---------- FOOTER (#1da1f2) ---------- */
+  footer{background:#1da1f2;padding:32px 24px;text-align:center;font-size:13px;color:#ffffff;box-shadow:0 -2px 10px rgba(29,161,242,0.15);}
+  footer .flinks{margin-top:12px;}
+  footer .flinks a{margin:0 14px;color:rgba(255,255,255,0.9);font-weight:600;transition:all .2s;}
+  footer .flinks a:hover{color:#ffffff;text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<!-- KHỐI BANNER & NAVBAR NỀN XANH (#1da1f2) -->
+<div class="header-bar">
+  <header class="masthead wrap">
+    <div class="name"><a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Tạp chí Khoa học</a></div>
+    <div class="tagline">NGHIÊN CỨU · CÔNG NGHỆ · CHUYỂN GIAO TRI THỨC</div>
+  </header>
+
+  <nav class="navbar wrap">
+    <div class="nav-links">
+      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html" style="display:inline-flex;align-items:center;gap:4px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        Trang chủ
+      </a>
+
+      <!-- TAB DROPDOWN: GIỚI THIỆU -->
+      <div class="nav-item-dropdown">
+        <span class="nav-dropdown-toggle">
+          GIỚI THIỆU
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </span>
+        <div class="nav-fields-menu">
+          <a href="about.html" class="field-menu-item">
+            <span>Giới thiệu về tạp chí</span>
+          </a>
+          <a href="publishing-policy.html" class="field-menu-item">
+            <span>Chính sách xuất bản</span>
+          </a>
+          <a href="editorial-board.html" class="field-menu-item">
+            <span>Hội đồng biên tập</span>
+          </a>
+          <a href="contact.html" class="field-menu-item">
+            <span>Nhân sự &amp; Liên hệ</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- TAB DROPDOWN: QUY TRÌNH - BIỂU MẪU -->
+      <div class="nav-item-dropdown">
+        <span class="nav-dropdown-toggle">
+          QUY TRÌNH - BIỂU MẪU
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </span>
+        <div class="nav-fields-menu">
+          <a href="guidelines.html#submission" class="field-menu-item">
+            <span>Quy trình đăng bài</span>
+          </a>
+          <a href="guidelines.html#review" class="field-menu-item">
+            <span>Quy trình phản biện</span>
+          </a>
+          <a href="guidelines.html#format" class="field-menu-item">
+            <span>Thể lệ viết và gửi bài</span>
+          </a>
+          <a href="guidelines.html#templates" class="field-menu-item">
+            <span>Các biểu mẫu</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- TAB DROPDOWN: LĨNH VỰC KHOA HỌC -->
+      <div class="nav-item-dropdown">
+        <span class="nav-dropdown-toggle on">
+          LĨNH VỰC KHOA HỌC
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        </span>
+        <div class="nav-fields-menu">
+          <a href="article-detail.html" class="field-menu-item" style="color:#1da1f2!important;font-weight:700;">
+            <span>Công nghệ thông tin</span>
+            <span class="badge-count">142</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Cơ khí – Tự động hóa</span>
+            <span class="badge-count">98</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Khoa học Môi trường</span>
+            <span class="badge-count">76</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Kinh tế – Quản trị</span>
+            <span class="badge-count">115</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Hóa học &amp; Công nghệ thực phẩm</span>
+            <span class="badge-count">84</span>
+          </a>
+          <a href="archives.html" class="field-menu-item">
+            <span>Khoa học Xã hội &amp; Nhân văn</span>
+            <span class="badge-count">62</span>
+          </a>
+          <div class="fields-menu-divider"></div>
+          <a href="archives.html" class="fields-menu-all">Xem tất cả các chuyên ngành &rarr;</a>
+        </div>
+      </div>
+
+      <a href="archives.html">Kho lưu trữ</a>
+    </div>
+
+    <!-- KHỐI PHẢI: NÚT NỘP BÀI + AUTH -->
+    <div class="nav-actions">
+      <a href="submit-paper.html" style="background:#ffffff;color:#1da1f2;padding:6px 14px;border-radius:4px;font-size:12.5px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.12);display:inline-flex;align-items:center;gap:6px;transition:all .2s;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+        Gửi bài báo
+      </a>
+      
+      <div class="auth-links">
+        <a href="login.html" class="login-btn">Đăng nhập</a>
+        <a href="register.html" class="register-btn">Đăng ký</a>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb-bar">
+  <div class="wrap">
+    <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Trang chủ</a>
+    <span class="sep">/</span>
+    <a href="archives.html">Công nghệ thông tin</a>
+    <span class="sep">/</span>
+    <a href="archives.html">Tập 15, Số 42 (2026)</a>
+    <span class="sep">/</span>
+    <span style="color:var(--ink-700);">Chi tiết bản thảo</span>
+  </div>
+</div>
+
+<!-- NỘI DUNG CHI TIẾT BÀI BÁO -->
+<div class="detail-grid wrap">
+  
+  <!-- CỘT NỘI DUNG CHÍNH (TRÁI) -->
+  <main>
+    <div class="article-header">
+      <!-- ẢNH BÌA / MINH HỌA BÀI NGHIÊN CỨU ĐẶT TRÊN CÙNG -->
+      <figure class="article-hero-figure" style="margin-top:0;margin-bottom:24px;">
+        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80" alt="Minh họa mô hình Transformer và Khoa học tính toán">
+        <figcaption>
+          <span>Hình 1: Minh họa cơ chế ánh xạ không gian ngữ nghĩa nhiều chiều của kiến trúc Transformer</span>
+          <span class="source">Nhóm tác giả cung cấp (2026)</span>
+        </figcaption>
+      </figure>
+
+      <span class="article-badge">BÀI BÁO NGHIÊN CỨU GỐC (ORIGINAL RESEARCH)</span>
+      <h1 class="article-title-vn">Ứng dụng mô hình Transformer trong phân loại văn bản tiếng Việt quy mô lớn</h1>
+      <h2 class="article-title-en">Application of Transformer Models in Large-Scale Vietnamese Text Classification</h2>
+
+      <div class="author-list">
+        <div class="author-item">
+          <span class="author-name">Vũ Thị F</span>
+          <span class="author-affiliation">Khoa CNTT, Trường Đại học</span>
+          <span class="author-orcid">iD</span>
+        </div>
+        <div class="author-item">
+          <span class="author-name">Đặng Văn G</span>
+          <span class="author-affiliation">Viện Công nghệ Tiên tiến, Đại học Quốc gia TP.HCM</span>
+          <span class="author-orcid">iD</span>
+        </div>
+      </div>
+
+      <div class="article-pub-meta">
+        <div><strong>Xuất bản:</strong> Tập 15, Số 42 (11/2026)</div>
+        <div><strong>Trang:</strong> 45–58</div>
+        <div><strong>DOI:</strong> <a href="javascript:void(0)" onclick="showToast('Mã định danh DOI quốc tế: 10.59876/jst.jsc.2026.42.04')" class="doi-link">10.59876/jst.jsc.2026.42.04</a></div>
+        <div><strong>Bản quyền:</strong> CC BY-NC 4.0 Open Access</div>
+      </div>
+
+      <!-- THANH THAO TÁC -->
+      <div class="action-toolbar" style="margin-bottom:0;">
+        <a href="#download-pdf" class="btn-download-pdf">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Tải toàn văn PDF (1.4 MB)
+        </a>
+        <button type="button" class="btn-cite">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg>
+          Trích dẫn (BibTeX / RIS)
+        </button>
+      </div>
+    </div>
+
+    <!-- TÓM TẮT TIẾNG VIỆT -->
+    <section class="content-block">
+      <h3 class="block-heading">Tóm tắt (Abstract - Vietnamese)</h3>
+      <p class="abstract-body">
+        Phân loại văn bản tiếng Việt quy mô lớn đặt ra nhiều thách thức do tính đa nghĩa của từ ghép, ngữ cảnh phong phú và thiếu hụt các kho ngữ liệu chuẩn hóa có gán nhãn chất lượng cao. Nghiên cứu này đề xuất một giải pháp cải tiến dựa trên kiến trúc tiền huấn luyện Transformer (dựa trên nền tảng PhoBERT và RoBERTa tối ưu hóa), tích hợp cơ chế tự chú ý đa đầu có trọng số ngữ nghĩa để trích xuất đặc trưng văn bản. Thực nghiệm trên tập dữ liệu gồm hơn 250.000 bài báo tiếng Việt thuộc 10 lĩnh vực khác nhau cho thấy phương pháp đề xuất đạt độ chính xác F1-score bình quân là 94,8%, vượt trội hơn 4,2% so với các mô hình CNN-LSTM truyền thống, đồng thời rút ngắn 28% thời gian huấn luyện nhờ tối ưu hóa phân rã ma trận chú ý.
+      </p>
+      <div class="keywords-tag-list">
+        <span class="keyword-label">Từ khóa:</span>
+        <span class="kw-tag">Transformer</span>
+        <span class="kw-tag">Phân loại văn bản</span>
+        <span class="kw-tag">Xử lý ngôn ngữ tự nhiên</span>
+        <span class="kw-tag">PhoBERT</span>
+        <span class="kw-tag">Tiếng Việt</span>
+      </div>
+    </section>
+
+    <!-- TÓM TẮT TIẾNG ANH -->
+    <section class="content-block">
+      <h3 class="block-heading">Abstract (English)</h3>
+      <p class="abstract-body">
+        Large-scale Vietnamese text classification poses significant challenges due to compound word ambiguity, diverse linguistic nuances, and the scarcity of high-quality standardized annotated corpora. In this research, we propose an enhanced approach based on pre-trained Transformer architecture (built upon optimized PhoBERT and RoBERTa foundations), incorporating weighted multi-head self-attention mechanisms to extract robust semantic representations. Empirical experiments conducted on a benchmark dataset exceeding 250,000 Vietnamese news articles across 10 domains demonstrate that our proposed model achieves an average macro F1-score of 94.8%, outperforming baseline CNN-LSTM architectures by 4.2% while reducing computational training latency by 28%.
+      </p>
+      <div class="keywords-tag-list">
+        <span class="keyword-label">Keywords:</span>
+        <span class="kw-tag">Transformer</span>
+        <span class="kw-tag">Text Classification</span>
+        <span class="kw-tag">Natural Language Processing</span>
+        <span class="kw-tag">Vietnamese NLP</span>
+        <span class="kw-tag">Deep Learning</span>
+      </div>
+    </section>
+
+    <!-- TÀI LIỆU THAM KHẢO TIÊU BIỂU -->
+    <section class="content-block">
+      <h3 class="block-heading">Tài liệu tham khảo (References)</h3>
+      <ol class="ref-list">
+        <li>Vaswani, A., et al. (2017). "Attention is all you need." <em>Advances in Neural Information Processing Systems (NeurIPS)</em>, 30, 5998-6008.</li>
+        <li>Nguyen, D. Q., &amp; Nguyen, A. T. (2020). "PhoBERT: Pre-trained language models for Vietnamese." <em>Findings of EMNLP 2020</em>, 1037-1042.</li>
+        <li>Devlin, J., et al. (2019). "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding." <em>NAACL-HLT</em>, 4171-4186.</li>
+        <li>Trần Văn Nam, Lê Thị Hương (2024). "Đánh giá các mô hình học sâu trong xử lý ngữ nghĩa tiếng Việt." <em>Tạp chí Khoa học &amp; Công nghệ</em>, 13(38), 112-124.</li>
+      </ol>
+    </section>
+  </main>
+
+  <!-- CỘT PHỤ (PHẢI) -->
+  <aside>
+    <!-- Số tạp chí chứa bài viết -->
+    <div class="side-card">
+      <h3 class="side-card-title">Ấn phẩm phát hành</h3>
+      <div class="issue-mini-info">
+        <div class="issue-mini-cover">
+          <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=200&q=80" alt="Bìa số báo 42">
+        </div>
+        <div class="issue-mini-meta">
+          <h4>Tập 15, Số 42 (2026)</h4>
+          <p>Chuyên đề Trí tuệ nhân tạo &amp; Chuyển đổi số</p>
+          <p style="margin-top:4px;"><a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html" style="color:#1da1f2;font-weight:700;font-size:12px;">Xem toàn bộ mục lục số này →</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Thống kê tương tác -->
+    <div class="side-card">
+      <h3 class="side-card-title">Chỉ số bài viết</h3>
+      <div class="metrics-box">
+        <div>
+          <div class="metric-val">1.420</div>
+          <div class="metric-lbl">Lượt xem tóm tắt</div>
+        </div>
+        <div>
+          <div class="metric-val">580</div>
+          <div class="metric-lbl">Tải bản PDF</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dòng thời gian thẩm định (Quy trình xuất bản 6 giai đoạn) -->
+    <div class="side-card">
+      <h3 class="side-card-title">Lịch sử thẩm định bản thảo</h3>
+      <ul class="timeline-list">
+        <li class="timeline-item">
+          <div class="timeline-date">10/09/2026</div>
+          <div class="timeline-event">Tòa soạn tiếp nhận bản thảo sơ duyệt</div>
+        </li>
+        <li class="timeline-item">
+          <div class="timeline-date">15/09/2026</div>
+          <div class="timeline-event">Phân công 02 chuyên gia phản biện kín</div>
+        </li>
+        <li class="timeline-item">
+          <div class="timeline-date">12/10/2026</div>
+          <div class="timeline-event">Tác giả hoàn thiện chỉnh sửa theo ý kiến phản biện</div>
+        </li>
+        <li class="timeline-item">
+          <div class="timeline-date">05/11/2026</div>
+          <div class="timeline-event">Hội đồng biên tập chấp nhận đăng</div>
+        </li>
+        <li class="timeline-item">
+          <div class="timeline-date">28/11/2026</div>
+          <div class="timeline-event">Công bố chính thức trên ấn phẩm số 42</div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Bài viết liên quan -->
+    <div class="side-card">
+      <h3 class="side-card-title">Bài báo cùng chuyên mục</h3>
+      <div class="related-item">
+        <a href="article-detail.html">Kỹ thuật tăng cường dữ liệu cho mô hình học sâu tiếng Việt</a>
+        <span>Bởi Trần Văn N · 02/09/2026</span>
+      </div>
+      <div class="related-item">
+        <a href="article-detail.html">Giải pháp bảo mật dữ liệu IoT dựa trên công nghệ blockchain</a>
+        <span>Bởi Đặng Thành Thi · 15/08/2026</span>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div>Tạp chí Khoa học · Tạp chí Nghiên cứu &amp; Phát triển Công nghệ · ISSN 1859-3097</div>
+    <div class="flinks">
+      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Trang chủ</a>
+      <a href="about.html">Về tạp chí</a>
+      <a href="guidelines.html">Thể lệ &amp; Quy trình nộp bài</a>
+      <a href="publishing-policy.html">Chính sách xuất bản</a>
+      <a href="editorial-board.html">Hội đồng biên tập</a>
+      <a href="contact.html">Liên hệ tòa soạn</a>
+    </div>
+  </div>
+</footer>
+
+<script src="journal-interactions.js"></script>
+</body>
+</html>
