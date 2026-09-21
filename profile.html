@@ -505,8 +505,8 @@
             Xóa ảnh
           </button>
         </div>
-        <input type="file" id="author-avatar-file-input" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none;" onchange="handleAvatarFileSelected(event)">
-        <div style="font-size:11px;color:var(--ink-500);margin-top:6px;">Hỗ trợ JPG, PNG, WEBP tối đa 5MB</div>
+        <input type="file" id="author-avatar-file-input" accept="image/png,image/jpeg,.jfif,image/webp,image/gif" style="display:none;" onchange="handleAvatarFileSelected(event)">
+        <div style="font-size:11px;color:var(--ink-500);margin-top:6px;">Hỗ trợ JPG, JFIF, PNG, WEBP tối đa 5MB</div>
       </div>
 
       <div class="spec-entry">
@@ -1007,8 +1007,14 @@
     }
 
     const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-    if (!validTypes.includes(file.type)) {
-      showToast('Định dạng tệp không được hỗ trợ. Vui lòng chọn ảnh JPG, PNG, WEBP hoặc GIF.', 'error');
+    // .jfif có MIME type "image/jpeg" hoặc "image/jfif" tuỳ trình duyệt
+    // → kiểm tra kết hợp cả MIME lẫn đuôi file để đảm bảo tương thích
+    const fileName = file.name.toLowerCase();
+    const validExts = ['.jpg', '.jpeg', '.jfif', '.png', '.webp', '.gif'];
+    const hasValidMime = validTypes.includes(file.type);
+    const hasValidExt  = validExts.some(ext => fileName.endsWith(ext));
+    if (!hasValidMime && !hasValidExt) {
+      showToast('Định dạng tệp không được hỗ trợ. Vui lòng chọn ảnh JPG, JFIF, PNG, WEBP hoặc GIF.', 'error');
       event.target.value = '';
       return;
     }
