@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title id="htmlPageTitle">Chi tiết số tạp chí · Tạp chí Khoa học Đại học Công Thương</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="journal-interactions.css?v=align_1600_8issues">
+
+<style>
+  :root {
+    --serif: 'Source Serif 4', Georgia, serif;
+    --sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --sky-050: #F3F8FD;
+    --sky-100: #E4EFFA;
+    --sky-200: #C9DFF4;
+    --sky-400: #8FB8E3;
+    --sky-500: #6699D1;
+    --sky-600: #4C7FB8;
+    --sky-700: #3A6497;
+    --ink-900: #16202B;
+    --ink-700: #3D4A57;
+    --ink-500: #6B7684;
+    --ink-300: #A9B2BC;
+    --white: #FFFFFF;
+    --line: #E1E9F1;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--sans); color: var(--ink-900); background: #ffffff; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  .wrap { max-width: 1600px; margin: 0 auto; padding: 0 24px; }
+
+  /* BREADCRUMB BAR */
+  .breadcrumb-bar { background: var(--sky-050); border-bottom: 1px solid var(--line); padding: 12px 0; font-size: 12.5px; color: var(--ink-500); }
+  .breadcrumb-bar a { color: #1da1f2; font-weight: 600; }
+  .breadcrumb-bar a:hover { text-decoration: underline; }
+  .breadcrumb-bar span.sep { margin: 0 8px; color: var(--sky-400); }
+
+  /* MAIN LAYOUT GRID */
+  .issue-page-grid { display: grid; grid-template-columns: 1fr 320px; gap: 42px; padding: 36px 0 64px; align-items: start; }
+
+  /* ISSUE HERO HEADER */
+  .issue-header-box { margin-bottom: 36px; border-bottom: 2px solid var(--line); padding-bottom: 32px; }
+  .issue-main-title { font-family: var(--sans); font-size: 26px; font-weight: 700; color: #111827; margin-bottom: 20px; }
+  .issue-meta-split { display: flex; gap: 32px; align-items: flex-start; flex-wrap: wrap; }
+  .issue-cover-container { width: 250px; min-width: 220px; border: 1px solid #E5E7EB; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-radius: 3px; overflow: hidden; background: #fff; }
+  .issue-cover-container img { width: 100%; height: auto; display: block; }
+  
+  .issue-meta-details { flex: 1; min-width: 280px; }
+  .issue-theme-title { font-family: var(--sans); font-size: 19px; font-weight: 700; color: #111827; line-height: 1.45; margin-bottom: 12px; }
+  .issue-date-tag { font-size: 14px; font-weight: 700; color: #111827; margin-bottom: 12px; }
+  .issue-date-tag span { color: #374151; font-weight: 600; }
+  .issue-desc { font-size: 13.5px; color: #4B5563; line-height: 1.65; margin-bottom: 20px; }
+
+  .issue-actions-bar { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-issue-full-pdf { background: #1da1f2; color: #ffffff; padding: 9px 20px; border-radius: 4px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 6px rgba(29, 161, 242, 0.25); transition: background .2s; }
+  .btn-issue-full-pdf:hover { background: #0d8ddc; }
+
+  /* SECTION HEADER */
+  .section-divider-bar { margin: 32px 0 20px; font-size: 15px; font-weight: 700; color: #16202B; display: flex; align-items: center; gap: 16px; text-transform: uppercase; letter-spacing: .04em; }
+  .section-divider-bar::before { content: ""; width: 28px; height: 2px; background: #1da1f2; }
+  .section-divider-bar::after { content: ""; flex: 1; height: 1px; background: #E5E7EB; }
+
+  /* ARTICLES LIST */
+  .articles-full-list { display: flex; flex-direction: column; gap: 18px; }
+  .article-row-item { padding: 18px 0; border-bottom: 1px solid #E5E7EB; transition: background .15s; }
+  .article-row-item:first-child { padding-top: 0; }
+  .article-row-item:last-child { border-bottom: none; }
+  
+  .article-row-title { font-family: var(--sans); font-size: 15px; font-weight: 700; line-height: 1.45; color: #0066b3; margin-bottom: 8px; }
+  .article-row-title a:hover { color: #1da1f2; text-decoration: underline; }
+  
+  .article-row-meta { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+  .article-row-authors { font-size: 13px; color: #4B5563; line-height: 1.4; flex: 1; min-width: 250px; }
+  .article-row-page { font-size: 12px; color: #6B7280; font-weight: 600; }
+  
+  .btn-article-pdf { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border: 1px solid #0066b3; border-radius: 3px; font-size: 12px; font-weight: 700; color: #0066b3; background: #ffffff; transition: all .2s; }
+  .btn-article-pdf:hover { background: #0066b3; color: #ffffff; }
+
+  /* SIDEBAR CARDS */
+  .sidebar-box { background: #ffffff; border: 1px solid #E5E7EB; border-radius: 4px; padding: 18px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+  .sidebar-box-title { font-size: 13px; font-weight: 700; text-transform: uppercase; color: #16202B; margin: 0 0 14px; padding-bottom: 8px; border-bottom: 2px solid #1da1f2; letter-spacing: .04em; }
+
+  /* SỐ KHÁC CÙNG TẬP */
+  .sibling-issues-list { display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
+  .sibling-issue-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border: 1px solid #E2E8F0; border-radius: 3px; color: #1E293B; font-weight: 600; transition: all .2s; text-decoration: none; }
+  .sibling-issue-item:hover { border-color: #1da1f2; color: #1da1f2; background: #F8FAFC; }
+  .sibling-issue-item.active { background: #E0F2FE; border-color: #0284C7; color: #0284C7; font-weight: 700; }
+
+  /* THÔNG TIN HƯỚNG DẪN KHÔNG BULLET POINT */
+  .sidebar-nav-links { display: flex; flex-direction: column; gap: 8px; font-size: 13px; line-height: 1.6; }
+  .sidebar-nav-links a { color: #1da1f2; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+  .sidebar-nav-links a:hover { text-decoration: underline; }
+
+  @media (max-width: 1024px) {
+    .issue-page-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- KHỐI HEADER CHUNG (SHARED LAYOUT) -->
+<div id="huit-header" data-active="archives"></div>
+
+<!-- THANH ĐIỀU HƯỚNG BREADCRUMB -->
+<div class="breadcrumb-bar">
+  <div class="wrap">
+    <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Trang chủ</a>
+    <span class="sep">/</span>
+    <a href="archives.html">Lưu trữ</a>
+    <span class="sep">/</span>
+    <span id="breadcrumbIssueTitle" style="color: #374151; font-weight: 600;">Tập 26 Số 3E (2026)</span>
+  </div>
+</div>
+
+<!-- THÂN TRANG CHI TIẾT SỐ (DYNAMIC ISSUE VIEW) -->
+<div class="wrap">
+  <div class="issue-page-grid">
+
+    <!-- CỘT CHÍNH: CHI TIẾT TOÀN BỘ SỐ VÀ CÁC BÀI BÁO -->
+    <main class="issue-main-content">
+      
+      <!-- KHỐI ĐẦU ĐỀ SỐ XUẤT BẢN -->
+      <section class="issue-header-box">
+        <h1 class="issue-main-title" id="issueMainTitle">
+          Tập 26 Số 3E (2026)
+        </h1>
+
+        <div class="issue-meta-split">
+          <!-- Bìa số tạp chí -->
+          <div class="issue-cover-container">
+            <img id="issueCoverImg" src="assets/images/cover_huit_vol26_no3e.svg" alt="Bìa số tạp chí HUIT">
+          </div>
+
+          <!-- Chi tiết chuyên đề -->
+          <div class="issue-meta-details">
+            <h2 class="issue-theme-title" id="issueThemeTitle">
+              Hội thảo Quốc tế về Kinh tế lần thứ 3 – ICE 2026
+            </h2>
+            <div class="issue-date-tag">
+              Đã Xuất bản: <span id="issueDateVal">2026-08-25</span>
+            </div>
+            <p class="issue-desc" id="issueDescVal">
+              Số chuyên đề đặc biệt xuất bản các công trình nghiên cứu chọn lọc từ Hội thảo Khoa học Quốc tế lần thứ 3 về Kinh tế (ICE 2026), tập trung vào các vấn đề: Chuyển đổi số, Kinh tế tuần hoàn, Tài chính và Phát triển bền vững.
+            </p>
+            <div class="issue-actions-bar">
+              <a href="#" id="btnDownloadFullIssue" download class="btn-issue-full-pdf" style="display:none;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                Tải mục lục toàn bộ số (PDF)
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CHUYÊN MỤC BÀI BÁO -->
+      <div class="section-divider-bar" id="issueSectionTitle">
+        Kinh tế
+      </div>
+
+      <!-- DANH SÁCH TOÀN BỘ BÀI BÁO CỦA SỐ NÀY -->
+      <div class="articles-full-list" id="articlesFullListContainer">
+        <!-- Được Javascript tự động kết xuất đầy đủ theo ID của số -->
+      </div>
+
+    </main>
+
+    <!-- CỘT PHỤ BÊN PHẢI (SIDEBAR) -->
+    <aside class="issue-sidebar">
+      
+      <!-- NÚT GỬI BÀI BÁO -->
+      <div style="margin-bottom: 24px;">
+        <a href="submit-paper.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px 16px; background: #1da1f2; color: #ffffff; font-weight: 700; font-size: 14px; border-radius: 4px; text-decoration: none; box-shadow: 0 2px 6px rgba(29, 161, 242, 0.25); transition: background .2s;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          GỬI BÀI BÁO (SUBMIT)
+        </a>
+      </div>
+
+      <!-- CÁC SỐ KHÁC CÙNG TẬP -->
+      <div class="sidebar-box">
+        <h4 class="sidebar-box-title" id="siblingBoxTitle">
+          CÁC SỐ CÙNG TẬP
+        </h4>
+        <div class="sibling-issues-list" id="siblingIssuesContainer">
+          <!-- Tự động kết xuất danh sách số cùng Tập -->
+        </div>
+      </div>
+
+      <!-- Khối Chỉ mục Khoa học (ABSTRACTING & INDEXING) -->
+      <div class="sidebar-box" style="text-align: center;">
+        <h4 class="sidebar-box-title" style="text-align: left;">
+          ABSTRACTING &amp; INDEXING
+        </h4>
+        <div class="content" style="display: flex; flex-direction: column; gap: 12px; margin-top: 14px;">
+          <div class="indexing-logo-item" style="background: #ffffff; border: 1px solid #f1f5f9; border-radius: 4px; padding: 10px 12px; display: flex; align-items: center; justify-content: center; transition: all .2s ease;">
+            <a href="https://vjol.info.vn/index.php/dhcongthuongHCM" target="_blank" rel="noopener" title="Vietnam Journals Online (VJOL)">
+              <img src="assets/images/indexing/vjol-logo.png" alt="Vietnam Journals Online" style="max-width: 82%; max-height: 48px; height: auto; margin: 0 auto; display: block;">
+            </a>
+          </div>
+          <div class="indexing-logo-item" style="background: #ffffff; border: 1px solid #f1f5f9; border-radius: 4px; padding: 10px 12px; display: flex; align-items: center; justify-content: center; transition: all .2s ease;">
+            <a href="https://www.turnitin.com/login_page.asp" target="_blank" rel="noopener" title="Turnitin Similarity Check">
+              <img src="assets/images/indexing/turnitin-logo.svg" alt="Turnitin" style="max-width: 75%; max-height: 42px; height: auto; margin: 0 auto; display: block;">
+            </a>
+          </div>
+          <div class="indexing-logo-item" style="background: #ffffff; border: 1px solid #f1f5f9; border-radius: 4px; padding: 10px 12px; display: flex; align-items: center; justify-content: center; transition: all .2s ease;">
+            <a href="https://search.crossref.org/?from_ui=&q=3030-413X&page=2" target="_blank" rel="noopener" title="Crossref DOI Indexing">
+              <img src="assets/images/indexing/crossref-logo.png" alt="Crossref" style="max-width: 75%; max-height: 44px; height: auto; margin: 0 auto; display: block;">
+            </a>
+          </div>
+          <div class="indexing-logo-item" style="background: #ffffff; border: 1px solid #f1f5f9; border-radius: 4px; padding: 10px 12px; display: flex; align-items: center; justify-content: center; transition: all .2s ease;">
+            <a href="https://scholar.google.com/citations?hl=vi&user=M-lHDdYAAAAJ&view_op=list_works&authuser=2&gmla=AP6z3OZ8DknU5cOu35nUET7P_2pcQDmXYXJDzQuGLhFkfkVFzcGLQnVhd0iEGA3bt5Gq0Eu7ksbt2RP_6CuBbLsf7qNiRZm0GbGX8LFSHvML" target="_blank" rel="noopener" title="Google Scholar Citations">
+              <img src="assets/images/indexing/google-scholar-logo.png" alt="Google Scholar" style="max-width: 75%; max-height: 46px; height: auto; margin: 0 auto; display: block;">
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- HỒ SƠ XUẤT BẢN -->
+      <div class="sidebar-box">
+        <h4 class="sidebar-box-title">
+          HỒ SƠ XUẤT BẢN
+        </h4>
+        <div style="font-size: 12.5px; color: #4B5563; line-height: 1.65;">
+          <p style="margin: 0 0 8px;"><strong>Cơ quan chủ quản:</strong><br>Trường ĐH Công Thương TP.HCM</p>
+          <p style="margin: 0 0 8px;"><strong>Mã định danh chuẩn:</strong><br>p-ISSN: <b>3030-4113</b><br>e-ISSN: <b>3030-413X</b></p>
+          <p style="margin: 0 0 8px;"><strong>Giấy phép BTTTT:</strong><br>Số 53/GP-BTTTT (06/3/2024)</p>
+          <p style="margin: 0;"><strong>Tổng biên tập:</strong><br>TS. Bùi Hồng Đăng</p>
+        </div>
+      </div>
+
+      <!-- THÔNG TIN HƯỚNG DẪN (KHÔNG BULLET POINT) -->
+      <div class="sidebar-box">
+        <h4 class="sidebar-box-title">
+          THÔNG TIN HƯỚNG DẪN
+        </h4>
+        <div class="sidebar-nav-links">
+          <a href="guidelines.html">
+            <span style="color: #1da1f2; font-weight: 700;">&rsaquo;</span> Dành cho Tác giả
+          </a>
+          <a href="publishing-policy.html">
+            <span style="color: #1da1f2; font-weight: 700;">&rsaquo;</span> Dành cho Người phản biện
+          </a>
+          <a href="about.html">
+            <span style="color: #1da1f2; font-weight: 700;">&rsaquo;</span> Dành cho Độc giả &amp; Thư viện
+          </a>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+</div>
+
+<!-- KHỐI FOOTER CHUNG (SHARED LAYOUT) -->
+<div id="huit-footer"></div>
+
+<script src="journal-layout.js?v=nav_titlecase"></script>
+<script src="journal-interactions.js?v=align_1600_8issues"></script>
+
+<!-- =========================================================================
+     CƠ SỞ DỮ LIỆU ĐỘNG TOÀN BỘ CÁC SỐ TẠP CHÍ HUIT & BỘ XỬ LÝ RENDER TRANG
+     ========================================================================= -->
+<script>
+(function() {
+  'use strict';
+
+  // 1. CƠ SỞ DỮ LIỆU ĐẦY ĐỦ CÁC SỐ XUẤT BẢN HUIT
+  const HUIT_ISSUES_DB = {
+    // --- TẬP 26 (2026) ---
+    'vol26_no3e': {
+      id: 'vol26_no3e',
+      altId: '30',
+      volume: 26,
+      year: 2026,
+      title: 'Tập 26 Số 3E (2026)',
+      theme: 'Hội thảo Quốc tế về Kinh tế lần thứ 3 – ICE 2026',
+      date: '2026-08-25',
+      cover: 'assets/images/cover_huit_vol26_no3e.svg',
+      desc: 'Số chuyên đề đặc biệt xuất bản các công trình nghiên cứu chọn lọc từ Hội thảo Khoa học Quốc tế lần thứ 3 về Kinh tế (ICE 2026), tập trung vào các vấn đề: Chuyển đổi số, Kinh tế tuần hoàn, Tài chính và Phát triển bền vững.',
+      section: 'Kinh tế',
+      articles: [
+        { title: 'BARRIERS AND STRATEGIES FOR CIRCULAR ECONOMY IMPLEMENTATION: A MIXED-METHODS ANALYSIS OF THANH HOA PROVINCE, VIET NAM', authors: 'Ma Minh Phuong (Tác giả liên hệ); Le Huy Huan (Tác giả)', pages: 'Trang 1 - 8', pdf: 'article-detail.html' },
+        { title: "FACTORS INFLUENCING CUSTOMERS' TIPPING BEHAVIOUR IN THE RESTAURANT DEPARTMENT AT CARAVELLE SAIGON HOTEL", authors: 'Tran Thi Le (Tác giả); Pham Minh Luan (Tác giả liên hệ)', pages: 'Trang 9 - 16', pdf: 'article-detail.html' },
+        { title: 'A COMPARATIVE ANALYSIS OF FORECASTING ACCURACY BETWEEN MACHINE LEARNING MODELS AND OLS REGRESSION: EMPIRICAL EVIDENCE FROM THE VIETNAMESE STOCK MARKET', authors: 'Ngo Ly Huynh Phat (Tác giả liên hệ); Pham Chi Trung, Bui Le Vi (Tác giả)', pages: 'Trang 17 - 39', pdf: 'article-detail.html' },
+        { title: 'A MECHANISM-BASED PERSPECTIVE ON THE PERSONALIZATION-PRIVACY TRADE-OFF: THE ROLES OF PERCEIVED SURVEILLANCE AND TRUST IN AI-DRIVEN E-COMMERCE', authors: 'Ngo Thi Bao Huong (Tác giả liên hệ); Nguyen Thu Lan (Tác giả)', pages: 'Trang 40 - 51', pdf: 'article-detail.html' },
+        { title: 'A STUDY ON THE DEVELOPMENT OF GREEN BANKING AT COMMERCIAL BANKS IN HO CHI MINH CITY', authors: 'Nguyen Van Tuan (Tác giả liên hệ)', pages: 'Trang 52 - 63', pdf: 'article-detail.html' },
+        { title: 'ADOPTION OF ARTIFICIAL INTELLIGENCE BY ACCOUNTING EMPLOYEES AT SMALL AND MEDIUM-SIZED ENTERPRISES IN HO CHI MINH CITY: THE MEDIATING ROLE OF TRUST IN AI', authors: 'Thi Mai Anh Hoang (Tác giả liên hệ); Nhi Ngoc Bao Do, Hoang Phuc Nguyen, Hoang Gia Kiet Than, Huynh Phuong Dong Le (Tác giả)', pages: 'Trang 64 - 81', pdf: 'article-detail.html' },
+        { title: 'AI-SUPPORTED LEARNING AND HUMAN CAPITAL DEVELOPMENT THROUGH STUDENT-NEGOTIATED INTELLIGENCE', authors: 'Dang Thi Thu Hang, Tran San Dao (Tác giả); Dinh Ngoc Long (Tác giả liên hệ)', pages: 'Trang 82 - 94', pdf: 'article-detail.html' },
+        { title: 'AN MCDM APPROACH TO EVALUATE DETERMINANTS OF SUSTAINABLE EXPORT CAPACITY OF VIETNAMESE TEXTILE AND GARMENT ENTERPRISES TO THE U.S MARKET', authors: 'Nong Thi Nhu Mai (Tác giả liên hệ); Hau Thanh Nhon Le, Chi Le, Luong Phuong Thao, Ngan Pham, Truong Trinh Minh Thu (Tác giả)', pages: 'Trang 95 - 116', pdf: 'article-detail.html' },
+        { title: "APPLYING AI TO WOMEN'S BUSINESS ACTIVITIES: STRUCTURAL BARRIERS AND PRACTICAL ADAPTATION IN URBAN VIETNAM", authors: 'Nguyen Thu Hao (Tác giả liên hệ); Nguyen Duy Thai, Minh Anh Vu, Bushra Beegom R. K., Nguyen Duc Chien (Tác giả)', pages: 'Trang 117 - 130', pdf: 'article-detail.html' },
+        { title: 'APPLYING THE PLS-SEM MODEL TO ANALYZE THE RELATIONSHIP BETWEEN FACTORS AFFECTING THE INTENTION AND ACTUAL USE OF AI TOOLS (CHATGPT) IN THE WORKPLACE IN HO CHI MINH CITY', authors: 'Nguyen Huu Ngoc (Tác giả liên hệ); Nguyen Hien Duc, Luong Quy Ngoc, Nguyen Hien Nhan, Luu Thi Thanh Huyen (Tác giả)', pages: 'Trang 131 - 145', pdf: 'article-detail.html' },
+        { title: 'ARTIFICIAL INTELLIGENCE ADOPTION IN ENTERPRISES: A LAYERED CAPABILITY FRAMEWORK FOR EMERGING ECONOMIES', authors: 'Vu Van Diep (Tác giả liên hệ)', pages: 'Trang 146 - 155', pdf: 'article-detail.html' },
+        { title: 'ARTIFICIAL INTELLIGENCE IN DIGITAL BANKING: APPLICATIONS AND IMPLICATIONS FOR LABOR TRANSFORMATION', authors: 'Nguyen Thi Hang (Tác giả); Huynh Thi Huong Thao (Tác giả liên hệ)', pages: 'Trang 156 - 171', pdf: 'article-detail.html' },
+        { title: 'ASSESSING THE IMPACT OF BLOCKCHAIN ON THE PERFORMANCE AND SECURITY OF DIGITAL CONSUMER LENDING SYSTEMS', authors: 'Ho Thanh Tri (Tác giả liên hệ); Le Hoang Minh Khue, Le Dinh Van, Tran Gia Linh, Vo Nguyen Thien Kim, Tran Phuong Dinh (Tác giả)', pages: 'Trang 172 - 186', pdf: 'article-detail.html' },
+        { title: 'BUILDING TRUST THROUGH AI: HOW INTERACTION FEATURES DRIVE IMPULSE BUYING IN LIVESTREAM COMMERCE', authors: 'Ngo Thi Bao Huong (Tác giả liên hệ); Nguyen Thi Hanh (Tác giả)', pages: 'Trang 187 - 205', pdf: 'article-detail.html' },
+        { title: 'CONSUMER RESISTANCE TO AI ADVERTISING: INSIGHTS FROM BIBLIOMETRIC MAPPING AND SYSTEMATIC REVIEW', authors: 'Phan Trong Nhan (Tác giả liên hệ); Ho Truc Vi (Tác giả)', pages: 'Trang 206 - 225', pdf: 'article-detail.html' },
+        { title: 'CORPORATE CULTURE, PROFESSIONAL ETHICS, AND CSR AS DETERMINANTS OF OPERATIONAL PERFORMANCE: EVIDENCE FROM VIETNAMESE FINTECH FIRMS', authors: 'Nguyen Thuy Cam Huong (Tác giả liên hệ)', pages: 'Trang 226 - 239', pdf: 'article-detail.html' },
+        { title: 'DESIGN AND IMPLEMENTATION OF A SCHOLARSHIP MANAGEMENT INFORMATION SYSTEM USING THE LARAVEL FRAMEWORK: A CASE STUDY OF DESAMIND SCHOLARSHIP PROGRAM', authors: 'Hardika Dwi Hermawan (Tác giả liên hệ); Vio Arvendha, Taufik Probowasito, Ahmad Zahy Rashad Handradika, Agatha Saputri (Tác giả)', pages: 'Trang 240 - 256', pdf: 'article-detail.html' }
+      ]
+    },
+
+    'vol26_no2e': {
+      id: 'vol26_no2e',
+      altId: '28',
+      volume: 26,
+      year: 2026,
+      title: 'Tập 26 Số 2E (2026)',
+      theme: 'Hội thảo Quốc tế VKSPE-SWPEA 2026: Kỹ thuật Hệ thống & Năng lượng Bền vững',
+      date: '2026-06-20',
+      cover: 'assets/images/cover_huit_vol26_no2e.jpg',
+      desc: 'Số chuyên đề tiếng Anh tuyển tập các nghiên cứu từ Hội thảo Quốc tế VKSPE-SWPEA 2026, tập trung vào lĩnh vực Kỹ thuật thực phẩm, Năng lượng tái tạo và Quản lý tài nguyên môi trường.',
+      section: 'Khoa học Kỹ thuật & Năng lượng',
+      articles: [
+        { title: 'OPTIMIZING RENEWABLE ENERGY MICROGRIDS USING DEEP REINFORCEMENT LEARNING', authors: 'Nguyen Van An (Tác giả liên hệ); Le Thi Binh (Tác giả)', pages: 'Trang 1 - 12', pdf: 'article-detail.html' },
+        { title: 'EXPERIMENTAL INVESTIGATION OF BIODIESEL BLENDS ON DIESEL ENGINE EMISSIONS AND PERFORMANCE', authors: 'Tran Minh Canh (Tác giả); Vo Hoang Danh (Tác giả liên hệ)', pages: 'Trang 13 - 24', pdf: 'article-detail.html' },
+        { title: 'WATER QUALITY ASSESSMENT AND PURIFICATION IN INDUSTRIAL ZONES OF DONG NAI BASIN', authors: 'Pham Thi En (Tác giả); Hoang Van Phuc (Tác giả liên hệ)', pages: 'Trang 25 - 36', pdf: 'article-detail.html' },
+        { title: 'SUSTAINABLE WASTEWATER TREATMENT VIA MEMBRANE BIOREACTOR PROCESS', authors: 'Doan Ngoc Giau (Tác giả liên hệ); Bui Xuan Hieu (Tác giả)', pages: 'Trang 37 - 48', pdf: 'article-detail.html' },
+        { title: 'STRUCTURAL ANALYSIS OF REINFORCED GEOPOLYMER COMPOSITES UNDER SEISMIC LOADS', authors: 'Phan Thanh Long (Tác giả); Dang Quang Khai (Tác giả liên hệ)', pages: 'Trang 49 - 60', pdf: 'article-detail.html' },
+        { title: 'CIRCULAR SUPPLY CHAIN OPTIMIZATION IN AGRI-FOOD PROCESSING ENTERPRISES', authors: 'Vu Thi Lan (Tác giả); Nguyen Tien Manh (Tác giả liên hệ)', pages: 'Trang 61 - 74', pdf: 'article-detail.html' }
+      ]
+    },
+
+    'vol26_no1e': {
+      id: 'vol26_no1e',
+      altId: '26',
+      volume: 26,
+      year: 2026,
+      title: 'Tập 26 Số 1E (2026)',
+      theme: 'English Edition: Food Science, Bioengineering & Chemical Technology',
+      date: '2026-03-15',
+      cover: 'assets/images/cover_huit_vol26_no1e.jpg',
+      desc: 'Ấn phẩm Tiếng Anh chuyên sâu về Công nghệ Thực phẩm, Công nghệ Sinh học và Công nghệ Hóa học ứng dụng trong chế biến nông lâm thủy sản.',
+      section: 'Food Science & Bioengineering',
+      articles: [
+        { title: 'EXTRACTION OF BIOACTIVE COMPOUNDS FROM DRAGON FRUIT PEEL USING ULTRASOUND-ASSISTED METHODS', authors: 'Nguyen Huu Phong (Tác giả liên hệ); Le Quoc Quan (Tác giả)', pages: 'Trang 1 - 10', pdf: 'article-detail.html' },
+        { title: 'EFFECTS OF FERMENTATION PARAMETERS ON THE QUALITY OF VIETNAMESE TRADITIONAL COCOA BEANS', authors: 'Trinh Van Rinh (Tác giả); Pham Ngoc Son (Tác giả liên hệ)', pages: 'Trang 11 - 22', pdf: 'article-detail.html' },
+        { title: 'SYNTHESIS AND CHARACTERIZATION OF CHITOSAN NANOPARTICLES FOR ACTIVE FOOD PACKAGING', authors: 'Mai Thi Tam (Tác giả liên hệ); Dinh Van Uy (Tác giả)', pages: 'Trang 23 - 34', pdf: 'article-detail.html' },
+        { title: 'ANTIMICROBIAL PROPERTIES OF ESSENTIAL OILS EXTRACTED FROM CYMBOPOGON CITRATUS', authors: 'Hoang Minh Vu (Tác giả); Vo Thi Xuan (Tác giả liên hệ)', pages: 'Trang 35 - 46', pdf: 'article-detail.html' },
+        { title: 'KINETIC MODELLING OF ENZYMATIC HYDROLYSIS OF TRA CATFISH BY-PRODUCTS', authors: 'Bui Van Yen (Tác giả liên hệ); Nguyen Thi Zung (Tác giả)', pages: 'Trang 47 - 58', pdf: 'article-detail.html' }
+      ]
+    },
+
+    'vol26_no3': {
+      id: 'vol26_no3',
+      altId: '29',
+      volume: 26,
+      year: 2026,
+      title: 'Tập 26 Số 3 (2026)',
+      theme: 'Xuất bản định kỳ Tháng 06/2026: Khoa học & Công nghệ Đa ngành',
+      date: '2026-06-30',
+      cover: 'assets/images/cover_huit_vol26_no3e.jpg',
+      desc: 'Số định kỳ xuất bản các kết quả nghiên cứu mới nhất trong các lĩnh vực: Công nghệ Thông tin, Cơ khí chế tạo máy, Kinh tế và Khoa học Xã hội.',
+      section: 'Công nghệ Thông tin & Tự động hóa',
+      articles: [
+        { title: 'ỨNG DỤNG MÔ HÌNH TRANSFORMER TRONG PHÂN LOẠI VĂN BẢN TIẾNG VIỆT QUY MÔ LỚN', authors: 'Bùi Vũ Thị F (Tác giả); Đặng Văn G (Tác giả liên hệ)', pages: 'Trang 1 - 14', pdf: 'article-detail.html' },
+        { title: 'THIẾT KẾ BỘ ĐIỀU KHIỂN THÍCH NGHI CHO TAY MÁY CÔNG NGHIỆP 6 BẬC TỰ DO', authors: 'Nguyễn Văn An (Tác giả liên hệ); Lê Minh Tuấn (Tác giả)', pages: 'Trang 15 - 28', pdf: 'article-detail.html' },
+        { title: 'NGHIÊN CỨU PHÁT HIỆN TẤN CÔNG MẠNG TRONG HỆ THỐNG IOT BẰNG HỌC SÂU', authors: 'Trần Quốc Bảo (Tác giả liên hệ); Phạm Thị Dung (Tác giả)', pages: 'Trang 29 - 42', pdf: 'article-detail.html' },
+        { title: 'TỐI ƯU HÓA HỆ THỐNG QUẢN TRỊ KHO DƯỢC PHẨM DỰA TRÊN THUẬT TOÁN GENETIC', authors: 'Võ Thành Đạt (Tác giả); Hoàng Ngọc Lan (Tác giả liên hệ)', pages: 'Trang 43 - 56', pdf: 'article-detail.html' },
+        { title: 'ĐÁNH GIÁ ĐỘ BỀN VẬT LIỆU COMPOSITE SỢI THỦY TINH TRONG MÔI TRƯỜNG BIỂN', authors: 'Đặng Hữu Phúc (Tác giả liên hệ); Nguyễn Văn Hùng (Tác giả)', pages: 'Trang 57 - 70', pdf: 'article-detail.html' }
+      ]
+    },
+
+    'vol26_no2': {
+      id: 'vol26_no2',
+      altId: '14',
+      volume: 26,
+      year: 2026,
+      title: 'Tập 26 Số 2 (2026)',
+      theme: 'Xuất bản định kỳ Tháng 04/2026: Kinh tế & Quản trị Kinh doanh',
+      date: '2026-04-30',
+      cover: 'assets/images/cover_huit_vol26_no2e.jpg',
+      desc: 'Số định kỳ tập trung vào nghiên cứu ứng dụng, chuyển giao công nghệ, quản trị chuỗi cung ứng và kinh tế số.',
+      section: 'Kinh tế & Quản trị',
+      articles: [
+        { title: 'CÁC YẾU TỐ ẢNH HƯỞNG ĐẾN QUYẾT ĐỊNH CHỌN MUA SẢN PHẨM OCOP TẠI TP.HCM', authors: 'Phạm Thanh Hà (Tác giả liên hệ); Vũ Đức Cường (Tác giả)', pages: 'Trang 1 - 12', pdf: 'article-detail.html' },
+        { title: 'TÁC ĐỘNG CỦA CHUYỂN ĐỔI SỐ ĐẾN HIỆU QUẢ HOẠT ĐỘNG CỦA CÁC DOANH NGHIỆP VỪA VÀ NHỎ', authors: 'Ngô Thị Hạnh (Tác giả); Trương Minh Quân (Tác giả liên hệ)', pages: 'Trang 13 - 26', pdf: 'article-detail.html' },
+        { title: 'Ý ĐỊNH SỬ DỤNG VÍ ĐIỆN TỬ CỦA THẾ HỆ GEN Z: MỞ RỘNG MÔ HÌNH UTAUT2', authors: 'Lê Hoàng Nam (Tác giả liên hệ); Đỗ Thị Oanh (Tác giả)', pages: 'Trang 27 - 40', pdf: 'article-detail.html' },
+        { title: 'NÂNG CAO NĂNG LỰC CẠNH TRANH XUẤT KHẨU GẠO VIỆT NAM SANG THỊ TRƯỜNG EU', authors: 'Hoàng Văn Phong (Tác giả); Nguyễn Thị Thảo (Tác giả liên hệ)', pages: 'Trang 41 - 54', pdf: 'article-detail.html' }
+      ]
+    },
+
+    'vol26_no1': {
+      id: 'vol26_no1',
+      altId: '23',
+      volume: 26,
+      year: 2026,
+      title: 'Tập 26 Số 1 (2026)',
+      theme: 'Xuất bản định kỳ Tháng 02/2026: Khởi đầu công trình nghiên cứu năm 2026',
+      date: '2026-02-28',
+      cover: 'assets/images/cover_huit_vol26_no1e.jpg',
+      desc: 'Số khai xuân năm 2026 với các công trình nghiên cứu khoa học cơ bản và ứng dụng tiêu biểu của giảng viên và nhà nghiên cứu HUIT.',
+      section: 'Khoa học Thực phẩm & Môi trường',
+      articles: [
+        { title: 'NGHIÊN CỨU SẢN XUẤT RƯỢU VANG THANH LONG ĐỎ LÊN MEN BẰNG CHỦNG SACCHAROMYCES CEREVISIAE THUẦN KHIẾT', authors: 'Lê Văn Sơn (Tác giả liên hệ); Trần Thị Thảo (Tác giả)', pages: 'Trang 1 - 11', pdf: 'article-detail.html' },
+        { title: 'KHẢO SÁT HÀM LƯỢNG KIM LOẠI NẶNG TRONG NƯỚC THẢI LÀNG NGHỀ CHẾ BIẾN TINH BỘT', authors: 'Nguyễn Duy Tân (Tác giả); Phạm Văn Uy (Tác giả liên hệ)', pages: 'Trang 12 - 24', pdf: 'article-detail.html' },
+        { title: 'TỐI ƯU HÓA ĐIỀU KIỆN SẤY THĂNG HOA DƯỢC LIỆU ĐÔNG TRÙNG HẠ THẢO', authors: 'Vũ Đình Vĩnh (Tác giả liên hệ); Hoàng Thị Xuân (Tác giả)', pages: 'Trang 25 - 38', pdf: 'article-detail.html' }
+      ]
+    },
+
+    // --- TẬP 25 (2025) ---
+    'vol25_no6': {
+      id: 'vol25_no6',
+      altId: '25',
+      volume: 25,
+      year: 2025,
+      title: 'Tập 25 Số 6 (2025)',
+      theme: 'Xuất bản định kỳ Tháng 12/2025: Tổng kết các công trình khoa học năm 2025',
+      date: '2025-12-30',
+      cover: 'assets/images/cover_huit_vol26_no3e.jpg',
+      desc: 'Ấn phẩm tổng kết các công trình khoa học trọng điểm năm 2025 của Trường Đại học Công Thương TP.HCM.',
+      section: 'Khoa học Ứng dụng & Công nghệ',
+      articles: [
+        { title: 'ĐÁNH GIÁ CHẤT LƯỢNG BỘT TRÁI CÂY SẤY PHUN DÙNG TRỢ SẤY MALTODEXTRIN', authors: 'Đoàn Văn Tiến (Tác giả liên hệ); Lê Thị Mỹ (Tác giả)', pages: 'Trang 1 - 12', pdf: 'article-detail.html' },
+        { title: 'THU HỒI DẦU TỪ BÃ CÀ PHÊ BẰNG DUNG MÔI XANH ETHANOL', authors: 'Trần Đình Trọng (Tác giả); Nguyễn Văn Nam (Tác giả liên hệ)', pages: 'Trang 13 - 25', pdf: 'article-detail.html' },
+        { title: 'MÔ PHỎNG SỐ TRƯỜNG NHIỆT VÀ ỨNG SUẤT KHI HÀN TỰ ĐỘNG KHUNG DẦM THÉP', authors: 'Phạm Quốc Huy (Tác giả liên hệ); Vũ Văn Lộc (Tác giả)', pages: 'Trang 26 - 38', pdf: 'article-detail.html' }
+      ]
+    },
+
+    'vol25_no5': {
+      id: 'vol25_no5',
+      altId: '11',
+      volume: 25,
+      year: 2025,
+      title: 'Tập 25 Số 5 (2025)',
+      theme: 'Xuất bản định kỳ Tháng 10/2025: Công nghệ Sinh học & Hóa học',
+      date: '2025-10-31',
+      cover: 'assets/images/cover_huit_vol26_no2e.jpg',
+      desc: 'Số chuyên đề về xử lý môi trường, vi sinh học ứng dụng và phân tích an toàn thực phẩm.',
+      section: 'Hóa học & Sinh học Ứng dụng',
+      articles: [
+        { title: 'TỔNG HỢP VẬT LIỆU NANO TIO2 BIẾN TÍNH QUANG XÚC TÁC XỬ LÝ PHẨM MÀU HỮU CƠ', authors: 'Ngô Văn Bách (Tác giả liên hệ); Lê Thị Cúc (Tác giả)', pages: 'Trang 1 - 13', pdf: 'article-detail.html' },
+        { title: 'CHIẾT XUẤT VÀ KHẢO SÁT HOẠT TÍNH CHỐNG OXY HÓA CỦA HỢP CHẤT PHENOL TỪ LÁ TRÀ VẰNG', authors: 'Hoàng Kim Dung (Tác giả); Đỗ Văn Giang (Tác giả liên hệ)', pages: 'Trang 14 - 26', pdf: 'article-detail.html' },
+        { title: 'PHÂN LẬP VÀ TUYỂN CHỌN CHỦNG VI SINH VẬT CÓ KHẢ NĂNG PHÂN HỦY MÀNG NHỰA SINH HỌC', authors: 'Võ Thị Hoa (Tác giả liên hệ); Nguyễn Thành Long (Tác giả)', pages: 'Trang 27 - 39', pdf: 'article-detail.html' }
+      ]
+    },
+
+    'vol25_no4': {
+      id: 'vol25_no4',
+      altId: '19',
+      volume: 25,
+      year: 2025,
+      title: 'Tập 25 Số 4 (2025)',
+      theme: 'Xuất bản định kỳ Tháng 08/2025: Kỹ thuật Cơ khí & Nông nghiệp',
+      date: '2025-08-31',
+      cover: 'assets/images/cover_huit_vol26_no1e.jpg',
+      desc: 'Số xuất bản định kỳ quý 3 năm 2025 với các bài báo về cơ khí chính xác, tự động hóa và công nghệ chế biến sau thu hoạch.',
+      section: 'Khoa học & Kỹ thuật',
+      articles: [
+        { title: 'NGHIÊN CỨU THIẾT KẾ MÁY TỰ ĐỘNG PHÂN LOẠI NÔNG SẢN BẰNG XỬ LÝ ẢNH', authors: 'Lê Văn Minh (Tác giả liên hệ); Trần Văn Hòa (Tác giả)', pages: 'Trang 1 - 14', pdf: 'article-detail.html' },
+        { title: 'ẢNH HƯỞNG CỦA CÔNG NGHỆ CHẾ BIẾN NHIỆT ĐẾN GIÁ TRỊ DINH DƯỠNG CỦA SỮA HẠT', authors: 'Nguyễn Thị Mai (Tác giả); Phạm Văn Hùng (Tác giả liên hệ)', pages: 'Trang 15 - 28', pdf: 'article-detail.html' }
+      ]
+    },
+
+    'vol25_no2': {
+      id: 'vol25_no2',
+      altId: '20',
+      volume: 25,
+      year: 2025,
+      title: 'Tập 25 Số 2 (2025)',
+      theme: 'Xuất bản định kỳ Tháng 04/2025: Khoa học Xã hội & Phát triển Bền vững',
+      date: '2025-04-30',
+      cover: 'assets/images/cover_huit_vol26_no2e.jpg',
+      desc: 'Ấn phẩm nghiên cứu liên ngành về phát triển nguồn nhân lực, quản trị rủi ro chuỗi cung ứng và chính sách kinh tế khu vực.',
+      section: 'Khoa học Xã hội & Quản lý',
+      articles: [
+        { title: 'CHÍNH SÁCH PHÁT TRIỂN NGUỒN NHÂN LỰC CHẤT LƯỢNG CAO TẠI VÙNG KINH TẾ TRỌNG ĐIỂM PHÍA NAM', authors: 'Vũ Thị Lan (Tác giả liên hệ); Hoàng Văn Nam (Tác giả)', pages: 'Trang 1 - 13', pdf: 'article-detail.html' },
+        { title: 'QUẢN TRỊ RỦI RO CHUỖI CUNG ỨNG TRONG BỐI CẢNH THỊ TRƯỜNG TOÀN CẦU BIẾN ĐỘNG', authors: 'Đinh Văn Thành (Tác giả); Nguyễn Thị Yến (Tác giả liên hệ)', pages: 'Trang 14 - 27', pdf: 'article-detail.html' }
+      ]
+    }
+  };
+
+  // 2. HÀM TÌM SỐ DỰA TRÊN QUERY PARAM HOẶC DEFAULT
+  function getRequestedIssue() {
+    const params = new URLSearchParams(window.location.search);
+    const queryId = params.get('id') || params.get('issue');
+
+    if (queryId) {
+      // Tìm theo key trực tiếp
+      if (HUIT_ISSUES_DB[queryId]) return HUIT_ISSUES_DB[queryId];
+      // Tìm theo altId (ví dụ id: 30, 28, 26...)
+      for (const k in HUIT_ISSUES_DB) {
+        if (HUIT_ISSUES_DB[k].altId === queryId || HUIT_ISSUES_DB[k].id === queryId) {
+          return HUIT_ISSUES_DB[k];
+        }
+      }
+    }
+    // Mặc định là số mới nhất: Tập 26 Số 3E
+    return HUIT_ISSUES_DB['vol26_no3e'];
+  }
+
+  // 3. RENDER NỘI DUNG SỐ ĐƯỢC CHỌN (Kết nối trực tiếp API SQL Server)
+  async function renderIssueDetail() {
+    const params = new URLSearchParams(window.location.search);
+    const queryId = params.get('id') || params.get('issue');
+
+    let issue = null;
+
+    // 1. Thử gọi API nếu id là số (khóa chính MaSoTapChi trong SQL Server)
+    if (queryId && !isNaN(parseInt(queryId, 10)) && typeof apiGetIssueDetail === 'function') {
+      try {
+        const liveIssue = await apiGetIssueDetail(parseInt(queryId, 10));
+        if (liveIssue) {
+          issue = {
+            id: liveIssue.maSoTapChi.toString(),
+            volume: liveIssue.tap,
+            year: liveIssue.nam,
+            title: liveIssue.tenSo || `Tập ${liveIssue.tap} Số ${liveIssue.so} (${liveIssue.nam})`,
+            theme: `Tập ${liveIssue.tap} Số ${liveIssue.so} (${liveIssue.nam}): Công trình nghiên cứu khoa học công nghệ`,
+            date: liveIssue.ngayPhatHanh ? new Date(liveIssue.ngayPhatHanh).toLocaleDateString('vi-VN') : liveIssue.nam.toString(),
+            cover: liveIssue.anhBiaUrl || 'assets/images/cover_huit_vol26_no3e.jpg',
+            pdfMucLuc: liveIssue.pdfMucLuc || null,
+            desc: liveIssue.moTa || `Ấn phẩm Tạp chí Khoa học Đại học Công Thương Tập ${liveIssue.tap} Số ${liveIssue.so} Năm ${liveIssue.nam}.`,
+            section: 'Công trình nghiên cứu khoa học',
+            articles: (liveIssue.danhSachBaiBao || []).map(b => ({
+              title: b.tieuDe,
+              authors: b.tacGias && b.tacGias.length > 0 ? b.tacGias.map(t => t.hoTen + (t.laTacGiaLienHe ? ' (Tác giả liên hệ)' : '')).join('; ') : 'Ban biên tập',
+              pages: (b.trangBatDau && b.trangKetThuc) ? `Trang ${b.trangBatDau} - ${b.trangKetThuc}` : 'Bài báo toàn văn',
+              pdf: `article-detail.html?id=${b.maBaiBao}`
+            }))
+          };
+        }
+      } catch (err) {
+        console.warn('Lỗi kết nối API số tạp chí:', err);
+      }
+    }
+
+    // 2. Nếu không tìm thấy qua API, fallback sang HUIT_ISSUES_DB
+    if (!issue) {
+      issue = getRequestedIssue();
+    }
+    if (!issue) return;
+
+    // Cập nhật tiêu đề trang
+    document.title = `${issue.title} · Tạp chí Khoa học Đại học Công Thương`;
+    document.getElementById('breadcrumbIssueTitle').textContent = issue.title;
+
+    // Cập nhật thông tin đầu đề số
+    document.getElementById('issueMainTitle').textContent = issue.title;
+    document.getElementById('issueThemeTitle').textContent = issue.theme;
+    document.getElementById('issueDateVal').textContent = issue.date;
+    document.getElementById('issueDescVal').textContent = issue.desc;
+    document.getElementById('issueCoverImg').src = issue.cover;
+    document.getElementById('issueCoverImg').onerror = function() { this.src = 'assets/images/cover_huit_vol26_no3e.jpg'; };
+    document.getElementById('issueCoverImg').alt = `Bìa ${issue.title}`;
+    
+    // Nút tải mục lục PDF: Chỉ hiển thị khi có file PDF thực sự, tuyệt đối không gán nhầm sang file ảnh bìa
+    const btnDownloadFullIssue = document.getElementById('btnDownloadFullIssue');
+    if (btnDownloadFullIssue) {
+      if (issue.pdfMucLuc && typeof issue.pdfMucLuc === 'string' && issue.pdfMucLuc.trim() !== '') {
+        btnDownloadFullIssue.href = issue.pdfMucLuc;
+        btnDownloadFullIssue.style.display = 'inline-flex';
+      } else {
+        btnDownloadFullIssue.style.display = 'none';
+      }
+    }
+
+    // Cập nhật tiêu đề chuyên mục
+    document.getElementById('issueSectionTitle').textContent = issue.section;
+
+    // Render danh sách toàn bộ bài báo
+    const articlesContainer = document.getElementById('articlesFullListContainer');
+    if (issue.articles && issue.articles.length > 0) {
+      articlesContainer.innerHTML = issue.articles.map(a => `
+        <article class="article-row-item">
+          <h3 class="article-row-title">
+            <a href="${a.pdf}">${a.title}</a>
+          </h3>
+          <div class="article-row-meta">
+            <div class="article-row-authors">${a.authors}</div>
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <span class="article-row-page">${a.pages}</span>
+              <a href="${a.pdf}" class="btn-article-pdf">📄 Xem toàn văn</a>
+            </div>
+          </div>
+        </article>
+      `).join('');
+    } else {
+      articlesContainer.innerHTML = `
+        <div style="padding:24px;text-align:center;color:var(--ink-500);font-size:13.5px;">
+          Số tạp chí này đang trong giai đoạn hoàn thiện mục lục bài báo.
+        </div>
+      `;
+    }
+
+    // Render danh sách các số cùng Tập ở Sidebar
+    document.getElementById('siblingBoxTitle').textContent = `CÁC SỐ CÙNG TẬP ${issue.volume || 15} (${issue.year || 2026})`;
+    const siblingContainer = document.getElementById('siblingIssuesContainer');
+    
+    const siblingIssues = Object.values(HUIT_ISSUES_DB).filter(item => item.volume === issue.volume);
+    siblingContainer.innerHTML = siblingIssues.map(s => {
+      const isCurrent = s.id === issue.id;
+      if (isCurrent) {
+        return `
+          <div class="sibling-issue-item active">
+            <span>${s.title}</span>
+            <span style="font-size: 11px; background: #0284C7; color: #fff; padding: 2px 6px; border-radius: 2px;">Đang xem</span>
+          </div>
+        `;
+      } else {
+        return `
+          <a href="issue-detail.html?id=${s.id}" class="sibling-issue-item">
+            <span>${s.title}</span>
+            <span style="font-size: 12px; color: #94A3B8;">&rarr;</span>
+          </a>
+        `;
+      }
+    }).join('');
+  }
+
+  // Khởi chạy khi DOM sẵn sàng
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderIssueDetail);
+  } else {
+    renderIssueDetail();
+  }
+})();
+</script>
+</body>
+</html>

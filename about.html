@@ -3,11 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Giới thiệu · Tạp chí Khoa học</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Giới thiệu · Tạp chí Khoa học Đại học Công Thương</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="journal-interactions.css">
+<link rel="stylesheet" href="journal-interactions.css?v=2">
 
 <style>
   :root {
@@ -17,10 +20,11 @@
     --sky-100: #E4EFFA;
     --sky-200: #C9DFF4;
     --sky-400: #8FB8E3;
-    --sky-500: #6699D1;
-    --sky-600: #4C7FB8;
-    --sky-700: #3A6497;
+    --sky-500: #1da1f2;
+    --sky-600: #0f82c7;
+    --sky-700: #0066b3;
     --ink-900: #16202B;
+    --ink-800: #1F2937;
     --ink-700: #3D4A57;
     --ink-500: #6B7684;
     --ink-300: #A9B2BC;
@@ -33,182 +37,356 @@
     font-family: var(--sans);
     background: var(--white);
     color: var(--ink-900);
-    line-height: 1.6;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
   }
 
   a { text-decoration: none; color: inherit; }
   .wrap { max-width: 1360px; margin: 0 auto; padding: 0 20px; }
 
   /* BREADCRUMB */
-  .breadcrumb-bar { background: var(--sky-050); border-bottom: 1px solid var(--line); padding: 12px 0; font-size: 12px; color: var(--ink-500); }
-  .breadcrumb-bar a { color: #1da1f2; font-weight: 500; }
-  .breadcrumb-bar a:hover { text-decoration: underline; }
-  .breadcrumb-bar span.sep { margin: 0 8px; color: var(--sky-200); }
+  .breadcrumb-bar {
+    background: var(--sky-050);
+    border-bottom: 1px solid var(--line);
+    padding: 12px 0;
+    font-size: 12.5px;
+    color: var(--ink-500);
+  }
+  .breadcrumb-bar a {
+    color: #1da1f2;
+    font-weight: 500;
+  }
+  .breadcrumb-bar a:hover {
+    text-decoration: underline;
+  }
+  .breadcrumb-bar span.sep {
+    margin: 0 8px;
+    color: var(--sky-200);
+  }
 
-  /* LAYOUT CHÍNH */
-  .about-container { display: grid; grid-template-columns: 280px 1fr; gap: 36px; padding: 36px 0 64px; }
+  /* LAYOUT CHÍNH: 280px 1fr */
+  .about-container {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 36px;
+    padding: 36px 0 64px;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .about-container {
+      grid-template-columns: 1fr;
+    }
+  }
 
-  /* SIDEBAR TABS */
-  .about-sidebar { position: sticky; top: 20px; align-self: start; background: #ffffff; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
-  .about-sidebar-title { padding: 14px 18px; font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-500); border-bottom: 1px solid var(--line); background: #fafcff; }
-  .about-nav-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; font-size: 13.5px; font-weight: 600; color: var(--ink-700); border-left: 3px solid transparent; border-bottom: 1px solid #f1f5f9; cursor: pointer; transition: all .15s; }
-  .about-nav-item:hover { background: #f8fafc; color: #1da1f2; }
-  .about-nav-item.active { background: #f0f7ff; color: #1da1f2; border-left-color: #1da1f2; font-weight: 700; }
-  .about-nav-item svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+  /* SIDEBAR CHUYÊN MỤC GIỚI THIỆU */
+  .about-sidebar {
+    position: sticky;
+    top: 20px;
+    align-self: start;
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .about-sidebar-title {
+    padding: 14px 18px;
+    font-size: 12.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ink-500);
+    border-bottom: 1px solid var(--line);
+    background: #fafcff;
+  }
+  .about-nav-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink-700);
+    border-left: 3px solid transparent;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .about-nav-item:last-child {
+    border-bottom: none;
+  }
+  .about-nav-item:hover {
+    background: #f8fafc;
+    color: #1da1f2;
+  }
+  .about-nav-item.active {
+    background: #f0f7ff;
+    color: #1da1f2;
+    border-left-color: #1da1f2;
+    font-weight: 700;
+  }
+  .about-nav-item svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+  }
 
-  /* NỘI DUNG CHÍNH */
-  .about-content { background: #ffffff; border: 1px solid var(--line); border-radius: 8px; padding: 36px 42px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); min-height: 600px; }
-  .tab-pane { display: none; }
-  .tab-pane.active { display: block; animation: fadeIn 0.2s ease-out; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  /* KHỐI NỘI DUNG CHÍNH (CARD TRẮNG BO GÓC) */
+  .about-content {
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 36px 42px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    min-height: 650px;
+  }
 
-  .page-title { font-family: var(--serif); font-size: 28px; font-weight: 600; color: var(--ink-900); margin-bottom: 8px; }
-  .page-subtitle { font-size: 13.5px; color: var(--ink-500); margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+  .page-title {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--ink-900);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .page-subtitle {
+    font-size: 13.5px;
+    color: var(--ink-500);
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+  }
 
-  .content-section { margin-bottom: 32px; }
-  .content-section h2 { font-size: 18px; font-weight: 700; color: var(--ink-900); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-  .content-section p { font-size: 14.5px; color: var(--ink-700); margin-bottom: 14px; text-align: justify; }
+  /* PHÂN MỤC NỘI DUNG */
+  .content-section {
+    margin-bottom: 30px;
+  }
+  .content-section h2 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ink-900);
+    margin-bottom: 12px;
+  }
+  .content-section p {
+    font-size: 14.5px;
+    color: var(--ink-700);
+    margin-bottom: 12px;
+    text-align: justify;
+    line-height: 1.65;
+  }
+  .content-section p:last-child {
+    margin-bottom: 0;
+  }
 
-  /* THÔNG SỐ TẠP CHÍ HIGHLIGHT BOX */
-  .journal-meta-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin: 20px 0 28px; }
-  .meta-card { background: var(--sky-050); border: 1px solid var(--sky-200); border-radius: 6px; padding: 16px 20px; }
-  .meta-card-label { font-size: 11.5px; font-weight: 700; color: #1da1f2; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
-  .meta-card-val { font-size: 14.5px; font-weight: 700; color: var(--ink-900); }
-  .meta-card-sub { font-size: 12px; color: var(--ink-500); margin-top: 2px; }
+  /* KHỐI 4 THẺ THÔNG SỐ (METADATA GRID 2x2) */
+  .journal-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin: 20px 0 28px;
+  }
+  @media (max-width: 680px) {
+    .journal-meta-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .meta-card {
+    background: var(--sky-050);
+    border: 1px solid var(--sky-200);
+    border-radius: 6px;
+    padding: 16px 20px;
+    transition: box-shadow .2s;
+  }
+  .meta-card:hover {
+    box-shadow: 0 3px 8px rgba(29, 161, 242, 0.08);
+  }
+  .meta-card-label {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #1da1f2;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+  .meta-card-val {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--ink-900);
+  }
+  .meta-card-sub {
+    font-size: 12px;
+    color: var(--ink-500);
+    margin-top: 2px;
+  }
 
-  /* DANH SÁCH BAN BIÊN TẬP / NHÂN SỰ CARD */
-  .personnel-group { margin-bottom: 28px; }
-  .personnel-group-title { font-size: 14.5px; font-weight: 700; color: #1da1f2; background: #f1f5f9; padding: 8px 14px; border-radius: 4px; margin-bottom: 12px; }
-  .personnel-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin-top: 8px; }
-  .personnel-table th { background: #fafcff; border: 1px solid var(--line); padding: 10px 14px; text-align: left; font-weight: 600; color: var(--ink-700); }
-  .personnel-table td { border: 1px solid var(--line); padding: 10px 14px; vertical-align: top; }
-  .person-role { font-weight: 700; color: var(--ink-900); }
-  .person-name { font-weight: 600; color: #1da1f2; }
-  .person-inst { font-size: 12.5px; color: var(--ink-500); }
+  /* KHỐI TIỀN THÂN & LỊCH SỬ */
+  .history-box {
+    background: #f8fafc;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 16px 20px;
+    margin: 16px 0 20px;
+    font-size: 14px;
+    color: var(--ink-700);
+    line-height: 1.65;
+  }
 
-  /* POLICY BOXES */
-  .policy-box { border: 1px solid var(--line); border-left: 4px solid #1da1f2; border-radius: 4px; padding: 18px 22px; background: #fff; margin-bottom: 18px; }
-  .policy-box h3 { font-size: 15px; font-weight: 700; color: var(--ink-900); margin-bottom: 8px; }
+  /* BẢNG THÔNG SỐ XUẤT BẢN (KHÔNG BULLET POINT) */
+  .spec-grid { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+  .spec-row { display: flex; gap: 14px; padding: 10px 14px; background: #ffffff; border: 1px solid var(--line); border-radius: 4px; font-size: 13.5px; }
+  .spec-label { font-weight: 700; color: var(--ink-900); min-width: 170px; flex-shrink: 0; }
+  .spec-value { color: var(--ink-700); }
+  @media (max-width: 640px) {
+    .spec-row { flex-direction: column; gap: 4px; }
+  }
 
-  footer { background: #1da1f2; padding: 32px 24px; text-align: center; font-size: 13px; color: #ffffff; margin-top: 40px; box-shadow: 0 -2px 10px rgba(29,161,242,0.15); }
-  footer .flinks { margin-top: 12px; }
-  footer .flinks a { margin: 0 14px; color: rgba(255,255,255,0.9); font-weight: 600; }
-  footer .flinks a:hover { color: #ffffff; text-decoration: underline; }
+  /* BẢNG TÍNH ĐIỂM HỘI ĐỒNG GIÁO SƯ NHÀ NƯỚC */
+  .scoring-table-box {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 14px 0 20px;
+  }
+  .scoring-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  .scoring-table thead {
+    background: #f8fafc;
+    border-bottom: 1px solid var(--line);
+  }
+  .scoring-table th {
+    padding: 10px 16px;
+    font-weight: 700;
+    color: var(--ink-900);
+    text-align: left;
+    font-size: 12.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .scoring-table td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink-800);
+  }
+  .scoring-table tr:last-child td {
+    border-bottom: none;
+  }
+  .scoring-table tr:hover {
+    background: #fcfdfe;
+  }
+  .score-badge {
+    display: inline-block;
+    background: #e0f2fe;
+    color: #0284c7;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12.5px;
+    white-space: nowrap;
+  }
+
+  /* KHỐI 4 LĨNH VỰC TRỌNG ĐIỂM (Ô TRUNG TÍNH, KHÔNG DÙNG MÀU XANH, TRÁNH CẢM GIÁC MÁY MÓC) */
+  .focus-fields-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin: 14px 0 18px;
+  }
+  @media (max-width: 680px) {
+    .focus-fields-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  .focus-field-item {
+    background: #fafafa;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    padding: 12px 16px;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .focus-field-item:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+  }
+  .focus-field-num {
+    width: 24px;
+    height: 24px;
+    background: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #e5e7eb;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* THỂ THỨC XUẤT BẢN & LIÊN HỆ TÒA SOẠN */
+  .spec-list {
+    list-style: none;
+    margin: 10px 0 16px;
+  }
+  .spec-list li {
+    display: flex;
+    align-items: baseline;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--line);
+    font-size: 14px;
+  }
+  .spec-list li:last-child {
+    border-bottom: none;
+  }
+  .spec-label {
+    width: 200px;
+    font-weight: 600;
+    color: var(--ink-900);
+    flex-shrink: 0;
+  }
+  .spec-value {
+    color: var(--ink-700);
+    flex: 1;
+  }
+
+  .office-contact-box {
+    background: #f8fafc;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 18px 22px;
+    margin-top: 12px;
+  }
+  .office-contact-box h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink-900);
+    margin-bottom: 12px;
+  }
+  .office-contact-box p {
+    font-size: 14px;
+    color: var(--ink-700);
+    margin-bottom: 8px;
+    line-height: 1.55;
+  }
+  .office-contact-box p:last-child {
+    margin-bottom: 0;
+  }
 </style>
 </head>
 <body>
 
-<!-- KHỐI BANNER & NAVBAR NỀN XANH (#1da1f2) -->
-<div class="header-bar">
-  <header class="masthead wrap">
-    <div class="name"><a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Tạp chí Khoa học</a></div>
-    <div class="tagline">NGHIÊN CỨU · CÔNG NGHỆ · CHUYỂN GIAO TRI THỨC</div>
-  </header>
-
-  <nav class="navbar wrap">
-    <div class="nav-links">
-      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html" style="display:inline-flex;align-items:center;gap:4px;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        Trang chủ
-      </a>
-
-      <!-- TAB DROPDOWN: GIỚI THIỆU -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle on">
-          GIỚI THIỆU
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="about.html" class="field-menu-item" style="color:#1da1f2!important;font-weight:700;">
-            <span>Giới thiệu về tạp chí</span>
-          </a>
-          <a href="publishing-policy.html" class="field-menu-item">
-            <span>Chính sách xuất bản</span>
-          </a>
-          <a href="editorial-board.html" class="field-menu-item">
-            <span>Hội đồng biên tập</span>
-          </a>
-          <a href="contact.html" class="field-menu-item">
-            <span>Nhân sự &amp; Liên hệ</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- TAB DROPDOWN: QUY TRÌNH - BIỂU MẪU -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle">
-          QUY TRÌNH - BIỂU MẪU
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="guidelines.html#submission" class="field-menu-item">
-            <span>Quy trình đăng bài</span>
-          </a>
-          <a href="guidelines.html#review" class="field-menu-item">
-            <span>Quy trình phản biện</span>
-          </a>
-          <a href="guidelines.html#format" class="field-menu-item">
-            <span>Thể lệ viết và gửi bài</span>
-          </a>
-          <a href="guidelines.html#templates" class="field-menu-item">
-            <span>Các biểu mẫu</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- TAB DROPDOWN: LĨNH VỰC KHOA HỌC -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle">
-          LĨNH VỰC KHOA HỌC
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="article-detail.html" class="field-menu-item">
-            <span>Công nghệ thông tin</span>
-            <span class="badge-count">142</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Cơ khí – Tự động hóa</span>
-            <span class="badge-count">98</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Khoa học Môi trường</span>
-            <span class="badge-count">76</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Kinh tế – Quản trị</span>
-            <span class="badge-count">115</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Hóa học &amp; Công nghệ thực phẩm</span>
-            <span class="badge-count">84</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Khoa học Xã hội &amp; Nhân văn</span>
-            <span class="badge-count">62</span>
-          </a>
-          <div class="fields-menu-divider"></div>
-          <a href="archives.html" class="fields-menu-all">Xem tất cả các chuyên ngành &rarr;</a>
-        </div>
-      </div>
-
-      <a href="archives.html">Kho lưu trữ</a>
-    </div>
-
-    <!-- KHỐI PHẢI: NÚT NỘP BÀI + AUTH -->
-    <div class="nav-actions">
-      <a href="submit-paper.html" style="background:#ffffff;color:#1da1f2;padding:6px 14px;border-radius:4px;font-size:12.5px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.12);display:inline-flex;align-items:center;gap:6px;transition:all .2s;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-        Gửi bài báo
-      </a>
-      
-      <div class="auth-links">
-        <a href="login.html" class="login-btn">Đăng nhập</a>
-        <a href="register.html" class="register-btn">Đăng ký</a>
-      </div>
-    </div>
-  </nav>
-</div>
+<!-- KHỐI HEADER CHUNG (SHARED LAYOUT HUIT) -->
+<div id="huit-header" data-active="about"></div>
 
 <!-- BREADCRUMB -->
 <div class="breadcrumb-bar">
@@ -219,10 +397,10 @@
   </div>
 </div>
 
-<!-- THÂN TRANG GIỚI THIỆU -->
+<!-- THÂN TRANG GIỚI THIỆU (2 CỘT CHUẨN 280px + 1fr) -->
 <div class="wrap about-container">
   
-  <!-- SIDEBAR MENU -->
+  <!-- SIDEBAR MENU BÊN TRÁI -->
   <aside class="about-sidebar">
     <div class="about-sidebar-title">Chuyên mục Giới thiệu</div>
     <a href="about.html" class="about-nav-item active">
@@ -243,255 +421,177 @@
     </a>
   </aside>
 
-  <!-- NỘI DUNG CÁC TAB -->
+  <!-- NỘI DUNG CHÍNH BÊN PHẢI (CARD TRẮNG BO GÓC) -->
   <main class="about-content">
     
-    <!-- TAB 1: GIỚI THIỆU VỀ TẠP CHÍ -->
-    <div id="tab-intro" class="tab-pane active">
-      <h1 class="page-title">Giới thiệu về Tạp chí Khoa học</h1>
-      <div class="page-subtitle">Cơ quan ngôn luận học thuật chuyên ngành Nghiên cứu &amp; Phát triển Công nghệ</div>
+    <h1 class="page-title">Giới thiệu về Tạp chí Khoa học Đại học Công Thương</h1>
+    <div class="page-subtitle">Cơ quan ngôn luận học thuật trực thuộc Trường Đại học Công Thương TP. Hồ Chí Minh (HUIT)</div>
 
-      <div class="content-section">
-        <h2>1. Tôn chỉ và Mục đích</h2>
-        <p>Tạp chí Khoa học là diễn đàn khoa học uy tín công bố các công trình nghiên cứu khoa học cơ bản, nghiên cứu ứng dụng, chuyển giao công nghệ và các bài tổng quan chuyên sâu trong nhiều lĩnh vực: Khoa học Kỹ thuật &amp; Công nghệ, Công nghệ Sinh học &amp; Thực phẩm, Hóa học &amp; Môi trường, Kinh tế &amp; Quản trị kinh doanh, Khoa học Xã hội và Nhân văn.</p>
-        <p>Tạp chí hoạt động theo Giấy phép hoạt động báo chí của Bộ Thông tin và Truyền thông, tuân thủ các quy chuẩn học thuật khắt khe, minh bạch và liêm chính nghiên cứu theo thông lệ quốc tế.</p>
+    <!-- 1. TÔN CHỈ VÀ MỤC ĐÍCH -->
+    <div class="content-section">
+      <h2>1. Tôn chỉ và Mục đích</h2>
+      <p><strong>Tạp chí Khoa học Đại học Công Thương</strong> (<em>HUIT Journal of Science - HUIT Journal</em>) là diễn đàn học thuật uy tín của <strong>Trường Đại học Công Thương TP. Hồ Chí Minh</strong>; chuyên công bố các kết quả nghiên cứu khoa học thuộc lĩnh vực đào tạo, giảng dạy của Nhà trường; tạo ra diễn đàn trao đổi thông tin khoa học công nghệ với các đơn vị trong và ngoài nước, gắn hoạt động nghiên cứu khoa học của Nhà trường với đào tạo, ứng dụng vào thực tiễn sản xuất, hội nhập và phát triển đất nước.</p>
+      <p>Tạp chí hoạt động theo <strong>Giấy phép hoạt động báo chí in và báo chí điện tử số 53/GP-BTTTT ngày 06/3/2024</strong> do <strong>Bộ Thông tin và Truyền thông</strong> cấp, tuân thủ quy trình phản biện kín hai chiều (Double-blind peer review), minh bạch và bảo đảm tính liêm chính nghiên cứu theo chuẩn mực quốc tế COPE và OJS.</p>
+    </div>
+
+    <!-- KHỐI 4 THẺ THÔNG SỐ ĐỊNH DANH (2x2 GRID) -->
+    <div class="journal-meta-grid">
+      <div class="meta-card">
+        <div class="meta-card-label">Mã chuẩn quốc tế (Print)</div>
+        <div class="meta-card-val">p-ISSN 3030-4113</div>
+        <div class="meta-card-sub">Ấn bản in định kỳ phát hành toàn quốc</div>
       </div>
-
-      <div class="journal-meta-grid">
-        <div class="meta-card">
-          <div class="meta-card-label">Mã chuẩn quốc tế (Print)</div>
-          <div class="meta-card-val">ISSN 1859-3097</div>
-          <div class="meta-card-sub">Ấn bản in định kỳ phát hành toàn quốc</div>
-        </div>
-        <div class="meta-card">
-          <div class="meta-card-label">Mã chuẩn quốc tế (Online)</div>
-          <div class="meta-card-val">e-ISSN 2815-5920</div>
-          <div class="meta-card-sub">Ấn bản điện tử Open Access</div>
-        </div>
-        <div class="meta-card">
-          <div class="meta-card-label">Định danh số quốc tế</div>
-          <div class="meta-card-val">DOI prefix: 10.59876/jst</div>
-          <div class="meta-card-sub">Tích hợp đăng ký định danh CrossRef</div>
-        </div>
-        <div class="meta-card">
-          <div class="meta-card-label">Chỉ mục dữ liệu</div>
-          <div class="meta-card-val">Google Scholar · VCI · ACI</div>
-          <div class="meta-card-sub">Hệ thống Trích dẫn Khoa học Việt Nam &amp; ASEAN</div>
-        </div>
+      <div class="meta-card">
+        <div class="meta-card-label">Mã chuẩn quốc tế (Online)</div>
+        <div class="meta-card-val">e-ISSN 3030-413X</div>
+        <div class="meta-card-sub">Ấn bản điện tử Open Access trực tuyến</div>
       </div>
-
-      <div class="content-section">
-        <h2>2. Kỳ hạn phát hành &amp; Ngôn ngữ</h2>
-        <p>Tạp chí phát hành định kỳ <strong>06 số/năm</strong> đối với bản in và cập nhật liên tục các bài báo được chấp nhận xuất bản (Online First) trên hệ thống điện tử. Ngôn ngữ công bố chính thức gồm tiếng Việt và tiếng Anh (khuyến khích các bài viết bằng tiếng Anh có tóm tắt tiếng Việt mở rộng).</p>
+      <div class="meta-card">
+        <div class="meta-card-label">Cơ quan chủ quản &amp; Cấp phép</div>
+        <div class="meta-card-val">Trường ĐH Công Thương TP.HCM</div>
+        <div class="meta-card-sub">Giấy phép số 53/GP-BTTTT (06/3/2024) - BTTTT</div>
+      </div>
+      <div class="meta-card">
+        <div class="meta-card-label">Tổng biên tập &amp; Trụ sở</div>
+        <div class="meta-card-val">TS. Bùi Hồng Đăng</div>
+        <div class="meta-card-sub">140 Lê Trọng Tấn, P. Tây Thạnh, Q. Tân Phú, TP.HCM</div>
       </div>
     </div>
 
-    <!-- TAB 2: CHÍNH SÁCH -->
-    <div id="tab-policy" class="tab-pane">
-      <h1 class="page-title">Chính sách xuất bản &amp; Đạo đức nghiên cứu</h1>
-      <div class="page-subtitle">Cam kết duy trì chuẩn mực cao nhất về liêm chính học thuật và bảo vệ quyền tác giả</div>
-
-      <div class="policy-box">
-        <h3>1. Chính sách Truy cập Mở (Open Access Policy)</h3>
-        <p>Tạp chí áp dụng chính sách truy cập mở không hạn chế. Toàn văn các bài báo khoa học được công bố ngay sau khi xuất bản để bạn đọc, giảng viên, nghiên cứu sinh trong và ngoài nước có thể tự do tiếp cận, tải về, trích dẫn phục vụ học tập và nghiên cứu phi thương mại theo giấy phép Creative Commons Attribution (CC BY-NC 4.0).</p>
-      </div>
-
-      <div class="policy-box">
-        <h3>2. Đạo đức xuất bản &amp; Chống đạo văn</h3>
-        <p>Tòa soạn áp dụng chặt chẽ hướng dẫn của Ủy ban Đạo đức Xuất bản (COPE). 100% bài nộp đều được quét kiểm tra độ trùng lặp qua hệ thống Turnitin/iThenticate. Bất kỳ hành vi gian lận dữ liệu, giả mạo kết quả, trùng lặp &gt; 20% không trích dẫn hợp lệ đều bị từ chối tiếp nhận ngay từ khâu sơ duyệt.</p>
-      </div>
-
-      <div class="policy-box">
-        <h3>3. Nguyên tắc Phản biện Kín hai chiều (Double-Blind Peer Review)</h3>
-        <p>Danh tính của tác giả và người phản biện đều được bảo mật tuyệt đối trong suốt quá trình thẩm định bài báo. Mọi phản hồi học thuật đều tập trung vào giá trị khoa học, tính mới và phương pháp thực nghiệm.</p>
-      </div>
-
-      <div class="policy-box">
-        <h3>4. Xung đột lợi ích &amp; Quyền tác giả</h3>
-        <p>Tác giả nộp bài phải kê khai đầy đủ các tác giả đồng thực hiện, đóng góp thực tế của từng cá nhân và nguồn tài trợ nghiên cứu (nếu có). Tất cả tác giả phải ký Bản cam đoan chuyển giao bản quyền (Copyright Agreement) trước khi đưa vào đọc bông và xếp số xuất bản.</p>
+    <!-- 2. TIỀN THÂN & LỊCH SỬ HÌNH THÀNH -->
+    <div class="content-section">
+      <h2>2. Tiền thân &amp; Lịch sử hình thành</h2>
+      <div class="history-box">
+        Tiền thân của <strong>Tạp chí Khoa học Đại học Công Thương</strong> là <em>Tạp chí Khoa học Công nghệ và Thực phẩm</em> (<strong>ISSN 0866-8132</strong>) thuộc Trường Đại học Công nghiệp Thực phẩm Thành phố Hồ Chí Minh (nay là Trường Đại học Công Thương Thành phố Hồ Chí Minh). Tạp chí được thành lập và hoạt động theo <strong>Giấy phép hoạt động báo chí in số 435/GP-BTTTT ngày 23 tháng 10 năm 2013</strong> của Bộ Thông tin và Truyền Thông.
       </div>
     </div>
 
-    <!-- TAB 3: HỘI ĐỒNG BIÊN TẬP -->
-    <div id="tab-board" class="tab-pane">
-      <h1 class="page-title">Hội đồng biên tập</h1>
-      <div class="page-subtitle">Ban cố vấn khoa học và hội đồng chuyên môn các lĩnh vực nghiên cứu trọng điểm</div>
-
-      <div class="personnel-group">
-        <div class="personnel-group-title">BAN LÃNH ĐẠO TÒA SOẠN</div>
-        <table class="personnel-table">
+    <!-- 3. TÍNH ĐIỂM CÔNG TRÌNH KHOA HỌC (HĐGSNN 2025) -->
+    <div class="content-section">
+      <h2>3. Tính điểm công trình khoa học (Hội đồng Giáo sư Nhà nước 2025)</h2>
+      <p>Năm 2025, Tạp chí được <strong>Hội đồng Giáo sư nhà nước</strong> và <strong>07 Hội đồng Giáo sư ngành, liên ngành</strong> tính điểm công trình khoa học, cụ thể gồm:</p>
+      
+      <div class="scoring-table-box">
+        <table class="scoring-table">
           <thead>
             <tr>
-              <th style="width: 25%;">Chức danh</th>
-              <th style="width: 35%;">Họ và tên</th>
-              <th style="width: 40%;">Đơn vị công tác / Chuyên môn</th>
+              <th style="width: 70%;">Hội đồng Giáo sư ngành / Liên ngành</th>
+              <th style="width: 30%; text-align: right;">Khung điểm công nhận</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="person-role">Tổng Biên tập</td>
-              <td class="person-name">GS. TS. Nguyễn Xuân Hoàn</td>
-              <td class="person-inst">Hội đồng Giáo sư liên ngành</td>
+              <td><strong>Liên ngành Hóa học - Công nghệ thực phẩm</strong></td>
+              <td style="text-align: right;"><span class="score-badge">0 – 0,75 điểm</span></td>
             </tr>
             <tr>
-              <td class="person-role">Phó Tổng Biên tập</td>
-              <td class="person-name">PGS. TS. Lê Nguyễn Đoan Duy</td>
-              <td class="person-inst">Chuyên gia Công nghệ Thực phẩm &amp; Sinh học</td>
+              <td><strong>Ngành Sinh học</strong></td>
+              <td style="text-align: right;"><span class="score-badge">0 – 0,75 điểm</span></td>
             </tr>
             <tr>
-              <td class="person-role">Phó Tổng Biên tập</td>
-              <td class="person-name">TS. Thái Doãn Thanh</td>
-              <td class="person-inst">Chuyên gia Khoa học Kỹ thuật &amp; Hệ thống</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="personnel-group">
-        <div class="personnel-group-title">TIỂU BAN CÔNG NGHỆ THÔNG TIN &amp; TỰ ĐỘNG HÓA</div>
-        <table class="personnel-table">
-          <tbody>
-            <tr>
-              <td class="person-role" style="width: 25%;">Trưởng Tiểu ban</td>
-              <td class="person-name" style="width: 35%;">PGS. TS. Đặng Tấn Dũng</td>
-              <td class="person-inst" style="width: 40%;">Chuyên gia Trí tuệ nhân tạo &amp; NLP</td>
+              <td><strong>Liên ngành Điện - Điện tử - Tự động hóa</strong></td>
+              <td style="text-align: right;"><span class="score-badge">0 – 0,75 điểm</span></td>
             </tr>
             <tr>
-              <td class="person-role">Ủy viên</td>
-              <td class="person-name">GS. TS. Lê Hoài Bắc</td>
-              <td class="person-inst">Chuyên gia Khoa học Dữ liệu &amp; Máy học</td>
+              <td><strong>Ngành Kinh tế</strong></td>
+              <td style="text-align: right;"><span class="score-badge">0 – 0,50 điểm</span></td>
             </tr>
             <tr>
-              <td class="person-role">Ủy viên</td>
-              <td class="person-name">PGS. TS. Quản Thành Thơ</td>
-              <td class="person-inst">Chuyên gia Hệ thống nhúng &amp; IoT</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="personnel-group">
-        <div class="personnel-group-title">TIỂU BAN HÓA HỌC &amp; CÔNG NGHỆ THỰC PHẨM</div>
-        <table class="personnel-table">
-          <tbody>
-            <tr>
-              <td class="person-role" style="width: 25%;">Trưởng Tiểu ban</td>
-              <td class="person-name" style="width: 35%;">GS. TS. Lê Văn Việt Mẫn</td>
-              <td class="person-inst" style="width: 40%;">Chuyên gia Công nghệ Sinh học</td>
+              <td><strong>Liên ngành Cơ khí - Động lực</strong></td>
+              <td style="text-align: right;"><span class="score-badge">0 – 0,25 điểm</span></td>
             </tr>
             <tr>
-              <td class="person-role">Ủy viên</td>
-              <td class="person-name">PGS. TS. Trần Phước Đường</td>
-              <td class="person-inst">Chuyên gia Hóa phân tích</td>
+              <td><strong>Liên ngành Khoa học Trái đất - Mỏ</strong></td>
+              <td style="text-align: right;"><span class="score-badge">0 – 0,25 điểm</span></td>
+            </tr>
+            <tr>
+              <td><strong>Liên ngành Nông nghiệp - Lâm nghiệp</strong></td>
+              <td style="text-align: right;"><span class="score-badge">0 – 0,25 điểm</span></td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- TAB 4: NHÂN SỰ TẠP CHÍ -->
-    <div id="tab-staff" class="tab-pane">
-      <h1 class="page-title">Nhân sự Tạp chí Khoa học</h1>
-      <div class="page-subtitle">Ban thư ký và bộ phận quản lý quy trình biên tập, xử lý kỹ thuật xuất bản</div>
+    <!-- 4. TRỌNG TÂM VÀ PHẠM VI XUẤT BẢN -->
+    <div class="content-section">
+      <h2>4. Trọng tâm và Phạm vi của Tạp chí</h2>
+      <p><strong>Tạp chí Khoa học Đại học Công Thương</strong> (<em>HUIT Journal</em>) là tạp chí đa ngành có bình duyệt của Trường Đại học Công Thương Thành phố Hồ Chí Minh; là diễn đàn cho các nhà khoa học trong và ngoài Nhà trường công bố, trao đổi các kết quả nghiên cứu khoa học. Tạp chí đăng tải các kết quả nghiên cứu ở nhiều lĩnh vực thuộc khoa học lý thuyết và ứng dụng, bao gồm:</p>
+      
+      <div class="focus-fields-grid">
+        <div class="focus-field-item">
+          <div class="focus-field-num">1</div>
+          <span>Công nghệ sinh học và Kỹ thuật môi trường</span>
+        </div>
+        <div class="focus-field-item">
+          <div class="focus-field-num">2</div>
+          <span>Công nghệ hóa học, Công nghệ thực phẩm và Thủy sản</span>
+        </div>
+        <div class="focus-field-item">
+          <div class="focus-field-num">3</div>
+          <span>Cơ điện tử, Công nghệ thông tin, Khoa học tự nhiên</span>
+        </div>
+        <div class="focus-field-item">
+          <div class="focus-field-num">4</div>
+          <span>Kinh tế, Xã hội</span>
+        </div>
+      </div>
 
-      <div class="personnel-group">
-        <div class="personnel-group-title">BAN THƯ KÝ TÒA SOẠN</div>
-        <table class="personnel-table">
-          <thead>
-            <tr>
-              <th style="width: 25%;">Vị trí công tác</th>
-              <th style="width: 35%;">Họ và tên</th>
-              <th style="width: 40%;">Email liên hệ</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="person-role">Thư ký Tòa soạn</td>
-              <td class="person-name">TS. Nguyễn Văn Hưng</td>
-              <td class="person-inst">hungnv@journal.edu.vn</td>
-            </tr>
-            <tr>
-              <td class="person-role">Thư ký Quản trị hệ thống</td>
-              <td class="person-name">ThS. Lê Hoàng Long</td>
-              <td class="person-inst">tapchikhoahoc@journal.edu.vn</td>
-            </tr>
-            <tr>
-              <td class="person-role">Biên tập viên kỹ thuật (Chế bản)</td>
-              <td class="person-name">ThS. Phạm Thanh Thảo</td>
-              <td class="person-inst">thaopt@journal.edu.vn</td>
-            </tr>
-            <tr>
-              <td class="person-role">Biên tập viên tiếng Anh</td>
-              <td class="person-name">ThS. Trần Vũ Lan Anh</td>
-              <td class="person-inst">anhtvl@journal.edu.vn</td>
-            </tr>
-          </tbody>
-        </table>
+      <p>Các bài báo được đăng trên HUIT Journal được <strong>ít nhất 02 chuyên gia phản biện</strong> đánh giá nghiêm túc với quy trình phản biện kín hai chiều (double-blind peer review) nhằm đảm bảo chất lượng khoa học và tính liêm chính của bài báo.</p>
+    </div>
+
+    <!-- 5. CHÍNH SÁCH TRUY CẬP MỞ -->
+    <div class="content-section">
+      <h2>5. Chính sách truy cập (Open Access)</h2>
+      <p>Tạp chí Khoa học Đại học Công Thương áp dụng <strong>chính sách truy cập mở (Open Access)</strong>, đăng tải trực tuyến (miễn phí) bài báo toàn văn trên website của Tạp chí (<a href="https://journal.huit.edu.vn/" target="_blank" style="color:#1da1f2;font-weight:600;">https://journal.huit.edu.vn/</a> | <a href="https://huitjournal.vn/" target="_blank" style="color:#1da1f2;font-weight:600;">https://huitjournal.vn/</a>) để các nhà nghiên cứu và độc giả quan tâm thuộc nhiều lĩnh vực có thể tiếp cận.</p>
+      <p>Theo đó, độc giả được khuyến khích đọc, tải về, chia sẻ, in ấn, tìm kiếm, hoặc kết nối với bản toàn văn của tất cả các bài báo được công bố trên Tạp chí Khoa học Đại học Công Thương mà <strong>không phải trả bất kỳ chi phí nào</strong>.</p>
+    </div>
+
+    <!-- 6. KỲ HẠN PHÁT HÀNH, THỂ THỨC & PHÍ ĐĂNG BÀI -->
+    <div class="content-section">
+      <h2>6. Kỳ hạn phát hành, Thể thức xuất bản &amp; Phí đăng bài</h2>
+      <div class="spec-grid">
+        <div class="spec-row">
+          <span class="spec-label">Ngôn ngữ thể hiện:</span>
+          <span class="spec-value">Tiếng Việt và Tiếng Anh (song ngữ)</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-label">Kỳ hạn xuất bản:</span>
+          <span class="spec-value">Tạp chí in được xuất bản <strong>06 số/năm</strong> (2 tháng/kỳ vào ngày 28 các tháng chẵn), và cập nhật thường xuyên đối với tạp chí điện tử (Online First).</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-label">Khuôn khổ &amp; Số trang:</span>
+          <span class="spec-value">19 cm × 27 cm; Dung lượng: 164 trang/số</span>
+        </div>
+        <div class="spec-row">
+          <span class="spec-label">Phí đăng bài (APC):</span>
+          <span class="spec-value"><strong style="color:#059669;">Tạp chí miễn phí đăng bài</strong> (Không thu bất kỳ khoản phí nào đối với tác giả cho việc nộp bài, bình duyệt hay xuất bản).</span>
+        </div>
       </div>
     </div>
 
-    <!-- TAB 5: LIÊN HỆ TÒA SOẠN -->
-    <div id="tab-contact" class="tab-pane">
-      <h1 class="page-title">Thông tin liên hệ Tòa soạn</h1>
-      <div class="page-subtitle">Cơ quan tiếp nhận bản thảo và giải đáp thắc mắc của tác giả, phản biện</div>
-
-      <div class="policy-box">
-        <h3>Văn phòng Tạp chí Khoa học</h3>
-        <p><strong>Địa chỉ:</strong> Tòa nhà Tòa soạn Tạp chí Khoa học, Trung tâm Nghiên cứu &amp; Đào tạo Sau đại học</p>
-        <p><strong>Điện thoại cơ quan:</strong> (028) 3816 1673 - Ext: 124</p>
-        <p><strong>Hotline Thư ký tòa soạn:</strong> 0908 123 456 (Trong giờ hành chính)</p>
-        <p><strong>Email chính thức:</strong> <a href="mailto:tapchikhoahoc@journal.edu.vn" style="color:var(--sky-600);font-weight:600;">tapchikhoahoc@journal.edu.vn</a></p>
-        <p><strong>Cổng nộp bài trực tuyến:</strong> <a href="submit-paper.html" style="color:var(--sky-600);font-weight:600;">https://tapchikhoahoc.edu.vn/submit-paper.html</a></p>
+    <!-- 7. THÔNG TIN LIÊN HỆ TÒA SOẠN -->
+    <div class="content-section">
+      <h2>7. Thông tin Tòa soạn</h2>
+      <div class="office-contact-box">
+        <h3>Tạp chí Khoa học Đại học Công Thương</h3>
+        <p><strong>Cơ quan chủ quản:</strong> Trường Đại học Công Thương Thành phố Hồ Chí Minh</p>
+        <p><strong>Địa chỉ trụ sở:</strong> 140 Lê Trọng Tấn, Phường Tây Thạnh, Quận Tân Phú, Thành phố Hồ Chí Minh</p>
+        <p><strong>Văn phòng Tòa soạn:</strong> Tòa C, Phòng C.101, Trường Đại học Công Thương Thành phố Hồ Chí Minh</p>
+        <p><strong>Điện thoại:</strong> 028.38163319 (112) &nbsp;·&nbsp; <strong>Fax:</strong> 028.38163320</p>
+        <p><strong>Email chính thức:</strong> <a href="mailto:journal@huit.edu.vn" style="color:#1da1f2;font-weight:600;">journal@huit.edu.vn</a></p>
+        <p><strong>Website:</strong> <a href="https://huitjournal.vn" target="_blank" style="color:#1da1f2;font-weight:600;">https://huitjournal.vn</a> &nbsp;|&nbsp; <a href="https://journal.huit.edu.vn" target="_blank" style="color:#1da1f2;font-weight:600;">https://journal.huit.edu.vn</a></p>
       </div>
     </div>
 
   </main>
 </div>
 
-<!-- FOOTER -->
-<footer>
-  <div class="wrap">
-    <div><strong>Tạp chí Khoa học · Tạp chí Nghiên cứu &amp; Phát triển Công nghệ</strong></div>
-    <div style="font-size: 11.5px; opacity: 0.9; margin-top: 4px;">Giấy phép xuất bản báo chí số 188/GP-BTTTT cấp bởi Bộ Thông tin và Truyền thông · ISSN 1859-3097</div>
-    <div class="flinks">
-      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Trang chủ</a>
-      <a href="about.html">Giới thiệu</a>
-      <a href="publishing-policy.html">Chính sách xuất bản</a>
-      <a href="editorial-board.html">Hội đồng biên tập</a>
-      <a href="guidelines.html">Quy trình - Biểu mẫu</a>
-      <a href="archives.html">Kho lưu trữ</a>
-      <a href="submit-paper.html">Nộp bài trực tuyến</a>
-      <a href="contact.html">Liên hệ</a>
-    </div>
-  </div>
-</footer>
+<!-- KHỐI FOOTER CHUNG (SHARED LAYOUT HUIT) -->
+<div id="huit-footer"></div>
 
-<script>
-  function switchAboutTab(tabName) {
-    const tabs = ['intro', 'policy', 'board', 'staff', 'contact'];
-    tabs.forEach(t => {
-      const pane = document.getElementById('tab-' + t);
-      const btn = document.getElementById('btn-' + t);
-      if (pane) pane.classList.remove('active');
-      if (btn) btn.classList.remove('active');
-    });
-
-    const activePane = document.getElementById('tab-' + tabName);
-    const activeBtn = document.getElementById('btn-' + tabName);
-    if (activePane) activePane.classList.add('active');
-    if (activeBtn) activeBtn.classList.add('active');
-
-    window.location.hash = tabName;
-  }
-
-  // Tự động nhảy tab theo URL hash
-  window.addEventListener('DOMContentLoaded', () => {
-    const hash = window.location.hash.replace('#', '');
-    if (hash && ['intro', 'policy', 'board', 'staff', 'contact'].includes(hash)) {
-      switchAboutTab(hash);
-    }
-  });
-</script>
+<script src="journal-layout.js"></script>
+<script src="journal-interactions.js"></script>
 
 </body>
 </html>

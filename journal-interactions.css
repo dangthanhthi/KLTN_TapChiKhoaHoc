@@ -4,25 +4,29 @@
    ========================================================================== */
 
 /* Toast Notification */
+/* Toast Notification */
 .journal-toast {
   position: fixed;
   bottom: 24px;
   right: 24px;
+  max-width: 480px;
   background: #0f1419;
   color: #ffffff;
-  padding: 12px 20px;
-  border-radius: 6px;
+  padding: 12px 18px;
+  border-radius: 8px;
   font-size: 13.5px;
   font-weight: 500;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  line-height: 1.5;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: flex-start;
+  gap: 12px;
   z-index: 99999;
   transform: translateY(100px);
   opacity: 0;
   transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events: none;
+  border: 1px solid rgba(255,255,255,0.08);
 }
 .journal-toast.active {
   transform: translateY(0);
@@ -32,6 +36,64 @@
 .journal-toast svg {
   stroke: #1da1f2;
   flex-shrink: 0;
+  margin-top: 2px;
+}
+.journal-toast .toast-msg {
+  flex: 1;
+  word-break: break-word;
+}
+.journal-toast .toast-close-btn {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.5);
+  font-size: 18px;
+  line-height: 1;
+  padding: 0 0 0 8px;
+  cursor: pointer;
+  margin-top: 1px;
+  transition: color 0.15s ease;
+}
+.journal-toast .toast-close-btn:hover {
+  color: #ffffff;
+}
+
+/* Toast Variants */
+.journal-toast.toast-error {
+  background: #1c1415;
+  border-left: 4px solid #ef4444;
+}
+.journal-toast.toast-error svg {
+  stroke: #ef4444;
+}
+.journal-toast.toast-warning {
+  background: #1c1813;
+  border-left: 4px solid #f59e0b;
+}
+.journal-toast.toast-warning svg {
+  stroke: #f59e0b;
+}
+.journal-toast.toast-success {
+  background: #0f1715;
+  border-left: 4px solid #10b981;
+}
+.journal-toast.toast-success svg {
+  stroke: #10b981;
+}
+.journal-toast.toast-info {
+  background: #0f1419;
+  border-left: 4px solid #1da1f2;
+}
+.journal-toast.toast-info svg {
+  stroke: #1da1f2;
+}
+
+@media (max-width: 600px) {
+  .journal-toast {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    max-width: none;
+  }
 }
 
 /* Modal Backdrop */
@@ -544,11 +606,11 @@
 }
 
 .wrap {
-  max-width: 1360px !important;
+  max-width: 1600px !important;
   margin-left: auto !important;
   margin-right: auto !important;
-  padding-left: 20px !important;
-  padding-right: 20px !important;
+  padding-left: 24px !important;
+  padding-right: 24px !important;
   box-sizing: border-box;
 }
 
@@ -589,6 +651,41 @@
   font-weight: 500 !important;
   text-align: center !important;
 }
+
+/* 2 CHỈ SỐ ISSN DẠNG VĂN BẢN THUẦN Ở GÓC DƯỚI PHẢI BANNER */
+.masthead {
+  position: relative !important;
+}
+
+.banner-issn-text {
+  position: absolute !important;
+  right: 20px !important;
+  bottom: 12px !important;
+  text-align: right !important;
+  color: #ffffff !important;
+  font-family: var(--sans, 'Inter', sans-serif) !important;
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  line-height: 1.45 !important;
+  letter-spacing: 0.03em !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.15) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  pointer-events: none !important;
+}
+
+@media (max-width: 860px) {
+  .banner-issn-text {
+    position: static !important;
+    margin-top: 10px !important;
+    align-items: center !important;
+    text-align: center !important;
+    font-size: 12px !important;
+  }
+}
+
+
 
 .navbar {
   display: flex !important;
@@ -730,7 +827,7 @@
   transform: translateY(-1px) !important;
 }
 
-/* Master Footer Unified */
+/* Master Footer Unified - Hallmark Standard */
 footer {
   background: #1da1f2 !important;
   padding: 32px 24px !important;
@@ -741,8 +838,12 @@ footer {
   margin-top: 48px !important;
 }
 
+footer a {
+  color: #ffffff !important;
+}
+
 footer .flinks {
-  margin-top: 12px !important;
+  margin-top: 14px !important;
 }
 
 footer .flinks a {
@@ -757,5 +858,539 @@ footer .flinks a:hover {
   color: #ffffff !important;
   text-decoration: underline !important;
 }
+
+/* ==========================================================================
+   ACADEMIC JOURNAL ISSUES STYLES (THEO PHONG CÁCH HỌC THUẬT & OJS CHUẨN MỰC)
+   ========================================================================== */
+
+/* 1. KHỐI SỐ HIỆN TẠI (CURRENT ISSUE - THEO HÌNH 2) */
+.academic-current-issue {
+  background: #ffffff;
+  border: 1px solid var(--line, #E1E9F1);
+  border-radius: 6px;
+  padding: 28px;
+  margin-bottom: 36px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+
+.current-issue-header-area {
+  margin-bottom: 20px;
+  border-bottom: 2px solid #16202B;
+  padding-bottom: 12px;
+}
+
+.current-issue-title {
+  font-family: var(--serif, 'Source Serif 4', Georgia, serif);
+  font-size: 26px;
+  font-weight: 700;
+  color: #16202B;
+  margin: 0 0 6px;
+}
+
+.current-issue-volume {
+  font-family: var(--sans, 'Inter', sans-serif);
+  font-size: 16px;
+  font-weight: 700;
+  color: #1da1f2;
+}
+
+.current-issue-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 36px;
+  align-items: flex-start;
+}
+
+.current-issue-cover-wrap {
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #C9DFF4;
+  box-shadow: 0 4px 14px rgba(0, 102, 179, 0.15);
+  background: #f8fafc;
+  transition: transform .2s ease;
+}
+
+.current-issue-cover-wrap:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 102, 179, 0.22);
+}
+
+.current-issue-cover-wrap img,
+.current-issue-cover-wrap svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  aspect-ratio: 3/4.25;
+  object-fit: cover;
+}
+
+.current-issue-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.current-issue-conference {
+  font-family: var(--serif, 'Source Serif 4', Georgia, serif);
+  font-size: 21px;
+  font-weight: 700;
+  color: #16202B;
+  line-height: 1.4;
+  margin: 0 0 12px;
+}
+
+.current-issue-meta-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 13.5px;
+  color: #3D4A57;
+  padding: 10px 0 14px;
+  border-bottom: 1px dashed var(--line, #E1E9F1);
+  margin-bottom: 18px;
+}
+
+.current-issue-meta-bar b {
+  color: #16202B;
+}
+
+.current-issue-desc {
+  font-size: 14px;
+  color: #3D4A57;
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+
+/* Mục lục bài báo trong số hiện tại */
+.current-issue-toc {
+  margin-top: 10px;
+}
+
+.current-issue-toc-head {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: #16202B;
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line, #E1E9F1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.toc-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #F1F5F9;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.toc-item:last-child {
+  border-bottom: none;
+}
+
+.toc-item-title {
+  font-family: var(--serif, 'Source Serif 4', Georgia, serif);
+  font-size: 15.5px;
+  font-weight: 600;
+  color: #16202B;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+.toc-item-title a:hover {
+  color: #1da1f2;
+}
+
+.toc-item-authors {
+  font-size: 12.5px;
+  color: #6B7684;
+}
+
+.toc-item-actions {
+  display: flex;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.toc-btn-pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #E4EFFA;
+  color: #1da1f2;
+  padding: 4px 10px;
+  border-radius: 3px;
+  text-decoration: none;
+  transition: all .15s;
+}
+
+.toc-btn-pdf:hover {
+  background: #1da1f2;
+  color: #ffffff;
+}
+
+/* 2. KHỐI SỐ MỚI NHẤT (RECENT ISSUES - THEO HÌNH 1) */
+.academic-recent-issues-section {
+  margin: 36px 0;
+}
+
+.recent-issues-header-bar {
+  background: #1da1f2; /* Màu xanh Azure Blue chuẩn thương hiệu HUIT */
+  color: #ffffff;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  border-radius: 4px 4px 0 0;
+  box-shadow: 0 2px 4px rgba(29, 161, 242, 0.2);
+}
+
+.recent-issues-wrapper {
+  background: #ffffff;
+  border: 1px solid #E2E8F0;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  padding: 24px 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+.recent-issues-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  row-gap: 24px;
+}
+
+@media (max-width: 1024px) {
+  .recent-issues-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 540px) {
+  .recent-issues-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+.recent-issue-card {
+  background: #ffffff;
+  border: 1px solid #E2E8F0;
+  border-radius: 4px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  transition: all .2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.recent-issue-card:hover {
+  border-color: #CBD5E1;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.recent-issue-cover {
+  width: 100%;
+  aspect-ratio: 3/4.25;
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid #E2E8F0;
+  background: #F8FAFC;
+  margin-bottom: 14px;
+}
+
+.recent-issue-cover img,
+.recent-issue-cover svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.recent-issue-title {
+  font-family: var(--sans, 'Inter', sans-serif);
+  font-size: 15px;
+  font-weight: 700;
+  color: #16202B;
+  margin: 0 0 12px;
+  line-height: 1.4;
+}
+
+.btn-read-more {
+  background: #1da1f2; /* Nút màu xanh Azure Blue đồng bộ hệ thống */
+  color: #ffffff !important;
+  border: none;
+  border-radius: 4px;
+  padding: 7px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-block;
+  align-self: flex-start;
+  text-decoration: none !important;
+  transition: background .2s ease, transform .15s ease;
+  box-shadow: 0 1px 3px rgba(29, 161, 242, 0.25);
+}
+
+.btn-read-more:hover {
+  background: #0d8ddc;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(13, 141, 220, 0.35);
+}
+
+/* Responsive cho Bố cục OJS Trang chủ */
+@media (max-width: 992px) {
+  .ojs-layout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 36px !important;
+  }
+  .current-issue-layout {
+    grid-template-columns: 220px 1fr;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .current-issue-layout {
+    grid-template-columns: 1fr;
+  }
+  .current-issue-cover-wrap {
+    max-width: 240px;
+    margin: 0 auto 16px;
+  }
+}
+
+/* ==========================================================================
+   OJS ACADEMIC ARTICLE LIST (CHUYÊN MỤC & DANH SÁCH BÀI BÁO THEO HÌNH MẪU)
+   ========================================================================== */
+.ojs-section-header {
+  display: flex;
+  align-items: center;
+  margin: 32px 0 24px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #4B5563;
+}
+
+.ojs-section-header::before {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: #CBD5E1;
+  margin-right: 12px;
+}
+
+.ojs-section-header::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #CBD5E1;
+  margin-left: 12px;
+}
+
+.ojs-article-item {
+  margin-bottom: 26px;
+  padding-bottom: 22px;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.ojs-article-item:last-child {
+  border-bottom: none;
+  margin-bottom: 16px;
+  padding-bottom: 0;
+}
+
+.ojs-article-title {
+  font-family: var(--sans, 'Inter', sans-serif);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.45;
+  margin: 0 0 6px;
+}
+
+.ojs-article-title a {
+  color: #0066b3;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color .15s ease;
+}
+
+.ojs-article-title a:hover {
+  color: #004c85;
+  text-decoration: underline;
+}
+
+.ojs-article-authors {
+  font-size: 13.5px;
+  color: #374151;
+  margin: 0 0 10px;
+  font-weight: 500;
+}
+
+.ojs-btn-pdf {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  border: 1.5px solid #0066b3 !important;
+  color: #0066b3 !important;
+  background: #ffffff !important;
+  padding: 5px 14px !important;
+  border-radius: 4px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  width: auto !important;
+  max-width: fit-content !important;
+  transition: all .2s ease !important;
+}
+
+.ojs-btn-pdf:hover {
+  background: #0066b3 !important;
+  color: #ffffff !important;
+}
+
+.ojs-btn-pdf svg {
+  width: 15px !important;
+  height: 15px !important;
+  min-width: 15px !important;
+  min-height: 15px !important;
+  max-width: 15px !important;
+  max-height: 15px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 2 !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+}
+
+/* ==========================================================================
+   GLOBAL RESPONSIVE ENGINE (320px, 375px, 768px, 1024px, 1366px)
+   Chống vỡ layout, chống tràn ngang và tối ưu hiển thị di động
+   ========================================================================== */
+
+/* 1. Reset chống tràn toàn cục */
+html, body {
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+.wrap {
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* 2. Responsive cho Header, Masthead & Navbar (Dưới 768px) */
+@media (max-width: 768px) {
+  header.masthead {
+    padding: 16px 14px 20px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+  
+  header.masthead .name a {
+    font-size: 19px !important;
+    line-height: 1.3 !important;
+    display: block !important;
+  }
+  
+  header.masthead .tagline {
+    font-size: 10.5px !important;
+    max-width: 85% !important;
+    line-height: 1.4 !important;
+  }
+
+  .banner-issn-text {
+    position: static !important;
+    margin-top: 6px !important;
+    text-align: left !important;
+    align-items: flex-start !important;
+    font-size: 11px !important;
+    gap: 2px !important;
+  }
+
+  .navbar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 12px !important;
+    padding: 10px 14px 14px !important;
+  }
+
+  .nav-links {
+    display: flex !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    gap: 16px !important;
+    padding-bottom: 6px !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+
+  .nav-links::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .nav-actions {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    gap: 10px !important;
+  }
+
+  /* Stepper Bar trên submit-paper */
+  .steps-bar {
+    display: flex !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .step-tab {
+    flex-shrink: 0 !important;
+    padding: 10px 12px !important;
+  }
+
+  /* Layout 2 cột trên các trang */
+  .editorial-layout, .workbench-grid, .archives-grid {
+    grid-template-columns: 1fr !important;
+    gap: 24px !important;
+  }
+
+  /* Form controls 2 cột chuyển thành 1 cột */
+  .grid-2 {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+}
+
+/* 3. Responsive cực nhỏ (Dưới 375px) */
+@media (max-width: 375px) {
+  header.masthead .name a {
+    font-size: 17px !important;
+  }
+  .form-card {
+    padding: 20px 14px !important;
+  }
+  .auth-box {
+    padding: 16px !important;
+  }
+  .auth-box-body {
+    padding: 20px 16px !important;
+  }
+}
+
+
+
 
 

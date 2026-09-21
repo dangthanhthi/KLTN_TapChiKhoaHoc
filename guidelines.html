@@ -92,10 +92,164 @@
   .wf-step-body p { font-size: 13.5px; color: var(--ink-700); margin-bottom: 6px; }
   .wf-step-meta { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #1da1f2; background: var(--sky-050); padding: 3px 8px; border-radius: 3px; }
 
-  /* REVIEW FLOW DIAGRAM / RULE BOX */
-  .rule-card { border-left: 4px solid #1da1f2; background: #fafcff; border-top: 1px solid var(--sky-100); border-right: 1px solid var(--sky-100); border-bottom: 1px solid var(--sky-100); border-radius: 0 6px 6px 0; padding: 18px 22px; margin-bottom: 20px; }
-  .rule-card h3 { font-size: 15px; font-weight: 700; color: var(--ink-900); margin-bottom: 8px; }
-  .rule-card p { font-size: 13.5px; color: var(--ink-700); margin-bottom: 8px; }
+  /* ACADEMIC CONTENT SECTIONS (CLEAN TYPOGRAPHY, NO BOXING) */
+  .academic-section {
+    margin-bottom: 28px;
+  }
+  .academic-section-title {
+    font-size: 16.5px;
+    font-weight: 700;
+    color: var(--ink-900);
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #eef2f6;
+  }
+  .academic-p {
+    font-size: 14px;
+    color: var(--ink-700);
+    line-height: 1.7;
+    margin-bottom: 10px;
+  }
+
+  /* CALLOUT BOX (CHỈ SỬ DỤNG KHI THỰC SỰ CẦN THIẾT - LƯU Ý QUAN TRỌNG) */
+  .notice-callout {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #475569;
+    border-radius: 6px;
+    padding: 14px 18px;
+    margin: 20px 0;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 13.5px;
+    color: var(--ink-700);
+    line-height: 1.6;
+  }
+  .notice-callout svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+    color: #475569;
+  }
+
+  /* 4 MỨC ĐÁNH GIÁ PHẢN BIỆN (KHÔNG BULLET POINT) */
+  .review-outcomes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+    margin: 14px 0 24px;
+  }
+  .outcome-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: border-color .15s;
+  }
+  .outcome-card:hover {
+    border-color: #cbd5e1;
+  }
+  .outcome-badge-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2px;
+  }
+  .outcome-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .badge-accept { background: #dcfce7; color: #15803d; }
+  .badge-minor { background: #fef9c3; color: #a16207; }
+  .badge-major { background: #ffedd5; color: #c2410c; }
+  .badge-reject { background: #fee2e2; color: #b91c1c; }
+  .outcome-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--ink-900);
+    line-height: 1.4;
+  }
+  .outcome-desc {
+    font-size: 13px;
+    color: var(--ink-700);
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  /* BẢNG QUY CÁCH TRÌNH BÀY BẢN THẢO (KHÔNG BULLET POINT) */
+  .format-spec-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 14px 0 24px;
+  }
+  .format-spec-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 16px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 12px 18px;
+    font-size: 13.5px;
+  }
+  @media (max-width: 640px) {
+    .format-spec-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+  .format-spec-label {
+    font-weight: 700;
+    color: var(--ink-900);
+  }
+  .format-spec-val {
+    color: var(--ink-700);
+    line-height: 1.5;
+  }
+
+  /* CẤU TRÚC IMRAD (KHÔNG BULLET POINT, ĐÁNH SỐ THỨ TỰ RÕ RÀNG) */
+  .imrad-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 14px 0 24px;
+  }
+  .imrad-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 12px 16px;
+    border-radius: 6px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+  }
+  .imrad-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    background: #f1f5f9;
+    color: var(--ink-700);
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .imrad-content {
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--ink-700);
+  }
+  .imrad-content strong {
+    color: var(--ink-900);
+  }
 
   /* TEMPLATE DOWNLOAD TABLE */
   .template-table { width: 100%; border-collapse: collapse; margin-top: 16px; }
@@ -103,7 +257,7 @@
   .template-table td { border: 1px solid var(--line); padding: 14px 16px; vertical-align: middle; font-size: 13.5px; }
   .doc-name { font-weight: 600; color: var(--ink-900); display: flex; align-items: center; gap: 8px; }
   .doc-name svg { width: 20px; height: 20px; stroke: #2563eb; fill: none; stroke-width: 2; flex-shrink: 0; }
-  .btn-download { display: inline-flex; align-items: center; gap: 6px; background: var(--sky-050); color: #1da1f2; border: 1px solid var(--sky-200); padding: 6px 14px; border-radius: 4px; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: all .15s; }
+  .btn-download { display: inline-flex; align-items: center; gap: 6px; background: #ffffff; color: #1da1f2; border: 1px solid #cbd5e1; padding: 6px 14px; border-radius: 4px; font-size: 12.5px; font-weight: 700; cursor: pointer; transition: all .15s; }
   .btn-download:hover { background: #1da1f2; color: #ffffff; border-color: #1da1f2; }
 
   /* DIAGRAM FIGURES */
@@ -143,9 +297,9 @@
     gap: 10px;
   }
   .btn-diagram-tool {
-    background: var(--sky-050);
-    color: #1da1f2;
-    border: 1px solid var(--sky-200);
+    background: #ffffff;
+    color: var(--ink-700);
+    border: 1px solid #cbd5e1;
     border-radius: 4px;
     padding: 5px 12px;
     font-size: 12px;
@@ -158,13 +312,13 @@
     transition: all .15s;
   }
   .btn-diagram-tool:hover {
-    background: #1da1f2;
-    color: #ffffff;
-    border-color: #1da1f2;
+    background: #f8fafc;
+    color: #1da1f2;
+    border-color: #94a3b8;
   }
   .diagram-img-wrap {
-    background: #fafcff;
-    border: 1px solid #f1f5f9;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
     border-radius: 6px;
     padding: 16px;
     text-align: center;
@@ -247,117 +401,8 @@
 </head>
 <body>
 
-<!-- KHỐI BANNER & NAVBAR NỀN XANH (#1da1f2) -->
-<div class="header-bar">
-  <header class="masthead wrap">
-    <div class="name"><a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Tạp chí Khoa học</a></div>
-    <div class="tagline">NGHIÊN CỨU · CÔNG NGHỆ · CHUYỂN GIAO TRI THỨC</div>
-  </header>
-
-  <nav class="navbar wrap">
-    <div class="nav-links">
-      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html" style="display:inline-flex;align-items:center;gap:4px;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        Trang chủ
-      </a>
-
-      <!-- TAB DROPDOWN: GIỚI THIỆU -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle">
-          GIỚI THIỆU
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="about.html" class="field-menu-item">
-            <span>Giới thiệu về tạp chí</span>
-          </a>
-          <a href="publishing-policy.html" class="field-menu-item">
-            <span>Chính sách xuất bản</span>
-          </a>
-          <a href="editorial-board.html" class="field-menu-item">
-            <span>Hội đồng biên tập</span>
-          </a>
-          <a href="contact.html" class="field-menu-item">
-            <span>Nhân sự &amp; Liên hệ</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- TAB DROPDOWN: QUY TRÌNH - BIỂU MẪU -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle on">
-          QUY TRÌNH - BIỂU MẪU
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="guidelines.html#submission" class="field-menu-item" onclick="switchTab('submission')">
-            <span>Quy trình đăng bài</span>
-          </a>
-          <a href="guidelines.html#review" class="field-menu-item" onclick="switchTab('review')">
-            <span>Quy trình phản biện</span>
-          </a>
-          <a href="guidelines.html#format" class="field-menu-item" onclick="switchTab('format')">
-            <span>Thể lệ viết và gửi bài</span>
-          </a>
-          <a href="guidelines.html#templates" class="field-menu-item" onclick="switchTab('templates')">
-            <span>Các biểu mẫu</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- TAB DROPDOWN: LĨNH VỰC KHOA HỌC -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle">
-          LĨNH VỰC KHOA HỌC
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="article-detail.html" class="field-menu-item">
-            <span>Công nghệ thông tin</span>
-            <span class="badge-count">142</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Cơ khí – Tự động hóa</span>
-            <span class="badge-count">98</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Khoa học Môi trường</span>
-            <span class="badge-count">76</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Kinh tế – Quản trị</span>
-            <span class="badge-count">115</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Hóa học &amp; Công nghệ thực phẩm</span>
-            <span class="badge-count">84</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Khoa học Xã hội &amp; Nhân văn</span>
-            <span class="badge-count">62</span>
-          </a>
-          <div class="fields-menu-divider"></div>
-          <a href="archives.html" class="fields-menu-all">Xem tất cả các chuyên ngành &rarr;</a>
-        </div>
-      </div>
-
-      <a href="archives.html">Kho lưu trữ</a>
-    </div>
-
-    <!-- KHỐI PHẢI: NÚT NỘP BÀI + AUTH -->
-    <div class="nav-actions">
-      <a href="submit-paper.html" style="background:#ffffff;color:#1da1f2;padding:6px 14px;border-radius:4px;font-size:12.5px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.12);display:inline-flex;align-items:center;gap:6px;transition:all .2s;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-        Gửi bài báo
-      </a>
-      
-      <div class="auth-links">
-        <a href="login.html" class="login-btn">Đăng nhập</a>
-        <a href="register.html" class="register-btn">Đăng ký</a>
-      </div>
-    </div>
-  </nav>
-</div>
+<!-- KHỐI HEADER CHUNG (SHARED LAYOUT) -->
+<div id="huit-header" data-active="guidelines"></div>
 
 <!-- BREADCRUMB -->
 <div class="breadcrumb-bar">
@@ -488,22 +533,52 @@
       <h1 class="page-title">Quy trình phản biện chuyên môn</h1>
       <div class="page-subtitle">Phương thức thẩm định độc lập kín 2 chiều và cơ chế xử lý bất đồng học thuật</div>
 
-      <div class="rule-card">
-        <h3>1. Nguyên tắc phản biện độc lập kín 2 chiều</h3>
-        <p>Mỗi bài nộp hợp lệ được thẩm định độc lập bởi 02 nhà khoa học có học vị Tiến sĩ trở lên hoặc học hàm Phó Giáo sư, Giáo sư, không cùng đơn vị công tác trực tiếp với tác giả.</p>
-        <p>Phiếu đánh giá phản biện bao gồm 5 tiêu chí: (1) Tính cấp thiết và tính mới, (2) Cơ sở lý thuyết và phương pháp, (3) Giá trị thực nghiệm &amp; kết quả, (4) Trích dẫn tài liệu tham khảo, (5) Văn phong khoa học.</p>
-      </div>
+      <!-- MỤC 1: NGUYÊN TẮC (ACADEMIC TYPOGRAPHY TRÊN NỀN TRẮNG, KHÔNG ĐÓNG KHUNG XANH) -->
+      <section class="academic-section">
+        <h2 class="academic-section-title">1. Nguyên tắc phản biện độc lập kín 2 chiều (Double-blind Peer Review)</h2>
+        <p class="academic-p">Mỗi bài nộp hợp lệ được thẩm định độc lập bởi tối thiểu 02 nhà khoa học có học vị Tiến sĩ trở lên hoặc học hàm Phó Giáo sư, Giáo sư, không cùng đơn vị công tác trực tiếp với tác giả.</p>
+        <p class="academic-p">Phiếu đánh giá phản biện bao gồm 5 tiêu chí cốt lõi: Tính cấp thiết và tính mới của đề tài; Cơ sở lý thuyết và phương pháp nghiên cứu; Giá trị thực nghiệm và kết quả đạt được; Trích dẫn tài liệu tham khảo theo quy chuẩn; và Văn phong khoa học chuẩn mực.</p>
+      </section>
 
-      <div class="rule-card">
-        <h3>2. Kết luận đánh giá của Chuyên gia phản biện</h3>
-        <p>Chuyên gia đưa ra 1 trong 4 mức đánh giá chính thức:</p>
-        <ul style="margin-left: 20px; font-size: 13.5px; color: var(--ink-700); line-height: 1.8;">
-          <li><strong>Chấp nhận đăng không cần sửa đổi (Accept):</strong> Bài viết đạt chất lượng xuất sắc.</li>
-          <li><strong>Chấp nhận sau khi sửa chữa nhỏ (Minor Revisions):</strong> Bổ sung trích dẫn, làm rõ câu chữ, giải thích thêm số liệu bảng biểu.</li>
-          <li><strong>Xem xét lại sau khi sửa chữa lớn (Major Revisions):</strong> Cần bổ sung thí nghiệm, thay đổi phương pháp hoặc tính toán lại mô hình. Phải phản biện vòng 2.</li>
-          <li><strong>Từ chối đăng (Reject):</strong> Không có tính mới, phương pháp sai lệch hoặc vi phạm liêm chính nghiên cứu.</li>
-        </ul>
-      </div>
+      <!-- MỤC 2: 4 MỨC ĐÁNH GIÁ (TRÌNH BÀY BẰNG BẢNG THẺ ĐỊNH DANH MỨC ĐỘ, KHÔNG DÙNG BULLET POINT) -->
+      <section class="academic-section">
+        <h2 class="academic-section-title">2. Kết luận đánh giá của Chuyên gia phản biện</h2>
+        <p class="academic-p">Chuyên gia đưa ra một trong bốn mức đánh giá chính thức dựa trên kết quả thẩm định học thuật:</p>
+        
+        <div class="review-outcomes-grid">
+          <div class="outcome-card">
+            <div class="outcome-badge-row">
+              <span class="outcome-badge badge-accept">Mức 1</span>
+            </div>
+            <div class="outcome-title">Chấp nhận đăng không cần sửa đổi (Accept)</div>
+            <p class="outcome-desc">Bài viết đạt chất lượng xuất sắc, phương pháp nghiên cứu chặt chẽ và không yêu cầu chỉnh sửa bổ sung.</p>
+          </div>
+
+          <div class="outcome-card">
+            <div class="outcome-badge-row">
+              <span class="outcome-badge badge-minor">Mức 2</span>
+            </div>
+            <div class="outcome-title">Chấp nhận sau khi sửa chữa nhỏ (Minor Revisions)</div>
+            <p class="outcome-desc">Bổ sung trích dẫn tài liệu tham khảo, làm rõ văn phong câu chữ, giải thích thêm số liệu biểu đồ hoặc bảng biểu.</p>
+          </div>
+
+          <div class="outcome-card">
+            <div class="outcome-badge-row">
+              <span class="outcome-badge badge-major">Mức 3</span>
+            </div>
+            <div class="outcome-title">Xem xét lại sau khi sửa chữa lớn (Major Revisions)</div>
+            <p class="outcome-desc">Cần bổ sung thí nghiệm thực nghiệm, điều chỉnh phương pháp hoặc tính toán lại mô hình. Bắt buộc phản biện vòng 2.</p>
+          </div>
+
+          <div class="outcome-card">
+            <div class="outcome-badge-row">
+              <span class="outcome-badge badge-reject">Mức 4</span>
+            </div>
+            <div class="outcome-title">Từ chối đăng (Reject)</div>
+            <p class="outcome-desc">Bản thảo không có đóng góp tính mới, phương pháp sai lệch nghiêm trọng hoặc vi phạm liêm chính khoa học.</p>
+          </div>
+        </div>
+      </section>
 
       <!-- SƠ ĐỒ 2: QUY TRÌNH PHẢN BIỆN CHI TIẾT -->
       <figure class="diagram-figure">
@@ -531,10 +606,11 @@
         </figcaption>
       </figure>
 
-      <div class="rule-card">
-        <h3>3. Cơ chế mời Chuyên gia phản biện thứ 3 (Third Reviewer)</h3>
-        <p>Trường hợp 2 phản biện có ý kiến trái ngược nhau (ví dụ 1 chuyên gia Chấp nhận đăng và 1 chuyên gia Đề nghị từ chối), Tổng biên tập sẽ chỉ định <strong>Chuyên gia phản biện thứ 3</strong> để đánh giá độc lập hoặc đưa ra Ban Thường trực Hội đồng biên tập bỏ phiếu quyết định cuối cùng.</p>
-      </div>
+      <!-- MỤC 3: CƠ CHẾ MỜI CHUYÊN GIA THỨ 3 (ACADEMIC TYPOGRAPHY TRÊN NỀN TRẮNG) -->
+      <section class="academic-section">
+        <h2 class="academic-section-title">3. Cơ chế mời Chuyên gia phản biện thứ 3 (Third Reviewer)</h2>
+        <p class="academic-p">Trường hợp 2 phản biện có ý kiến trái ngược nhau (ví dụ một chuyên gia Chấp nhận đăng và một chuyên gia Đề nghị từ chối), Tổng biên tập sẽ chỉ định Chuyên gia phản biện thứ 3 để đánh giá độc lập hoặc đưa ra Ban Thường trực Hội đồng biên tập bỏ phiếu quyết định cuối cùng.</p>
+      </section>
 
       <!-- SƠ ĐỒ 3: QUY TRÌNH MỜI CHUYÊN GIA THỨ 3 -->
       <figure class="diagram-figure">
@@ -561,6 +637,15 @@
           <strong>Hình 3:</strong> Quy trình xử lý bất đồng đối nghịch: BTV phân tích bản chất &rarr; Lập Tờ trình đề xuất &rarr; TBT phê duyệt chỉ định Chuyên gia thứ 3 (trọng tài độc lập) &rarr; Đưa ra phán quyết theo nguyên tắc đa số (2/3).
         </figcaption>
       </figure>
+
+      <!-- KHUNG XANH CHỈ DÙNG KHI CẦN THIẾT: LƯU Ý BẢO MẬT KIN 2 CHIỀU -->
+      <div class="notice-callout">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div>
+          <strong>Lưu ý quan trọng về tính bảo mật phản biện:</strong>
+          Danh tính của tác giả và các chuyên gia phản biện được bảo mật tuyệt đối trong toàn bộ chu trình thẩm định theo chuẩn Double-blind Peer Review quốc tế. Mọi trao đổi phản biện và giải trình đều được luân chuyển trung gian qua Thư ký tòa soạn.
+        </div>
+      </div>
     </div>
 
     <!-- TAB 3: THỂ LỆ VIẾT VÀ GỬI BÀI -->
@@ -568,28 +653,79 @@
       <h1 class="page-title">Thể lệ viết và gửi bài báo khoa học</h1>
       <div class="page-subtitle">Quy định chi tiết về cấu trúc bản thảo chuẩn IMRaD, định dạng phông chữ và trích dẫn</div>
 
-      <div class="rule-card">
-        <h3>1. Quy cách trình bày bản thảo</h3>
-        <ul style="margin-left: 20px; font-size: 13.5px; color: var(--ink-700); line-height: 1.8;">
-          <li><strong>Định dạng tệp:</strong> Microsoft Word (.docx), font chữ Times New Roman, cỡ chữ 11pt, giãn dòng Single (1.0).</li>
-          <li><strong>Dung lượng bài báo:</strong> Dao động từ 08 đến 15 trang chuẩn A4 (bao gồm toàn bộ bảng biểu, hình vẽ và tài liệu tham khảo).</li>
-          <li><strong>Lề trang:</strong> Top 2.5cm, Bottom 2.5cm, Left 3.0cm, Right 2.0cm. Tiêu đề các mục đánh số La Mã hoặc số Ả Rập phân cấp rõ ràng (1, 1.1, 1.1.1).</li>
-        </ul>
-      </div>
+      <!-- MỤC 1: QUY CÁCH TRÌNH BÀY (KHÔNG DÙNG BULLET POINT, ĐỊNH DẠNG GRID THÔNG SỐ) -->
+      <section class="academic-section">
+        <h2 class="academic-section-title">1. Quy cách trình bày bản thảo</h2>
+        <p class="academic-p">Bản thảo gửi đăng phải tuân thủ nghiêm ngặt các thông số kỹ thuật xuất bản sau:</p>
 
-      <div class="rule-card">
-        <h3>2. Cấu trúc bài báo khoa học chuẩn quốc tế (IMRaD)</h3>
-        <p>Bản thảo hoàn chỉnh bắt buộc bao gồm các phần theo thứ tự:</p>
-        <ol style="margin-left: 20px; font-size: 13.5px; color: var(--ink-700); line-height: 1.8;">
-          <li><strong>Tiêu đề bài báo (Title):</strong> Ngắn gọn, súc tích, phản ánh đúng nội dung chính (Tiếng Việt &amp; Tiếng Anh).</li>
-          <li><strong>Tóm tắt (Abstract):</strong> Từ 150 – 250 từ, nêu rõ bối cảnh, phương pháp, kết quả chính và đóng góp khoa học.</li>
-          <li><strong>Từ khóa (Keywords):</strong> Từ 4 đến 6 từ/cụm từ phản ánh lĩnh vực nghiên cứu.</li>
-          <li><strong>1. Đặt vấn đề (Introduction):</strong> Bối cảnh nghiên cứu, tổng quan các công trình liên quan và mục tiêu bài báo.</li>
-          <li><strong>2. Phương pháp nghiên cứu (Methods):</strong> Mô tả chi tiết dữ liệu, mô hình, thiết bị hoặc thuật toán thực hiện.</li>
-          <li><strong>3. Kết quả &amp; Thảo luận (Results and Discussion):</strong> Trình bày dữ liệu khách quan, so sánh với các công bố trước đó.</li>
-          <li><strong>4. Kết luận (Conclusion):</strong> Tóm lược kết quả đạt được, đóng góp mới và hướng phát triển tiếp theo.</li>
-          <li><strong>Tài liệu tham khảo (References):</strong> Trích dẫn theo chuẩn IEEE (cho ngành Kỹ thuật - Công nghệ) hoặc APA 7th (cho ngành Kinh tế - Xã hội).</li>
-        </ol>
+        <div class="format-spec-grid">
+          <div class="format-spec-row">
+            <span class="format-spec-label">Định dạng tệp tin</span>
+            <span class="format-spec-val">Microsoft Word (.docx), font chữ Times New Roman, cỡ chữ 11pt, giãn dòng Single (1.0).</span>
+          </div>
+          <div class="format-spec-row">
+            <span class="format-spec-label">Dung lượng bản thảo</span>
+            <span class="format-spec-val">Dao động từ 08 đến 15 trang chuẩn A4 (bao gồm toàn bộ bảng biểu, hình vẽ và tài liệu tham khảo).</span>
+          </div>
+          <div class="format-spec-row">
+            <span class="format-spec-label">Căn lề trang in</span>
+            <span class="format-spec-val">Lề trên (Top) 2.5cm, lề dưới (Bottom) 2.5cm, lề trái (Left) 3.0cm, lề phải (Right) 2.0cm.</span>
+          </div>
+          <div class="format-spec-row">
+            <span class="format-spec-label">Hệ thống đề mục</span>
+            <span class="format-spec-val">Đánh số phân cấp rõ ràng theo chữ số Ả Rập (1, 1.1, 1.1.1). Không sử dụng ký tự bullet point đặc biệt làm đầu dòng.</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- MỤC 2: CẤU TRÚC IMRAD (KHÔNG BULLET POINT, ĐÁNH SỐ THỨ TỰ RÕ RÀNG) -->
+      <section class="academic-section">
+        <h2 class="academic-section-title">2. Cấu trúc bài báo khoa học chuẩn quốc tế (IMRaD)</h2>
+        <p class="academic-p">Bản thảo hoàn chỉnh bắt buộc bao gồm các phần theo thứ tự chuẩn mực:</p>
+
+        <div class="imrad-flow">
+          <div class="imrad-item">
+            <span class="imrad-num">01</span>
+            <div class="imrad-content"><strong>Tiêu đề bài báo (Title):</strong> Ngắn gọn, súc tích, phản ánh đúng nội dung chính của nghiên cứu (song ngữ Tiếng Việt và Tiếng Anh).</div>
+          </div>
+          <div class="imrad-item">
+            <span class="imrad-num">02</span>
+            <div class="imrad-content"><strong>Tóm tắt (Abstract):</strong> Dung lượng 150 – 250 từ, nêu bật bối cảnh, phương pháp thực hiện, kết quả chính và đóng góp khoa học mới.</div>
+          </div>
+          <div class="imrad-item">
+            <span class="imrad-num">03</span>
+            <div class="imrad-content"><strong>Từ khóa (Keywords):</strong> Cung cấp từ 4 đến 6 từ hoặc cụm từ phản ánh đặc trưng lĩnh vực nghiên cứu.</div>
+          </div>
+          <div class="imrad-item">
+            <span class="imrad-num">04</span>
+            <div class="imrad-content"><strong>1. Đặt vấn đề (Introduction):</strong> Trình bày bối cảnh nghiên cứu, tổng quan các công trình liên quan và xác định rõ mục tiêu bài báo.</div>
+          </div>
+          <div class="imrad-item">
+            <span class="imrad-num">05</span>
+            <div class="imrad-content"><strong>2. Phương pháp nghiên cứu (Methods):</strong> Mô tả chi tiết dữ liệu, mô hình lý thuyết, thiết bị thí nghiệm hoặc thuật toán triển khai.</div>
+          </div>
+          <div class="imrad-item">
+            <span class="imrad-num">06</span>
+            <div class="imrad-content"><strong>3. Kết quả &amp; Thảo luận (Results and Discussion):</strong> Trình bày dữ liệu khách quan, phân tích biện giải và so sánh với các công bố quốc tế.</div>
+          </div>
+          <div class="imrad-item">
+            <span class="imrad-num">07</span>
+            <div class="imrad-content"><strong>4. Kết luận (Conclusion):</strong> Tóm lược kết quả đạt được, chỉ ra đóng góp mới và gợi mở hướng phát triển tiếp theo.</div>
+          </div>
+          <div class="imrad-item">
+            <span class="imrad-num">08</span>
+            <div class="imrad-content"><strong>Tài liệu tham khảo (References):</strong> Trích dẫn theo chuẩn IEEE (ngành Kỹ thuật - Công nghệ) hoặc APA 7th (ngành Kinh tế - Xã hội).</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- KHUNG XANH CHỈ DÙNG KHI CẦN THIẾT: YÊU CẦU BẢN THẢO MẪU -->
+      <div class="notice-callout">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div>
+          <strong>Yêu cầu bắt buộc khi chuẩn bị bản thảo:</strong>
+          Tác giả vui lòng tải mẫu bài báo chuẩn <strong>BM-01</strong> tại mục Biểu mẫu và định dạng nội dung trực tiếp trên mẫu này trước khi nộp trực tuyến để đảm bảo bài nộp được xử lý nhanh chóng ở khâu sơ duyệt.
+        </div>
       </div>
     </div>
 
@@ -677,24 +813,10 @@
   </main>
 </div>
 
-<!-- FOOTER -->
-<footer>
-  <div class="wrap">
-    <div><strong>Tạp chí Khoa học · Tạp chí Nghiên cứu &amp; Phát triển Công nghệ</strong></div>
-    <div style="font-size: 11.5px; opacity: 0.9; margin-top: 4px;">Giấy phép xuất bản báo chí số 188/GP-BTTTT cấp bởi Bộ Thông tin và Truyền thông · ISSN 1859-3097</div>
-    <div class="flinks">
-      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Trang chủ</a>
-      <a href="about.html">Giới thiệu</a>
-      <a href="publishing-policy.html">Chính sách xuất bản</a>
-      <a href="editorial-board.html">Hội đồng biên tập</a>
-      <a href="guidelines.html">Quy trình - Biểu mẫu</a>
-      <a href="archives.html">Kho lưu trữ</a>
-      <a href="submit-paper.html">Nộp bài trực tuyến</a>
-      <a href="contact.html">Liên hệ</a>
-    </div>
-  </div>
-</footer>
+<!-- KHỐI FOOTER CHUNG (SHARED LAYOUT) -->
+<div id="huit-footer"></div>
 
+<script src="journal-layout.js"></script>
 <script src="journal-interactions.js"></script>
 <script>
   function switchTab(tabName) {

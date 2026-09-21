@@ -2,10 +2,13 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Trang chủ — Phong cách biên tập (Quanta-inspired)</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Trang chủ — Tạp chí Khoa học Đại học Công Thương</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="journal-interactions.css">
+<link rel="stylesheet" href="journal-interactions.css?v=align_1600_8issues">
 <style>
   :root{
     --sky-050:#F3F8FD; --sky-100:#E4EFFA; --sky-200:#C9DFF4;
@@ -18,7 +21,7 @@
   *{box-sizing:border-box;}
   body{margin:0;font-family:var(--sans);background:var(--white);color:var(--ink-900);}
   a{text-decoration:none;color:inherit;}
-  .wrap{max-width:1360px;margin:0 auto;padding:0 20px;}
+  .wrap{max-width:1600px;margin:0 auto;padding:0 24px;}
 
   /* ---------- HEADER BANNER WITH AZURE BLUE (#1da1f2) ---------- */
   .header-bar{background:#1da1f2;color:#ffffff;box-shadow:0 2px 10px rgba(29,161,242,0.18);}
@@ -154,343 +157,367 @@
 </head>
 <body>
 
-<!-- KHỐI BANNER & NAVBAR NỀN XANH (#1da1f2) -->
-<div class="header-bar">
-  <header class="masthead wrap">
-    <div class="name">Tạp chí Khoa học</div>
-    <div class="tagline">NGHIÊN CỨU · CÔNG NGHỆ · CHUYỂN GIAO TRI THỨC</div>
-  </header>
+<!-- KHỐI HEADER CHUNG (SHARED LAYOUT) -->
+<div id="huit-header" data-active="home"></div>
 
-  <nav class="navbar wrap">
-    <div class="nav-links">
-      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html" class="on" style="display:inline-flex;align-items:center;gap:4px;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        Trang chủ
-      </a>
-
-      <!-- TAB DROPDOWN: GIỚI THIỆU -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle">
-          GIỚI THIỆU
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="about.html" class="field-menu-item">
-            <span>Giới thiệu về tạp chí</span>
-          </a>
-          <a href="publishing-policy.html" class="field-menu-item">
-            <span>Chính sách xuất bản</span>
-          </a>
-          <a href="editorial-board.html" class="field-menu-item">
-            <span>Hội đồng biên tập</span>
-          </a>
-          <a href="contact.html" class="field-menu-item">
-            <span>Nhân sự &amp; Liên hệ</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- TAB DROPDOWN: QUY TRÌNH - BIỂU MẪU -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle">
-          QUY TRÌNH - BIỂU MẪU
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="guidelines.html#submission" class="field-menu-item">
-            <span>Quy trình đăng bài</span>
-          </a>
-          <a href="guidelines.html#review" class="field-menu-item">
-            <span>Quy trình phản biện</span>
-          </a>
-          <a href="guidelines.html#format" class="field-menu-item">
-            <span>Thể lệ viết và gửi bài</span>
-          </a>
-          <a href="guidelines.html#templates" class="field-menu-item">
-            <span>Các biểu mẫu</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- TAB DROPDOWN: LĨNH VỰC KHOA HỌC -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle">
-          LĨNH VỰC KHOA HỌC
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="article-detail.html" class="field-menu-item">
-            <span>Công nghệ thông tin</span>
-            <span class="badge-count">142</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Cơ khí – Tự động hóa</span>
-            <span class="badge-count">98</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Khoa học Môi trường</span>
-            <span class="badge-count">76</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Kinh tế – Quản trị</span>
-            <span class="badge-count">115</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Hóa học &amp; Công nghệ thực phẩm</span>
-            <span class="badge-count">84</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Khoa học Xã hội &amp; Nhân văn</span>
-            <span class="badge-count">62</span>
-          </a>
-          <a href="archives.html" class="fields-menu-all">Xem tất cả các chuyên ngành &rarr;</a>
-        </div>
-      </div>
-
-      <a href="archives.html">Kho lưu trữ</a>
-    </div>
+<!-- =========================================================================
+     TRANG CHỦ HỌC THUẬT: CHUẨN OJS (KHỚP CHÍNH XÁC VỚI HÌNH ẢNH media_1789798743155.png)
+     ========================================================================= -->
+<div class="wrap ojs-home-container" style="max-width: 1600px; margin: 36px auto 60px; padding: 0 24px;">
+  <div class="ojs-layout-grid" style="display: grid; grid-template-columns: 1fr 310px; gap: 42px; align-items: start;">
     
-    <!-- KHỐI PHẢI: NÚT NỘP BÀI + AUTH -->
-    <div class="nav-actions">
-      <a href="submit-paper.html" style="background:#ffffff;color:#1da1f2;padding:6px 14px;border-radius:4px;font-size:12.5px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.12);display:inline-flex;align-items:center;gap:6px;transition:all .2s;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-        Gửi bài báo
-      </a>
+    <!-- CỘT CHÍNH: SỐ HIỆN TẠI (100% KHỚP HÌNH media_1789798743155.png) -->
+    <main class="ojs-main-column">
+      <h1 class="ojs-page-title" style="font-family: var(--sans); font-size: 26px; font-weight: 700; color: #111827; margin: 0 0 16px;">
+        Số hiện tại
+      </h1>
+      
+      <h2 class="ojs-issue-heading" style="font-family: var(--sans); font-size: 17px; font-weight: 700; color: #111827; margin: 0 0 24px;">
+        <a href="issue-detail.html" style="color: inherit; text-decoration: none;">Tập 26 Số 3E (2026)</a>
+      </h2>
 
-      <div class="auth-links">
-        <a href="login.html" class="login-btn">Đăng nhập</a>
-        <a href="register.html" class="register-btn">Đăng ký</a>
-      </div>
-    </div>
-  </nav>
-</div>
+      <!-- Khối Bìa & Thông tin Chuyên đề (2 cột) -->
+      <div class="ojs-issue-intro" style="display: flex; gap: 32px; align-items: flex-start; margin-bottom: 36px; flex-wrap: wrap;">
+        <!-- Bìa tạp chí -->
+        <div style="width: 250px; min-width: 220px; border: 1px solid #E5E7EB; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-radius: 2px; overflow: hidden; background: #fff;">
+          <a href="issue-detail.html" title="Xem toàn bộ bài viết trong Số 3E">
+            <img src="assets/images/cover_huit_vol26_no3e.svg" alt="Bìa Tạp chí Khoa học Đại học Công Thương Tập 26 Số 3E (2026)" style="width: 100%; height: auto; display: block; transition: transform .2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+          </a>
+        </div>
 
-<!-- KHỐI TIÊU ĐIỂM CHUẨN TẠP CHÍ HỌC THUẬT (EDITORIAL SPLIT) -->
-<section class="hero-section wrap">
-  <div class="hero-grid">
-    
-    <!-- Cột chính: Bài nghiên cứu nổi bật -->
-    <article>
-      <div class="hero-media" style="background-image: url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80');">
-        <span class="hero-tag">CÔNG NGHỆ THÔNG TIN</span>
-        <span class="cap">Minh họa · Khoa học tính toán &amp; AI</span>
-      </div>
-      <div class="hero-text">
-        <h1><a href="article-detail.html">Ứng dụng mô hình Transformer trong phân loại văn bản tiếng Việt quy mô lớn</a></h1>
-        <div class="byline">Bởi <b>Vũ Thị F</b>, <b>Đặng Văn G</b> — Số 42, Tập 15 (2026)</div>
-        <p class="dek">Nghiên cứu đề xuất kiến trúc cải tiến giúp nâng cao 4,2% độ chính xác phân loại văn bản trên tập dữ liệu tiếng Việt quy mô lớn, đồng thời rút ngắn đáng kể thời gian huấn luyện.</p>
-        <div class="hero-meta">
-          <span>Ngày công bố: 28/11/2026</span>
-          <a href="article-detail.html">Tải PDF</a>
+        <!-- Thông tin chuyên đề -->
+        <div style="flex: 1; min-width: 260px; padding-top: 6px;">
+          <h3 style="font-family: var(--sans); font-size: 18px; font-weight: 700; color: #111827; line-height: 1.45; margin: 0 0 16px;">
+            <a href="issue-detail.html" style="color: #111827; text-decoration: none; transition: color .2s;" onmouseover="this.style.color='#1da1f2'" onmouseout="this.style.color='#111827'">
+              Hội thảo Quốc tế về Kinh tế lần thứ 3 – ICE 2026
+            </a>
+          </h3>
+          <p style="font-family: var(--sans); font-size: 14.5px; font-weight: 700; color: #111827; margin: 0 0 12px;">
+            Đã Xuất bản: <span style="font-weight: 700; color: #374151;">2026-08-25</span>
+          </p>
+          <p style="font-size: 13.5px; color: #4B5563; line-height: 1.6; margin: 0;">
+            Số chuyên đề đặc biệt xuất bản các công trình nghiên cứu chọn lọc từ Hội thảo Khoa học Quốc tế lần thứ 3 về Kinh tế (ICE 2026), tập trung vào các vấn đề: Chuyển đổi số, Kinh tế tuần hoàn, Tài chính và Phát triển bền vững.
+          </p>
         </div>
       </div>
-    </article>
 
-    <!-- Cột phụ: Đồng bộ với tiêu chuẩn Sidebar bên dưới -->
-    <aside class="hero-side-panel">
-      <!-- Số báo mới -->
-      <div>
-        <h3 class="side-headline">Số mới phát hành</h3>
-        <div class="issue-editorial-box">
-          <div class="issue-cover-thumb">
-            <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=300&q=80" alt="Bìa ấn phẩm số 42" loading="lazy">
+      <!-- Dòng phân cách chuyên mục theo đúng hình ảnh: —— Kinh tế —————————————————— -->
+      <div class="ojs-section-header">
+        Kinh tế
+      </div>
+
+      <!-- DANH SÁCH BÀI BÁO THEO CHÍNH XÁC HÌNH ẢNH media_1789798743155.png -->
+      <div class="ojs-articles-list" id="homepage-articles-list">
+        
+        <!-- BÀI 1 -->
+        <article class="ojs-article-item">
+          <h3 class="ojs-article-title">
+            <a href="article-detail.html">
+              BARRIERS AND STRATEGIES FOR CIRCULAR ECONOMY IMPLEMENTATION: A MIXED-METHODS ANALYSIS OF THANH HOA PROVINCE, VIET NAM
+            </a>
+          </h3>
+          <div class="ojs-article-authors">
+            Ma Minh Phuong (Tác giả liên hệ); Le Huy Huan (Tác giả)
           </div>
-          <div class="issue-content">
-            <span class="issue-tag-sub">Xuất bản định kỳ</span>
-            <h3>Tập 15, Số 42 (2026)</h3>
-            <p>Số chuyên đề đặc biệt về Trí tuệ nhân tạo, Chuyển đổi số và Kỹ thuật cơ khí.</p>
-            <div class="meta-stats">12 bài báo · Phản biện kín 2 chiều</div>
-            <a href="archives.html" class="link-issue">Xem toàn bộ số báo →</a>
+          <div>
+            <a href="article-detail.html" class="ojs-btn-pdf">
+              📄 PDF (Tiếng Anh)
+            </a>
+          </div>
+        </article>
+
+        <!-- BÀI 2 -->
+        <article class="ojs-article-item">
+          <h3 class="ojs-article-title">
+            <a href="article-detail.html">
+              FACTORS INFLUENCING CUSTOMERS' TIPPING BEHAVIOUR IN THE RESTAURANT DEPARTMENT AT CARAVELLE SAIGON HOTEL
+            </a>
+          </h3>
+          <div class="ojs-article-authors">
+            Tran Thi Le (Tác giả); Pham Minh Luan (Tác giả liên hệ)
+          </div>
+          <div>
+            <a href="article-detail.html" class="ojs-btn-pdf">
+              📄 PDF (Tiếng Anh)
+            </a>
+          </div>
+        </article>
+
+        <!-- BÀI 3 -->
+        <article class="ojs-article-item">
+          <h3 class="ojs-article-title">
+            <a href="article-detail.html">
+              A COMPARATIVE ANALYSIS OF FORECASTING ACCURACY BETWEEN MACHINE LEARNING MODELS AND OLS REGRESSION: EMPIRICAL EVIDENCE FROM THE VIETNAMESE STOCK MARKET
+            </a>
+          </h3>
+          <div class="ojs-article-authors">
+            Ngo Ly Huynh Phat (Tác giả liên hệ); Pham Chi Trung, Bui Le Vi (Tác giả)
+          </div>
+          <div>
+            <a href="article-detail.html" class="ojs-btn-pdf">
+              📄 PDF (Tiếng Anh)
+            </a>
+          </div>
+        </article>
+
+      </div>
+
+      <!-- ĐƯỜNG DẪN XEM TOÀN BỘ SỐ HIỆN TẠI (SỐ 3E) -->
+      <div style="margin-top: 28px; text-align: center;">
+        <a href="issue-detail.html" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 14px; font-weight: 700; color: #1da1f2; text-decoration: none; padding: 10px 26px; border: 1.5px solid #1da1f2; border-radius: 4px; background: #ffffff; transition: all .2s; box-shadow: 0 1px 3px rgba(29, 161, 242, 0.1);" onmouseover="this.style.background='#f0f7ff'" onmouseout="this.style.background='#ffffff'">
+          &mdash;&mdash;&mdash; Xem toàn bộ số 3E &mdash;&mdash;&mdash;
+        </a>
+      </div>
+
+    </main>
+
+    <!-- CỘT PHỤ BÊN PHẢI (ACADEMIC SIDEBAR OJS CHUẨN TÒA SOẠN HUIT) -->
+    <aside class="ojs-sidebar-column">
+      <!-- Nút Gửi bài báo -->
+      <div style="margin-bottom: 24px;">
+        <a href="submit-paper.html" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 12px 16px; background: #1da1f2; color: #ffffff; font-weight: 700; font-size: 14px; border-radius: 4px; text-decoration: none; box-shadow: 0 2px 6px rgba(29, 161, 242, 0.25); transition: background .2s;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          GỬI BÀI BÁO (SUBMIT)
+        </a>
+      </div>
+
+      <!-- Khối Chỉ mục Khoa học (ABSTRACTING & INDEXING) -->
+      <div class="huit_custom_sidebar_blocks" style="background: #ffffff; border: 1px solid #E5E7EB; border-radius: 4px; padding: 18px; margin-bottom: 24px; text-align: center;">
+        <h4 class="title" style="font-size: 13px; font-weight: 700; text-transform: uppercase; color: #16202B; margin: 0 0 16px; padding-bottom: 8px; border-bottom: 2px solid #1da1f2; letter-spacing: .04em; text-align: left;">
+          ABSTRACTING &amp; INDEXING
+        </h4>
+        <div class="content" style="display: flex; flex-direction: column; gap: 12px;">
+          <div class="indexing-logo-item" style="background: #ffffff; border: 1px solid #f1f5f9; border-radius: 4px; padding: 10px 12px; display: flex; align-items: center; justify-content: center; transition: all .2s ease;">
+            <a href="https://vjol.info.vn/index.php/dhcongthuongHCM" target="_blank" rel="noopener" title="Vietnam Journals Online (VJOL)">
+              <img src="assets/images/indexing/vjol-logo.png" alt="Vietnam Journals Online" style="max-width: 82%; max-height: 48px; height: auto; margin: 0 auto; display: block;">
+            </a>
+          </div>
+          <div class="indexing-logo-item" style="background: #ffffff; border: 1px solid #f1f5f9; border-radius: 4px; padding: 10px 12px; display: flex; align-items: center; justify-content: center; transition: all .2s ease;">
+            <a href="https://www.turnitin.com/login_page.asp" target="_blank" rel="noopener" title="Turnitin Similarity Check">
+              <img src="assets/images/indexing/turnitin-logo.svg" alt="Turnitin" style="max-width: 75%; max-height: 42px; height: auto; margin: 0 auto; display: block;">
+            </a>
+          </div>
+          <div class="indexing-logo-item" style="background: #ffffff; border: 1px solid #f1f5f9; border-radius: 4px; padding: 10px 12px; display: flex; align-items: center; justify-content: center; transition: all .2s ease;">
+            <a href="https://search.crossref.org/?from_ui=&q=3030-413X&page=2" target="_blank" rel="noopener" title="Crossref DOI Indexing">
+              <img src="assets/images/indexing/crossref-logo.png" alt="Crossref" style="max-width: 75%; max-height: 44px; height: auto; margin: 0 auto; display: block;">
+            </a>
+          </div>
+          <div class="indexing-logo-item" style="background: #ffffff; border: 1px solid #f1f5f9; border-radius: 4px; padding: 10px 12px; display: flex; align-items: center; justify-content: center; transition: all .2s ease;">
+            <a href="https://scholar.google.com/citations?hl=vi&user=M-lHDdYAAAAJ&view_op=list_works&authuser=2&gmla=AP6z3OZ8DknU5cOu35nUET7P_2pcQDmXYXJDzQuGLhFkfkVFzcGLQnVhd0iEGA3bt5Gq0Eu7ksbt2RP_6CuBbLsf7qNiRZm0GbGX8LFSHvML" target="_blank" rel="noopener" title="Google Scholar Citations">
+              <img src="assets/images/indexing/google-scholar-logo.png" alt="Google Scholar" style="max-width: 75%; max-height: 46px; height: auto; margin: 0 auto; display: block;">
+            </a>
           </div>
         </div>
       </div>
 
-      <!-- Hướng dẫn tác giả (Đặt tại vị trí thông báo tòa soạn) -->
-      <div>
-        <h3 class="side-headline">Thông báo &amp; Hướng dẫn</h3>
-        <div class="guide-editorial-box">
-          <span class="guide-tag">DÀNH CHO TÁC GIẢ</span>
-          <h4>Quy trình nộp bài &amp; Phản biện</h4>
-          <p>Tìm hiểu thể lệ trình bày bản thảo, quy trình phản biện kín hai chiều 30 ngày và định dạng bài báo chuẩn học thuật.</p>
-          <a href="submit-paper.html">Xem chi tiết &amp; Nộp bài →</a>
+      <!-- Khối Hồ sơ xuất bản & Pháp lý -->
+      <div style="background: #ffffff; border: 1px solid #E5E7EB; border-radius: 4px; padding: 18px; margin-bottom: 24px;">
+        <h4 style="font-size: 13px; font-weight: 700; text-transform: uppercase; color: #16202B; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 2px solid #1da1f2; letter-spacing: .04em;">
+          HỒ SƠ XUẤT BẢN
+        </h4>
+        <div style="font-size: 12.5px; color: #4B5563; line-height: 1.65;">
+          <p style="margin: 0 0 8px;"><strong>Cơ quan chủ quản:</strong><br>Trường ĐH Công Thương TP.HCM</p>
+          <p style="margin: 0 0 8px;"><strong>Mã định danh chuẩn:</strong><br>p-ISSN: <b>3030-4113</b><br>e-ISSN: <b>3030-413X</b></p>
+          <p style="margin: 0 0 8px;"><strong>Giấy phép BTTTT:</strong><br>Số 53/GP-BTTTT (06/3/2024)</p>
+          <p style="margin: 0;"><strong>Tổng biên tập:</strong><br>TS. Bùi Hồng Đăng</p>
         </div>
       </div>
+
+      <!-- Khối Thông tin hướng dẫn -->
+      <div style="background: #ffffff; border: 1px solid #E5E7EB; border-radius: 4px; padding: 18px;">
+        <h4 style="font-size: 13px; font-weight: 700; text-transform: uppercase; color: #16202B; margin: 0 0 12px; padding-bottom: 8px; border-bottom: 2px solid #1da1f2; letter-spacing: .04em;">
+          THÔNG TIN HƯỚNG DẪN
+        </h4>
+        <div style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; line-height: 1.6;">
+          <a href="guidelines.html" style="color: #1da1f2; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+            <span style="color: #1da1f2; font-weight: 700;">&rsaquo;</span> Dành cho Tác giả
+          </a>
+          <a href="publishing-policy.html" style="color: #1da1f2; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+            <span style="color: #1da1f2; font-weight: 700;">&rsaquo;</span> Dành cho Người phản biện
+          </a>
+          <a href="about.html" style="color: #1da1f2; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+            <span style="color: #1da1f2; font-weight: 700;">&rsaquo;</span> Dành cho Độc giả &amp; Thư viện
+          </a>
+        </div>
+      </div>
+
     </aside>
 
   </div>
-</section>
 
-<div class="main-grid wrap">
-  <div class="feed">
-    <h2 class="section-title">Bài báo mới nhất</h2>
+  <!-- 2. KHỐI CÁC SỐ GẦN ĐÂY (2 HÀNG × 4 CỘT = 8 SỐ CHUẨN HUIT KHỚP HOÀN TOÀN Ở ZOOM 100%) -->
+  <section class="academic-recent-issues-section" style="margin-top: 48px;">
+    <div class="recent-issues-header-bar">
+      CÁC SỐ GẦN ĐÂY
+    </div>
+    <div class="recent-issues-wrapper">
+      <div class="recent-issues-grid">
+        
+        <!-- HÀNG 1 - THẺ 1: Tập 26 Số 3E (2026) -->
+        <div class="recent-issue-card">
+          <div class="recent-issue-cover">
+            <a href="issue-detail.html?id=vol26_no3e" title="Xem chi tiết Tập 26 Số 3E (2026)">
+              <img src="assets/images/cover_huit_vol26_no3e.jpg" alt="Tập 26 Số 3E (2026) - Hội thảo ICE 2026">
+            </a>
+          </div>
+          <div class="recent-issue-title">
+            <a href="issue-detail.html?id=vol26_no3e">Tập 26 Số 3E (2026)</a>
+          </div>
+          <a href="issue-detail.html?id=vol26_no3e" class="btn-read-more">Đọc thêm</a>
+        </div>
 
-    <div class="feed-row">
-      <div class="feed-thumb">
-        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=500&q=80" alt="Môi trường và Nông nghiệp" loading="lazy">
-      </div>
-      <div>
-        <span class="feed-tag">MÔI TRƯỜNG</span>
-        <h3><a href="article-detail.html">Đánh giá tác động của biến đổi khí hậu đến năng suất lúa Đồng bằng sông Cửu Long</a></h3>
-        <div class="byline">Bởi <b>Trần Thị H</b></div>
-        <div class="dek">Phân tích chuỗi dữ liệu 20 năm nhằm lượng hóa mức độ ảnh hưởng của các yếu tố khí hậu cực đoan đến sản lượng lúa vùng đồng bằng.</div>
-        <div class="feed-meta"><span>12/11/2026</span><a href="article-detail.html" style="color:#1da1f2;font-weight:600;">Tải PDF</a></div>
+        <!-- HÀNG 1 - THẺ 2: Tập 26 Số 2E (2026) -->
+        <div class="recent-issue-card">
+          <div class="recent-issue-cover">
+            <a href="issue-detail.html?id=vol26_no2e" title="Xem chi tiết Tập 26 Số 2E (2026)">
+              <img src="assets/images/cover_huit_vol26_no2e.jpg" alt="Tập 26 Số 2E (2026) - VKSPE-SWPEA 2026">
+            </a>
+          </div>
+          <div class="recent-issue-title">
+            <a href="issue-detail.html?id=vol26_no2e">Tập 26 Số 2E (2026)</a>
+          </div>
+          <a href="issue-detail.html?id=vol26_no2e" class="btn-read-more">Đọc thêm</a>
+        </div>
+
+        <!-- HÀNG 1 - THẺ 3: Tập 26 Số 1E (2026) -->
+        <div class="recent-issue-card">
+          <div class="recent-issue-cover">
+            <a href="issue-detail.html?id=vol26_no1e" title="Xem chi tiết Tập 26 Số 1E (2026)">
+              <img src="assets/images/cover_huit_vol26_no1e.jpg" alt="Tập 26 Số 1E (2026) - English Edition">
+            </a>
+          </div>
+          <div class="recent-issue-title">
+            <a href="issue-detail.html?id=vol26_no1e">Tập 26 Số 1E (2026)</a>
+          </div>
+          <a href="issue-detail.html?id=vol26_no1e" class="btn-read-more">Đọc thêm</a>
+        </div>
+
+        <!-- HÀNG 1 - THẺ 4: Tập 26 Số 3 (2026) -->
+        <div class="recent-issue-card">
+          <div class="recent-issue-cover">
+            <a href="issue-detail.html?id=vol26_no3" title="Xem chi tiết Tập 26 Số 3 (2026)">
+              <img src="assets/images/cover_huit_vol26_no3e.jpg" alt="Tập 26 Số 3 (2026)">
+            </a>
+          </div>
+          <div class="recent-issue-title">
+            <a href="issue-detail.html?id=vol26_no3">Tập 26 Số 3 (2026)</a>
+          </div>
+          <a href="issue-detail.html?id=vol26_no3" class="btn-read-more">Đọc thêm</a>
+        </div>
+
+        <!-- HÀNG 2 - THẺ 5: Tập 26 Số 2 (2026) -->
+        <div class="recent-issue-card">
+          <div class="recent-issue-cover">
+            <a href="issue-detail.html?id=vol26_no2" title="Xem chi tiết Tập 26 Số 2 (2026)">
+              <img src="assets/images/cover_huit_vol26_no2e.jpg" alt="Tập 26 Số 2 (2026)">
+            </a>
+          </div>
+          <div class="recent-issue-title">
+            <a href="issue-detail.html?id=vol26_no2">Tập 26 Số 2 (2026)</a>
+          </div>
+          <a href="issue-detail.html?id=vol26_no2" class="btn-read-more">Đọc thêm</a>
+        </div>
+
+        <!-- HÀNG 2 - THẺ 6: Tập 26 Số 1 (2026) -->
+        <div class="recent-issue-card">
+          <div class="recent-issue-cover">
+            <a href="issue-detail.html?id=vol26_no1" title="Xem chi tiết Tập 26 Số 1 (2026)">
+              <img src="assets/images/cover_huit_vol26_no1e.jpg" alt="Tập 26 Số 1 (2026)">
+            </a>
+          </div>
+          <div class="recent-issue-title">
+            <a href="issue-detail.html?id=vol26_no1">Tập 26 Số 1 (2026)</a>
+          </div>
+          <a href="issue-detail.html?id=vol26_no1" class="btn-read-more">Đọc thêm</a>
+        </div>
+
+        <!-- HÀNG 2 - THẺ 7: Tập 25 Số 6 (2025) -->
+        <div class="recent-issue-card">
+          <div class="recent-issue-cover">
+            <a href="issue-detail.html?id=vol25_no6" title="Xem chi tiết Tập 25 Số 6 (2025)">
+              <img src="assets/images/cover_huit_vol26_no3e.jpg" alt="Tập 25 Số 6 (2025)">
+            </a>
+          </div>
+          <div class="recent-issue-title">
+            <a href="issue-detail.html?id=vol25_no6">Tập 25 Số 6 (2025)</a>
+          </div>
+          <a href="issue-detail.html?id=vol25_no6" class="btn-read-more">Đọc thêm</a>
+        </div>
+
+        <!-- HÀNG 2 - THẺ 8: Tập 25 Số 5 (2025) -->
+        <div class="recent-issue-card">
+          <div class="recent-issue-cover">
+            <a href="issue-detail.html?id=vol25_no5" title="Xem chi tiết Tập 25 Số 5 (2025)">
+              <img src="assets/images/cover_huit_vol26_no2e.jpg" alt="Tập 25 Số 5 (2025)">
+            </a>
+          </div>
+          <div class="recent-issue-title">
+            <a href="issue-detail.html?id=vol25_no5">Tập 25 Số 5 (2025)</a>
+          </div>
+          <a href="issue-detail.html?id=vol25_no5" class="btn-read-more">Đọc thêm</a>
+        </div>
+
       </div>
     </div>
+  </section>
 
-    <div class="feed-row">
-      <div class="feed-thumb">
-        <img src="https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=500&q=80" alt="Cơ khí chính xác" loading="lazy">
-      </div>
-      <div>
-        <span class="feed-tag">CƠ KHÍ – TỰ ĐỘNG HÓA</span>
-        <h3><a href="article-detail.html">Tối ưu hóa thông số cắt gọt trong gia công hợp kim nhôm bằng phương pháp Taguchi</a></h3>
-        <div class="byline">Bởi <b>Nguyễn Văn K</b>, <b>Lý Thị M</b></div>
-        <div class="dek">Xác định bộ thông số cắt tối ưu thông qua kết hợp phương pháp Taguchi và phân tích phương sai, giúp giảm 18% thời gian gia công.</div>
-        <div class="feed-meta"><span>08/11/2026</span><a href="article-detail.html" style="color:#1da1f2;font-weight:600;">Tải PDF</a></div>
-      </div>
-    </div>
-
-    <div class="feed-row">
-      <div class="feed-thumb">
-        <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=500&q=80" alt="Khoa học máy tính" loading="lazy">
-      </div>
-      <div>
-        <span class="feed-tag">CÔNG NGHỆ THÔNG TIN</span>
-        <h3><a href="article-detail.html">Kỹ thuật tăng cường dữ liệu cho mô hình học sâu xử lý ngôn ngữ tiếng Việt</a></h3>
-        <div class="byline">Bởi <b>Trần Văn N</b></div>
-        <div class="dek">Khảo sát các kỹ thuật tăng cường dữ liệu văn bản nhằm cải thiện hiệu suất mô hình trong điều kiện dữ liệu huấn luyện hạn chế.</div>
-        <div class="feed-meta"><span>02/09/2026</span><a href="article-detail.html" style="color:#1da1f2;font-weight:600;">Tải PDF</a></div>
-      </div>
-    </div>
-
-    <div class="feed-row">
-      <div class="feed-thumb">
-        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=500&q=80" alt="Kinh tế và Tài chính" loading="lazy">
-      </div>
-      <div>
-        <span class="feed-tag">KINH TẾ – QUẢN TRỊ</span>
-        <h3><a href="article-detail.html">Tác động của chuyển đổi số đến hiệu quả hoạt động doanh nghiệp vừa và nhỏ</a></h3>
-        <div class="byline">Bởi <b>Phạm Thị Q</b>, <b>Ngô Văn R</b></div>
-        <div class="dek">Khảo sát 320 doanh nghiệp vừa và nhỏ cho thấy mối tương quan tích cực giữa mức độ chuyển đổi số và năng suất lao động.</div>
-        <div class="feed-meta"><span>28/08/2026</span><a href="article-detail.html" style="color:#1da1f2;font-weight:600;">Tải PDF</a></div>
-      </div>
-    </div>
-
-    <!-- Bài báo thứ 5: Khớp với bài #3 trong Đọc nhiều nhất để nội dung đồng bộ và cân bằng chiều cao 2 cột -->
-    <div class="feed-row" style="border-bottom:none">
-      <div class="feed-thumb">
-        <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=500&q=80" alt="Bảo mật Blockchain IoT" loading="lazy">
-      </div>
-      <div>
-        <span class="feed-tag">CÔNG NGHỆ THÔNG TIN</span>
-        <h3><a href="article-detail.html">Giải pháp bảo mật dữ liệu IoT dựa trên công nghệ blockchain</a></h3>
-        <div class="byline">Bởi <b>Đặng Thành Thi</b></div>
-        <div class="dek">Đề xuất giao thức đồng thuận nhẹ kết hợp mã hóa bất đối xứng tối ưu cho các thiết bị IoT giới hạn tài nguyên tính toán.</div>
-        <div class="feed-meta"><span>15/08/2026</span><a href="article-detail.html" style="color:#1da1f2;font-weight:600;">Tải PDF</a></div>
-      </div>
-    </div>
-
-    <!-- Dòng xem tất cả bài báo chuẩn tòa soạn ở đáy trang -->
-    <div class="feed-archive-link">
-      <a href="archives.html">Xem tất cả bài báo trong kho lưu trữ &rarr;</a>
-    </div>
+  <!-- KHỐI TÌM KIẾM TOÀN VĂN CÁC SỐ PHÁT HÀNH TRƯỚC ĐÂY (ĐẶT Ở PHÍA DƯỚI CỦA Ô CÁC SỐ GẦN ĐÂY) -->
+  <div style="margin-top: 24px; padding: 18px 24px; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 4px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);">
+    <span style="font-size: 14px; font-weight: 600; color: #374151;">Tìm kiếm toàn văn các số phát hành trước đây?</span>
+    <a href="archives.html" style="font-size: 13.5px; font-weight: 700; color: #1da1f2; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: color .2s;">
+      Xem toàn bộ kho lưu trữ ấn phẩm (Archives) &rarr;
+    </a>
   </div>
 
-  <aside>
-    <!-- 1. Đọc nhiều nhất tuần qua (Đưa lên đầu, 1 điểm nhấn xanh duy nhất ở số thứ tự) -->
-    <div class="side-block">
-      <h3 class="side-title">Đọc nhiều nhất tuần qua</h3>
-      <div class="most-read-item">
-        <span class="n">01</span>
-        <div>
-          <div class="t"><a href="article-detail.html">Ứng dụng mô hình Transformer trong phân loại văn bản tiếng Việt</a></div>
-          <div class="a"><span>Vũ Thị F, Đặng Văn G</span> · <span class="reads">1.420 lượt đọc</span></div>
-        </div>
-      </div>
-      <div class="most-read-item">
-        <span class="n">02</span>
-        <div>
-          <div class="t"><a href="article-detail.html">Đánh giá tác động của biến đổi khí hậu đến năng suất lúa ĐBSCL</a></div>
-          <div class="a"><span>Trần Thị H</span> · <span class="reads">1.185 lượt đọc</span></div>
-        </div>
-      </div>
-      <div class="most-read-item">
-        <span class="n">03</span>
-        <div>
-          <div class="t"><a href="article-detail.html">Giải pháp bảo mật dữ liệu IoT dựa trên công nghệ blockchain</a></div>
-          <div class="a"><span>Đặng Thành Thi</span> · <span class="reads">940 lượt đọc</span></div>
-        </div>
-      </div>
-      <div class="most-read-item" style="border-bottom:none">
-        <span class="n">04</span>
-        <div>
-          <div class="t"><a href="article-detail.html">Tối ưu hóa thông số cắt gọt trong gia công hợp kim nhôm</a></div>
-          <div class="a"><span>Nguyễn Văn K, Lý Thị M</span> · <span class="reads">820 lượt đọc</span></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2. Thông tin xuất bản & Chỉ số khoa học (Spec-sheet chuẩn: nhãn trên, giá trị dưới, viền var(--line)) -->
-    <div class="side-block">
-      <h3 class="side-title">Hồ sơ ấn phẩm</h3>
-      <div class="journal-stats-card">
-        <div class="stat-row">
-          <span class="lbl">Mã chuẩn quốc tế</span>
-          <span class="val">p-ISSN 1859-3097</span>
-        </div>
-        <div class="stat-row">
-          <span class="lbl">Kỳ hạn xuất bản</span>
-          <span class="val">02 tháng / số (06 số / năm)</span>
-        </div>
-        <div class="stat-row">
-          <span class="lbl">Hình thức phản biện</span>
-          <span class="val">Kín hai chiều (Double-blind)</span>
-        </div>
-        <div class="stat-row">
-          <span class="lbl">Thời gian phản biện</span>
-          <span class="val">Trung bình 30 ngày</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3. Chỉ mục & Cơ sở dữ liệu (Badge phẳng xanh nhạt, không bóng đổ) -->
-    <div class="side-block">
-      <h3 class="side-title">Chỉ mục &amp; Cơ sở dữ liệu</h3>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;padding-top:4px;">
-        <span style="font-size:11.5px;padding:5px 10px;background:var(--sky-050);border:1px solid var(--sky-200);border-radius:3px;color:var(--ink-700);font-weight:600;">Google Scholar</span>
-        <span style="font-size:11.5px;padding:5px 10px;background:var(--sky-050);border:1px solid var(--sky-200);border-radius:3px;color:var(--ink-700);font-weight:600;">CrossRef DOI</span>
-        <span style="font-size:11.5px;padding:5px 10px;background:var(--sky-050);border:1px solid var(--sky-200);border-radius:3px;color:var(--ink-700);font-weight:600;">Vietnam Citation Index</span>
-      </div>
-    </div>
-
-    <!-- 4. Nhận thông báo xuất bản (Thiết kế tinh gọn, nằm ở cuối) -->
-    <div class="side-block">
-      <div class="newsletter-box">
-        <div class="nl-head">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#1da1f2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-          Nhận thông báo bài báo mới
-        </div>
-        <p>Đăng ký nhận mục lục và trích yếu số mới phát hành định kỳ.</p>
-        <div class="input-group">
-          <input type="email" placeholder="Địa chỉ email của bạn...">
-          <button type="button">Đăng ký</button>
-        </div>
-      </div>
-    </div>
-  </aside>
 </div>
 
-<footer>
-  <div>Tạp chí Khoa học · Tạp chí Nghiên cứu &amp; Phát triển Công nghệ · ISSN 1859-3097</div>
-  <div class="flinks">
-    <a href="about.html">Về tạp chí</a>
-    <a href="guidelines.html">Thể lệ &amp; Quy trình nộp bài</a>
-    <a href="publishing-policy.html">Đạo đức xuất bản</a>
-    <a href="editorial-board.html">Hội đồng biên tập</a>
-    <a href="contact.html">Liên hệ tòa soạn</a>
-  </div>
-</footer>
+<!-- KHỐI FOOTER CHUNG (SHARED LAYOUT) -->
+<div id="huit-footer"></div>
 
-<script src="journal-interactions.js"></script>
+<script src="journal-layout.js?v=nav_titlecase"></script>
+<script src="journal-interactions.js?v=align_1600_8issues"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadHomepageArticles();
+  });
+
+  async function loadHomepageArticles() {
+    const container = document.getElementById('homepage-articles-list');
+    if (!container) return;
+
+    try {
+      if (typeof apiGetLatestArticles === 'function') {
+        const articles = await apiGetLatestArticles(6);
+        if (articles && articles.length > 0) {
+          container.innerHTML = articles.map(art => {
+            const authorsStr = (art.tacGias && art.tacGias.length > 0)
+              ? art.tacGias.map(tg => `${tg.hoTen}${tg.laTacGiaLienHe ? ' (Tác giả liên hệ)' : ''}`).join('; ')
+              : (art.tacGiaChinh || 'Ban biên tập');
+            const titleDisplay = (art.tieuDeTiengAnh || art.tieuDe).toUpperCase();
+            return `
+              <article class="ojs-article-item">
+                <h3 class="ojs-article-title">
+                  <a href="article-detail.html?id=${art.maBaiBao}">
+                    ${titleDisplay}
+                  </a>
+                </h3>
+                <div class="ojs-article-authors">
+                  ${authorsStr}
+                </div>
+                <div>
+                  <a href="article-detail.html?id=${art.maBaiBao}" class="ojs-btn-pdf">
+                    📄 PDF (Toàn văn)
+                  </a>
+                </div>
+              </article>
+            `;
+          }).join('');
+        }
+      }
+    } catch (e) {
+      console.warn('Sử dụng dữ liệu tĩnh dự phòng cho trang chủ:', e);
+    }
+  }
+</script>
 </body>
 </html>

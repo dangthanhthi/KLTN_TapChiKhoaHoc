@@ -129,117 +129,8 @@
 </head>
 <body>
 
-<!-- KHỐI BANNER & NAVBAR NỀN XANH (#1da1f2) -->
-<div class="header-bar">
-  <header class="masthead wrap">
-    <div class="name"><a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Tạp chí Khoa học</a></div>
-    <div class="tagline">NGHIÊN CỨU · CÔNG NGHỆ · CHUYỂN GIAO TRI THỨC</div>
-  </header>
-
-  <nav class="navbar wrap">
-    <div class="nav-links">
-      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html" style="display:inline-flex;align-items:center;gap:4px;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        Trang chủ
-      </a>
-
-      <!-- TAB DROPDOWN: GIỚI THIỆU -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle">
-          GIỚI THIỆU
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="about.html" class="field-menu-item">
-            <span>Giới thiệu về tạp chí</span>
-          </a>
-          <a href="publishing-policy.html" class="field-menu-item">
-            <span>Chính sách xuất bản</span>
-          </a>
-          <a href="editorial-board.html" class="field-menu-item">
-            <span>Hội đồng biên tập</span>
-          </a>
-          <a href="contact.html" class="field-menu-item">
-            <span>Nhân sự &amp; Liên hệ</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- TAB DROPDOWN: QUY TRÌNH - BIỂU MẪU -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle">
-          QUY TRÌNH - BIỂU MẪU
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="guidelines.html#submission" class="field-menu-item">
-            <span>Quy trình đăng bài</span>
-          </a>
-          <a href="guidelines.html#review" class="field-menu-item">
-            <span>Quy trình phản biện</span>
-          </a>
-          <a href="guidelines.html#format" class="field-menu-item">
-            <span>Thể lệ viết và gửi bài</span>
-          </a>
-          <a href="guidelines.html#templates" class="field-menu-item">
-            <span>Các biểu mẫu</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- TAB DROPDOWN: LĨNH VỰC KHOA HỌC -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle on">
-          LĨNH VỰC KHOA HỌC
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="article-detail.html" class="field-menu-item" style="color:#1da1f2!important;font-weight:700;">
-            <span>Công nghệ thông tin</span>
-            <span class="badge-count">142</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Cơ khí – Tự động hóa</span>
-            <span class="badge-count">98</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Khoa học Môi trường</span>
-            <span class="badge-count">76</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Kinh tế – Quản trị</span>
-            <span class="badge-count">115</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Hóa học &amp; Công nghệ thực phẩm</span>
-            <span class="badge-count">84</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Khoa học Xã hội &amp; Nhân văn</span>
-            <span class="badge-count">62</span>
-          </a>
-          <div class="fields-menu-divider"></div>
-          <a href="archives.html" class="fields-menu-all">Xem tất cả các chuyên ngành &rarr;</a>
-        </div>
-      </div>
-
-      <a href="archives.html">Kho lưu trữ</a>
-    </div>
-
-    <!-- KHỐI PHẢI: NÚT NỘP BÀI + AUTH -->
-    <div class="nav-actions">
-      <a href="submit-paper.html" style="background:#ffffff;color:#1da1f2;padding:6px 14px;border-radius:4px;font-size:12.5px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.12);display:inline-flex;align-items:center;gap:6px;transition:all .2s;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-        Gửi bài báo
-      </a>
-      
-      <div class="auth-links">
-        <a href="login.html" class="login-btn">Đăng nhập</a>
-        <a href="register.html" class="register-btn">Đăng ký</a>
-      </div>
-    </div>
-  </nav>
-</div>
+<!-- KHỐI HEADER CHUNG (SHARED LAYOUT) -->
+<div id="huit-header" data-active="article"></div>
 
 <!-- BREADCRUMB -->
 <div class="breadcrumb-bar">
@@ -273,24 +164,36 @@
       <h1 class="article-title-vn">Ứng dụng mô hình Transformer trong phân loại văn bản tiếng Việt quy mô lớn</h1>
       <h2 class="article-title-en">Application of Transformer Models in Large-Scale Vietnamese Text Classification</h2>
 
-      <div class="author-list">
-        <div class="author-item">
-          <span class="author-name">Vũ Thị F</span>
-          <span class="author-affiliation">Khoa CNTT, Trường Đại học</span>
-          <span class="author-orcid">iD</span>
+      <div class="author-list" style="display:flex;flex-direction:column;gap:10px;">
+        <div class="author-item" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;">
+          <span class="author-name" style="font-size:14.5px;">TS. Vũ Thị F</span>
+          <span class="author-affiliation">Khoa Công nghệ Thông tin, Trường ĐH Công Thương TP.HCM</span>
+          <a href="https://orcid.org/0000-0002-1825-0097" target="_blank" rel="noopener" class="author-orcid" title="Hồ sơ ORCID: 0000-0002-1825-0097">
+            <span style="background:#a6ce39;color:#fff;border-radius:50%;width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;margin-right:2px;">iD</span>
+            0000-0002-1825-0097
+          </a>
+          <span style="background:#1da1f2;color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px;" title="Tác giả chịu trách nhiệm trao đổi bản thảo">✉ Tác giả liên hệ</span>
+          <span style="background:#ecfdf5;color:#059669;font-size:11px;font-weight:600;padding:1px 6px;border-radius:3px;border:1px solid #a7f3d0;" title="Tài khoản đã đăng ký trên hệ thống">✓ Tài khoản hệ thống</span>
         </div>
-        <div class="author-item">
-          <span class="author-name">Đặng Văn G</span>
+        <div class="author-item" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;">
+          <span class="author-name" style="font-size:14.5px;">PGS.TS. Đặng Văn G</span>
           <span class="author-affiliation">Viện Công nghệ Tiên tiến, Đại học Quốc gia TP.HCM</span>
-          <span class="author-orcid">iD</span>
+          <a href="https://orcid.org/0000-0002-4512-8890" target="_blank" rel="noopener" class="author-orcid" title="Hồ sơ ORCID: 0000-0002-4512-8890">
+            <span style="background:#a6ce39;color:#fff;border-radius:50%;width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;margin-right:2px;">iD</span>
+            0000-0002-4512-8890
+          </a>
+          <span style="background:#f1f5f9;color:#475569;font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px;">Đồng tác giả (2)</span>
+          <span style="background:#ecfdf5;color:#059669;font-size:11px;font-weight:600;padding:1px 6px;border-radius:3px;border:1px solid #a7f3d0;" title="Tài khoản đã đăng ký trên hệ thống">✓ Tài khoản hệ thống</span>
         </div>
       </div>
 
       <div class="article-pub-meta">
+        <div><strong>Tạp chí:</strong> Tạp chí Khoa học Đại học Công Thương</div>
         <div><strong>Xuất bản:</strong> Tập 15, Số 42 (11/2026)</div>
+        <div><strong>Chỉ số:</strong> p-ISSN 3030-4113 · e-ISSN 3030-413X</div>
         <div><strong>Trang:</strong> 45–58</div>
         <div><strong>DOI:</strong> <a href="javascript:void(0)" onclick="showToast('Mã định danh DOI quốc tế: 10.59876/jst.jsc.2026.42.04')" class="doi-link">10.59876/jst.jsc.2026.42.04</a></div>
-        <div><strong>Bản quyền:</strong> CC BY-NC 4.0 Open Access</div>
+        <div><strong>Bản quyền:</strong> ©2026 Trường ĐH Công Thương TP.HCM (CC BY-NC 4.0)</div>
       </div>
 
       <!-- THANH THAO TÁC -->
@@ -385,28 +288,28 @@
     <!-- Dòng thời gian thẩm định (Quy trình xuất bản 6 giai đoạn) -->
     <div class="side-card">
       <h3 class="side-card-title">Lịch sử thẩm định bản thảo</h3>
-      <ul class="timeline-list">
-        <li class="timeline-item">
+      <div class="timeline-list">
+        <div class="timeline-item">
           <div class="timeline-date">10/09/2026</div>
           <div class="timeline-event">Tòa soạn tiếp nhận bản thảo sơ duyệt</div>
-        </li>
-        <li class="timeline-item">
+        </div>
+        <div class="timeline-item">
           <div class="timeline-date">15/09/2026</div>
           <div class="timeline-event">Phân công 02 chuyên gia phản biện kín</div>
-        </li>
-        <li class="timeline-item">
+        </div>
+        <div class="timeline-item">
           <div class="timeline-date">12/10/2026</div>
           <div class="timeline-event">Tác giả hoàn thiện chỉnh sửa theo ý kiến phản biện</div>
-        </li>
-        <li class="timeline-item">
+        </div>
+        <div class="timeline-item">
           <div class="timeline-date">05/11/2026</div>
           <div class="timeline-event">Hội đồng biên tập chấp nhận đăng</div>
-        </li>
-        <li class="timeline-item">
+        </div>
+        <div class="timeline-item">
           <div class="timeline-date">28/11/2026</div>
           <div class="timeline-event">Công bố chính thức trên ấn phẩm số 42</div>
-        </li>
-      </ul>
+        </div>
+      </div>
     </div>
 
     <!-- Bài viết liên quan -->
@@ -425,21 +328,84 @@
 
 </div>
 
-<!-- FOOTER -->
-<footer>
-  <div class="wrap">
-    <div>Tạp chí Khoa học · Tạp chí Nghiên cứu &amp; Phát triển Công nghệ · ISSN 1859-3097</div>
-    <div class="flinks">
-      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Trang chủ</a>
-      <a href="about.html">Về tạp chí</a>
-      <a href="guidelines.html">Thể lệ &amp; Quy trình nộp bài</a>
-      <a href="publishing-policy.html">Chính sách xuất bản</a>
-      <a href="editorial-board.html">Hội đồng biên tập</a>
-      <a href="contact.html">Liên hệ tòa soạn</a>
-    </div>
-  </div>
-</footer>
+<!-- KHỐI FOOTER CHUNG (SHARED LAYOUT) -->
+<div id="huit-footer"></div>
 
+<script src="journal-layout.js"></script>
 <script src="journal-interactions.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const params = new URLSearchParams(window.location.search);
+  const articleId = params.get('id');
+
+  if (articleId && !isNaN(parseInt(articleId, 10)) && typeof apiGetPublicArticle === 'function') {
+    try {
+      const art = await apiGetPublicArticle(parseInt(articleId, 10));
+      if (art) {
+        document.title = `${art.tieuDe} · Tạp chí Khoa học Đại học Công Thương`;
+        
+        // Cập nhật tiêu đề bài báo
+        const titleVn = document.querySelector('.article-title-vn');
+        if (titleVn) titleVn.innerText = art.tieuDe;
+
+        const titleEn = document.querySelector('.article-title-en');
+        if (titleEn) titleEn.innerText = art.tieuDeTiengAnh || '';
+
+        // Tóm tắt tiếng Việt
+        const absVi = document.querySelector('.abstract-body');
+        if (absVi) absVi.innerText = art.tomTat || 'Chưa có tóm tắt.';
+
+        // Từ khóa
+        const kwList = document.querySelector('.keywords-tag-list');
+        if (kwList && art.tuKhoa) {
+          const kwItems = art.tuKhoa.split(',').map(k => k.trim()).filter(Boolean);
+          kwList.innerHTML = '<span class="keyword-label">Từ khóa:</span> ' + 
+            kwItems.map(k => `<span class="kw-tag">${k}</span>`).join(' ');
+        }
+
+        // Tác giả
+        const authorList = document.querySelector('.author-list');
+        if (authorList && art.tacGias && art.tacGias.length > 0) {
+          authorList.innerHTML = art.tacGias.map((tg, idx) => `
+            <div class="author-item" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;">
+              <span class="author-name" style="font-size:14.5px;">${tg.hoTen}</span>
+              <span class="author-affiliation">${tg.donVi || 'Trường Đại học Công Thương TP.HCM'}</span>
+              ${tg.maORCID ? `
+                <a href="https://orcid.org/${tg.maORCID}" target="_blank" rel="noopener" class="author-orcid" title="Hồ sơ ORCID: ${tg.maORCID}">
+                  <span style="background:#a6ce39;color:#fff;border-radius:50%;width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;margin-right:2px;">iD</span>
+                  ${tg.maORCID}
+                </a>` : ''}
+              ${tg.laTacGiaLienHe ? `<span style="background:#1da1f2;color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px;">✉ Tác giả liên hệ</span>` : `<span style="background:#f1f5f9;color:#475569;font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px;">Đồng tác giả (${idx + 1})</span>`}
+              ${tg.daLienKetTaiKhoan ? `<span style="background:#ecfdf5;color:#059669;font-size:11px;font-weight:600;padding:1px 6px;border-radius:3px;border:1px solid #a7f3d0;">✓ Tài khoản hệ thống</span>` : ''}
+            </div>
+          `).join('');
+        }
+
+        // Siêu dữ liệu xuất bản
+        const pubMeta = document.querySelector('.article-pub-meta');
+        if (pubMeta) {
+          pubMeta.innerHTML = `
+            <div><strong>Tạp chí:</strong> Tạp chí Khoa học Đại học Công Thương</div>
+            <div><strong>Xuất bản:</strong> ${art.tenSoTapChi || `Tập ${art.tap || 15}, Số ${art.so || 42} (${art.nam || 2026})`}</div>
+            <div><strong>Chỉ số:</strong> p-ISSN 3030-4113 · e-ISSN 3030-413X</div>
+            <div><strong>Trang:</strong> ${art.trangBatDau && art.trangKetThuc ? `${art.trangBatDau}–${art.trangKetThuc}` : 'Toàn văn'}</div>
+            <div><strong>DOI:</strong> <a href="javascript:void(0)" onclick="showToast('Mã định danh DOI: ${art.maDOI || 'Đang cập nhật'}')" class="doi-link">${art.maDOI || 'Đang cấp mã DOI'}</a></div>
+            <div><strong>Chuyên ngành:</strong> ${art.chuyenNganh}</div>
+          `;
+        }
+
+        // Tải PDF
+        const btnPdf = document.querySelector('.btn-download-pdf');
+        if (btnPdf && art.filePdfUrl) {
+          btnPdf.href = art.filePdfUrl;
+          btnPdf.target = '_blank';
+        }
+      }
+    } catch (e) {
+      console.warn('Không thể nạp bài báo qua API, dùng nội dung mẫu:', e);
+    }
+  }
+});
+</script>
 </body>
 </html>

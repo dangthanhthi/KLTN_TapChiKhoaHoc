@@ -207,117 +207,8 @@
 </head>
 <body>
 
-<!-- KHỐI BANNER & NAVBAR NỀN XANH (#1da1f2) -->
-<div class="header-bar">
-  <header class="masthead wrap">
-    <div class="name"><a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Tạp chí Khoa học</a></div>
-    <div class="tagline">NGHIÊN CỨU · CÔNG NGHỆ · CHUYỂN GIAO TRI THỨC</div>
-  </header>
-
-  <nav class="navbar wrap">
-    <div class="nav-links">
-      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html" style="display:inline-flex;align-items:center;gap:4px;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        Trang chủ
-      </a>
-
-      <!-- TAB DROPDOWN: GIỚI THIỆU -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle">
-          GIỚI THIỆU
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="about.html" class="field-menu-item">
-            <span>Giới thiệu về tạp chí</span>
-          </a>
-          <a href="publishing-policy.html" class="field-menu-item">
-            <span>Chính sách xuất bản</span>
-          </a>
-          <a href="editorial-board.html" class="field-menu-item">
-            <span>Hội đồng biên tập</span>
-          </a>
-          <a href="contact.html" class="field-menu-item">
-            <span>Nhân sự &amp; Liên hệ</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- TAB DROPDOWN: QUY TRÌNH - BIỂU MẪU -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle">
-          QUY TRÌNH - BIỂU MẪU
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="guidelines.html#submission" class="field-menu-item">
-            <span>Quy trình đăng bài</span>
-          </a>
-          <a href="guidelines.html#review" class="field-menu-item">
-            <span>Quy trình phản biện</span>
-          </a>
-          <a href="guidelines.html#format" class="field-menu-item">
-            <span>Thể lệ viết và gửi bài</span>
-          </a>
-          <a href="guidelines.html#templates" class="field-menu-item">
-            <span>Các biểu mẫu</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- TAB DROPDOWN: LĨNH VỰC KHOA HỌC -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle">
-          LĨNH VỰC KHOA HỌC
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="article-detail.html" class="field-menu-item">
-            <span>Công nghệ thông tin</span>
-            <span class="badge-count">142</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Cơ khí – Tự động hóa</span>
-            <span class="badge-count">98</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Khoa học Môi trường</span>
-            <span class="badge-count">76</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Kinh tế – Quản trị</span>
-            <span class="badge-count">115</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Hóa học &amp; Công nghệ thực phẩm</span>
-            <span class="badge-count">84</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Khoa học Xã hội &amp; Nhân văn</span>
-            <span class="badge-count">62</span>
-          </a>
-          <div class="fields-menu-divider"></div>
-          <a href="archives.html" class="fields-menu-all">Xem tất cả các chuyên ngành &rarr;</a>
-        </div>
-      </div>
-
-      <a href="archives.html">Kho lưu trữ</a>
-    </div>
-
-    <!-- KHỐI PHẢI: NÚT NỘP BÀI + AUTH -->
-    <div class="nav-actions">
-      <a href="submit-paper.html" style="background:#ffffff;color:#1da1f2;padding:6px 14px;border-radius:4px;font-size:12.5px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.12);display:inline-flex;align-items:center;gap:6px;transition:all .2s;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-        Gửi bài báo
-      </a>
-      
-      <div class="auth-links">
-        <a href="login.html" class="login-btn" style="background:#0d8ddc;color:#ffffff;border-color:#0d8ddc;">Đăng nhập</a>
-        <a href="register.html" class="register-btn">Đăng ký</a>
-      </div>
-    </div>
-  </nav>
-</div>
+<!-- KHỐI HEADER CHUNG (SHARED LAYOUT) -->
+<div id="huit-header" data-active="login"></div>
 
 <!-- BREADCRUMB -->
 <div class="breadcrumb-bar">
@@ -336,19 +227,40 @@
       <p>Cổng thông tin quản lý bài báo và xuất bản khoa học</p>
     </div>
 
-    <div class="auth-box-body">
+    <!-- KHỐI HIỂN THỊ KHI ĐÃ ĐĂNG NHẬP -->
+    <div id="already-logged-in-box" style="display:none;padding:24px 28px;background:#f0fdf4;border-bottom:1px solid #bbf7d0;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+        <div style="width:42px;height:42px;border-radius:50%;background:#10b981;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;" id="logged-user-avatar">U</div>
+        <div>
+          <div style="font-size:14.5px;font-weight:700;color:#065f46;" id="logged-user-name">Đang đăng nhập</div>
+          <div style="font-size:12.5px;color:#047857;" id="logged-user-email">email@huit.edu.vn</div>
+        </div>
+      </div>
+      <p style="font-size:13px;color:#065f46;margin-bottom:16px;line-height:1.5;">
+        Bạn hiện đang đăng nhập trong hệ thống Tòa soạn. Bạn có thể truy cập Bàn làm việc hoặc đăng xuất để chuyển sang tài khoản khác.
+      </p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a href="profile.html" class="btn-auth-submit" style="flex:1;min-width:140px;text-align:center;text-decoration:none;display:inline-block;padding:10px 14px;font-size:13px;">Vào Bàn làm việc &rarr;</a>
+        <button type="button" onclick="handleLogoutFromLogin()" style="flex:1;min-width:140px;background:#fff;border:1px solid #f87171;color:#b91c1c;border-radius:4px;padding:10px 14px;font-size:13px;font-weight:700;cursor:pointer;">Đăng xuất ngay</button>
+      </div>
+      <div style="margin-top:12px;text-align:center;">
+        <a href="javascript:void(0)" onclick="showLoginFormAnyway()" style="font-size:12px;color:#047857;text-decoration:underline;">Đăng nhập bằng tài khoản khác mà không đăng xuất</a>
+      </div>
+    </div>
+
+    <div class="auth-box-body" id="login-form-container">
       <form id="login-page-form" onsubmit="handleLoginPageSubmit(event)">
         
         <!-- 1. Email / Tên đăng nhập -->
         <div class="form-group">
           <label for="username">Tên đăng nhập hoặc Email học thuật <span class="req">*</span></label>
-          <input type="text" id="username" class="form-control" placeholder="Ví dụ: vuthif@journal.edu.vn" value="vuthif@journal.edu.vn" required autofocus>
+          <input type="text" id="username" class="form-control" placeholder="Ví dụ: tacgia@huit.edu.vn hoặc tên đăng nhập" required autofocus>
         </div>
 
         <!-- 2. Mật khẩu -->
         <div class="form-group">
           <label for="password">Mật khẩu truy cập <span class="req">*</span></label>
-          <input type="password" id="password" class="form-control" placeholder="Nhập mật khẩu tài khoản" value="MatKhau@123" required>
+          <input type="password" id="password" class="form-control" placeholder="Nhập mật khẩu tài khoản" required>
         </div>
 
         <!-- Nhớ mật khẩu & Quên mật khẩu -->
@@ -356,7 +268,7 @@
           <label>
             <input type="checkbox" checked> Ghi nhớ đăng nhập
           </label>
-          <a href="javascript:void(0)" onclick="alert('Vui lòng liên hệ Thư ký tòa soạn qua email tapchikhoahoc@journal.edu.vn để được cấp lại mật khẩu truy cập.')">Quên mật khẩu?</a>
+          <a href="javascript:void(0)" onclick="showToast('Vui lòng liên hệ Thư ký tòa soạn qua email journal@huit.edu.vn hoặc Hotline 028.38163318 - ext.112 để được cấp lại mật khẩu truy cập.', 'info', 6000)">Quên mật khẩu?</a>
         </div>
 
         <!-- Nút Đăng nhập -->
@@ -371,40 +283,91 @@
   </div>
 </main>
 
-<!-- FOOTER -->
-<footer>
-  <div class="wrap">
-    <div>Tạp chí Khoa học · Tạp chí Nghiên cứu &amp; Phát triển Công nghệ · ISSN 1859-3097</div>
-    <div class="flinks">
-      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Trang chủ</a>
-      <a href="about.html">Về tạp chí</a>
-      <a href="guidelines.html">Thể lệ &amp; Quy trình nộp bài</a>
-      <a href="publishing-policy.html">Chính sách xuất bản</a>
-      <a href="editorial-board.html">Hội đồng biên tập</a>
-      <a href="contact.html">Liên hệ tòa soạn</a>
-    </div>
-  </div>
-</footer>
+<!-- KHỐI FOOTER CHUNG (SHARED LAYOUT) -->
+<div id="huit-footer"></div>
 
+<script src="journal-layout.js"></script>
 <script src="journal-interactions.js"></script>
 <script>
-  function handleLoginPageSubmit(e) {
+  async function handleLoginPageSubmit(e) {
     e.preventDefault();
-    const email = document.getElementById('username').value;
-    const user = {
-      isLoggedIn: true,
-      hoTen: email.includes('vuthif') ? 'TS. Vũ Thị F' : (email.includes('nguyen') ? 'PGS. Nguyễn Văn A' : 'Tác giả ' + email.split('@')[0]),
-      email: email,
-      donVi: 'Trường Đại học',
-      chucVu: 'Tác giả & Nhà nghiên cứu',
-      orcid: '0000-0002-1825-0097'
-    };
-    setCurrentUser(user);
-    showToast(`Đăng nhập thành công! Xin chào ${user.hoTen}.`);
-    setTimeout(() => {
-      window.location.href = 'profile.html';
-    }, 600);
+    const loginInput = document.getElementById('username').value.trim();
+    const passwordInput = document.getElementById('password').value;
+    const btn = e.target.querySelector('button[type="submit"]');
+    const oldBtnText = btn.innerHTML;
+    btn.innerHTML = 'Đang xác thực tài khoản...';
+    btn.disabled = true;
+
+    try {
+      const res = await apiLogin(loginInput, passwordInput);
+      if (res.success && res.token) {
+        localStorage.setItem('journal_token', res.token);
+        const userObj = {
+          isLoggedIn: true,
+          ...res.user,
+          chucVu: (res.user.vaiTros && res.user.vaiTros.length > 0) ? res.user.vaiTros.join(', ') : 'Tác giả'
+        };
+        setCurrentUser(userObj);
+        showToast(`Đăng nhập thành công! Xin chào ${res.user.hoTen}.`, 'success');
+        setTimeout(() => {
+          window.location.href = 'profile.html';
+        }, 600);
+      } else {
+        showToast(res.message || 'Tài khoản hoặc mật khẩu không chính xác.', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Không thể kết nối đến máy chủ Backend (http://localhost:5000). Vui lòng đảm bảo backend đang chạy.', 'error');
+    } finally {
+      btn.innerHTML = oldBtnText;
+      btn.disabled = false;
+    }
   }
+
+  function checkExistingLogin() {
+    const user = getCurrentUser();
+    const token = localStorage.getItem('journal_token');
+    const alreadyBox = document.getElementById('already-logged-in-box');
+    const formBox = document.getElementById('login-form-container');
+
+    if ((user && user.isLoggedIn) || token) {
+      if (alreadyBox && formBox) {
+        alreadyBox.style.display = 'block';
+        formBox.style.display = 'none';
+
+        if (user && user.hoTen) {
+          const initial = user.hoTen.split(' ').pop().charAt(0).toUpperCase();
+          const avEl = document.getElementById('logged-user-avatar');
+          if (avEl) {
+            if (user.anhDaiDien) {
+              avEl.innerHTML = `<img src="${getAvatarUrl(user.anhDaiDien)}" alt="Avatar" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+              avEl.style.background = 'transparent';
+            } else {
+              avEl.innerText = initial;
+              avEl.style.background = '#10b981';
+            }
+          }
+        }
+      }
+    } else {
+      if (alreadyBox && formBox) {
+        alreadyBox.style.display = 'none';
+        formBox.style.display = 'block';
+      }
+    }
+  }
+
+  function handleLogoutFromLogin() {
+    handleUserLogout();
+    checkExistingLogin();
+  }
+
+  function showLoginFormAnyway() {
+    document.getElementById('already-logged-in-box').style.display = 'none';
+    document.getElementById('login-form-container').style.display = 'block';
+  }
+
+  document.addEventListener('DOMContentLoaded', checkExistingLogin);
 </script>
 </body>
 </html>

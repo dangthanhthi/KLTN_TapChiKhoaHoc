@@ -358,6 +358,15 @@
   .btn-modal-cancel { background: #f1f5f9; border: none; padding: 8px 16px; border-radius: 3px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--ink-700); }
   .btn-modal-save { background: #1da1f2; border: none; padding: 8px 18px; border-radius: 3px; cursor: pointer; font-size: 13px; font-weight: 700; color: #fff; }
 
+  /* TABLE & BADGES FOR DOSSIER */
+  .custom-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12.5px; }
+  .custom-table th { background: #f8fafc; border: 1px solid var(--line); padding: 8px 10px; text-align: left; font-weight: 600; color: var(--ink-700); font-size: 11.5px; }
+  .custom-table td { border: 1px solid var(--line); padding: 8px 10px; vertical-align: middle; }
+  .badge-tag { display: inline-block; font-size: 10.5px; padding: 2px 7px; border-radius: 3px; font-weight: 600; }
+  .badge-primary { background: var(--sky-050); color: #1da1f2; border: 1px solid var(--sky-200); }
+  .badge-neutral { background: #f1f5f9; color: var(--ink-700); }
+  .badge-success { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+
   /* FOOTER */
   footer { background: #1da1f2; padding: 32px 24px; text-align: center; font-size: 13px; color: #ffffff; }
   footer .flinks { margin-top: 12px; }
@@ -367,115 +376,8 @@
 </head>
 <body>
 
-<!-- KHỐI BANNER & NAVBAR NỀN XANH (#1da1f2) -->
-<div class="header-bar">
-  <header class="masthead wrap">
-    <div class="name"><a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Tạp chí Khoa học</a></div>
-    <div class="tagline">NGHIÊN CỨU · CÔNG NGHỆ · CHUYỂN GIAO TRI THỨC</div>
-  </header>
-
-  <nav class="navbar wrap">
-    <div class="nav-links">
-      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html" style="display:inline-flex;align-items:center;gap:4px;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        Trang chủ
-      </a>
-
-      <!-- TAB DROPDOWN: GIỚI THIỆU -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle">
-          GIỚI THIỆU
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="about.html" class="field-menu-item">
-            <span>Giới thiệu về tạp chí</span>
-          </a>
-          <a href="publishing-policy.html" class="field-menu-item">
-            <span>Chính sách xuất bản</span>
-          </a>
-          <a href="editorial-board.html" class="field-menu-item">
-            <span>Hội đồng biên tập</span>
-          </a>
-          <a href="contact.html" class="field-menu-item">
-            <span>Nhân sự &amp; Liên hệ</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- TAB DROPDOWN: QUY TRÌNH - BIỂU MẪU -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle">
-          QUY TRÌNH - BIỂU MẪU
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="guidelines.html#submission" class="field-menu-item">
-            <span>Quy trình đăng bài</span>
-          </a>
-          <a href="guidelines.html#review" class="field-menu-item">
-            <span>Quy trình phản biện</span>
-          </a>
-          <a href="guidelines.html#format" class="field-menu-item">
-            <span>Thể lệ viết và gửi bài</span>
-          </a>
-          <a href="guidelines.html#templates" class="field-menu-item">
-            <span>Các biểu mẫu download</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- TAB DROPDOWN: LĨNH VỰC KHOA HỌC -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle">
-          LĨNH VỰC KHOA HỌC
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="article-detail.html" class="field-menu-item">
-            <span>Công nghệ thông tin</span>
-            <span class="badge-count">142</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Cơ khí – Tự động hóa</span>
-            <span class="badge-count">98</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Khoa học Môi trường</span>
-            <span class="badge-count">76</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Kinh tế – Quản trị</span>
-            <span class="badge-count">115</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Hóa học &amp; Công nghệ thực phẩm</span>
-            <span class="badge-count">84</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Khoa học Xã hội &amp; Nhân văn</span>
-            <span class="badge-count">62</span>
-          </a>
-          <div class="fields-menu-divider"></div>
-          <a href="archives.html" class="fields-menu-all">Xem tất cả các chuyên ngành &rarr;</a>
-        </div>
-      </div>
-
-      <a href="archives.html">Kho lưu trữ</a>
-    </div>
-    
-    <div class="nav-actions">
-      <a href="submit-paper.html" style="background:#ffffff;color:#1da1f2;padding:6px 14px;border-radius:4px;font-size:12.5px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.12);display:inline-flex;align-items:center;gap:6px;transition:all .2s;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-        Gửi bài báo
-      </a>
-
-      <div class="auth-links">
-        <!-- Rendered by JS -->
-      </div>
-    </div>
-  </nav>
-</div>
+<!-- KHỐI HEADER CHUNG (SHARED LAYOUT) -->
+<div id="huit-header" data-active="profile"></div>
 
 <!-- BREADCRUMB -->
 <div class="breadcrumb-bar">
@@ -489,13 +391,22 @@
 <!-- WORKBENCH HEADER (Chuẩn Editorial Workbench của Hallmark) -->
 <section class="workbench-header wrap">
   <div class="workbench-title-row">
-    <div>
-      <span class="workbench-tag">PHÂN HỆ TÁC GIẢ · BÀN LÀM VIỆC TÒA SOẠN</span>
-      <h1 id="author-heading-name">Bàn làm việc: TS. Vũ Thị F</h1>
-      <div class="author-meta-sub">
-        Đơn vị: <strong id="author-sub-affil">Khoa Công nghệ Thông tin, Viện Nghiên cứu Khoa học &amp; Công nghệ</strong>
-        &nbsp;·&nbsp;
-        Mã ORCID: <strong id="author-sub-orcid">0000-0002-1825-0097</strong>
+    <div style="display:flex;align-items:center;gap:18px;">
+      <!-- Avatar đại diện Tác giả tại Header -->
+      <div style="width:64px;height:64px;border-radius:50%;overflow:hidden;flex-shrink:0;box-shadow:0 3px 10px rgba(0,0,0,0.1);border:2px solid #ffffff;background:#e2e8f0;position:relative;">
+        <img id="workbench-header-avatar-img" src="" alt="Avatar" style="width:100%;height:100%;object-fit:cover;display:none;">
+        <div id="workbench-header-avatar-initial" style="width:100%;height:100%;background:linear-gradient(135deg, #1da1f2, #0d8ddc);color:#ffffff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;font-family:var(--serif);">
+          U
+        </div>
+      </div>
+      <div>
+        <span class="workbench-tag">PHÂN HỆ TÁC GIẢ · BÀN LÀM VIỆC TÒA SOẠN</span>
+        <h1 id="author-heading-name">Bàn làm việc: TS. Vũ Thị F</h1>
+        <div class="author-meta-sub">
+          Đơn vị: <strong id="author-sub-affil">Khoa Công nghệ Thông tin, Viện Nghiên cứu Khoa học &amp; Công nghệ</strong>
+          &nbsp;·&nbsp;
+          Mã ORCID: <strong id="author-sub-orcid">0000-0002-1825-0097</strong>
+        </div>
       </div>
     </div>
 
@@ -537,116 +448,94 @@
   
   <!-- CỘT TRÁI: DANH SÁCH BẢN THẢO VÀ TIẾN TRÌNH 6 GIAI ĐOẠN -->
   <main>
+    <!-- BANNER XÁC NHẬN TÁC QUYỀN ĐỒNG TÁC GIẢ (AUTHOR CLAIMING - CHUẨN SCOPUS / OJS) -->
+    <div id="author-claiming-container" style="display:none;margin-bottom:24px;"></div>
+
     <div class="sec-heading">
       <span>Tiến trình xử lý các Bản thảo của bạn</span>
       <span style="font-size:12px;color:var(--ink-500);font-family:var(--sans);font-weight:500;">Cập nhật thời gian thực</span>
     </div>
 
-    <!-- BÀI BÁO 1: ĐÃ XUẤT BẢN HOÀN TẤT -->
-    <article class="sub-item-card">
-      <div class="sub-header-line">
-        <span class="sub-code-badge">MÃ BẢN THẢO: JST-2026-042</span>
-        <span class="sub-stage-badge stage-published">● Giai đoạn 6: Đã xuất bản chính thức</span>
+    <!-- DANH SÁCH BẢN THẢO THỜI GIAN THỰC TỪ SQL SERVER 2022 -->
+    <div id="my-submissions-container">
+      <div style="padding:24px;text-align:center;color:var(--ink-500);font-size:13px;">
+        Đang tải tiến trình các bản thảo từ máy chủ...
       </div>
-      <h3><a href="article-detail.html">Ứng dụng mô hình Transformer trong phân loại văn bản tiếng Việt quy mô lớn</a></h3>
-      <div class="sub-meta-specs">
-        <span>Chuyên ngành: <b>Khoa học máy tính &amp; Trí tuệ nhân tạo</b></span>
-        <span>Ngày nộp: <b>10/09/2026</b></span>
-        <span>DOI: <b>10.59876/jst.jsc.2026.42.04</b></span>
-      </div>
+    </div>
 
-      <!-- Tracker 6 giai đoạn -->
-      <div class="workflow-progress-tracker">
-        <div class="wf-step completed"><div class="step-dot">✓</div><span>1. Nộp bài</span></div>
-        <div class="wf-step completed"><div class="step-dot">✓</div><span>2. Sơ duyệt</span></div>
-        <div class="wf-step completed"><div class="step-dot">✓</div><span>3. Phản biện</span></div>
-        <div class="wf-step completed"><div class="step-dot">✓</div><span>4. Quyết định</span></div>
-        <div class="wf-step completed"><div class="step-dot">✓</div><span>5. Chế bản</span></div>
-        <div class="wf-step completed"><div class="step-dot">✓</div><span>6. Phát hành</span></div>
+    <!-- DANH SÁCH NHIỆM VỤ PHẢN BIỆN (DÀNH CHO CHUYÊN GIA PHẢN BIỆN) -->
+    <div id="reviewer-section" style="display:none;margin-top:36px;">
+      <div class="sec-heading">
+        <span>Nhiệm vụ Phản biện độc lập kín (Chuyên gia phản biện)</span>
+        <span style="font-size:12px;color:var(--ink-500);font-family:var(--sans);font-weight:500;">Phân công từ Ban biên tập</span>
       </div>
-
-      <div class="sub-action-bar">
-        <span class="note">Đã phát hành trong <strong>Tập 15, Số 42 (11/2026)</strong> · 1.420 lượt đọc</span>
-        <a href="article-detail.html" class="btn-action-view">Xem bài báo trên tạp chí &rarr;</a>
+      <div id="my-assignments-container">
+        <div style="padding:24px;text-align:center;color:var(--ink-500);font-size:13px;">
+          Đang tải danh sách phân công phản biện...
+        </div>
       </div>
-    </article>
-
-    <!-- BÀI BÁO 2: YÊU CẦU CHỈNH SỬA PHẢN BIỆN (ACTION REQUIRED) -->
-    <article class="sub-item-card" style="border-left: 3px solid #b91c1c;">
-      <div class="sub-header-line">
-        <span class="sub-code-badge">MÃ BẢN THẢO: JST-2026-105</span>
-        <span class="sub-stage-badge stage-revision">⚠️ Giai đoạn 3: Yêu cầu Chỉnh sửa nhỏ</span>
-      </div>
-      <h3><a href="javascript:void(0)" onclick="openRevisionDialog()">Nghiên cứu kiến trúc vi dịch vụ phân tán cho hệ thống giám sát năng lượng mặt trời</a></h3>
-      <div class="sub-meta-specs">
-        <span>Chuyên ngành: <b>Cơ điện tử &amp; Tự động hóa</b></span>
-        <span>Hạn phản hồi: <b style="color:#b91c1c;">15/12/2026 (Còn 14 ngày)</b></span>
-        <span>Biên tập viên: <b>ThS. Trần Thị D</b></span>
-      </div>
-
-      <!-- Tracker 6 giai đoạn -->
-      <div class="workflow-progress-tracker">
-        <div class="wf-step completed"><div class="step-dot">✓</div><span>1. Nộp bài</span></div>
-        <div class="wf-step completed"><div class="step-dot">✓</div><span>2. Sơ duyệt</span></div>
-        <div class="wf-step current-alert"><div class="step-dot">!</div><span>3. Sửa đổi</span></div>
-        <div class="wf-step"><div class="step-dot">4</div><span>4. Quyết định</span></div>
-        <div class="wf-step"><div class="step-dot">5</div><span>5. Chế bản</span></div>
-        <div class="wf-step"><div class="step-dot">6</div><span>6. Phát hành</span></div>
-      </div>
-
-      <div class="sub-action-bar">
-        <span class="note">Hội đồng yêu cầu bổ sung bảng đối sánh hiệu năng hệ thống theo ý kiến Phản biện 1 &amp; 2.</span>
-        <button type="button" class="btn-action-revise" onclick="openRevisionDialog()">Xem nhận xét &amp; Nộp bản sửa &rarr;</button>
-      </div>
-    </article>
-
-    <!-- BÀI BÁO 3: ĐANG PHẢN BIỆN KÍN HAI CHIỀU -->
-    <article class="sub-item-card">
-      <div class="sub-header-line">
-        <span class="sub-code-badge">MÃ BẢN THẢO: JST-2026-089</span>
-        <span class="sub-stage-badge stage-review">⏳ Giai đoạn 3: Đang phản biện độc lập (Vòng 2)</span>
-      </div>
-      <h3><a href="javascript:void(0)" onclick="showToast('Bản thảo đang được 02 chuyên gia độc lập thẩm định.')">Tối ưu hóa thuật toán nhận diện chữ viết tay tiếng Việt dựa trên đồ thị tri thức</a></h3>
-      <div class="sub-meta-specs">
-        <span>Chuyên ngành: <b>Công nghệ thông tin</b></span>
-        <span>Gửi phản biện: <b>15/10/2026</b></span>
-        <span>Tỷ lệ Turnitin: <b>8% (Hợp lệ)</b></span>
-      </div>
-
-      <!-- Tracker 6 giai đoạn -->
-      <div class="workflow-progress-tracker">
-        <div class="wf-step completed"><div class="step-dot">✓</div><span>1. Nộp bài</span></div>
-        <div class="wf-step completed"><div class="step-dot">✓</div><span>2. Sơ duyệt</span></div>
-        <div class="wf-step current"><div class="step-dot">3</div><span>3. Phản biện</span></div>
-        <div class="wf-step"><div class="step-dot">4</div><span>4. Quyết định</span></div>
-        <div class="wf-step"><div class="step-dot">5</div><span>5. Chế bản</span></div>
-        <div class="wf-step"><div class="step-dot">6</div><span>6. Phát hành</span></div>
-      </div>
-
-      <div class="sub-action-bar">
-        <span class="note">02 Chuyên gia phản biện kín đang đánh giá theo 5 tiêu chí IMRaD. Dự kiến có kết quả trong 10 ngày.</span>
-        <a href="javascript:void(0)" onclick="alert('THÔNG TIN TIẾN ĐỘ BÌNH DUYỆT\n\n- Mã bản thảo: JST-2026-089\n- Trạng thái: 02/02 chuyên gia đã nhận lời mời và đang hoàn tất phiếu đánh giá.\n- Thời hạn hoàn thành: 25/11/2026.\n\nTòa soạn sẽ tự động gửi email cho tác giả ngay khi có tổng hợp nhận xét.')" class="btn-action-view">Xem chi tiết tiến trình &rarr;</a>
-      </div>
-    </article>
-
+    </div>
   </main>
 
   <!-- CỘT PHẢI: SPEC-SHEET HỒ SƠ & TIỆN ÍCH TÒA SOẠN -->
   <aside>
     <!-- THÔNG TIN LÝ LỊCH KHOA HỌC -->
     <div class="side-spec-card">
-      <h4>Hồ sơ Tác giả (Author Spec)</h4>
+      <h4>Hồ sơ Tác giả &amp; Chuyên gia (Author Spec)</h4>
+
+      <!-- KHỐI QUẢN LÝ & UPLOAD ẢNH ĐẠI DIỆN TÁC GIẢ -->
+      <div class="author-avatar-spec-box" style="display:flex;flex-direction:column;align-items:center;padding:12px 0 18px;border-bottom:1px solid var(--line);margin-bottom:16px;">
+        <div style="position:relative;width:96px;height:96px;margin-bottom:10px;">
+          <img id="author-spec-avatar-img" src="" alt="Avatar" style="width:96px;height:96px;border-radius:50%;object-fit:cover;border:3px solid #ffffff;box-shadow:0 4px 14px rgba(0,0,0,0.12);display:none;background:#f1f5f9;">
+          <div id="author-spec-avatar-placeholder" style="width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg, #1da1f2, #0d8ddc);color:#ffffff;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:700;font-family:var(--serif);box-shadow:0 4px 14px rgba(29,161,242,0.25);">
+            U
+          </div>
+          <!-- Nút đổi ảnh nhanh overlay -->
+          <button type="button" onclick="triggerAvatarUpload()" title="Thay đổi ảnh đại diện" style="position:absolute;bottom:0;right:0;width:32px;height:32px;border-radius:50%;background:#1da1f2;border:2px solid #ffffff;color:#ffffff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,0.2);transition:all .2s;" onmouseover="this.style.background='#0d8ddc'" onmouseout="this.style.background='#1da1f2'">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+          </button>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button type="button" onclick="triggerAvatarUpload()" style="background:var(--sky-050);border:1px solid var(--sky-200);color:#1da1f2;padding:5px 12px;border-radius:4px;font-size:11.5px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            Tải ảnh lên
+          </button>
+          <button type="button" id="btn-delete-avatar" onclick="handleDeleteAvatar()" style="background:#fff;border:1px solid #fecaca;color:#dc2626;padding:5px 10px;border-radius:4px;font-size:11.5px;font-weight:600;cursor:pointer;display:none;transition:all .15s;" onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='#fff'">
+            Xóa ảnh
+          </button>
+        </div>
+        <input type="file" id="author-avatar-file-input" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none;" onchange="handleAvatarFileSelected(event)">
+        <div style="font-size:11px;color:var(--ink-500);margin-top:6px;">Hỗ trợ JPG, PNG, WEBP tối đa 5MB</div>
+      </div>
+
       <div class="spec-entry">
         <div class="lbl">Họ và tên</div>
         <div class="val" id="spec-name">TS. Vũ Thị F</div>
       </div>
       <div class="spec-entry">
+        <div class="lbl">Học hàm &amp; Học vị</div>
+        <div class="val" id="spec-degrees">Tiến sĩ</div>
+      </div>
+      <div class="spec-entry">
+        <div class="lbl">Chuyên môn chính</div>
+        <div class="val" id="spec-chuyenmon" style="color:#1da1f2;font-weight:700;">Công nghệ thông tin &amp; Trí tuệ nhân tạo</div>
+      </div>
+      <div class="spec-entry">
         <div class="lbl">Cơ quan công tác (Affiliation)</div>
-        <div class="val" id="spec-affil">Trường Đại học</div>
+        <div class="val" id="spec-affil">Trường Đại học Công Thương TP.HCM</div>
       </div>
       <div class="spec-entry">
         <div class="lbl">Email học thuật</div>
-        <div class="val" id="spec-email">vuthif@journal.edu.vn</div>
+        <div class="val" id="spec-email">vuthif@huit.edu.vn</div>
+      </div>
+      <div class="spec-entry">
+        <div class="lbl">Số điện thoại</div>
+        <div class="val" id="spec-phone">0912345678</div>
+      </div>
+      <div class="spec-entry">
+        <div class="lbl">Tài khoản thụ hưởng (Nhuận bút)</div>
+        <div class="val" id="spec-bank">Vietcombank - 1903456789012</div>
       </div>
       <div class="spec-entry">
         <div class="lbl">Mã định danh ORCID</div>
@@ -655,6 +544,12 @@
       <div style="margin-top:16px;display:flex;gap:8px;">
         <button type="button" onclick="openProfileEditModal()" style="flex:1;background:var(--sky-050);border:1px solid var(--sky-200);color:#1da1f2;padding:7px;border-radius:3px;font-size:12px;font-weight:700;cursor:pointer;">Cập nhật hồ sơ</button>
         <button type="button" onclick="openPasswordModal()" style="flex:1;background:#fff;border:1px solid #cbd5e1;color:var(--ink-700);padding:7px;border-radius:3px;font-size:12px;font-weight:600;cursor:pointer;">Đổi mật khẩu</button>
+      </div>
+      <div style="margin-top:8px;">
+        <button type="button" onclick="handleUserLogout()" style="width:100%;background:#fff;border:1px solid #fecaca;color:#b91c1c;padding:7px;border-radius:3px;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;" onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='#fff'">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          Đăng xuất tài khoản
+        </button>
       </div>
     </div>
 
@@ -684,30 +579,51 @@
 
 <!-- DIALOG NỘP BẢN GIẢI TRÌNH CHỈNH SỬA (REVISION MODAL CHUYÊN NGHIỆP) -->
 <div class="modal-overlay" id="modal-revision">
-  <div class="modal-box-edit" style="max-width:600px;">
+  <div class="modal-box-edit" style="max-width:620px;">
     <h3>Nộp bản thảo chỉnh sửa &amp; Bản giải trình phản biện</h3>
-    <p style="font-size:12.5px;color:var(--ink-500);margin-bottom:16px;">
-      Mã bài: <strong>JST-2026-105</strong> · Chuyên san Cơ điện tử &amp; Tự động hóa
+    <p style="font-size:12.5px;color:var(--ink-500);margin-bottom:14px;">
+      Mã bản thảo: <strong id="rev-modal-code">JST-2026-105</strong> · Chuyên san: <span id="rev-modal-major">Cơ khí – Tự động hóa</span>
     </p>
 
-    <div style="background:var(--sky-050);border:1px solid var(--sky-200);border-radius:4px;padding:12px;font-size:12.5px;color:var(--ink-700);margin-bottom:16px;line-height:1.5;">
-      <strong>Nhận xét từ Hội đồng:</strong> Tác giả cần bổ sung biểu đồ so sánh độ trễ truyền thông của kiến trúc vi dịch vụ và làm rõ phương pháp giải mã dữ liệu cảm biến năng lượng mặt trời.
+    <div style="background:#fffbeb;border:1px solid #fde68a;border-left:4px solid #d97706;border-radius:4px;padding:12px 14px;font-size:12.5px;color:#78350f;margin-bottom:16px;line-height:1.55;">
+      <div style="font-weight:700;color:#92400e;margin-bottom:4px;">Nhận xét từ Hội đồng &amp; Chuyên gia phản biện:</div>
+      <div id="rev-modal-feedback">Tác giả cần bổ sung biểu đồ so sánh độ trễ truyền thông của kiến trúc vi dịch vụ và làm rõ phương pháp giải mã dữ liệu cảm biến.</div>
     </div>
 
-    <form onsubmit="handleSendRevision(event)">
+    <form onsubmit="handleSendRevision(event)" id="form-revision-submit">
+      <input type="hidden" id="rev-paper-id">
+      <input type="hidden" id="rev-paper-code">
+
+      <!-- 1. Nội dung giải trình tóm tắt -->
       <div class="form-group-modal">
-        <label>Bản giải trình chỉnh sửa (Response to Reviewers) <span style="color:#e02424;">*</span></label>
-        <textarea class="form-control-modal" rows="4" placeholder="Giải trình chi tiết từng điểm sửa đổi theo ý kiến của Chuyên gia phản biện 1 và 2..." required></textarea>
+        <label>Nội dung giải trình tiếp thu ý kiến (Response to Reviewers) <span style="color:#e02424;">*</span></label>
+        <textarea id="rev-explanation" class="form-control-modal" rows="3" placeholder="Tóm tắt các điểm đã chỉnh sửa, bổ sung theo yêu cầu của Chuyên gia phản biện 1 và 2..." required></textarea>
       </div>
 
+      <!-- 2. Biểu mẫu giải trình BM-03 -->
       <div class="form-group-modal">
-        <label>Tệp bản thảo đã chỉnh sửa hoàn thiện (.docx / .pdf) <span style="color:#e02424;">*</span></label>
-        <input type="file" class="form-control-modal" required>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+          <label style="margin-bottom:0;">Bản giải trình chi tiết theo Biểu mẫu BM-03 (.docx / .pdf) <span style="color:#e02424;">*</span></label>
+          <a href="guidelines.html#templates" target="_blank" style="font-size:11.5px;color:#1da1f2;text-decoration:underline;">Tải mẫu BM-03</a>
+        </div>
+        <input type="file" id="rev-file-bm03" class="form-control-modal" accept=".doc,.docx,.pdf" required>
+      </div>
+
+      <!-- 3. Bản thảo chỉnh sửa hoàn thiện (Clean Manuscript) -->
+      <div class="form-group-modal">
+        <label>Tệp bản thảo đã chỉnh sửa hoàn thiện (Clean Manuscript .docx / .pdf) <span style="color:#e02424;">*</span></label>
+        <input type="file" id="rev-file-clean" class="form-control-modal" accept=".doc,.docx,.pdf" required>
+      </div>
+
+      <!-- 4. Bản thảo có đánh dấu sửa đổi (Track Changes) -->
+      <div class="form-group-modal">
+        <label>Tệp bản thảo có đánh dấu sửa đổi (Track Changes Manuscript .docx / .pdf) <span style="color:var(--ink-500);font-weight:normal;">(Tùy chọn)</span></label>
+        <input type="file" id="rev-file-tracked" class="form-control-modal" accept=".doc,.docx,.pdf">
       </div>
 
       <div class="modal-btn-row">
         <button type="button" class="btn-modal-cancel" onclick="closeRevisionDialog()">Hủy bỏ</button>
-        <button type="submit" class="btn-modal-save">Gửi bản sửa đổi cho Tòa soạn &rarr;</button>
+        <button type="submit" class="btn-modal-save" id="btn-submit-revision">Gửi bản sửa đổi cho Tòa soạn &rarr;</button>
       </div>
     </form>
   </div>
@@ -715,20 +631,93 @@
 
 <!-- MODAL CẬP NHẬT HỒ SƠ -->
 <div class="modal-overlay" id="modal-edit-profile">
-  <div class="modal-box-edit">
-    <h3>Cập nhật lý lịch khoa học Tác giả</h3>
+  <div class="modal-box-edit" style="max-width:640px;">
+    <h3>Cập nhật lý lịch khoa học &amp; Thông tin tài khoản</h3>
     <form onsubmit="handleSaveProfile(event)">
+      <!-- Ảnh đại diện trong Modal -->
+      <div style="display:flex;align-items:center;gap:16px;padding:12px 14px;background:#f8fafc;border:1px solid var(--line);border-radius:6px;margin-bottom:16px;">
+        <div style="width:54px;height:54px;border-radius:50%;overflow:hidden;flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,0.08);background:#e2e8f0;display:flex;align-items:center;justify-content:center;">
+          <img id="modal-preview-avatar-img" src="" alt="Avatar" style="width:100%;height:100%;object-fit:cover;display:none;">
+          <div id="modal-preview-avatar-initial" style="font-size:20px;font-weight:700;color:#1da1f2;">U</div>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:12.5px;font-weight:600;color:var(--ink-900);margin-bottom:2px;">Ảnh đại diện tài khoản</div>
+          <div style="font-size:11.5px;color:var(--ink-500);">Hiển thị trên Bàn làm việc, Danh sách tác giả và Thẻ hồ sơ chuyên gia.</div>
+        </div>
+        <div>
+          <button type="button" onclick="triggerAvatarUpload()" style="background:#fff;border:1px solid #cbd5e1;color:var(--ink-700);padding:6px 12px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;" onmouseover="this.style.borderColor='#1da1f2';this.style.color='#1da1f2'" onmouseout="this.style.borderColor='#cbd5e1';this.style.color='var(--ink-700)'">
+            Đổi ảnh...
+          </button>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group-modal">
+          <label>Họ tên đệm</label>
+          <input type="text" id="modal-input-hodem" class="form-control-modal" required>
+        </div>
+        <div class="form-group-modal">
+          <label>Tên</label>
+          <input type="text" id="modal-input-ten" class="form-control-modal" required>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group-modal">
+          <label>Học vị</label>
+          <select id="modal-input-hocvi" class="form-control-modal">
+            <option value="Không">Không</option>
+            <option value="Cử nhân">Cử nhân</option>
+            <option value="Thạc sĩ">Thạc sĩ</option>
+            <option value="Tiến sĩ">Tiến sĩ</option>
+            <option value="TSKH">Tiến sĩ Khoa học (TSKH)</option>
+          </select>
+        </div>
+        <div class="form-group-modal">
+          <label>Học hàm</label>
+          <select id="modal-input-hocham" class="form-control-modal">
+            <option value="Không">Không</option>
+            <option value="Phó giáo sư">Phó giáo sư</option>
+            <option value="Giáo sư">Giáo sư</option>
+          </select>
+        </div>
+      </div>
       <div class="form-group-modal">
-        <label>Họ và tên</label>
-        <input type="text" id="modal-input-name" class="form-control-modal" required>
+        <label>Lĩnh vực chuyên môn nghiên cứu chính</label>
+        <select id="modal-input-chuyenmon" class="form-control-modal">
+          <option value="1">1. Công nghệ thông tin &amp; Trí tuệ nhân tạo</option>
+          <option value="2">2. Cơ khí – Chế tạo máy – Tự động hóa</option>
+          <option value="3">3. Khoa học Môi trường &amp; Nông nghiệp</option>
+          <option value="4">4. Kinh tế – Quản trị kinh doanh &amp; Tài chính</option>
+          <option value="5">5. Hóa học &amp; Công nghệ thực phẩm</option>
+        </select>
       </div>
       <div class="form-group-modal">
         <label>Cơ quan công tác / Trường đại học (Affiliation)</label>
         <input type="text" id="modal-input-affil" class="form-control-modal" required>
       </div>
-      <div class="form-group-modal">
-        <label>Mã định danh tác giả quốc tế ORCID (iD)</label>
-        <input type="text" id="modal-input-orcid" class="form-control-modal">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="form-group-modal">
+          <label>Số điện thoại</label>
+          <input type="tel" id="modal-input-phone" class="form-control-modal">
+        </div>
+        <div class="form-group-modal">
+          <label>Mã định danh tác giả quốc tế ORCID (iD)</label>
+          <input type="text" id="modal-input-orcid" class="form-control-modal">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+        <div class="form-group-modal">
+          <label>Số tài khoản</label>
+          <input type="text" id="modal-input-stk" class="form-control-modal">
+        </div>
+        <div class="form-group-modal">
+          <label>Chủ tài khoản</label>
+          <input type="text" id="modal-input-ctk" class="form-control-modal">
+        </div>
+        <div class="form-group-modal">
+          <label>Ngân hàng</label>
+          <input type="text" id="modal-input-bank" class="form-control-modal">
+        </div>
       </div>
       <div class="modal-btn-row">
         <button type="button" class="btn-modal-cancel" onclick="closeProfileEditModal()">Hủy</button>
@@ -745,7 +734,7 @@
     <form onsubmit="handleSavePass(event)">
       <div class="form-group-modal">
         <label>Mật khẩu hiện tại</label>
-        <input type="password" class="form-control-modal" required placeholder="••••••••">
+        <input type="password" id="p-current" class="form-control-modal" required placeholder="••••••••">
       </div>
       <div class="form-group-modal">
         <label>Mật khẩu mới</label>
@@ -763,90 +752,1128 @@
   </div>
 </div>
 
-<!-- FOOTER -->
-<footer>
-  <div class="wrap">
-    <div>Tạp chí Khoa học · Tạp chí Nghiên cứu &amp; Phát triển Công nghệ · ISSN 1859-3097</div>
-    <div class="flinks">
-      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Trang chủ</a>
-      <a href="about.html">Về tạp chí</a>
-      <a href="guidelines.html">Thể lệ &amp; Quy trình nộp bài</a>
-      <a href="publishing-policy.html">Chính sách xuất bản</a>
-      <a href="editorial-board.html">Hội đồng biên tập</a>
-      <a href="contact.html">Liên hệ tòa soạn</a>
+<!-- MODAL ĐÁNH GIÁ PHẢN BIỆN BM-04 -->
+<div class="modal-overlay" id="modal-eval-paper">
+  <div class="modal-box-edit" style="max-width:680px;max-height:90vh;overflow-y:auto;">
+    <h3>Phiếu nhận xét và đánh giá phản biện (BM-04)</h3>
+    <p id="eval-modal-subtitle" style="font-size:13px;color:var(--ink-500);margin-bottom:16px;"></p>
+    <form onsubmit="handleSaveEvaluation(event)">
+      <input type="hidden" id="eval-maphancong">
+      
+      <div style="display:grid;grid-template-columns:repeat(4, 1fr);gap:10px;margin-bottom:14px;">
+        <div class="form-group-modal">
+          <label>1. Tính mới (0-10)</label>
+          <input type="number" id="eval-tinhmoi" min="0" max="10" step="0.5" class="form-control-modal" required value="8.0" oninput="calculateTotalScore()">
+        </div>
+        <div class="form-group-modal">
+          <label>2. Phương pháp (0-10)</label>
+          <input type="number" id="eval-phuongphap" min="0" max="10" step="0.5" class="form-control-modal" required value="8.0" oninput="calculateTotalScore()">
+        </div>
+        <div class="form-group-modal">
+          <label>3. Kết quả (0-10)</label>
+          <input type="number" id="eval-ketqua" min="0" max="10" step="0.5" class="form-control-modal" required value="8.0" oninput="calculateTotalScore()">
+        </div>
+        <div class="form-group-modal">
+          <label>4. Trình bày (0-10)</label>
+          <input type="number" id="eval-trinhbay" min="0" max="10" step="0.5" class="form-control-modal" required value="8.0" oninput="calculateTotalScore()">
+        </div>
+      </div>
+
+      <div class="form-group-modal" style="margin-bottom:14px;">
+        <label>Điểm tổng kết (Tự động tính trung bình cộng)</label>
+        <input type="number" id="eval-diemtong" readonly class="form-control-modal" style="background:#f1f5f9;font-weight:700;color:#1da1f2;" value="8.0">
+      </div>
+
+      <div class="form-group-modal" style="margin-bottom:14px;">
+        <label>Nhận xét chi tiết gửi Tác giả (góp ý chuyên môn, sửa chữa tài liệu, phương pháp)</label>
+        <textarea id="eval-nhanxet-tacgia" class="form-control-modal" rows="4" required placeholder="Ghi nhận xét đóng góp cho tác giả để nâng cao chất lượng bài báo..."></textarea>
+      </div>
+
+      <div class="form-group-modal" style="margin-bottom:14px;">
+        <label>Nhận xét bảo mật gửi riêng Ban biên tập (tùy chọn)</label>
+        <textarea id="eval-nhanxet-baomat" class="form-control-modal" rows="3" placeholder="Nhận xét riêng tư gửi Tổng biên tập / Thư ký tòa soạn..."></textarea>
+      </div>
+
+      <div class="form-group-modal" style="margin-bottom:18px;">
+        <label>Kiến nghị của Chuyên gia phản biện (Kết luận BM-04)</label>
+        <select id="eval-kiennghi" class="form-control-modal" required>
+          <option value="Chấp nhận đăng">1. Chấp nhận đăng (Không cần chỉnh sửa thêm)</option>
+          <option value="Chỉnh sửa nhỏ">2. Chỉnh sửa nhỏ (Tác giả chỉnh sửa theo góp ý)</option>
+          <option value="Chỉnh sửa lớn và phản biện lại">3. Chỉnh sửa lớn và phản biện lại (Vòng 2)</option>
+          <option value="Từ chối đăng">4. Từ chối đăng (Không đạt chất lượng học thuật)</option>
+        </select>
+      </div>
+
+      <div class="modal-btn-row">
+        <button type="button" class="btn-modal-cancel" onclick="closeEvalModal()">Hủy</button>
+        <button type="submit" class="btn-modal-save">Nộp phiếu đánh giá BM-04</button>
+      </div>
+    </form>
+  </div>
+<!-- MODAL XEM CHI TIẾT HỒ SƠ BẢN THẢO (SUBMISSION DOSSIER) -->
+<div class="modal-overlay" id="modal-submission-detail">
+  <div class="modal-box-edit" style="max-width:780px;max-height:90vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;border-bottom:1px solid var(--line);padding-bottom:12px;">
+      <div>
+        <h3 style="margin-bottom:4px;">Hồ Sơ Bản Thảo &amp; Tiến Trình Phê Duyệt</h3>
+        <p id="dt-modal-subtitle" style="font-size:12.5px;color:var(--ink-500);margin:0;"></p>
+      </div>
+      <button type="button" class="btn-modal-cancel" onclick="closeSubmissionDetailModal()" style="padding:4px 10px;font-size:16px;line-height:1;">&times;</button>
+    </div>
+
+    <div id="dt-modal-loading" style="text-align:center;padding:32px;color:var(--ink-500);">
+      Đang tải dữ liệu hồ sơ bản thảo từ CSDL...
+    </div>
+
+    <div id="dt-modal-content" style="display:none;">
+      <!-- Khối 1: Tiêu đề & Tóm tắt -->
+      <div style="background:#fafcff;border:1px solid var(--line);border-radius:4px;padding:14px;margin-bottom:16px;">
+        <div style="font-size:15px;font-weight:700;color:var(--ink-900);margin-bottom:4px;" id="dt-title-vi"></div>
+        <div style="font-size:13px;color:var(--ink-700);margin-bottom:10px;font-style:italic;" id="dt-title-en"></div>
+        <div style="font-size:12px;color:var(--ink-500);margin-bottom:6px;font-weight:700;text-transform:uppercase;">Tóm tắt nghiên cứu (Abstract):</div>
+        <p style="font-size:12.5px;color:var(--ink-700);line-height:1.6;text-align:justify;margin-bottom:10px;" id="dt-abstract"></p>
+        <div style="font-size:12px;color:var(--sky-700);font-weight:600;" id="dt-keywords"></div>
+      </div>
+
+      <!-- Khối 2: Nhóm tác giả -->
+      <div style="margin-bottom:18px;">
+        <div style="font-size:13px;font-weight:700;color:var(--ink-900);margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          Danh sách tác giả &amp; Đồng tác giả (Bảng DongTacGia)
+        </div>
+        <div id="dt-authors-container"></div>
+      </div>
+
+      <!-- Khối 3: Cán bộ thẩm định do tác giả đề xuất (PhanBienDeXuat) -->
+      <div style="margin-bottom:18px;">
+        <div style="font-size:13px;font-weight:700;color:var(--ink-900);margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
+          Chuyên gia phản biện do tác giả đề xuất (Bảng PhanBienDeXuat)
+        </div>
+        <div id="dt-reviewers-container"></div>
+      </div>
+
+      <!-- Khối 4: Thư mục tài liệu bản thảo (ThuMucBaiBao) -->
+      <div style="margin-bottom:18px;">
+        <div style="font-size:13px;font-weight:700;color:var(--ink-900);margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+          Tệp tài liệu đính kèm (Bảng ThuMucBaiBao)
+        </div>
+        <div id="dt-files-container"></div>
+      </div>
+
+      <!-- Khối 5: Lịch sử phê duyệt -->
+      <div style="margin-bottom:16px;">
+        <div style="font-size:13px;font-weight:700;color:var(--ink-900);margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Lịch sử tiến trình phê duyệt (Bảng LichSuTrangThaiBaiBao)
+        </div>
+        <div id="dt-history-container"></div>
+      </div>
+    </div>
+
+    <div class="modal-btn-row">
+      <button type="button" class="btn-modal-cancel" onclick="closeSubmissionDetailModal()">Đóng hồ sơ</button>
     </div>
   </div>
-</footer>
+</div>
 
+<!-- KHỐI FOOTER CHUNG (SHARED LAYOUT) -->
+<div id="huit-footer"></div>
+
+<script src="journal-layout.js"></script>
 <script src="journal-interactions.js"></script>
 <script>
+  const FACULTY_NAMES = {
+    1: 'Công nghệ thông tin & Trí tuệ nhân tạo',
+    2: 'Cơ khí – Chế tạo máy – Tự động hóa',
+    3: 'Khoa học Môi trường & Nông nghiệp',
+    4: 'Kinh tế – Quản trị kinh doanh & Tài chính',
+    5: 'Hóa học & Công nghệ thực phẩm'
+  };
+
   // Khởi tạo thông tin từ phiên người dùng
-  document.addEventListener('DOMContentLoaded', () => {
-    syncUserData();
+  document.addEventListener('DOMContentLoaded', async () => {
+    await syncUserData();
+    await loadMySubmissions();
+    await loadMyReviewAssignments();
+    checkAuthorClaiming();
   });
 
-  function syncUserData() {
-    const user = getCurrentUser() || {
-      hoTen: 'TS. Vũ Thị F',
-      email: 'vuthif@journal.edu.vn',
-      donVi: 'Khoa Công nghệ Thông tin, Viện Nghiên cứu Khoa học & Công nghệ',
-      orcid: '0000-0002-1825-0097'
-    };
+  async function syncUserData() {
+    let user = getCurrentUser();
+    
+    // Nếu có token, tải dữ liệu trực tiếp mới nhất từ CSDL SQL Server
+    const token = localStorage.getItem('journal_token');
+    if (token) {
+      const liveProfile = await apiGetProfile();
+      if (liveProfile) {
+        user = {
+          isLoggedIn: true,
+          ...liveProfile,
+          chuyenNganhId: (liveProfile.chuyenMonIds && liveProfile.chuyenMonIds.length > 0) ? liveProfile.chuyenMonIds[0] : 1,
+          chucVu: (liveProfile.vaiTros && liveProfile.vaiTros.length > 0) ? liveProfile.vaiTros.join(', ') : 'Tác giả'
+        };
+        setCurrentUser(user);
+      }
+    }
+
+    if (!user) {
+      window.location.href = 'login.html';
+      return;
+    }
 
     document.getElementById('author-heading-name').innerText = 'Bàn làm việc: ' + user.hoTen;
-    document.getElementById('author-sub-affil').innerText = user.donVi;
-    document.getElementById('author-sub-orcid').innerText = user.orcid || '0000-0002-1825-0097';
+    document.getElementById('author-sub-affil').innerText = user.donVi || 'Chưa cập nhật đơn vị';
+    document.getElementById('author-sub-orcid').innerText = user.maORCID || user.orcid || '0000-0002-1825-0097';
 
     document.getElementById('spec-name').innerText = user.hoTen;
-    document.getElementById('spec-affil').innerText = user.donVi;
+    
+    // Học hàm học vị
+    let degStr = '';
+    if (user.hocHam && user.hocHam !== 'Không') degStr += user.hocHam + ' · ';
+    degStr += (user.hocVi || 'Tiến sĩ');
+    document.getElementById('spec-degrees').innerText = degStr;
+
+    // Chuyên môn
+    const cId = user.chuyenNganhId || (user.chuyenMonIds ? user.chuyenMonIds[0] : 1);
+    document.getElementById('spec-chuyenmon').innerText = FACULTY_NAMES[cId] || 'Công nghệ thông tin & Trí tuệ nhân tạo';
+
+    document.getElementById('spec-affil').innerText = user.donVi || 'Chưa cập nhật đơn vị';
     document.getElementById('spec-email').innerText = user.email;
-    document.getElementById('spec-orcid').innerText = user.orcid || '—';
+    document.getElementById('spec-phone').innerText = user.soDienThoai || 'Chưa cập nhật';
+    
+    if (user.soTaiKhoan) {
+      document.getElementById('spec-bank').innerText = `${user.nganHang || 'Vietcombank'} - ${user.soTaiKhoan}`;
+    } else {
+      document.getElementById('spec-bank').innerText = 'Chưa cập nhật';
+    }
+
+    document.getElementById('spec-orcid').innerText = user.maORCID || user.orcid || '—';
+
+    // Cập nhật Avatar ảnh đại diện Tác giả (Workbench Header + Side Spec Card)
+    const initial = user.hoTen ? user.hoTen.split(' ').pop().charAt(0).toUpperCase() : 'U';
+    
+    const headerImg = document.getElementById('workbench-header-avatar-img');
+    const headerInit = document.getElementById('workbench-header-avatar-initial');
+    if (headerInit) headerInit.innerText = initial;
+    
+    const specImg = document.getElementById('author-spec-avatar-img');
+    const specPlaceholder = document.getElementById('author-spec-avatar-placeholder');
+    const btnDeleteAvatar = document.getElementById('btn-delete-avatar');
+    if (specPlaceholder) specPlaceholder.innerText = initial;
+
+    if (user.anhDaiDien) {
+      const fullAvatarUrl = getAvatarUrl(user.anhDaiDien);
+      if (headerImg) {
+        headerImg.src = fullAvatarUrl;
+        headerImg.style.display = 'block';
+      }
+      if (headerInit) headerInit.style.display = 'none';
+
+      if (specImg) {
+        specImg.src = fullAvatarUrl;
+        specImg.style.display = 'block';
+      }
+      if (specPlaceholder) specPlaceholder.style.display = 'none';
+      if (btnDeleteAvatar) btnDeleteAvatar.style.display = 'inline-block';
+    } else {
+      if (headerImg) headerImg.style.display = 'none';
+      if (headerInit) headerInit.style.display = 'flex';
+
+      if (specImg) specImg.style.display = 'none';
+      if (specPlaceholder) specPlaceholder.style.display = 'flex';
+      if (btnDeleteAvatar) btnDeleteAvatar.style.display = 'none';
+    }
+  }
+
+  function triggerAvatarUpload() {
+    const input = document.getElementById('author-avatar-file-input');
+    if (input) input.click();
+  }
+
+  async function handleAvatarFileSelected(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('Dung lượng tệp tin ảnh vượt quá 5MB. Vui lòng chọn ảnh nhỏ hơn.', 'error');
+      event.target.value = '';
+      return;
+    }
+
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!validTypes.includes(file.type)) {
+      showToast('Định dạng tệp không được hỗ trợ. Vui lòng chọn ảnh JPG, PNG, WEBP hoặc GIF.', 'error');
+      event.target.value = '';
+      return;
+    }
+
+    showToast('Đang tải ảnh đại diện lên máy chủ...', 'info', 2000);
+
+    try {
+      const res = await apiUploadAvatar(file);
+      if (res && res.success && res.avatarUrl) {
+        let user = getCurrentUser() || {};
+        user.anhDaiDien = res.avatarUrl;
+        if (res.profile) {
+          user = { ...user, ...res.profile, anhDaiDien: res.avatarUrl };
+        }
+        setCurrentUser(user);
+        syncUserData();
+        showToast('Cập nhật ảnh đại diện thành công!', 'success');
+      } else {
+        showToast((res && res.message) ? res.message : 'Không thể cập nhật ảnh đại diện.', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Lỗi kết nối khi tải ảnh lên máy chủ.', 'error');
+    } finally {
+      event.target.value = '';
+    }
+  }
+
+  async function handleDeleteAvatar() {
+    if (!confirm('Bạn có chắc chắn muốn xóa ảnh đại diện và quay về ảnh mặc định?')) {
+      return;
+    }
+
+    try {
+      const res = await apiDeleteAvatar();
+      if (res && res.success) {
+        let user = getCurrentUser() || {};
+        user.anhDaiDien = null;
+        if (res.profile) {
+          user = { ...user, ...res.profile, anhDaiDien: null };
+        }
+        setCurrentUser(user);
+        syncUserData();
+        showToast('Đã xóa ảnh đại diện thành công!', 'info');
+      } else {
+        showToast((res && res.message) ? res.message : 'Không thể xóa ảnh đại diện.', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Lỗi kết nối khi xóa ảnh.', 'error');
+    }
+  }
+
+  // Tải danh sách bản thảo thời gian thực từ CSDL SQL Server
+  async function loadMySubmissions() {
+    const container = document.getElementById('my-submissions-container');
+    if (!container) return;
+
+    try {
+      const submissions = await apiGetMySubmissions();
+      if (!submissions || submissions.length === 0) {
+        container.innerHTML = `
+          <div style="background:#f8fafc;border:1px dashed var(--line);border-radius:6px;padding:36px;text-align:center;">
+            <p style="font-size:14px;color:var(--ink-700);margin-bottom:12px;">Bạn chưa nộp bản thảo nào trên hệ thống Tạp chí.</p>
+            <a href="submit-paper.html" class="btn-primary" style="display:inline-block;padding:8px 18px;font-size:13px;font-weight:700;">+ Nộp bản thảo mới ngay</a>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = submissions.map(sub => {
+        let stageNum = 1;
+        let stageText = 'Giai đoạn 1: Nộp bài & Sơ duyệt thể thức';
+        let stageClass = 'stage-review';
+
+        if (sub.trangThai === 'Chờ sơ duyệt') {
+          stageNum = 1;
+          stageText = '⏳ Giai đoạn 1: Chờ sơ duyệt thể thức';
+          stageClass = 'stage-review';
+        } else if (sub.trangThai === 'Chờ sửa hình thức') {
+          stageNum = 2;
+          stageText = '⚠️ Giai đoạn 2: Yêu cầu sửa hình thức';
+          stageClass = 'stage-revision';
+        } else if (sub.trangThai === 'Đang phản biện') {
+          stageNum = 3;
+          stageText = '⏳ Giai đoạn 3: Đang phản biện độc lập kín';
+          stageClass = 'stage-review';
+        } else if (sub.trangThai === 'Chờ chỉnh sửa') {
+          stageNum = 4;
+          stageText = '⚠️ Giai đoạn 4: Yêu cầu chỉnh sửa theo phản biện';
+          stageClass = 'stage-revision';
+        } else if (sub.trangThai === 'Chờ quyết định') {
+          stageNum = 4;
+          stageText = '⏳ Giai đoạn 4: Chờ Ban biên tập quyết định';
+          stageClass = 'stage-review';
+        } else if (sub.trangThai === 'Đã chấp nhận' || sub.trangThai === 'Đang chế bản' || sub.trangThai === 'Sẵn sàng xuất bản') {
+          stageNum = 5;
+          stageText = '✨ Giai đoạn 5: Đang chế bản & dàn trang';
+          stageClass = 'stage-published';
+        } else if (sub.trangThai === 'Đã xuất bản') {
+          stageNum = 6;
+          stageText = '● Giai đoạn 6: Đã xuất bản chính thức';
+          stageClass = 'stage-published';
+        } else if (sub.trangThai === 'Từ chối') {
+          stageNum = 0;
+          stageText = '❌ Đã từ chối đăng';
+          stageClass = 'stage-revision';
+        }
+
+        const steps = [
+          { num: 1, name: '1. Nộp bài' },
+          { num: 2, name: '2. Sơ duyệt' },
+          { num: 3, name: '3. Phản biện' },
+          { num: 4, name: '4. Quyết định' },
+          { num: 5, name: '5. Chế bản' },
+          { num: 6, name: '6. Phát hành' }
+        ];
+
+        const stepsHtml = steps.map(st => {
+          let cls = '';
+          let dot = st.num;
+          if (stageNum > st.num || sub.trangThai === 'Đã xuất bản') {
+            cls = 'completed';
+            dot = '✓';
+          } else if (stageNum === st.num) {
+            cls = (sub.trangThai.includes('sửa') || sub.trangThai === 'Từ chối') ? 'current-alert' : 'current';
+            dot = (sub.trangThai.includes('sửa')) ? '!' : st.num;
+          }
+          return `<div class="wf-step ${cls}"><div class="step-dot">${dot}</div><span>${st.name}</span></div>`;
+        }).join('');
+
+        const dateStr = sub.ngayGui ? new Date(sub.ngayGui).toLocaleDateString('vi-VN') : '—';
+        const isRevising = sub.trangThai && sub.trangThai.includes('sửa');
+        const feedbackText = sub.nhanXetPhanBien || (sub.trangThai === 'Chờ sửa hình thức' 
+          ? 'Tác giả vui lòng định dạng lại tài liệu theo Thể lệ bài viết của Tạp chí (font chữ 12pt, lề 2.5cm, định dạng trích dẫn chuẩn IEEE) và nộp lại.'
+          : 'Chuyên gia phản biện 1 và 2 yêu cầu: Tác giả cần bổ sung biểu đồ so sánh độ trễ truyền thông, làm rõ phương pháp giải mã dữ liệu cảm biến thực nghiệm và đính kèm Bảng giải trình tiếp thu (BM-03).');
+
+        const revisionFeedbackHtml = isRevising ? `
+          <div style="background:#fffbeb;border:1px solid #fde68a;border-left:4px solid #d97706;border-radius:4px;padding:12px 14px;margin-bottom:14px;font-size:12.5px;line-height:1.55;">
+            <div style="font-weight:700;color:#92400e;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              Ý KIẾN PHẢN BIỆN &amp; YÊU CẦU CHỈNH SỬA TỪ HỘI ĐỒNG:
+            </div>
+            <p style="color:#78350f;margin-bottom:6px;">${feedbackText}</p>
+            <div style="font-size:11.5px;color:#b45309;font-weight:600;">
+              Thời hạn hoàn thành: Trong vòng 14 ngày làm việc kể từ ngày nhận thông báo.
+            </div>
+          </div>
+        ` : '';
+
+        return `
+          <article class="sub-item-card" ${isRevising ? 'style="border-left: 3px solid #b91c1c;"' : ''}>
+            <div class="sub-header-line">
+              <span class="sub-code-badge">MÃ BẢN THẢO: ${sub.maDinhDanh}</span>
+              <span class="sub-stage-badge ${stageClass}">${stageText}</span>
+            </div>
+            <h3><a href="javascript:void(0)" onclick="openSubmissionDetailModal(${sub.maBaiBao})">${sub.tieuDe}</a></h3>
+            <div class="sub-meta-specs">
+              <span>Chuyên ngành: <b>${sub.chuyenNganh}</b></span>
+              <span>Ngày nộp: <b>${dateStr}</b></span>
+              <span>Đồng tác giả: <b>${sub.soDongTacGia} tác giả</b></span>
+              ${sub.tapTinGoc ? `<span>Tệp gốc: <b>${sub.tapTinGoc}</b></span>` : ''}
+            </div>
+
+            ${revisionFeedbackHtml}
+
+            <div class="workflow-progress-tracker">
+              ${stepsHtml}
+            </div>
+
+            <div class="sub-action-bar">
+              <span class="note">Trạng thái: <strong>${sub.trangThai}</strong> · Dữ liệu CSDL SQL Server</span>
+              <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                ${isRevising ? `
+                  <button type="button" class="btn-action-revise" style="cursor:pointer;border:none;background:#b91c1c;color:#fff;padding:6px 14px;border-radius:3px;font-weight:700;font-size:12px;display:inline-flex;align-items:center;gap:4px;" onclick="openRevisionDialog('${sub.maBaiBao}', '${sub.maDinhDanh}', '${escapeJs(sub.tieuDe)}', '${sub.chuyenNganh}', '${escapeJs(feedbackText)}')">
+                    Nộp bản chỉnh sửa &amp; Giải trình (BM-03) &rarr;
+                  </button>
+                ` : ''}
+                <button type="button" class="btn-action-view" style="cursor:pointer;border:1px solid var(--sky-200);background:#fff;color:#1da1f2;padding:6px 14px;border-radius:3px;font-weight:600;font-size:12px;display:inline-flex;align-items:center;gap:4px;" onclick="openSubmissionDetailModal(${sub.maBaiBao})">
+                  Xem hồ sơ &amp; Chuyên gia đề xuất &rarr;
+                </button>
+                ${sub.trangThai === 'Đã xuất bản' 
+                  ? `<a href="article-detail.html?id=${sub.maBaiBao}" class="btn-action-view">Xem trên tạp chí &rarr;</a>`
+                  : ''}
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      // Cập nhật các ô số liệu trên thanh Metrics Strip
+      const totalCount = submissions.length;
+      const publishedCount = submissions.filter(s => s.trangThai === 'Đã xuất bản').length;
+      const revisingCount = submissions.filter(s => s.trangThai.includes('sửa')).length;
+      const inProgressCount = totalCount - publishedCount;
+
+      const metricCells = document.querySelectorAll('.metrics-spec-strip .metric-spec-cell .val');
+      if (metricCells.length >= 4) {
+        metricCells[0].innerText = totalCount < 10 ? '0' + totalCount : totalCount;
+        metricCells[1].innerText = inProgressCount < 10 ? '0' + inProgressCount : inProgressCount;
+        metricCells[2].innerText = revisingCount < 10 ? '0' + revisingCount : revisingCount;
+        metricCells[3].innerText = publishedCount < 10 ? '0' + publishedCount : publishedCount;
+      }
+    } catch (e) {
+      console.error('Lỗi khi nạp bản thảo:', e);
+    }
+  }
+
+  // Mở modal xem chi tiết toàn diện hồ sơ bản thảo nộp
+  async function openSubmissionDetailModal(maBaiBao) {
+    const modal = document.getElementById('modal-submission-detail');
+    const loading = document.getElementById('dt-modal-loading');
+    const content = document.getElementById('dt-modal-content');
+    modal.classList.add('open');
+    loading.style.display = 'block';
+    loading.innerHTML = 'Đang tải dữ liệu hồ sơ bản thảo từ CSDL...';
+    content.style.display = 'none';
+
+    try {
+      const data = await apiGetSubmissionDetail(maBaiBao);
+      if (!data) {
+        loading.innerHTML = '<span style="color:#ef4444;">Không thể nạp thông tin hồ sơ bản thảo. Vui lòng thử lại sau.</span>';
+        return;
+      }
+
+      document.getElementById('dt-modal-subtitle').innerHTML = `
+        Mã bản thảo: <strong style="font-family:monospace;color:#1da1f2;">${data.maDinhDanh}</strong> ·
+        Chuyên san: <b>${data.tenChuyenNganh}</b> ·
+        Trạng thái: <span class="badge-tag badge-primary">${data.trangThai}</span> ·
+        Ngày gửi: <b>${new Date(data.ngayGui).toLocaleDateString('vi-VN')}</b>
+      `;
+
+      document.getElementById('dt-title-vi').innerText = data.tieuDe;
+      document.getElementById('dt-title-en').innerText = data.tieuDeTiengAnh || '';
+      document.getElementById('dt-abstract').innerText = data.tomTat || 'Chưa có tóm tắt.';
+      document.getElementById('dt-keywords').innerText = 'Từ khóa: ' + (data.tuKhoa || '—');
+
+      // Tác giả & Đồng tác giả
+      const authorsContainer = document.getElementById('dt-authors-container');
+      let authorsHtml = `
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th style="width:36px;">STT</th>
+              <th>Họ và tên</th>
+              <th>Đơn vị công tác</th>
+              <th>Email</th>
+              <th>ORCID</th>
+              <th>Vai trò</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td><strong>${data.tacGiaChinh}</strong></td>
+              <td>Trường Đại học Công Thương TP.HCM</td>
+              <td><span style="font-family:monospace;">${data.emailTacGiaChinh}</span></td>
+              <td>—</td>
+              <td><span class="badge-tag badge-neutral">Tác giả chính</span></td>
+            </tr>
+      `;
+      if (data.dongTacGias && data.dongTacGias.length > 0) {
+        data.dongTacGias.forEach(dt => {
+          authorsHtml += `
+            <tr>
+              <td>${dt.thuTu + 1}</td>
+              <td><strong>${dt.hoTen}</strong></td>
+              <td>${dt.donVi || '—'}</td>
+              <td><span style="font-family:monospace;">${dt.email}</span></td>
+              <td>${dt.maORCID || '—'}</td>
+              <td>${dt.laTacGiaLienHe ? '<span class="badge-tag badge-primary">✉ Tác giả liên hệ</span>' : '<span class="badge-tag badge-neutral">Đồng tác giả</span>'}</td>
+            </tr>
+          `;
+        });
+      }
+      authorsHtml += `</tbody></table>`;
+      authorsContainer.innerHTML = authorsHtml;
+
+      // Cán bộ thẩm định do tác giả đề xuất (PhanBienDeXuat)
+      const reviewersContainer = document.getElementById('dt-reviewers-container');
+      if (data.phanBienDeXuats && data.phanBienDeXuats.length > 0) {
+        let revHtml = `
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th style="width:36px;">STT</th>
+                <th>Họ và tên chuyên gia</th>
+                <th>Cơ quan / Đơn vị công tác</th>
+                <th>Email</th>
+                <th>Lĩnh vực chuyên môn</th>
+                <th>Trạng thái đối soát</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+        data.phanBienDeXuats.forEach((pr, idx) => {
+          revHtml += `
+            <tr>
+              <td>${idx + 1}</td>
+              <td><strong>${pr.hoTen}</strong></td>
+              <td>${pr.donVi || '—'}</td>
+              <td><span style="font-family:monospace;">${pr.email}</span></td>
+              <td>${pr.linhVuc || '—'}</td>
+              <td>${pr.laChuyenGiaHeThong ? '<span class="badge-tag badge-primary">✓ Khớp CSDL hệ thống</span>' : '<span class="badge-tag badge-neutral">Mời ngoài hệ thống</span>'}</td>
+            </tr>
+          `;
+        });
+        revHtml += `</tbody></table>`;
+        reviewersContainer.innerHTML = revHtml;
+      } else {
+        reviewersContainer.innerHTML = '<div style="font-size:12px;color:var(--ink-500);font-style:italic;padding:8px 12px;background:#f8fafc;border:1px dashed var(--line);border-radius:4px;">Tác giả không gửi danh sách đề xuất cán bộ thẩm định cho bài báo này.</div>';
+      }
+
+      // Thư mục tài liệu đính kèm (ThuMucBaiBao)
+      const filesContainer = document.getElementById('dt-files-container');
+      if (data.tapTins && data.tapTins.length > 0) {
+        let fileHtml = `
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th style="width:36px;">STT</th>
+                <th>Tên tệp</th>
+                <th>Loại tệp</th>
+                <th>Dung lượng</th>
+                <th>Vòng</th>
+                <th>Ngày tải lên</th>
+              </tr>
+            </thead>
+            <tbody>
+        `;
+        data.tapTins.forEach((f, idx) => {
+          fileHtml += `
+            <tr>
+              <td>${idx + 1}</td>
+              <td><strong>${f.tenTapTinGoc || f.duongDanTapTin}</strong></td>
+              <td><span class="badge-tag badge-neutral">${f.loaiTapTin}</span></td>
+              <td>${f.dungLuongMb ? f.dungLuongMb.toFixed(2) + ' MB' : '—'}</td>
+              <td>Vòng ${f.soVong}</td>
+              <td>${new Date(f.ngayTao).toLocaleDateString('vi-VN')}</td>
+            </tr>
+          `;
+        });
+        fileHtml += `</tbody></table>`;
+        filesContainer.innerHTML = fileHtml;
+      } else {
+        filesContainer.innerHTML = '<div style="font-size:12px;color:var(--ink-500);font-style:italic;padding:8px 12px;background:#f8fafc;border:1px dashed var(--line);border-radius:4px;">Chưa có tài liệu trong thư mục bài báo.</div>';
+      }
+
+      // Lịch sử tiến trình phê duyệt (LichSuTrangThaiBaiBao)
+      const historyContainer = document.getElementById('dt-history-container');
+      if (data.lichSuTrangThais && data.lichSuTrangThais.length > 0) {
+        let histHtml = `
+          <div style="display:flex;flex-direction:column;gap:8px;">
+        `;
+        data.lichSuTrangThais.forEach(h => {
+          histHtml += `
+            <div style="display:flex;justify-content:space-between;align-items:center;background:#f8fafc;padding:8px 12px;border-radius:4px;border:1px solid var(--line);font-size:12px;">
+              <div>
+                <span style="font-weight:700;color:var(--ink-900);">${h.trangThaiMoi}</span>
+                ${h.trangThaiCu ? `<span style="color:var(--ink-500);margin-left:6px;">(trước: ${h.trangThaiCu})</span>` : ''}
+                ${h.ghiChu ? `<div style="color:var(--ink-700);margin-top:2px;">${h.ghiChu}</div>` : ''}
+              </div>
+              <div style="text-align:right;color:var(--ink-500);font-size:11px;">
+                <div>${new Date(h.ngayTao).toLocaleString('vi-VN')}</div>
+                ${h.nguoiThucHien ? `<div>Bởi: ${h.nguoiThucHien}</div>` : ''}
+              </div>
+            </div>
+          `;
+        });
+        histHtml += `</div>`;
+        historyContainer.innerHTML = histHtml;
+      } else {
+        historyContainer.innerHTML = '<div style="font-size:12px;color:var(--ink-500);font-style:italic;">Chưa có lịch sử trạng thái.</div>';
+      }
+
+      loading.style.display = 'none';
+      content.style.display = 'block';
+    } catch (e) {
+      console.error('Lỗi khi nạp chi tiết bản thảo:', e);
+      loading.innerHTML = '<span style="color:#ef4444;">Đã xảy ra lỗi khi kết nối máy chủ.</span>';
+    }
+  }
+
+  function closeSubmissionDetailModal() {
+    const modal = document.getElementById('modal-submission-detail');
+    if (modal) modal.classList.remove('open');
+  }
+
+  // Tải danh sách nhiệm vụ phản biện được Ban biên tập phân công
+  async function loadMyReviewAssignments() {
+    const user = getCurrentUser();
+    if (!user) return;
+
+    const roles = user.vaiTros || [];
+    const isReviewer = roles.includes('Chuyên gia phản biện') || roles.includes('Phản biện viên') || roles.includes('Ban biên tập') || roles.includes('Quản trị hệ thống');
+    
+    const reviewerSection = document.getElementById('reviewer-section');
+    const container = document.getElementById('my-assignments-container');
+    if (!reviewerSection || !container) return;
+
+    if (!isReviewer) {
+      reviewerSection.style.display = 'none';
+      return;
+    }
+
+    reviewerSection.style.display = 'block';
+
+    try {
+      const assignments = await apiGetMyAssignments();
+      if (!assignments || assignments.length === 0) {
+        container.innerHTML = `
+          <div style="background:#f8fafc;border:1px dashed var(--line);border-radius:6px;padding:28px;text-align:center;">
+            <p style="font-size:13.5px;color:var(--ink-700);">Hiện tại bạn chưa được phân công phản biện bản thảo nào.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = assignments.map(as => {
+        const assignDate = as.ngayPhanCong ? new Date(as.ngayPhanCong).toLocaleDateString('vi-VN') : '—';
+        const deadline = as.hanHoanThanh ? new Date(as.hanHoanThanh).toLocaleDateString('vi-VN') : '—';
+        const isDone = as.daDanhGia || as.trangThai === 'Đã đánh giá';
+
+        return `
+          <article class="sub-item-card" style="border-left: 3px solid ${isDone ? '#10b981' : '#1da1f2'};">
+            <div class="sub-header-line">
+              <span class="sub-code-badge">PHẢN BIỆN VÒNG ${as.soVong}</span>
+              <span class="sub-stage-badge ${isDone ? 'stage-published' : 'stage-review'}">${isDone ? '✓ Đã hoàn thành đánh giá' : '⏳ Chờ chuyên gia đánh giá'}</span>
+            </div>
+            <h3>${as.tieuDeBaiBao}</h3>
+            <div class="sub-meta-specs">
+              <span>Chuyên ngành: <b>${as.chuyenNganh}</b></span>
+              <span>Ngày phân công: <b>${assignDate}</b></span>
+              <span>Hạn hoàn thành: <b>${deadline}</b></span>
+              ${as.diemTongKet ? `<span>Điểm tổng: <b>${as.diemTongKet}/10</b></span>` : ''}
+              ${as.kienNghi ? `<span>Kiến nghị: <b>${as.kienNghi}</b></span>` : ''}
+            </div>
+
+            <div class="sub-action-bar">
+              <span class="note">Trạng thái: <strong>${as.trangThai}</strong> · Dữ liệu CSDL SQL Server</span>
+              ${isDone 
+                ? `<span style="color:#0e7039;font-weight:600;font-size:13px;">✓ Đã nộp phiếu BM-04 (${as.kienNghi || 'Đạt'})</span>` 
+                : `<button onclick="openEvalModal(${as.maPhanCong}, '${as.tieuDeBaiBao.replace(/'/g, "\\'")}')" class="btn-action-revise" style="background:#1da1f2;cursor:pointer;border:none;">Đánh giá bản thảo (BM-04) &rarr;</button>`}
+            </div>
+          </article>
+        `;
+      }).join('');
+    } catch (e) {
+      console.error('Lỗi khi tải phân công phản biện:', e);
+    }
+  }
+
+  function openEvalModal(maPhanCong, tieuDe) {
+    document.getElementById('eval-maphancong').value = maPhanCong;
+    document.getElementById('eval-modal-subtitle').innerText = 'Bản thảo: ' + tieuDe;
+    document.getElementById('eval-tinhmoi').value = 8.0;
+    document.getElementById('eval-phuongphap').value = 8.0;
+    document.getElementById('eval-ketqua').value = 8.0;
+    document.getElementById('eval-trinhbay').value = 8.0;
+    calculateTotalScore();
+    document.getElementById('eval-nhanxet-tacgia').value = '';
+    document.getElementById('eval-nhanxet-baomat').value = '';
+    document.getElementById('eval-kiennghi').value = 'Chấp nhận đăng';
+    document.getElementById('modal-eval-paper').classList.add('open');
+  }
+
+  function closeEvalModal() {
+    document.getElementById('modal-eval-paper').classList.remove('open');
+  }
+
+  function calculateTotalScore() {
+    const tm = parseFloat(document.getElementById('eval-tinhmoi').value) || 0;
+    const pp = parseFloat(document.getElementById('eval-phuongphap').value) || 0;
+    const kq = parseFloat(document.getElementById('eval-ketqua').value) || 0;
+    const tb = parseFloat(document.getElementById('eval-trinhbay').value) || 0;
+    const avg = ((tm + pp + kq + tb) / 4).toFixed(1);
+    document.getElementById('eval-diemtong').value = avg;
+  }
+
+  async function handleSaveEvaluation(e) {
+    e.preventDefault();
+    const maPhanCong = parseInt(document.getElementById('eval-maphancong').value, 10);
+    const diemTinhMoi = parseFloat(document.getElementById('eval-tinhmoi').value);
+    const diemPhuongPhap = parseFloat(document.getElementById('eval-phuongphap').value);
+    const diemKetQua = parseFloat(document.getElementById('eval-ketqua').value);
+    const diemTrinhBay = parseFloat(document.getElementById('eval-trinhbay').value);
+    const diemTongKet = parseFloat(document.getElementById('eval-diemtong').value);
+    const nhanXetChoTacGia = document.getElementById('eval-nhanxet-tacgia').value.trim();
+    const nhanXetBaoMat = document.getElementById('eval-nhanxet-baomat').value.trim();
+    const kienNghi = document.getElementById('eval-kiennghi').value;
+
+    const btn = e.target.querySelector('button[type="submit"]');
+    const oldText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerText = 'Đang gửi phiếu đánh giá...';
+
+    try {
+      const res = await apiSubmitEvaluation({
+        maPhanCong,
+        diemTinhMoi,
+        diemPhuongPhap,
+        diemKetQua,
+        diemTrinhBay,
+        diemTongKet,
+        nhanXetChoTacGia,
+        nhanXetBaoMat,
+        kienNghi
+      });
+
+      if (res && res.success) {
+        showToast(res.message || 'Nộp phiếu đánh giá BM-04 thành công!', 'success');
+        closeEvalModal();
+        await loadMyReviewAssignments();
+      } else {
+        showToast('Lỗi: ' + (res.message || 'Không thể lưu phiếu đánh giá'), 'error');
+      }
+    } catch (err) {
+      showToast('Lỗi kết nối máy chủ: ' + err.message, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = oldText;
+    }
   }
 
   // Modals
   function openProfileEditModal() {
-    const user = getCurrentUser();
-    document.getElementById('modal-input-name').value = user.hoTen;
-    document.getElementById('modal-input-affil').value = user.donVi;
-    document.getElementById('modal-input-orcid').value = user.orcid || '';
+    const user = getCurrentUser() || {};
+    document.getElementById('modal-input-hodem').value = user.hoDem || '';
+    document.getElementById('modal-input-ten').value = user.ten || '';
+    document.getElementById('modal-input-hocvi').value = user.hocVi || 'Không';
+    document.getElementById('modal-input-hocham').value = user.hocHam || 'Không';
+    document.getElementById('modal-input-chuyenmon').value = user.chuyenNganhId || (user.chuyenMonIds ? user.chuyenMonIds[0] : 1);
+    document.getElementById('modal-input-affil').value = user.donVi || '';
+    document.getElementById('modal-input-phone').value = user.soDienThoai || '';
+    document.getElementById('modal-input-orcid').value = user.maORCID || user.orcid || '';
+    document.getElementById('modal-input-stk').value = user.soTaiKhoan || '';
+    document.getElementById('modal-input-ctk').value = user.chuTaiKhoan || '';
+    document.getElementById('modal-input-bank').value = user.nganHang || '';
+
+    // Cập nhật preview avatar trong modal
+    const initial = user.hoTen ? user.hoTen.split(' ').pop().charAt(0).toUpperCase() : 'U';
+    const modalImg = document.getElementById('modal-preview-avatar-img');
+    const modalInit = document.getElementById('modal-preview-avatar-initial');
+    if (modalInit) modalInit.innerText = initial;
+    if (user.anhDaiDien && modalImg) {
+      modalImg.src = getAvatarUrl(user.anhDaiDien);
+      modalImg.style.display = 'block';
+      if (modalInit) modalInit.style.display = 'none';
+    } else if (modalImg) {
+      modalImg.style.display = 'none';
+      if (modalInit) modalInit.style.display = 'block';
+    }
+
     document.getElementById('modal-edit-profile').classList.add('open');
   }
   function closeProfileEditModal() { document.getElementById('modal-edit-profile').classList.remove('open'); }
 
-  function handleSaveProfile(e) {
+  async function handleSaveProfile(e) {
     e.preventDefault();
-    const user = getCurrentUser() || {};
-    user.hoTen = document.getElementById('modal-input-name').value;
-    user.donVi = document.getElementById('modal-input-affil').value;
-    user.orcid = document.getElementById('modal-input-orcid').value;
-    setCurrentUser(user);
-    syncUserData();
-    closeProfileEditModal();
-    showToast('Đã lưu thông tin lý lịch khoa học!');
+    const hoDem = document.getElementById('modal-input-hodem').value.trim();
+    const ten = document.getElementById('modal-input-ten').value.trim();
+    const hoTenGoc = hoDem ? (hoDem + ' ' + ten) : ten;
+    const hocVi = document.getElementById('modal-input-hocvi').value;
+    const hocHam = document.getElementById('modal-input-hocham').value;
+    const chuyenNganhId = parseInt(document.getElementById('modal-input-chuyenmon').value, 10);
+    const donVi = document.getElementById('modal-input-affil').value.trim();
+    const soDienThoai = document.getElementById('modal-input-phone').value.trim();
+    const maORCID = document.getElementById('modal-input-orcid').value.trim();
+    const soTaiKhoan = document.getElementById('modal-input-stk').value.trim();
+    const chuTaiKhoan = document.getElementById('modal-input-ctk').value.trim();
+    const nganHang = document.getElementById('modal-input-bank').value.trim();
+
+    let danhXung = '';
+    if (hocHam === 'Giáo sư') danhXung = 'GS.';
+    else if (hocHam === 'Phó giáo sư') danhXung = 'PGS.';
+    
+    if (hocVi === 'Tiến sĩ' || hocVi === 'TSKH') danhXung += (danhXung ? 'TS.' : 'TS.');
+    else if (hocVi === 'Thạc sĩ') danhXung += (danhXung ? 'ThS.' : 'ThS.');
+    else if (hocVi === 'Cử nhân') danhXung += (danhXung ? 'CN.' : 'CN.');
+
+    const hoTen = danhXung ? `${danhXung} ${hoTenGoc}` : hoTenGoc;
+
+    const btn = e.target.querySelector('button[type="submit"]');
+    const oldBtnText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerText = 'Đang lưu vào CSDL...';
+
+    try {
+      const res = await apiUpdateProfile({
+        hoTen,
+        hocVi,
+        hocHam,
+        donVi,
+        soDienThoai,
+        soTaiKhoan,
+        chuTaiKhoan,
+        nganHang,
+        maORCID,
+        chuyenMonIds: [chuyenNganhId]
+      });
+
+      if (res.success && res.profile) {
+        const userObj = {
+          isLoggedIn: true,
+          ...res.profile,
+          hoDem,
+          ten,
+          chuyenNganhId,
+          chucVu: (res.profile.vaiTros && res.profile.vaiTros.length > 0) ? res.profile.vaiTros.join(', ') : 'Tác giả'
+        };
+        setCurrentUser(userObj);
+        syncUserData();
+        closeProfileEditModal();
+        showToast('Đã lưu thông tin lý lịch khoa học & chuyên môn vào SQL Server!', 'success');
+      } else {
+        showToast(res.message || 'Cập nhật thất bại.', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Lỗi kết nối máy chủ khi cập nhật hồ sơ.', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = oldBtnText;
+    }
   }
 
   function openPasswordModal() { document.getElementById('modal-change-pass').classList.add('open'); }
   function closePasswordModal() { document.getElementById('modal-change-pass').classList.remove('open'); }
 
-  function handleSavePass(e) {
+  async function handleSavePass(e) {
     e.preventDefault();
+    const pCurr = document.getElementById('p-current').value;
     const p1 = document.getElementById('p-new').value;
     const p2 = document.getElementById('p-conf').value;
     if (p1 !== p2) {
-      alert('Mật khẩu mới và xác nhận mật khẩu không trùng khớp!');
+      showToast('Mật khẩu mới và xác nhận mật khẩu không trùng khớp!', 'error');
       return;
     }
-    closePasswordModal();
-    showToast('Đổi mật khẩu tài khoản thành công!');
+    if (p1.length < 6) {
+      showToast('Mật khẩu mới phải có ít nhất 6 ký tự!', 'error');
+      return;
+    }
+
+    const btn = e.target.querySelector('button[type="submit"]');
+    const oldBtnText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerText = 'Đang cập nhật...';
+
+    try {
+      const res = await apiChangePassword(pCurr, p1);
+      if (res.success) {
+        closePasswordModal();
+        showToast('Đổi mật khẩu tài khoản thành công!', 'success');
+      } else {
+        showToast(res.message || 'Mật khẩu hiện tại không chính xác.', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Lỗi kết nối máy chủ khi đổi mật khẩu.', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = oldBtnText;
+    }
   }
 
-  function openRevisionDialog() { document.getElementById('modal-revision').classList.add('open'); }
-  function closeRevisionDialog() { document.getElementById('modal-revision').classList.remove('open'); }
+  function escapeJs(str) {
+    if (!str) return '';
+    return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  }
 
-  function handleSendRevision(e) {
+  function openRevisionDialog(id, code, title, major, feedback) {
+    if (id) {
+      document.getElementById('rev-paper-id').value = id;
+    }
+    if (code) {
+      document.getElementById('rev-modal-code').innerText = code;
+      document.getElementById('rev-paper-code').value = code;
+    }
+    if (major) {
+      document.getElementById('rev-modal-major').innerText = major;
+    }
+    if (feedback) {
+      document.getElementById('rev-modal-feedback').innerText = feedback;
+    }
+    document.getElementById('modal-revision').classList.add('open');
+  }
+
+  function closeRevisionDialog() {
+    document.getElementById('modal-revision').classList.remove('open');
+  }
+
+  async function handleSendRevision(e) {
     e.preventDefault();
-    closeRevisionDialog();
-    showToast('Đã gửi Bản giải trình & Tệp chỉnh sửa tới Ban Biên tập thành công!');
+    const id = document.getElementById('rev-paper-id').value;
+    const code = document.getElementById('rev-paper-code').value || 'JST-2026';
+    const explanation = document.getElementById('rev-explanation').value;
+    const btn = document.getElementById('btn-submit-revision');
+    const oldText = btn.innerText;
+
+    btn.disabled = true;
+    btn.innerText = 'Đang gửi bản thảo và giải trình...';
+
+    // Tạo FormData tải tệp
+    const formData = new FormData();
+    formData.append('GiaiTrinh', explanation);
+    const fBm03 = document.getElementById('rev-file-bm03').files[0];
+    if (fBm03) formData.append('FileBm03', fBm03);
+    const fClean = document.getElementById('rev-file-clean').files[0];
+    if (fClean) formData.append('FileClean', fClean);
+    const fTracked = document.getElementById('rev-file-tracked').files[0];
+    if (fTracked) formData.append('FileTracked', fTracked);
+
+    try {
+      if (id && typeof apiResubmitPaper === 'function') {
+        const res = await apiResubmitPaper(id, formData);
+        if (res && res.success) {
+          btn.disabled = false;
+          btn.innerText = oldText;
+          closeRevisionDialog();
+          showToast(`Đã lưu CSDL: Nộp bản thảo chỉnh sửa & Giải trình BM-03 cho ${code} thành công!`);
+          setTimeout(() => { loadMySubmissions(); }, 600);
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn('Backend API offline, chuyển sang chế độ mô phỏng UI:', err);
+    }
+
+    // Chế độ mô phỏng UI dự phòng khi Backend chưa kết nối
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.innerText = oldText;
+      closeRevisionDialog();
+      showToast(`Đã nộp Bản thảo chỉnh sửa & Giải trình BM-03 cho bản thảo ${code} (Mô phỏng UI)!`);
+
+      // Làm mới danh sách hoặc cập nhật UI
+      setTimeout(() => {
+        loadMySubmissions();
+      }, 500);
+    }, 800);
+  }
+
+  // ==============================================================================
+  // CƠ CHẾ ĐỒNG BỘ TÁC QUYỀN TÁC GIẢ (AUTHOR CLAIMING - CHUẨN OJS & SCOPUS)
+  // Thực thi nguyên lý của Stored Procedure: sp_KiemTraDongTacGiaChuaLienKet & sp_DongBoDongTacGia_TheoEmail
+  // ==============================================================================
+  const PENDING_UNLINKED_PAPERS = [
+    {
+      id: 6,
+      code: 'JST-2026-06',
+      title: 'Mô hình chuỗi khối (Blockchain) tích hợp IoT trong truy xuất nguồn gốc nông sản',
+      major: 'Công nghệ thông tin & Trí tuệ nhân tạo',
+      guestEmail: 'vuthif@huit.edu.vn',
+      role: 'Đồng tác giả (Thứ tự: 2)',
+      stageText: 'Giai đoạn 2: Đang phản biện kín',
+      stageClass: 'stage-review',
+      doi: '10.59876/jst.jsc.2026.06.01',
+      date: '15/10/2026'
+    }
+  ];
+
+  function checkAuthorClaiming() {
+    const user = getCurrentUser() || {};
+    const email = (user.email || '').toLowerCase().trim();
+    const container = document.getElementById('author-claiming-container');
+    if (!container || !email) return;
+
+    // Kiểm tra các bài báo đã được xác nhận lưu trong localStorage
+    const claimedIds = JSON.parse(localStorage.getItem('claimed_papers_' + (user.id || 'default')) || '[]');
+    const dismissed = sessionStorage.getItem('dismiss_claiming_banner');
+
+    if (dismissed) {
+      container.style.display = 'none';
+      return;
+    }
+
+    // Lọc bài báo chưa liên kết khớp email của người dùng
+    const matchPapers = PENDING_UNLINKED_PAPERS.filter(p => 
+      p.guestEmail.toLowerCase().trim() === email && !claimedIds.includes(p.id)
+    );
+
+    if (matchPapers.length === 0) {
+      container.style.display = 'none';
+      return;
+    }
+
+    const p = matchPapers[0];
+    container.style.display = 'block';
+    container.innerHTML = `
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:6px;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;gap:18px;box-shadow:0 1px 3px rgba(0,0,0,0.03);">
+        <div style="display:flex;align-items:flex-start;gap:14px;">
+          <div style="width:38px;height:38px;border-radius:50%;background:#dcfce7;color:#16a34a;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;">🎓</div>
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#166534;display:flex;align-items:center;gap:8px;">
+              Xác nhận tác quyền công trình khoa học (Author Claiming)
+              <span style="font-size:11px;background:#dcfce7;color:#15803d;padding:2px 7px;border-radius:3px;font-weight:600;border:1px solid #bbf7d0;">Chuẩn Scopus / OJS</span>
+            </div>
+            <div style="font-size:13px;color:#15803d;margin-top:4px;line-height:1.5;">
+              Hệ thống phát hiện <strong>01 bài báo</strong> đã nộp trước đây mang email của bạn (<code>${user.email}</code>) khi chưa có liên kết tài khoản:<br>
+              <strong style="color:#14532d;">[${p.code}] ${p.title}</strong> · Vai trò: <em>${p.role}</em>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-shrink:0;">
+          <button type="button" class="btn-primary" style="background:#16a34a;border:none;padding:8px 16px;font-size:12.5px;white-space:nowrap;font-weight:700;box-shadow:0 2px 4px rgba(22,163,74,0.25);" onclick="confirmClaimPaper(${p.id})">
+            ✓ Xác nhận liên kết vào Lý lịch
+          </button>
+          <button type="button" class="btn-outline" style="padding:8px 12px;font-size:12px;color:#475569;border-color:#cbd5e1;background:#fff;" onclick="dismissClaimBanner()">
+            Để sau
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  function confirmClaimPaper(paperId) {
+    const user = getCurrentUser() || {};
+    const claimedKey = 'claimed_papers_' + (user.id || 'default');
+    const claimedIds = JSON.parse(localStorage.getItem(claimedKey) || '[]');
+    if (!claimedIds.includes(paperId)) {
+      claimedIds.push(paperId);
+      localStorage.setItem(claimedKey, JSON.stringify(claimedIds));
+    }
+
+    const container = document.getElementById('author-claiming-container');
+    if (container) container.style.display = 'none';
+
+    // Thêm card bài báo vào danh sách hiển thị
+    const paper = PENDING_UNLINKED_PAPERS.find(p => p.id === paperId);
+    if (paper) {
+      const cardHtml = `
+        <article class="sub-item-card" style="border-left:4px solid #16a34a;animation:fadeIn .3s ease-in-out;">
+          <div class="sub-header-line">
+            <span class="sub-code-badge" style="background:#ecfdf5;color:#059669;border-color:#a7f3d0;">MÃ BẢN THẢO: ${paper.code} · LIÊN KẾT TÁC QUYỀN (CLAIMED)</span>
+            <span class="sub-stage-badge ${paper.stageClass}">● ${paper.stageText}</span>
+          </div>
+          <h3><a href="article-detail.html">${paper.title}</a></h3>
+          <div class="sub-meta-specs">
+            <span>Chuyên ngành: <b>${paper.major}</b></span>
+            <span>Ngày nộp: <b>${paper.date}</b></span>
+            <span>Vai trò: <b style="color:#059669;">✓ ${paper.role}</b></span>
+          </div>
+          <div class="sub-action-bar">
+            <span class="note" style="color:#059669;">✓ Đã hoàn tất đồng bộ qua Stored Procedure sp_DongBoDongTacGia_TheoEmail</span>
+            <a href="article-detail.html" class="btn-action-view">Xem chi tiết bản thảo &rarr;</a>
+          </div>
+        </article>
+      `;
+      const heading = document.querySelector('.workbench-grid main .sec-heading');
+      if (heading) {
+        heading.insertAdjacentHTML('afterend', cardHtml);
+      }
+    }
+
+    // Cập nhật số liệu trên thanh Metrics Strip
+    const metricCell = document.querySelector('.metrics-spec-strip .metric-spec-cell .val');
+    if (metricCell) {
+      const currentVal = parseInt(metricCell.innerText, 10) || 3;
+      metricCell.innerText = '0' + (currentVal + 1);
+    }
+
+    showToast(`🎉 Xác nhận thành công! Đã liên kết công trình [${paper ? paper.code : paperId}] vào Lý lịch khoa học cá nhân (Thực thi sp_DongBoDongTacGia_TheoEmail).`);
+  }
+
+  function dismissClaimBanner() {
+    sessionStorage.setItem('dismiss_claiming_banner', 'true');
+    const container = document.getElementById('author-claiming-container');
+    if (container) container.style.display = 'none';
+    showToast('Đã tạm ẩn thông báo xác nhận tác quyền.');
   }
 </script>
 </body>

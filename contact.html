@@ -128,117 +128,8 @@
 </head>
 <body>
 
-<!-- KHỐI BANNER & NAVBAR NỀN XANH (#1da1f2) -->
-<div class="header-bar">
-  <header class="masthead wrap">
-    <div class="name"><a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Tạp chí Khoa học</a></div>
-    <div class="tagline">NGHIÊN CỨU · CÔNG NGHỆ · CHUYỂN GIAO TRI THỨC</div>
-  </header>
-
-  <nav class="navbar wrap">
-    <div class="nav-links">
-      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html" style="display:inline-flex;align-items:center;gap:4px;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        Trang chủ
-      </a>
-
-      <!-- TAB DROPDOWN: GIỚI THIỆU -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle on">
-          GIỚI THIỆU
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="about.html" class="field-menu-item">
-            <span>Giới thiệu về tạp chí</span>
-          </a>
-          <a href="publishing-policy.html" class="field-menu-item">
-            <span>Chính sách xuất bản</span>
-          </a>
-          <a href="editorial-board.html" class="field-menu-item">
-            <span>Hội đồng biên tập</span>
-          </a>
-          <a href="contact.html" class="field-menu-item" style="color:#1da1f2!important;font-weight:700;">
-            <span>Nhân sự &amp; Liên hệ</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- TAB DROPDOWN: QUY TRÌNH - BIỂU MẪU -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle">
-          QUY TRÌNH - BIỂU MẪU
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="guidelines.html#submission" class="field-menu-item">
-            <span>Quy trình đăng bài</span>
-          </a>
-          <a href="guidelines.html#review" class="field-menu-item">
-            <span>Quy trình phản biện</span>
-          </a>
-          <a href="guidelines.html#format" class="field-menu-item">
-            <span>Thể lệ viết và gửi bài</span>
-          </a>
-          <a href="guidelines.html#templates" class="field-menu-item">
-            <span>Các biểu mẫu</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- TAB DROPDOWN: LĨNH VỰC KHOA HỌC -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle">
-          LĨNH VỰC KHOA HỌC
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="article-detail.html" class="field-menu-item">
-            <span>Công nghệ thông tin</span>
-            <span class="badge-count">142</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Cơ khí – Tự động hóa</span>
-            <span class="badge-count">98</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Khoa học Môi trường</span>
-            <span class="badge-count">76</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Kinh tế – Quản trị</span>
-            <span class="badge-count">115</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Hóa học &amp; Công nghệ thực phẩm</span>
-            <span class="badge-count">84</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Khoa học Xã hội &amp; Nhân văn</span>
-            <span class="badge-count">62</span>
-          </a>
-          <div class="fields-menu-divider"></div>
-          <a href="archives.html" class="fields-menu-all">Xem tất cả các chuyên ngành &rarr;</a>
-        </div>
-      </div>
-
-      <a href="archives.html">Kho lưu trữ</a>
-    </div>
-
-    <!-- KHỐI PHẢI: NÚT NỘP BÀI + AUTH -->
-    <div class="nav-actions">
-      <a href="submit-paper.html" style="background:#ffffff;color:#1da1f2;padding:6px 14px;border-radius:4px;font-size:12.5px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.12);display:inline-flex;align-items:center;gap:6px;transition:all .2s;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-        Gửi bài báo
-      </a>
-      
-      <div class="auth-links">
-        <a href="login.html" class="login-btn">Đăng nhập</a>
-        <a href="register.html" class="register-btn">Đăng ký</a>
-      </div>
-    </div>
-  </nav>
-</div>
+<!-- KHỐI HEADER CHUNG (SHARED LAYOUT) -->
+<div id="huit-header" data-active="contact"></div>
 
 <!-- BREADCRUMB -->
 <div class="breadcrumb-bar">
@@ -287,23 +178,26 @@
       <div class="contact-card">
         <div class="contact-card-title">
           <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-          VĂN PHÒNG TÒA SOẠN
+          VĂN PHÒNG TÒA SOẠN HUIT
         </div>
-        <div class="contact-item"><strong>Địa chỉ trụ sở:</strong> Tòa nhà Tạp chí Khoa học, Trung tâm Nghiên cứu &amp; Phát triển Công nghệ, TP. Hồ Chí Minh</div>
-        <div class="contact-item"><strong>Điện thoại bàn:</strong> (028) 3816 1673 - Ext: 124, 126</div>
-        <div class="contact-item"><strong>Đường dây nóng (Hotline):</strong> 0908 123 456 (07:30 - 16:30)</div>
-        <div class="contact-item"><strong>Email tiếp nhận bản thảo:</strong> <a href="mailto:tapchikhoahoc@journal.edu.vn" style="color:var(--sky-600);font-weight:600;">tapchikhoahoc@journal.edu.vn</a></div>
+        <div class="contact-item"><strong>Cơ quan chủ quản:</strong> Trường Đại học Công Thương TP. Hồ Chí Minh</div>
+        <div class="contact-item"><strong>Địa chỉ trụ sở:</strong> 140 Lê Trọng Tấn, Phường Tây Thạnh, Thành phố Hồ Chí Minh</div>
+        <div class="contact-item"><strong>Văn phòng Tòa soạn:</strong> Tòa nhà C, Phòng C101, Trường Đại học Công Thương TP.HCM</div>
+        <div class="contact-item"><strong>Điện thoại:</strong> 028.38163318 - ext.112</div>
+        <div class="contact-item"><strong>Email chính thức:</strong> <a href="mailto:journal@huit.edu.vn" style="color:var(--sky-600);font-weight:600;">journal@huit.edu.vn</a></div>
+        <div class="contact-item"><strong>Website:</strong> <a href="https://huitjournal.vn" target="_blank" style="color:var(--sky-600);font-weight:600;">https://huitjournal.vn</a> | <a href="https://journal.huit.edu.vn" target="_blank" style="color:var(--sky-600);font-weight:600;">https://journal.huit.edu.vn</a></div>
       </div>
 
       <div class="contact-card">
         <div class="contact-card-title">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-          THỜI GIAN LÀM VIỆC &amp; HỖ TRỢ
+          THỜI GIAN LÀM VIỆC &amp; THÔNG TIN ẤN PHẨM
         </div>
-        <div class="contact-item"><strong>Các ngày trong tuần:</strong> Thứ Hai đến Thứ Sáu (Trừ ngày lễ, Tết)</div>
-        <div class="contact-item"><strong>Buổi sáng:</strong> 07:30 – 11:30</div>
-        <div class="contact-item"><strong>Buổi chiều:</strong> 13:00 – 17:00</div>
-        <div class="contact-item"><strong>Hệ thống nộp bài trực tuyến:</strong> Hoạt động 24/7 (tiếp nhận mọi thời điểm)</div>
+        <div class="contact-item"><strong>Tổng biên tập:</strong> TS. Bùi Hồng Đăng</div>
+        <div class="contact-item"><strong>Giấy phép hoạt động:</strong> Số 53/GP-BTTTT ngày 06/3/2024 (Bộ Thông tin và Truyền thông)</div>
+        <div class="contact-item"><strong>Mã chuẩn quốc tế:</strong> p-ISSN 3030-4113 | e-ISSN 3030-413X</div>
+        <div class="contact-item"><strong>Giờ tiếp nhận trực tiếp:</strong> Thứ Hai – Thứ Sáu (07:30 - 11:30 | 13:00 - 17:00)</div>
+        <div class="contact-item"><strong>Hệ thống nộp bài trực tuyến:</strong> Tiếp nhận bản thảo tự động 24/7</div>
       </div>
     </div>
 
@@ -398,24 +292,10 @@
   </main>
 </div>
 
-<!-- FOOTER -->
-<footer>
-  <div class="wrap">
-    <div><strong>Tạp chí Khoa học · Tạp chí Nghiên cứu &amp; Phát triển Công nghệ</strong></div>
-    <div style="font-size: 11.5px; opacity: 0.9; margin-top: 4px;">Giấy phép xuất bản báo chí số 188/GP-BTTTT cấp bởi Bộ Thông tin và Truyền thông · ISSN 1859-3097</div>
-    <div class="flinks">
-      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Trang chủ</a>
-      <a href="about.html">Giới thiệu</a>
-      <a href="publishing-policy.html">Chính sách xuất bản</a>
-      <a href="editorial-board.html">Hội đồng biên tập</a>
-      <a href="guidelines.html">Quy trình - Biểu mẫu</a>
-      <a href="archives.html">Kho lưu trữ</a>
-      <a href="submit-paper.html">Nộp bài trực tuyến</a>
-      <a href="contact.html">Liên hệ</a>
-    </div>
-  </div>
-</footer>
+<!-- KHỐI FOOTER CHUNG (SHARED LAYOUT) -->
+<div id="huit-footer"></div>
 
+<script src="journal-layout.js"></script>
 <script src="journal-interactions.js"></script>
 <script>
   function handleContactSubmit(e) {

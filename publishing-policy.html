@@ -3,11 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chính sách Xuất bản &amp; Đạo đức Nghiên cứu · Tạp chí Khoa học</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Chính sách Xuất bản &amp; Đạo đức Nghiên cứu · Tạp chí Khoa học Đại học Công Thương</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="journal-interactions.css">
+<link rel="stylesheet" href="journal-interactions.css?v=3">
 
 <style>
   :root {
@@ -16,184 +19,272 @@
     --sky-050: #F3F8FD;
     --sky-100: #E4EFFA;
     --sky-200: #C9DFF4;
-    --sky-400: #8FB8E3;
-    --sky-500: #6699D1;
-    --sky-600: #4C7FB8;
-    --sky-700: #3A6497;
-    --ink-900: #16202B;
-    --ink-700: #3D4A57;
-    --ink-500: #6B7684;
-    --ink-300: #A9B2BC;
-    --white: #FFFFFF;
-    --line: #E1E9F1;
+    --sky-500: #1da1f2;
+    --sky-600: #0f82c7;
+    --sky-700: #0066b3;
+    --ink-900: #111827;
+    --ink-800: #1F2937;
+    --ink-700: #374151;
+    --ink-500: #6B7280;
+    --ink-400: #9CA3AF;
+    --line: #E5E7EB;
+    --line-subtle: #F1F5F9;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: var(--sans);
-    background: var(--white);
-    color: var(--ink-900);
-    line-height: 1.65;
+    background: #FFFFFF;
+    color: var(--ink-800);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
   }
 
   a { text-decoration: none; color: inherit; }
   .wrap { max-width: 1360px; margin: 0 auto; padding: 0 20px; }
 
   /* BREADCRUMB */
-  .breadcrumb-bar { background: var(--sky-050); border-bottom: 1px solid var(--line); padding: 12px 0; font-size: 12px; color: var(--ink-500); }
-  .breadcrumb-bar a { color: #1da1f2; font-weight: 500; }
-  .breadcrumb-bar a:hover { text-decoration: underline; }
-  .breadcrumb-bar span.sep { margin: 0 8px; color: var(--sky-200); }
-
-  /* MAIN LAYOUT */
-  .page-container { display: grid; grid-template-columns: 280px 1fr; gap: 36px; padding: 36px 0 64px; }
-  @media (max-width: 900px) {
-    .page-container { grid-template-columns: 1fr; }
+  .breadcrumb-bar {
+    background: var(--sky-050);
+    border-bottom: 1px solid var(--line);
+    padding: 12px 0;
+    font-size: 12.5px;
+    color: var(--ink-500);
+  }
+  .breadcrumb-bar a {
+    color: #1da1f2;
+    font-weight: 500;
+  }
+  .breadcrumb-bar a:hover {
+    text-decoration: underline;
+  }
+  .breadcrumb-bar span.sep {
+    margin: 0 8px;
+    color: var(--sky-200);
   }
 
-  /* SIDEBAR NAVIGATION */
-  .page-sidebar { position: sticky; top: 20px; align-self: start; background: #ffffff; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
-  .sidebar-header { padding: 14px 18px; font-size: 12.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-500); border-bottom: 1px solid var(--line); background: #fafcff; }
-  .side-nav-link { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px; font-size: 13.5px; font-weight: 600; color: var(--ink-700); border-left: 3px solid transparent; border-bottom: 1px solid #f1f5f9; transition: all .15s; }
-  .side-nav-link:hover { background: #f8fafc; color: #1da1f2; }
-  .side-nav-link.active { background: #f0f7ff; color: #1da1f2; border-left-color: #1da1f2; font-weight: 700; }
-  .side-nav-link svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2; }
+  /* MAIN LAYOUT: 280px + 1fr */
+  .page-container {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 36px;
+    padding: 36px 0 64px;
+    align-items: start;
+  }
+  @media (max-width: 900px) {
+    .page-container {
+      grid-template-columns: 1fr;
+    }
+  }
 
-  /* MAIN CONTENT */
-  .main-content { background: #ffffff; border: 1px solid var(--line); border-radius: 8px; padding: 36px 42px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); min-height: 650px; }
-  .page-title { font-family: var(--serif); font-size: 28px; font-weight: 600; color: var(--ink-900); margin-bottom: 8px; }
-  .page-subtitle { font-size: 13.5px; color: var(--ink-500); margin-bottom: 28px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+  /* SIDEBAR */
+  .page-sidebar {
+    position: sticky;
+    top: 20px;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
 
-  /* POLICY CARD */
-  .policy-card { border: 1px solid var(--line); border-left: 4px solid #1da1f2; border-radius: 4px; padding: 22px 26px; background: #fff; margin-bottom: 22px; }
-  .policy-card h2 { font-size: 16px; font-weight: 700; color: var(--ink-900); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-  .policy-card p { font-size: 14px; color: var(--ink-700); margin-bottom: 10px; text-align: justify; }
-  .policy-card ul { margin-left: 20px; font-size: 13.5px; color: var(--ink-700); margin-bottom: 8px; }
-  .policy-card li { margin-bottom: 6px; }
+  .sidebar-box {
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
 
-  /* BADGE PILL */
-  .policy-tag { display: inline-block; font-size: 11.5px; font-weight: 700; padding: 3px 8px; border-radius: 3px; background: var(--sky-050); color: #1da1f2; border: 1px solid var(--sky-200); margin-bottom: 8px; }
+  .sidebar-header {
+    padding: 14px 18px;
+    font-size: 12.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ink-500);
+    border-bottom: 1px solid var(--line);
+    background: #fafcff;
+  }
 
-  /* FOOTER */
-  footer { background: #1da1f2; padding: 32px 24px; text-align: center; font-size: 13px; color: #ffffff; margin-top: 40px; box-shadow: 0 -2px 10px rgba(29,161,242,0.15); }
-  footer .flinks { margin-top: 12px; }
-  footer .flinks a { margin: 0 14px; color: rgba(255,255,255,0.9); font-weight: 600; }
-  footer .flinks a:hover { color: #ffffff; text-decoration: underline; }
+  .side-nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink-700);
+    border-left: 3px solid transparent;
+    border-bottom: 1px solid #f1f5f9;
+    transition: all .15s;
+  }
+  .side-nav-link:last-child {
+    border-bottom: none;
+  }
+  .side-nav-link:hover {
+    background: #f8fafc;
+    color: #1da1f2;
+  }
+  .side-nav-link.active {
+    background: #f0f7ff;
+    color: #1da1f2;
+    border-left-color: #1da1f2;
+    font-weight: 700;
+  }
+  .side-nav-link svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+  }
+
+  /* MỤC LỤC NHANH TRONG SIDEBAR (KHÔNG BULLET POINT) */
+  .toc-list {
+    margin: 0;
+    padding: 12px 16px;
+    font-size: 12.5px;
+  }
+  .toc-item {
+    margin-bottom: 8px;
+  }
+  .toc-item:last-child {
+    margin-bottom: 0;
+  }
+  .toc-list a {
+    color: var(--ink-700);
+    display: block;
+    line-height: 1.4;
+    transition: color .15s;
+  }
+  .toc-list a:hover {
+    color: #1da1f2;
+    text-decoration: underline;
+  }
+  .toc-section-title {
+    font-weight: 700;
+    color: var(--sky-700);
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 10px 0 6px;
+  }
+  .toc-section-title:first-child {
+    margin-top: 0;
+  }
+
+  /* KHỐI NỘI DUNG CHÍNH (VĂN BẢN CHUẨN HỌC THUẬT, KHÔNG BULLET POINT) */
+  .main-content {
+    background: #ffffff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 40px 48px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    min-height: 650px;
+  }
+  @media (max-width: 680px) {
+    .main-content {
+      padding: 24px 20px;
+    }
+  }
+
+  .page-title {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink-900);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .page-subtitle {
+    font-size: 14px;
+    color: var(--ink-500);
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+    line-height: 1.55;
+  }
+
+  /* PHÂN MỤC LỚN (PARTS) */
+  .part-header {
+    margin: 36px 0 20px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0f82c7;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+  .part-header:first-of-type {
+    margin-top: 0;
+  }
+  .part-title {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 700;
+    color: #0f82c7;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .part-badge {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--ink-500);
+    background: #f1f5f9;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  /* ĐIỀU KHOẢN (ARTICLES) */
+  .policy-article {
+    margin-bottom: 30px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line-subtle);
+  }
+  .policy-article:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .article-title {
+    font-size: 16.5px;
+    font-weight: 700;
+    color: var(--ink-900);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .article-num {
+    color: #0f82c7;
+    font-weight: 800;
+  }
+
+  .article-content {
+    font-size: 14.5px;
+    color: var(--ink-700);
+    line-height: 1.75;
+    text-align: justify;
+  }
+  .article-content p {
+    margin-bottom: 12px;
+  }
+  .article-content p:last-child {
+    margin-bottom: 0;
+  }
+
+  .sub-heading {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--ink-900);
+    margin: 16px 0 8px;
+  }
 </style>
 </head>
 <body>
 
-<!-- KHỐI BANNER & NAVBAR NỀN XANH (#1da1f2) -->
-<div class="header-bar">
-  <header class="masthead wrap">
-    <div class="name"><a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Tạp chí Khoa học</a></div>
-    <div class="tagline">NGHIÊN CỨU · CÔNG NGHỆ · CHUYỂN GIAO TRI THỨC</div>
-  </header>
-
-  <nav class="navbar wrap">
-    <div class="nav-links">
-      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html" style="display:inline-flex;align-items:center;gap:4px;">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-        Trang chủ
-      </a>
-
-      <!-- TAB DROPDOWN: GIỚI THIỆU -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle on">
-          GIỚI THIỆU
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="about.html" class="field-menu-item">
-            <span>Giới thiệu về tạp chí</span>
-          </a>
-          <a href="publishing-policy.html" class="field-menu-item" style="color:#1da1f2!important;font-weight:700;">
-            <span>Chính sách xuất bản</span>
-          </a>
-          <a href="editorial-board.html" class="field-menu-item">
-            <span>Hội đồng biên tập</span>
-          </a>
-          <a href="contact.html" class="field-menu-item">
-            <span>Nhân sự &amp; Liên hệ</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- TAB DROPDOWN: QUY TRÌNH - BIỂU MẪU -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle">
-          QUY TRÌNH - BIỂU MẪU
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="guidelines.html#submission" class="field-menu-item">
-            <span>Quy trình đăng bài</span>
-          </a>
-          <a href="guidelines.html#review" class="field-menu-item">
-            <span>Quy trình phản biện</span>
-          </a>
-          <a href="guidelines.html#format" class="field-menu-item">
-            <span>Thể lệ viết và gửi bài</span>
-          </a>
-          <a href="guidelines.html#templates" class="field-menu-item">
-            <span>Các biểu mẫu</span>
-          </a>
-        </div>
-      </div>
-
-      <!-- TAB DROPDOWN: LĨNH VỰC KHOA HỌC -->
-      <div class="nav-item-dropdown">
-        <span class="nav-dropdown-toggle">
-          LĨNH VỰC KHOA HỌC
-          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
-        </span>
-        <div class="nav-fields-menu">
-          <a href="article-detail.html" class="field-menu-item">
-            <span>Công nghệ thông tin</span>
-            <span class="badge-count">142</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Cơ khí – Tự động hóa</span>
-            <span class="badge-count">98</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Khoa học Môi trường</span>
-            <span class="badge-count">76</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Kinh tế – Quản trị</span>
-            <span class="badge-count">115</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Hóa học &amp; Công nghệ thực phẩm</span>
-            <span class="badge-count">84</span>
-          </a>
-          <a href="archives.html" class="field-menu-item">
-            <span>Khoa học Xã hội &amp; Nhân văn</span>
-            <span class="badge-count">62</span>
-          </a>
-          <div class="fields-menu-divider"></div>
-          <a href="archives.html" class="fields-menu-all">Xem tất cả các chuyên ngành &rarr;</a>
-        </div>
-      </div>
-
-      <a href="archives.html">Kho lưu trữ</a>
-    </div>
-
-    <!-- KHỐI PHẢI: NÚT NỘP BÀI + AUTH -->
-    <div class="nav-actions">
-      <a href="submit-paper.html" style="background:#ffffff;color:#1da1f2;padding:6px 14px;border-radius:4px;font-size:12.5px;font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,0.12);display:inline-flex;align-items:center;gap:6px;transition:all .2s;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-        Gửi bài báo
-      </a>
-      
-      <div class="auth-links">
-        <a href="login.html" class="login-btn">Đăng nhập</a>
-        <a href="register.html" class="register-btn">Đăng ký</a>
-      </div>
-    </div>
-  </nav>
-</div>
+<!-- KHỐI HEADER CHUNG (SHARED LAYOUT HUIT) -->
+<div id="huit-header" data-active="policy"></div>
 
 <!-- BREADCRUMB -->
 <div class="breadcrumb-bar">
@@ -206,121 +297,298 @@
   </div>
 </div>
 
-<!-- CONTAINER -->
+<!-- CONTAINER CHÍNH -->
 <div class="wrap page-container">
   
-  <!-- SIDEBAR MENU -->
+  <!-- SIDEBAR BÊN TRÁI -->
   <aside class="page-sidebar">
-    <div class="sidebar-header">Chuyên mục Giới thiệu</div>
-    <a href="about.html" class="side-nav-link">
-      <span>Giới thiệu về Tạp chí</span>
-      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
-    </a>
-    <a href="publishing-policy.html" class="side-nav-link active">
-      <span>Chính sách xuất bản &amp; Đạo đức</span>
-      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
-    </a>
-    <a href="editorial-board.html" class="side-nav-link">
-      <span>Hội đồng Biên tập</span>
-      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
-    </a>
-    <a href="contact.html" class="side-nav-link">
-      <span>Nhân sự &amp; Liên hệ Tòa soạn</span>
-      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
-    </a>
+    
+    <!-- MENU CHUYÊN MỤC GIỚI THIỆU -->
+    <div class="sidebar-box">
+      <div class="sidebar-header">Chuyên mục Giới thiệu</div>
+      <a href="about.html" class="side-nav-link">
+        <span>Giới thiệu về Tạp chí</span>
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </a>
+      <a href="publishing-policy.html" class="side-nav-link active">
+        <span>Chính sách xuất bản &amp; Đạo đức</span>
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </a>
+      <a href="editorial-board.html" class="side-nav-link">
+        <span>Hội đồng Biên tập</span>
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </a>
+      <a href="contact.html" class="side-nav-link">
+        <span>Nhân sự &amp; Liên hệ Tòa soạn</span>
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </a>
+    </div>
+
+    <!-- MỤC LỤC TRUY CẬP NHANH VĂN BẢN (KHÔNG BULLET POINT) -->
+    <div class="sidebar-box">
+      <div class="sidebar-header">Mục lục văn bản</div>
+      <nav class="toc-list">
+        <div class="toc-section-title">I. Chính sách xuất bản</div>
+        <div class="toc-item"><a href="#policy-1">1. Quy trình phản biện &amp; xuất bản</a></div>
+        <div class="toc-item"><a href="#policy-2">2. Hướng dẫn xuất bản số chuyên đề</a></div>
+        <div class="toc-item"><a href="#policy-3">3. Cấp phép &amp; Bản quyền (CC BY-NC 4.0)</a></div>
+        <div class="toc-item"><a href="#policy-4">4. Chính sách truy cập mở</a></div>
+        <div class="toc-item"><a href="#policy-5">5. Tuyên bố quyền riêng tư</a></div>
+        <div class="toc-item"><a href="#policy-6">6. Chính sách lưu trữ (CLOCKSS)</a></div>
+        <div class="toc-item"><a href="#policy-7">7. Phí nộp bài (Miễn phí 100%)</a></div>
+        <div class="toc-item"><a href="#policy-8">8. Quy định sử dụng Trí tuệ nhân tạo (AI)</a></div>
+        <div class="toc-item"><a href="#policy-9">9. Lưu trữ dữ liệu nghiên cứu</a></div>
+        <div class="toc-item"><a href="#policy-10">10. Chính sách không nhận quảng cáo</a></div>
+
+        <div class="toc-section-title" style="margin-top:14px;">II. Chuẩn mực đạo đức (COPE)</div>
+        <div class="toc-item"><a href="#ethics-1">1. Quyền tác giả &amp; Đồng tác giả</a></div>
+        <div class="toc-item"><a href="#ethics-2">2. Xung đột lợi ích (WAME)</a></div>
+        <div class="toc-item"><a href="#ethics-3">3. Khiếu nại và kháng nghị</a></div>
+        <div class="toc-item"><a href="#ethics-4">4. Cáo buộc vi phạm đạo đức (APA)</a></div>
+        <div class="toc-item"><a href="#ethics-5">5. Phòng chống đạo văn</a></div>
+        <div class="toc-item"><a href="#ethics-6">6. Sự đồng thuận (Informed Consent)</a></div>
+        <div class="toc-item"><a href="#ethics-7">7. Thao túng trích dẫn</a></div>
+        <div class="toc-item"><a href="#ethics-8">8. Rút bài, Thu hồi &amp; Gỡ bỏ bài báo</a></div>
+      </nav>
+    </div>
+
   </aside>
 
-  <!-- MAIN CONTENT -->
+  <!-- NỘI DUNG CHÍNH (VĂN BẢN HỌC THUẬT, KHÔNG DÙNG BULLET POINT) -->
   <main class="main-content">
-    <h1 class="page-title">Chính sách Xuất bản &amp; Đạo đức Nghiên cứu</h1>
-    <div class="page-subtitle">
-      Cam kết duy trì chuẩn mực cao nhất về liêm chính học thuật, đạo đức nghiên cứu quốc tế theo chuẩn COPE và bảo vệ quyền tác giả.
-    </div>
-
-    <!-- 1. OPEN ACCESS -->
-    <div class="policy-card">
-      <div class="policy-tag">OPEN ACCESS POLICY</div>
-      <h2>1. Chính sách Truy cập Mở (Open Access Policy)</h2>
-      <p>Tạp chí Khoa học áp dụng chính sách truy cập mở (Open Access) không giới hạn theo định dạng Gold Open Access. Toàn bộ các công trình nghiên cứu sau khi được phê duyệt và hoàn tất đọc bông xuất bản sẽ được đăng tải trực tuyến ngay lập tức với quyền truy cập miễn phí toàn cầu.</p>
-      <p>Người đọc được quyền sao chép, phân phối, trích dẫn nội dung bài báo cho các mục đích học tập, nghiên cứu phi thương mại mà không phải trả bất kỳ khoản phí nào, với điều kiện ghi rõ nguồn trích dẫn hợp lệ theo giấy phép Creative Commons CC BY-NC 4.0.</p>
-    </div>
-
-    <!-- 2. COPE ETHICS & PLAGIARISM -->
-    <div class="policy-card">
-      <div class="policy-tag">COPE &amp; RESEARCH INTEGRITY</div>
-      <h2>2. Chuẩn mực Đạo đức Nghiên cứu &amp; Phòng chống Đạo văn</h2>
-      <p>Tạp chí cam kết tuân thủ nghiêm ngặt các nguyên tắc cốt lõi của Ủy ban Đạo đức Xuất bản (Committee on Publication Ethics - COPE). Mọi hành vi gian lận dữ liệu, giả mạo kết quả thực nghiệm, xuất bản trùng lặp hoặc đạo văn dưới mọi hình thức đều bị nghiêm cấm.</p>
-      <ul>
-        <li><strong>Kiểm tra đạo văn tự động:</strong> 100% bản thảo nộp lên cổng thông tin đều bắt buộc phải qua hệ thống kiểm tra tương đồng (Turnitin / iThenticate).</li>
-        <li><strong>Ngưỡng tương đồng cho phép:</strong> Tỷ lệ trùng lặp tổng thể không được vượt quá <strong>20%</strong> và tỷ lệ trùng lặp với một nguồn tài liệu đơn lẻ không được vượt quá <strong>3%</strong>.</li>
-        <li><strong>Xử lý vi phạm:</strong> Nếu phát hiện đạo văn nghiêm trọng, bài báo sẽ bị từ chối ngay lập tức và tác giả sẽ bị đình chỉ quyền nộp bài trong thời hạn 12 tháng.</li>
-      </ul>
-    </div>
-
-    <!-- 3. DOUBLE-BLIND REVIEW -->
-    <div class="policy-card">
-      <div class="policy-tag">PEER REVIEW MODEL</div>
-      <h2>3. Quy chế Phản biện Kín hai chiều (Double-Blind Peer Review)</h2>
-      <p>Tất cả bài báo đáp ứng tiêu chuẩn sơ duyệt đều trải qua quy trình bình duyệt phản biện kín độc lập hai chiều (Double-Blind Peer Review):</p>
-      <ul>
-        <li>Tác giả không biết danh tính của các chuyên gia phản biện.</li>
-        <li>Người phản biện không biết danh tính, học hàm, học vị và cơ quan công tác của tác giả (tất cả thông tin nhận diện đều được gỡ bỏ trước khi chuyển giao).</li>
-        <li>Mỗi bài báo được thẩm định độc lập bởi ít nhất 02 nhà khoa học có uy tín và chuyên môn phù hợp nhất trong lĩnh vực.</li>
-        <li>Trường hợp có sự bất đồng ý kiến sâu sắc giữa 2 chuyên gia, Tòa soạn sẽ mời Chuyên gia phản biện thứ 3 độc lập trước khi Tổng biên tập đưa ra kết luận.</li>
-      </ul>
-
-      <div style="margin-top:16px;padding:14px 18px;background:var(--sky-050);border:1px solid var(--sky-200);border-radius:6px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;">
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="width:40px;height:40px;border-radius:4px;background:#ffffff;border:1px solid var(--sky-200);display:flex;align-items:center;justify-content:center;color:#1da1f2;flex-shrink:0;">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
-          </div>
-          <div>
-            <div style="font-size:13px;font-weight:700;color:var(--ink-900);">Sơ đồ Quy trình Phản biện Chuyên môn &amp; Cơ chế Chuyên gia thứ 3</div>
-            <div style="font-size:12px;color:var(--ink-700);">Xem lưu đồ thuật toán chi tiết các nhánh quyết định, thẩm định 5 tiêu chí và xử lý bất đồng học thuật.</div>
-          </div>
-        </div>
-        <a href="guidelines.html#review" style="background:#1da1f2;color:#ffffff;font-size:12px;font-weight:700;padding:7px 14px;border-radius:4px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;">
-          Xem sơ đồ phản biện &rarr;
-        </a>
+    
+    <header>
+      <h1 class="page-title">Chính sách Xuất bản &amp; Đạo đức Nghiên cứu</h1>
+      <div class="page-subtitle">
+        Quy định chính thức của Tạp chí Khoa học Đại học Công Thương (HUIT Journal of Science), tuân thủ các chuẩn mực của Ủy ban Đạo đức Xuất bản quốc tế (COPE), Hiệp hội Biên tập viên Y khoa Thế giới (WAME) và Hiệp hội Tâm lý học Hoa Kỳ (APA).
       </div>
+    </header>
+
+    <!-- ==================== PHẦN I: CHÍNH SÁCH XUẤT BẢN ==================== -->
+    <div class="part-header">
+      <h2 class="part-title">Phần I: Chính sách Xuất bản</h2>
+      <span class="part-badge">10 Điều khoản</span>
     </div>
 
-    <!-- 4. COPYRIGHT & CONFLICT OF INTEREST -->
-    <div class="policy-card">
-      <div class="policy-tag">COPYRIGHT &amp; CONFLICTS</div>
-      <h2>4. Bản quyền &amp; Tuyên bố Xung đột Lợi ích</h2>
-      <p><strong>Bản quyền tác giả:</strong> Tác giả giữ bản quyền đối với bài báo và cấp cho Tạp chí quyền xuất bản lần đầu. Tác giả có thể chia sẻ phiên bản bài báo đã xuất bản (VoR - Version of Record) trên các kho lưu trữ học thuật của trường hoặc viện nghiên cứu.</p>
-      <p><strong>Xung đột lợi ích:</strong> Tác giả, người phản biện và biên tập viên phải minh bạch mọi mối quan hệ tài chính, cá nhân hoặc công việc có khả năng tác động đến tính khách quan của công trình nghiên cứu hoặc kết quả phản biện.</p>
+    <!-- 1. QUY TRÌNH PHẢN BIỆN VÀ XUẤT BẢN -->
+    <article id="policy-1" class="policy-article">
+      <h3 class="article-title"><span class="article-num">1.</span> Quy trình phản biện và xuất bản</h3>
+      <div class="article-content">
+        <p>Tạp chí Khoa học Đại học Công Thương (<em>HUIT Journal of Science - HUIT Journal</em>) áp dụng quy trình phản biện kín hai chiều (double-blind peer review) nghiêm ngặt. Danh tính của các phản biện không được tiết lộ cho tác giả và ngược lại. Để được xuất bản, mọi bản thảo gửi đến đều phải trải qua các bước chuẩn hóa sau đây:</p>
+        
+        <div class="sub-heading">a. Nộp bản thảo</div>
+        <p>Tác giả liên hệ (corresponding author) nộp bản thảo thông qua hệ thống trực tuyến của Tạp chí tại địa chỉ: <strong>journal.huit.edu.vn</strong>. Tạp chí không khuyến khích gửi bản thảo qua thư điện tử (email).</p>
+
+        <div class="sub-heading">b. Sàng lọc ban đầu và kiểm tra đạo văn</div>
+        <p>Ban Biên tập kiểm tra mức độ phù hợp của bản thảo với phạm vi, mục tiêu và các quy định của Tạp chí.</p>
+        <p>Bản thảo được kiểm tra bằng phần mềm phát hiện đạo văn <strong>Turnitin</strong> nhằm bảo đảm không chứa nội dung sao chép hoặc sử dụng trái phép công trình của các tác giả khác.</p>
+        <p>Nếu vượt qua vòng đánh giá ban đầu, bản thảo sẽ được phân công cho một Biên tập viên chuyên mục phụ trách quá trình phản biện. Ở giai đoạn này, Biên tập viên chuyên mục có thể từ chối bản thảo nếu nội dung không phù hợp với định hướng của Tạp chí hoặc chưa đáp ứng yêu cầu về chất lượng học thuật.</p>
+
+        <div class="sub-heading">c. Đề cử phản biện</div>
+        <p>Biên tập viên chuyên mục chỉ định hai chuyên gia phản biện có chuyên môn phù hợp để đánh giá bản thảo theo hình thức phản biện kín hai chiều. Kết quả phản biện bao gồm một trong các khuyến nghị: chấp nhận đăng, yêu cầu sửa chữa nhỏ, yêu cầu sửa chữa lớn, nộp lại để phản biện, gửi sang tạp chí khác, hoặc từ chối đăng.</p>
+
+        <div class="sub-heading">d. Đánh giá kết quả phản biện &amp; Chỉnh sửa bản thảo</div>
+        <p>Biên tập viên chuyên mục xem xét ý kiến phản biện để đưa ra quyết định chấp nhận, yêu cầu chỉnh sửa hoặc từ chối. Tác giả có trách nhiệm chỉnh sửa bản thảo theo các ý kiến nhận xét và gửi kèm văn bản phản hồi chi tiết từng ý kiến, giải thích rõ các nội dung đã được điều chỉnh và đánh dấu nổi bật các thay đổi.</p>
+
+        <div class="sub-heading">e. Quyết định cuối cùng</div>
+        <p>Sau khi xem xét các khuyến nghị của phản biện, bản sửa đổi của tác giả và báo cáo của Biên tập viên chuyên mục, Ban Biên tập và Tổng Biên tập sẽ đưa ra quyết định cuối cùng. Khi tất cả các yêu cầu biên tập đã được giải quyết, bản thảo sẽ được chính thức chấp nhận đăng, chuyển sang khâu biên tập kỹ thuật, dàn trang và xuất bản.</p>
+      </div>
+    </article>
+
+    <!-- 2. HƯỚNG DẪN XUẤT BẢN SỐ CHUYÊN ĐỀ -->
+    <article id="policy-2" class="policy-article">
+      <h3 class="article-title"><span class="article-num">2.</span> Hướng dẫn xuất bản số chuyên đề</h3>
+      <div class="article-content">
+        <p>Tạp chí mời các nhà khoa học tham gia biên tập các số chuyên đề với vai trò Biên tập viên khách mời (Guest Editor). Hồ sơ năng lực của Biên tập viên khách mời sẽ được thẩm định và phê duyệt trước khi bổ nhiệm.</p>
+        <p><strong>Thẩm quyền phê duyệt:</strong> Ban Biên tập và Tổng Biên tập chịu trách nhiệm xem xét bổ nhiệm Biên tập viên khách mời và phê duyệt đề xuất số chuyên đề nhằm bảo đảm phù hợp với tôn chỉ, mục đích và phạm vi của Tạp chí.</p>
+        <p><strong>Yêu cầu đề xuất:</strong> Đề xuất phải có tiêu đề rõ ràng, tóm tắt và từ khóa nêu rõ chủ đề chính, thời hạn nhận bài, thông tin của Biên tập viên khách mời và danh sách ít nhất 15 bài báo dự kiến.</p>
+        <p><strong>Trách nhiệm &amp; Giới hạn tỷ lệ bài:</strong> Biên tập viên khách mời có thể gửi bài đóng góp; tuy nhiên số lượng bài do họ gửi không được chiếm quá <strong>25%</strong> tổng số bài báo của số chuyên đề và phải do các thành viên khác trong Ban Biên tập xử lý độc lập.</p>
+        <p><strong>Quy trình phản biện:</strong> Tất cả bản thảo gửi đến số chuyên đề đều bắt buộc trải qua quy trình phản biện kín hai chiều bình đẳng như các bài báo thông thường.</p>
+      </div>
+    </article>
+
+    <!-- 3. CHÍNH SÁCH CẤP PHÉP VÀ BẢN QUYỀN -->
+    <article id="policy-3" class="policy-article">
+      <h3 class="article-title"><span class="article-num">3.</span> Chính sách cấp phép và bản quyền</h3>
+      <div class="article-content">
+        <p>Tất cả các bài báo được xuất bản trên Tạp chí Khoa học Đại học Công Thương đều được cấp phép theo giấy phép quốc tế <strong>Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</strong>.</p>
+        <p>Giấy phép này cho phép bất kỳ cá nhân hoặc tổ chức nào được sao chép, phân phối lại, chỉnh sửa, chuyển tải và phát triển nội dung của công trình cho các mục đích phi thương mại, với điều kiện công trình gốc và nguồn xuất bản phải được trích dẫn phù hợp (ghi nhận quyền tác giả và việc công trình được xuất bản lần đầu trên Tạp chí Khoa học Đại học Công Thương).</p>
+        <p><strong>Bản quyền tác giả:</strong> Tác giả giữ bản quyền đối với bài báo của mình, đồng thời trao cho Tạp chí Khoa học Đại học Công Thương quyền công bố lần đầu đối với công trình.</p>
+      </div>
+    </article>
+
+    <!-- 4. CHÍNH SÁCH TRUY CẬP MỞ -->
+    <article id="policy-4" class="policy-article">
+      <h3 class="article-title"><span class="article-num">4.</span> Chính sách truy cập mở (Open Access)</h3>
+      <div class="article-content">
+        <p>Tạp chí cung cấp quyền truy cập mở ngay lập tức đối với tất cả các bài báo đã xuất bản. Chính sách này nhằm mở rộng cơ hội tiếp cận các kết quả nghiên cứu chất lượng cao, cho phép phổ biến rộng rãi tri thức khoa học miễn phí, qua đó thúc đẩy sự trao đổi và lan tỏa kiến thức trong cộng đồng học thuật và xã hội.</p>
+        <p>Tạp chí cho phép mọi cá nhân được đọc, tải xuống, sao chép, phân phối, in ấn, tìm kiếm hoặc liên kết đến toàn văn các bài báo đã xuất bản mà <strong>không cần đăng ký, không phải trả phí và không cần xin phép trước</strong> từ Tạp chí hoặc tác giả.</p>
+      </div>
+    </article>
+
+    <!-- 5. TUYÊN BỐ VỀ QUYỀN RIÊNG TƯ -->
+    <article id="policy-5" class="policy-article">
+      <h3 class="article-title"><span class="article-num">5.</span> Tuyên bố về quyền riêng tư</h3>
+      <div class="article-content">
+        <p>Tên, địa chỉ thư điện tử, số điện thoại và thông tin cá nhân của người dùng được cung cấp trên website của Tạp chí sẽ chỉ được sử dụng cho các mục đích đã được công bố của Tạp chí (liên lạc trong quá trình biên tập, phản biện, xuất bản) và cam kết không được sử dụng cho bất kỳ mục đích nào khác hoặc cung cấp cho bất kỳ bên thứ ba nào.</p>
+      </div>
+    </article>
+
+    <!-- 6. CHÍNH SÁCH LƯU TRỮ -->
+    <article id="policy-6" class="policy-article">
+      <h3 class="article-title"><span class="article-num">6.</span> Chính sách lưu trữ (Archiving)</h3>
+      <div class="article-content">
+        <p>Tạp chí sử dụng hệ thống <strong>CLOCKSS</strong> (Controlled Lots of Copies Keep Stuff Safe) để tạo các bản lưu trữ phân tán của Tạp chí nhằm phục vụ mục đích bảo tồn lâu dài và khôi phục nội dung toàn vẹn khi cần thiết, đảm bảo dữ liệu nghiên cứu khoa học luôn khả dụng trong tương lai.</p>
+      </div>
+    </article>
+
+    <!-- 7. PHÍ NỘP BÀI VÀ XUẤT BẢN -->
+    <article id="policy-7" class="policy-article">
+      <h3 class="article-title"><span class="article-num">7.</span> Phí nộp bài (Article Processing Charges - APC)</h3>
+      <div class="article-content">
+        <p>Việc nộp bản thảo, phản biện chuyên môn, biên tập kỹ thuật và xuất bản bài báo trên Tạp chí Khoa học Đại học Công Thương <strong>hoàn toàn miễn phí</strong>. Tạp chí không thu bất kỳ khoản phí nào từ phía tác giả.</p>
+      </div>
+    </article>
+
+    <!-- 8. QUY ĐỊNH SỬ DỤNG TRÍ TUỆ NHÂN TẠO (AI) -->
+    <article id="policy-8" class="policy-article">
+      <h3 class="article-title"><span class="article-num">8.</span> Quy định về việc sử dụng Trí tuệ nhân tạo (AI) và công cụ hỗ trợ biên tập</h3>
+      <div class="article-content">
+        <p><strong>Công bố bắt buộc:</strong> Tác giả phải khai báo việc sử dụng các công cụ AI hoặc phần mềm hỗ trợ biên tập (như ChatGPT, Grammarly, QuillBot, Midjourney, v.v.), bao gồm tên công cụ, phiên bản, nhà cung cấp, mục đích và phạm vi sử dụng trong phần <em>Lời cảm ơn (Acknowledgments)</em> hoặc <em>Phương pháp nghiên cứu (Methods)</em> của bản thảo.</p>
+        <p><strong>Trách nhiệm của tác giả:</strong> Các công cụ và công nghệ AI <strong>không được ghi nhận là tác giả</strong> của bài báo. Tác giả chịu hoàn toàn trách nhiệm đối với nội dung khoa học, tính chính xác, tính nguyên gốc và tính minh bạch của bản thảo.</p>
+        <p><strong>Giới hạn sử dụng:</strong> Tác giả không được phụ thuộc vào AI để tạo ra ý tưởng khoa học, thực hiện phân tích dữ liệu, đưa ra kết luận nghiên cứu, tạo hình minh họa hoặc viết mã lập trình mà không có sự kiểm chứng độc lập của con người. Nghiêm cấm tải lên các dữ liệu nghiên cứu nhạy cảm hoặc chưa công bố lên các nền tảng AI công khai.</p>
+        <p><strong>Quy trình phản biện và biên tập:</strong> Biên tập viên, phản biện viên và các cộng tác viên biên tập <strong>không được sử dụng các công cụ AI</strong> để soạn thảo báo cáo phản biện, đánh giá các bản thảo chưa công bố hoặc đưa ra các quyết định biên tập nhằm bảo đảm tính bảo mật, minh bạch và khách quan.</p>
+        <p><strong>Xử lý vi phạm:</strong> Các bản thảo không khai báo hoặc khai báo không trung thực việc sử dụng AI sẽ bị xem là vi phạm đạo đức xuất bản. Tùy theo mức độ, bản thảo có thể bị từ chối tiếp nhận hoặc bài báo đã xuất bản có thể bị thu hồi.</p>
+      </div>
+    </article>
+
+    <!-- 9. CHÍNH SÁCH LƯU TRỮ DỮ LIỆU NGHIÊN CỨU -->
+    <article id="policy-9" class="policy-article">
+      <h3 class="article-title"><span class="article-num">9.</span> Chính sách lưu trữ dữ liệu nghiên cứu (Research Data)</h3>
+      <div class="article-content">
+        <p>Tạp chí yêu cầu tác giả cung cấp <strong>Tuyên bố về khả năng truy cập dữ liệu (Data Availability Statement)</strong> trong tất cả các bản thảo gửi đến Tạp chí. Tác giả được khuyến khích lưu trữ các bộ dữ liệu nghiên cứu trong các kho lưu trữ công cộng được công nhận (ví dụ: Zenodo, Figshare, Dryad hoặc kho dữ liệu của cơ sở đào tạo, viện nghiên cứu) và trích dẫn bằng mã định danh số DOI hoặc liên kết cố định. Trong trường hợp dữ liệu không thể chia sẻ do yêu cầu bảo mật hoặc quy định pháp lý, tác giả phải nêu rõ lý do trong bản thảo.</p>
+      </div>
+    </article>
+
+    <!-- 10. CHÍNH SÁCH QUẢNG CÁO -->
+    <article id="policy-10" class="policy-article">
+      <h3 class="article-title"><span class="article-num">10.</span> Chính sách quảng cáo</h3>
+      <div class="article-content">
+        <p>Tạp chí cam kết duy trì tính toàn vẹn và tính độc lập của các nội dung học thuật được xuất bản. Tạp chí <strong>không chấp nhận quảng cáo dưới bất kỳ hình thức nào</strong>. Mọi quyết định biên tập đều được đưa ra độc lập, hoàn toàn không chịu ảnh hưởng của các lợi ích thương mại, chỉ dựa trên giá trị học thuật của công trình và kết quả phản biện khoa học.</p>
+      </div>
+    </article>
+
+    <!-- ==================== PHẦN II: CHUẨN MỰC ĐẠO ĐỨC XUẤT BẢN ==================== -->
+    <div class="part-header" style="margin-top: 48px;">
+      <h2 class="part-title">Phần II: Chuẩn mực Đạo đức Xuất bản</h2>
+      <span class="part-badge">Chuẩn mực COPE</span>
     </div>
 
-    <!-- 5. RETRACTION & CORRECTION -->
-    <div class="policy-card">
-      <div class="policy-tag">CORRECTIONS &amp; RETRACTIONS</div>
-      <h2>5. Chính sách Đính chính và Thu hồi Bài báo (Corrections &amp; Retractions)</h2>
-      <p>Tòa soạn duy trì tính toàn vẹn của hồ sơ học thuật. Trong trường hợp phát hiện các sai sót dữ liệu không chủ ý, Tạp chí sẽ ban hành thông báo đính chính (Corrigendum / Erratum). Trường hợp có bằng chứng không thể chối cãi về gian lận nghiên cứu hoặc đạo văn nghiêm trọng, bài báo sẽ bị thu hồi chính thức (Retraction Notice) và công khai trên toàn hệ thống.</p>
-    </div>
+    <!-- 1. QUYỀN TÁC GIẢ -->
+    <article id="ethics-1" class="policy-article">
+      <h3 class="article-title"><span class="article-num">1.</span> Quyền tác giả và trách nhiệm đồng tác giả</h3>
+      <div class="article-content">
+        <p>Quyền tác giả chỉ nên được dành cho những người có đóng góp đáng kể cho nghiên cứu, bao gồm việc hình thành ý tưởng, thiết kế, thực hiện hoặc diễn giải kết quả nghiên cứu. Tất cả những cá nhân này đều xứng đáng được công nhận là đồng tác giả. Những cá nhân hỗ trợ khác (chẳng hạn như hiệu đính ngôn ngữ, hỗ trợ kỹ thuật chung) nên được ghi nhận riêng trong phần <em>Lời cảm ơn</em>.</p>
+        <p><strong>Vai trò tác giả liên hệ:</strong> Có trách nhiệm then chốt trong việc xác nhận danh sách đồng tác giả đầy đủ, chính xác, không bỏ sót ai và bảo đảm tất cả đồng tác giả đã xem xét, phê duyệt bản thảo cuối cùng và đồng ý nộp bài.</p>
+        <p><strong>Thứ tự tác giả:</strong> Danh sách tác giả chính thức phải được cung cấp cùng với bản thảo ban đầu. Mọi thay đổi liên quan đến việc bổ sung, loại bỏ hoặc sắp xếp lại tác giả chỉ được xem xét trong những trường hợp đặc biệt, phải có văn bản giải trình của tác giả liên hệ và sự đồng thuận bằng văn bản của tất cả các đồng tác giả.</p>
+        <p><strong>Trách nhiệm chung:</strong> Tất cả các tác giả cùng chia sẻ trách nhiệm đối với công trình nghiên cứu và có nghĩa vụ làm rõ mọi câu hỏi liên quan đến tính chính xác hoặc tính toàn vẹn của bất kỳ khía cạnh nào của bài báo.</p>
+      </div>
+    </article>
+
+    <!-- 2. XUNG ĐỘT LỢI ÍCH -->
+    <article id="ethics-2" class="policy-article">
+      <h3 class="article-title"><span class="article-num">2.</span> Tuyên bố xung đột lợi ích (Conflicts of Interest)</h3>
+      <div class="article-content">
+        <p>Theo định nghĩa của Hiệp hội Biên tập viên Y khoa Thế giới (WAME), xung đột lợi ích là sự mâu thuẫn giữa lợi ích cá nhân (lợi ích cạnh tranh) và nghĩa vụ của một cá nhân trong việc duy trì tính toàn vẹn trong khoa học và xuất bản. Tính minh bạch và tính khách quan là yêu cầu tối quan trọng:</p>
+        <p><strong>Đối với Biên tập viên:</strong> Phải công bố mọi xung đột lợi ích tiềm ẩn trước khi đảm nhiệm vị trí. Biên tập viên phải tự rút khỏi mọi hoạt động ra quyết định liên quan đến các bài báo mà bản thân, người thân hoặc đồng nghiệp thân cận là tác giả hoặc có lợi ích liên quan (tài chính hoặc phi tài chính). Bản thảo này sẽ được chuyển cho thành viên khác trong Ban Biên tập xử lý độc lập.</p>
+        <p><strong>Đối với Phản biện viên:</strong> Nếu có xung đột lợi ích tiềm ẩn (quan hệ hợp tác, đối thủ cạnh tranh, lợi ích tài chính với cơ quan của tác giả), phản biện viên phải thông báo cho Ban Biên tập trước khi đồng ý tham gia. Mọi đề xuất trích dẫn công trình của chính mình phải hoàn toàn dựa trên giá trị học thuật thực sự, không nhằm tăng số lượt trích dẫn cá nhân.</p>
+        <p><strong>Đối với Tác giả:</strong> Phải công bố trong bản thảo mọi nguồn hỗ trợ tài chính, vai trò của nhà tài trợ (nếu có), cũng như các mối liên hệ tài chính hoặc cá nhân (quan hệ lao động, tư vấn, sở hữu cổ phần, thù lao, bằng sáng chế) có thể bị xem là gây thiên lệch đối với công trình nghiên cứu.</p>
+      </div>
+    </article>
+
+    <!-- 3. KHIẾU NẠI VÀ KHÁNG NGHỊ -->
+    <article id="ethics-3" class="policy-article">
+      <h3 class="article-title"><span class="article-num">3.</span> Khiếu nại và kháng nghị (Complaints &amp; Appeals)</h3>
+      <div class="article-content">
+        <p>Trong trường hợp bài báo bị từ chối, nếu tác giả cho rằng có căn cứ học thuật thuyết phục (chẳng hạn như xuất hiện chứng cứ mới hoặc có khả năng bài viết bị phản biện viên hiểu sai), tác giả có quyền kháng nghị quyết định biên tập theo quy trình 4 bước:</p>
+        <p><strong>Bước 1 - Gửi đơn kháng nghị:</strong> Tác giả gửi đơn kháng nghị bằng văn bản đến Ban Biên tập, nêu rõ lý do học thuật và cung cấp các bằng chứng hỗ trợ hoặc dữ liệu giải trình làm rõ.</p>
+        <p><strong>Bước 2 - Xem xét hồ sơ:</strong> Ban Biên tập tiếp nhận và tiến hành thẩm định lại hồ sơ bài nộp cùng các báo cáo phản biện liên quan.</p>
+        <p><strong>Bước 3 - Thời hạn xử lý:</strong> Tác giả sẽ nhận được xác nhận tiếp nhận đơn trong vòng <strong>10 ngày</strong> làm việc. Quyết định cuối cùng dự kiến được đưa ra trong vòng <strong>60 ngày</strong>.</p>
+        <p><strong>Bước 4 - Quyết định cuối cùng:</strong> Kết quả giải quyết kháng nghị được thông báo bằng văn bản. Quyết định của Tổng Biên tập là quyết định cuối cùng; tác giả không được kháng nghị lại cùng một bài báo nhiều hơn một lần.</p>
+      </div>
+    </article>
+
+    <!-- 4. CÁO BUỘC VI PHẠM ĐẠO ĐỨC NGHIÊN CỨU -->
+    <article id="ethics-4" class="policy-article">
+      <h3 class="article-title"><span class="article-num">4.</span> Cáo buộc vi phạm đạo đức nghiên cứu</h3>
+      <div class="article-content">
+        <p>Theo Hiệp hội Tâm lý học Hoa Kỳ (APA), hành vi sai phạm trong nghiên cứu là việc cố ý làm giả hoặc làm sai lệch dữ liệu, đạo văn đối với thông tin hoặc ý tưởng, hoặc bất kỳ hành vi cố ý nào khác vi phạm tính liêm chính khoa học. Tạp chí cam kết xử lý bảo mật và nghiêm túc mọi cáo buộc theo 4 giai đoạn:</p>
+        <p><strong>Giai đoạn 1 - Tiếp nhận:</strong> Bên khiếu nại liên hệ với Ban Biên tập bằng văn bản, cung cấp bản trình bày chi tiết và các bằng chứng hỗ trợ xác thực.</p>
+        <p><strong>Giai đoạn 2 - Xem xét sơ bộ:</strong> Ban Biên tập tiến hành đánh giá ban đầu để xác định tính xác thực của thông tin và liệu cáo buộc có đủ cơ sở để điều tra sâu hơn hay không.</p>
+        <p><strong>Giai đoạn 3 - Điều tra toàn diện:</strong> Thành lập tổ công tác độc lập để kiểm tra thực nghiệm, đối chiếu dữ liệu gốc và xây dựng hồ sơ sự việc.</p>
+        <p><strong>Giai đoạn 4 - Kết luận &amp; Xử lý:</strong> Dựa trên kết quả điều tra, Ban Biên tập đưa ra quyết định (bác bỏ cáo buộc, yêu cầu đính chính, từ chối bản thảo hoặc thu hồi bài báo đã xuất bản) và thông báo bằng văn bản cho các bên liên quan cùng cơ quan chủ quản của tác giả nếu cần thiết.</p>
+      </div>
+    </article>
+
+    <!-- 5. PHÒNG CHỐNG ĐẠO VĂN -->
+    <article id="ethics-5" class="policy-article">
+      <h3 class="article-title"><span class="article-num">5.</span> Phòng chống đạo văn (Plagiarism)</h3>
+      <div class="article-content">
+        <p>Đạo văn dưới mọi hình thức được xem là vi phạm nghiêm trọng liêm chính học thuật và bị <strong>nghiêm cấm tuyệt đối</strong> tại Tạp chí Khoa học Đại học Công Thương. Hành vi đạo văn bao gồm nhưng không giới hạn ở các hành vi sau:</p>
+        <p>Thứ nhất, chiếm đoạt một phần hoặc toàn bộ công trình, ý tưởng nghiên cứu của tác giả khác mà không xin phép hoặc không trích dẫn nguồn hợp lệ.</p>
+        <p>Thứ hai, sao chép nguyên văn hoặc diễn giải lại (paraphrase) đáng kể nội dung văn bản của tài liệu đã công bố mà không đặt trong ngoặc kép hoặc không ghi nguồn rõ ràng.</p>
+        <p>Thứ ba, tự đạo văn (Self-plagiarism): Tái sử dụng các đoạn văn bản dài hoặc kết quả nghiên cứu đã công bố trước đây của chính mình mà không có sự trích dẫn phù hợp.</p>
+        <p>Tất cả 100% bản thảo nộp lên hệ thống đều được kiểm tra đối sánh tự động qua phần mềm <strong>Turnitin</strong> trước khi chuyển sang khâu phản biện chuyên môn.</p>
+      </div>
+    </article>
+
+    <!-- 6. SỰ ĐỒNG THUẬN -->
+    <article id="ethics-6" class="policy-article">
+      <h3 class="article-title"><span class="article-num">6.</span> Sự đồng thuận của đối tượng nghiên cứu (Informed Consent)</h3>
+      <div class="article-content">
+        <p>Nếu bài báo có sử dụng hình ảnh có thể nhận diện được (ví dụ: khuôn mặt cá nhân, hồ sơ bệnh án, thông tin nhận dạng cá nhân), tác giả <strong>bắt buộc phải cung cấp bằng chứng về sự đồng thuận (Informed Consent)</strong> bằng văn bản có chữ ký của đối tượng nghiên cứu hoặc người giám hộ hợp pháp. Tác giả phải gửi mẫu đơn đồng ý xuất bản này kèm theo bản thảo khi nộp bài.</p>
+      </div>
+    </article>
+
+    <!-- 7. THAO TÚNG TRÍCH DẪN -->
+    <article id="ethics-7" class="policy-article">
+      <h3 class="article-title"><span class="article-num">7.</span> Thao túng trích dẫn (Citation Manipulation)</h3>
+      <div class="article-content">
+        <p>Trích dẫn tài liệu tham khảo là yếu tố cốt lõi trong nghiên cứu học thuật. Tạp chí chủ động giám sát và nghiêm cấm các hành vi thao túng trích dẫn sau đây:</p>
+        <p><strong>Tự trích dẫn quá mức:</strong> Các tài liệu được trích dẫn phải có liên quan và đóng góp trực tiếp cho bài viết hiện tại; không đưa vào chỉ nhằm mục đích tăng số lượng trích dẫn của tác giả. Khi trình bày phương pháp chuẩn hoặc tổng quan, cần ưu tiên tài liệu thuộc phạm vi rộng hơn của lĩnh vực.</p>
+        <p><strong>Trích dẫn mang tính ép buộc (Coercive Citation):</strong> Phản biện viên có thể gợi ý tài liệu bổ sung, nhưng việc ép buộc tác giả trích dẫn các công trình không có cơ sở học thuật hoặc chỉ nhằm nâng cao chỉ số của phản biện viên/biên tập viên là hành vi phi đạo đức. Tác giả có quyền phản ánh vấn đề này đến Tổng Biên tập.</p>
+        <p><strong>Lạm dụng trích dẫn có chủ đích ("Citation pushing"):</strong> Đưa vào các tài liệu tham khảo không liên quan hoặc hình thành các liên minh trích dẫn chéo nhằm tăng giả tạo chỉ số trích dẫn. Tạp chí tuân thủ chặt chẽ hướng dẫn của <strong>COPE</strong> để điều tra và xử lý nghiêm các trường hợp này, bao gồm cả biện pháp rút bài và thông báo cơ quan công tác.</p>
+      </div>
+    </article>
+
+    <!-- 8. RÚT BÀI, THU HỒI, GỠ BỎ VÀ THAY THẾ -->
+    <article id="ethics-8" class="policy-article">
+      <h3 class="article-title"><span class="article-num">8.</span> Quy định về Rút bài, Thu hồi, Gỡ bỏ và Thay thế bài báo</h3>
+      <div class="article-content">
+        <div class="sub-heading">a. Rút bài (Article Withdrawal)</div>
+        <p>Tác giả có quyền yêu cầu rút bản thảo trong giai đoạn xử lý trước khi xuất bản do phát hiện sai sót nghiêm trọng hoặc các lý do chính đáng khác. Tác giả gửi văn bản đến Ban Biên tập nêu rõ lý do; đối với bản thảo chưa xuất bản, Tạp chí sẽ chấm dứt xử lý và hoàn trả quyền gửi bài.</p>
+
+        <div class="sub-heading">b. Thu hồi bài báo (Article Retraction)</div>
+        <p>Áp dụng đối với các bài báo đã xuất bản nhưng vi phạm nghiêm trọng về đạo đức học thuật (gửi đồng thời nhiều tạp chí, khai báo sai tư cách tác giả, đạo văn, làm giả dữ liệu) hoặc có sai sót khoa học nghiêm trọng làm sai lệch kết quả:</p>
+        <p>Công bố thông báo thu hồi chính thức với tiêu đề <em>“Thu hồi: [Tên bài báo]”</em> trên cả ấn bản in và điện tử của số tiếp theo, có chữ ký của tác giả và/hoặc biên tập viên.</p>
+        <p>Trên bản điện tử, độc giả được hiển thị thông báo thu hồi trước khi xem bài báo. Tệp PDF gốc vẫn được lưu trữ phục vụ hồ sơ lịch sử học thuật nhưng được đóng dấu chìm chữ <strong>“ĐÃ THU HỒI” (RETRACTED)</strong> trên toàn bộ các trang.</p>
+
+        <div class="sub-heading">c. Gỡ bỏ bài báo (Article Removal)</div>
+        <p>Chỉ thực hiện trong những trường hợp ngoại lệ có căn cứ pháp lý rõ ràng (bài báo vi phạm pháp luật nghiêm trọng, xâm phạm quyền riêng tư nghiêm trọng, có quyết định của tòa án hoặc khuyến nghị trong bài báo có thể gây tổn hại nghiêm trọng đến an toàn, sức khỏe cộng đồng). Tiêu đề và tác giả vẫn hiển thị cùng thông báo giải thích lý do gỡ bỏ, nhưng toàn văn sẽ không còn khả dụng.</p>
+
+        <div class="sub-heading">d. Thay thế bài báo (Article Replacement)</div>
+        <p>Trong trường hợp nội dung bài báo có sai sót có thể gây nguy cơ nghiêm trọng nếu áp dụng vào thực tiễn, tác giả có thể đề nghị thay thế bằng một phiên bản đã được chỉnh sửa. Tạp chí sẽ công bố thông báo nêu rõ lý do thay thế và lưu giữ lịch sử chỉnh sửa minh bạch cho độc giả.</p>
+      </div>
+    </article>
 
   </main>
 </div>
 
-<!-- FOOTER -->
-<footer>
-  <div class="wrap">
-    <div><strong>Tạp chí Khoa học · Tạp chí Nghiên cứu &amp; Phát triển Công nghệ</strong></div>
-    <div style="font-size: 11.5px; opacity: 0.9; margin-top: 4px;">Giấy phép xuất bản báo chí số 188/GP-BTTTT cấp bởi Bộ Thông tin và Truyền thông · ISSN 1859-3097</div>
-    <div class="flinks">
-      <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Trang chủ</a>
-      <a href="about.html">Giới thiệu</a>
-      <a href="publishing-policy.html">Chính sách xuất bản</a>
-      <a href="editorial-board.html">Hội đồng biên tập</a>
-      <a href="guidelines.html">Quy trình - Biểu mẫu</a>
-      <a href="archives.html">Kho lưu trữ</a>
-      <a href="submit-paper.html">Nộp bài trực tuyến</a>
-      <a href="contact.html">Liên hệ</a>
-    </div>
-  </div>
-</footer>
+<!-- KHỐI FOOTER CHUNG (SHARED LAYOUT HUIT) -->
+<div id="huit-footer"></div>
 
+<script src="journal-layout.js"></script>
 <script src="journal-interactions.js"></script>
+
 </body>
 </html>
