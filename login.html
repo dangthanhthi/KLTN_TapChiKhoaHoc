@@ -317,7 +317,7 @@
       }
     } catch (err) {
       console.error(err);
-      showToast('Không thể kết nối đến máy chủ Backend (http://localhost:5000). Vui lòng đảm bảo backend đang chạy.', 'error');
+      showToast('Không thể xác thực tài khoản. Vui lòng kiểm tra lại thông tin đăng nhập.', 'error');
     } finally {
       btn.innerHTML = oldBtnText;
       btn.disabled = false;

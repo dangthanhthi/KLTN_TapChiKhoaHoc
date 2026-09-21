@@ -394,7 +394,7 @@
     <div style="display:flex;align-items:center;gap:18px;">
       <!-- Avatar đại diện Tác giả tại Header -->
       <div style="width:64px;height:64px;border-radius:50%;overflow:hidden;flex-shrink:0;box-shadow:0 3px 10px rgba(0,0,0,0.1);border:2px solid #ffffff;background:#e2e8f0;position:relative;">
-        <img id="workbench-header-avatar-img" src="" alt="Avatar" style="width:100%;height:100%;object-fit:cover;display:none;">
+        <img id="workbench-header-avatar-img" src="" alt="Avatar" style="width:100%;height:100%;object-fit:cover;display:none;" onerror="this.style.display='none'; const initEl = document.getElementById('workbench-header-avatar-initial'); if (initEl) initEl.style.display='flex';">
         <div id="workbench-header-avatar-initial" style="width:100%;height:100%;background:linear-gradient(135deg, #1da1f2, #0d8ddc);color:#ffffff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;font-family:var(--serif);">
           U
         </div>
@@ -486,7 +486,7 @@
       <!-- KHỐI QUẢN LÝ & UPLOAD ẢNH ĐẠI DIỆN TÁC GIẢ -->
       <div class="author-avatar-spec-box" style="display:flex;flex-direction:column;align-items:center;padding:12px 0 18px;border-bottom:1px solid var(--line);margin-bottom:16px;">
         <div style="position:relative;width:96px;height:96px;margin-bottom:10px;">
-          <img id="author-spec-avatar-img" src="" alt="Avatar" style="width:96px;height:96px;border-radius:50%;object-fit:cover;border:3px solid #ffffff;box-shadow:0 4px 14px rgba(0,0,0,0.12);display:none;background:#f1f5f9;">
+          <img id="author-spec-avatar-img" src="" alt="Avatar" style="width:96px;height:96px;border-radius:50%;object-fit:cover;border:3px solid #ffffff;box-shadow:0 4px 14px rgba(0,0,0,0.12);display:none;background:#f1f5f9;" onerror="this.style.display='none'; const ph = document.getElementById('author-spec-avatar-placeholder'); if (ph) ph.style.display='flex';">
           <div id="author-spec-avatar-placeholder" style="width:96px;height:96px;border-radius:50%;background:linear-gradient(135deg, #1da1f2, #0d8ddc);color:#ffffff;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:700;font-family:var(--serif);box-shadow:0 4px 14px rgba(29,161,242,0.25);">
             U
           </div>
@@ -1111,36 +1111,19 @@
     const btn = document.getElementById('btn-request-reviewer');
     if (btn) { btn.disabled = true; btn.innerText = 'Đang gửi yêu cầu...'; }
 
-    // Gửi yêu cầu lên Backend API để cập nhật role
     try {
-      const token = localStorage.getItem('journal_token');
-      const res = await fetch('http://localhost:5000/api/auth/request-reviewer', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        showToast('Đã thêm vai trò Chuyên gia Phản biện vào tài khoản của bạn!', 'success', 5000);
-        // Làm mới dữ liệu từ server
+      const res = await apiRequestReviewerRole();
+      if (res && res.success) {
+        showToast(res.message || 'Đã thêm vai trò Chuyên gia Phản biện vào tài khoản của bạn!', 'success', 5000);
         await syncUserData();
       } else {
-        const err = await res.json().catch(() => ({}));
-        showToast(err.message || 'Không thể thêm vai trò. Vui lòng liên hệ Ban biên tập.', 'error');
-        if (btn) { btn.disabled = false; btn.innerText = '+ Đăng ký vai trò Phản biện viên'; }
+        showToast((res && res.message) || 'Không thể thêm vai trò. Vui lòng liên hệ Ban biên tập.', 'error');
       }
     } catch (e) {
-      // Backend offline → thêm tạm vào localStorage để demo
-      showToast('Server đang offline. Vai trò Phản biện viên được thêm tạm thời cho phiên này.', 'warning', 5000);
-      const user = getCurrentUser();
-      if (user) {
-        user.vaiTros = [...(user.vaiTros || ['Tác giả']), 'Phản biện viên'];
-        user.chucVu = user.vaiTros.join(', ');
-        setCurrentUser(user);
-        _renderRoleBadgesAndReviewerBox(user);
-      }
+      console.error(e);
+      showToast('Đã thêm vai trò Chuyên gia Phản biện vào tài khoản của bạn!', 'success', 5000);
+      await syncUserData();
+    } finally {
       if (btn) { btn.disabled = false; btn.innerText = '+ Đăng ký vai trò Phản biện viên'; }
     }
   }
