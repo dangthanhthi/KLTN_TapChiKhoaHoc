@@ -1390,7 +1390,122 @@ html, body {
   }
 }
 
-
-
-
-
+/* ==========================================================================
+   PASSWORD MODAL & SECURITY STYLES (HALLMARK ANTI-SLOP SPEC)
+   ========================================================================== */
+.pass-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.pass-input-wrap .form-control-modal,
+.pass-input-wrap input.form-control {
+  width: 100%;
+  padding-right: 42px !important;
+}
+.pass-toggle-btn {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+.pass-toggle-btn:hover {
+  color: #1da1f2;
+  background: #f1f5f9;
+}
+.pass-strength-meter {
+  display: flex;
+  gap: 4px;
+  margin-top: 6px;
+  height: 4px;
+}
+.pass-strength-bar {
+  flex: 1;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 2px;
+  transition: background-color 0.25s ease;
+}
+.pass-strength-label {
+  font-size: 11.5px;
+  color: #64748b;
+  margin-top: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pass-match-hint {
+  font-size: 11.5px;
+  margin-top: 5px;
+  min-height: 18px;
+  line-height: 1.4;
+}
+.pass-policy-notice {
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 5px;
+  padding: 10px 12px;
+  font-size: 11.5px;
+  color: #0369a1;
+  line-height: 1.55;
+  margin-top: 14px;
+  margin-bottom: 6px;
+}
+.pass-policy-notice strong {
+  color: #0c4a6e;
+}
+.modal-box-edit.pass-modal-box {
+  max-width: 480px;
+  border-radius: 8px;
+  padding: 24px 26px;
+}
+.pass-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+.pass-modal-header h3 {
+  font-family: var(--serif);
+  font-size: 19px;
+  font-weight: 600;
+  color: #0f172a;
+  margin: 0 0 4px 0;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pass-modal-header p {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.45;
+}
+.pass-modal-close {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 0 4px;
+  border-radius: 4px;
+  transition: color 0.15s ease;
+}
+.pass-modal-close:hover {
+  color: #0f172a;
+}

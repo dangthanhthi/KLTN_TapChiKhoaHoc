@@ -137,15 +137,26 @@ async function apiDeleteAvatar() {
 
 async function apiChangePassword(currentPassword, newPassword) {
   const token = localStorage.getItem('journal_token');
-  const res = await fetch(`${API_BASE}/auth/change-password`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    },
-    body: JSON.stringify({ currentPassword, newPassword })
-  });
-  return await res.json();
+  try {
+    const res = await fetch(`${API_BASE}/auth/change-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ currentPassword, newPassword })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok) {
+      return { success: true, message: data.message || 'Đổi mật khẩu thành công.' };
+    } else {
+      const msg = data.message || (res.status === 401 ? 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.' : 'Mật khẩu hiện tại không chính xác.');
+      return { success: false, message: msg };
+    }
+  } catch (e) {
+    console.error('apiChangePassword error:', e);
+    return { success: false, message: 'Không thể kết nối đến máy chủ Backend (http://localhost:5000).' };
+  }
 }
 
 async function apiLookupUser(email) {
@@ -553,7 +564,7 @@ function renderAuthNavbar() {
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
               Gửi bản thảo bài báo mới
             </a>
-            <a href="profile.html#tab-password" class="dropdown-item">
+            <a href="javascript:void(0)" onclick="openPasswordModal()" class="dropdown-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
               Đổi mật khẩu bảo mật
             </a>
@@ -610,6 +621,250 @@ function handleUserLogout() {
     setTimeout(() => {
       window.location.href = 'UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html';
     }, 600);
+  }
+}
+
+// =============================================================================
+// QUẢN LÝ VÀ ĐIỀU KHIỂN MODAL ĐỔI MẬT KHẨU TOÀN CỤC (GLOBAL PASSWORD MODAL)
+// Hỗ trợ mở modal đổi mật khẩu từ bất kỳ trang nào trong toàn bộ hệ thống
+// =============================================================================
+
+function togglePasswordVisibility(inputId, btnEl) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const isPass = input.type === 'password';
+  input.type = isPass ? 'text' : 'password';
+  if (btnEl) {
+    btnEl.innerHTML = isPass
+      ? `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`
+      : `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+    btnEl.setAttribute('aria-label', isPass ? 'Ẩn mật khẩu' : 'Hiện mật khẩu');
+  }
+}
+
+function evaluatePasswordStrength(val, barPrefix = 'pass-bar-', labelId = 'pass-strength-text') {
+  const label = document.getElementById(labelId);
+  const bars = [1, 2, 3, 4].map(i => document.getElementById(barPrefix + i));
+  
+  if (!val) {
+    bars.forEach(b => { if (b) b.style.backgroundColor = '#e2e8f0'; });
+    if (label) {
+      label.innerHTML = '<span>Độ mạnh mật khẩu</span><span style="color:#94a3b8;">Chưa nhập</span>';
+    }
+    return 0;
+  }
+
+  let score = 0;
+  if (val.length >= 6) score++;
+  if (val.length >= 10) score++;
+  if (/[a-z]/.test(val) && /[A-Z]/.test(val)) score++;
+  if (/\d/.test(val) || /[^a-zA-Z0-9]/.test(val)) score++;
+
+  const levels = [
+    { text: 'Rất yếu', color: '#ef4444' },
+    { text: 'Yếu', color: '#f97316' },
+    { text: 'Trung bình', color: '#eab308' },
+    { text: 'Mạnh', color: '#10b981' }
+  ];
+
+  const currentLevel = levels[Math.max(0, score - 1)];
+
+  bars.forEach((b, idx) => {
+    if (b) {
+      b.style.backgroundColor = idx < score ? currentLevel.color : '#e2e8f0';
+    }
+  });
+
+  if (label) {
+    label.innerHTML = `<span>Độ mạnh mật khẩu</span><span style="color:${currentLevel.color};font-weight:700;">${currentLevel.text}</span>`;
+  }
+  return score;
+}
+
+function evaluatePasswordMatch(newId, confId, hintId) {
+  const pNew = document.getElementById(newId)?.value || '';
+  const pConf = document.getElementById(confId)?.value || '';
+  const hint = document.getElementById(hintId);
+  if (!hint) return;
+
+  if (!pConf) {
+    hint.innerHTML = '';
+    return;
+  }
+
+  if (pNew === pConf) {
+    hint.innerHTML = '<span style="color:#10b981;font-weight:600;">✓ Mật khẩu xác nhận hoàn toàn trùng khớp</span>';
+  } else {
+    hint.innerHTML = '<span style="color:#ef4444;font-weight:600;">⚠ Mật khẩu xác nhận chưa trùng khớp</span>';
+  }
+}
+
+function resetPassValidationIndicators(newId, confId, barPrefix, labelId, hintId) {
+  evaluatePasswordStrength('', barPrefix, labelId);
+  const hint = document.getElementById(hintId);
+  if (hint) hint.innerHTML = '';
+}
+
+function openPasswordModal() {
+  // Đóng dropdown navbar nếu đang mở
+  const menu = document.getElementById('global-user-dropdown');
+  if (menu) menu.classList.remove('show');
+
+  // Ưu tiên 1: Nếu trang hiện tại đã có modal-change-pass (như profile.html)
+  const localModal = document.getElementById('modal-change-pass');
+  if (localModal) {
+    const form = localModal.querySelector('form');
+    if (form) form.reset();
+    resetPassValidationIndicators('p-new', 'p-conf', 'pass-bar-', 'pass-strength-text', 'p-match-hint');
+    localModal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    const firstInput = localModal.querySelector('input[type="password"], input');
+    if (firstInput) setTimeout(() => firstInput.focus(), 120);
+    return;
+  }
+
+  // Ưu tiên 2: Nếu ở các trang khác (trang chủ, nộp bài, kho lưu trữ...), tự động chèn modal toàn cục
+  ensureGlobalPasswordModal();
+  const globalModal = document.getElementById('modal-global-change-pass');
+  if (globalModal) {
+    const form = globalModal.querySelector('form');
+    if (form) form.reset();
+    resetPassValidationIndicators('gp-new', 'gp-conf', 'gpass-bar-', 'gpass-strength-text', 'gp-match-hint');
+    globalModal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    const firstInput = document.getElementById('gp-current');
+    if (firstInput) setTimeout(() => firstInput.focus(), 120);
+  }
+}
+
+function closePasswordModal(modalId = 'modal-change-pass') {
+  const modal = document.getElementById(modalId) || document.getElementById('modal-global-change-pass');
+  if (modal) {
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+    const form = modal.querySelector('form');
+    if (form) form.reset();
+  }
+  if (window.location.hash === '#tab-password' || window.location.hash === '#change-password') {
+    history.replaceState(null, document.title, window.location.pathname + window.location.search);
+  }
+}
+
+function ensureGlobalPasswordModal() {
+  if (document.getElementById('modal-global-change-pass')) return;
+  const html = `
+  <div class="modal-overlay" id="modal-global-change-pass">
+    <div class="modal-box-edit pass-modal-box">
+      <div class="pass-modal-header">
+        <div>
+          <h3>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1da1f2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            Thiết lập mật khẩu bảo mật
+          </h3>
+          <p>Cập nhật mật khẩu tài khoản tác giả / chuyên gia phản biện của Tòa soạn.</p>
+        </div>
+        <button type="button" class="pass-modal-close" onclick="closePasswordModal('modal-global-change-pass')">&times;</button>
+      </div>
+      <form onsubmit="handleGlobalPasswordSubmit(event)">
+        <div class="form-group-modal">
+          <label>Mật khẩu hiện tại <span style="color:#ef4444;">*</span></label>
+          <div class="pass-input-wrap">
+            <input type="password" id="gp-current" class="form-control-modal" required placeholder="Nhập mật khẩu hiện tại">
+            <button type="button" class="pass-toggle-btn" onclick="togglePasswordVisibility('gp-current', this)" title="Ẩn/hiện mật khẩu">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
+        </div>
+        <div class="form-group-modal">
+          <label>Mật khẩu mới <span style="color:#ef4444;">*</span></label>
+          <div class="pass-input-wrap">
+            <input type="password" id="gp-new" class="form-control-modal" required placeholder="Tối thiểu 6 ký tự" oninput="evaluatePasswordStrength(this.value, 'gpass-bar-', 'gpass-strength-text'); evaluatePasswordMatch('gp-new', 'gp-conf', 'gp-match-hint');">
+            <button type="button" class="pass-toggle-btn" onclick="togglePasswordVisibility('gp-new', this)" title="Ẩn/hiện mật khẩu">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
+          <div class="pass-strength-meter">
+            <div class="pass-strength-bar" id="gpass-bar-1"></div>
+            <div class="pass-strength-bar" id="gpass-bar-2"></div>
+            <div class="pass-strength-bar" id="gpass-bar-3"></div>
+            <div class="pass-strength-bar" id="gpass-bar-4"></div>
+          </div>
+          <div class="pass-strength-label" id="gpass-strength-text">
+            <span>Độ mạnh mật khẩu</span>
+            <span style="color:#94a3b8;">Chưa nhập</span>
+          </div>
+        </div>
+        <div class="form-group-modal">
+          <label>Xác nhận lại mật khẩu mới <span style="color:#ef4444;">*</span></label>
+          <div class="pass-input-wrap">
+            <input type="password" id="gp-conf" class="form-control-modal" required placeholder="Nhập lại chính xác mật khẩu mới" oninput="evaluatePasswordMatch('gp-new', 'gp-conf', 'gp-match-hint');">
+            <button type="button" class="pass-toggle-btn" onclick="togglePasswordVisibility('gp-conf', this)" title="Ẩn/hiện mật khẩu">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            </button>
+          </div>
+          <div class="pass-match-hint" id="gp-match-hint"></div>
+        </div>
+        <div class="pass-policy-notice">
+          <strong>Quy tắc an toàn mật khẩu HUIT Journal:</strong>
+          <div style="margin-top:3px;">1. Độ dài tối thiểu 6 ký tự.</div>
+          <div>2. Không trùng hoàn toàn với mật khẩu hiện tại.</div>
+          <div>3. Nên phối hợp chữ hoa, chữ thường và chữ số.</div>
+        </div>
+        <div class="modal-btn-row">
+          <button type="button" class="btn-modal-cancel" onclick="closePasswordModal('modal-global-change-pass')">Hủy bỏ</button>
+          <button type="submit" class="btn-modal-save" id="btn-save-global-pass">Cập nhật mật khẩu</button>
+        </div>
+      </form>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+async function handleGlobalPasswordSubmit(e) {
+  e.preventDefault();
+  const pCurr = document.getElementById('gp-current')?.value || '';
+  const pNew  = document.getElementById('gp-new')?.value || '';
+  const pConf = document.getElementById('gp-conf')?.value || '';
+
+  if (!pCurr) {
+    showToast('Vui lòng nhập mật khẩu hiện tại.', 'error');
+    document.getElementById('gp-current')?.focus();
+    return;
+  }
+  if (pNew.length < 6) {
+    showToast('Mật khẩu mới phải có tối thiểu 6 ký tự theo quy định.', 'error');
+    document.getElementById('gp-new')?.focus();
+    return;
+  }
+  if (pNew === pCurr) {
+    showToast('Mật khẩu mới không được trùng hoàn toàn với mật khẩu hiện tại.', 'error');
+    document.getElementById('gp-new')?.focus();
+    return;
+  }
+  if (pNew !== pConf) {
+    showToast('Mật khẩu mới và xác nhận mật khẩu không trùng khớp.', 'error');
+    document.getElementById('gp-conf')?.focus();
+    return;
+  }
+
+  const btn = document.getElementById('btn-save-global-pass');
+  const oldText = btn ? btn.innerHTML : '';
+  if (btn) { btn.disabled = true; btn.innerText = 'Đang cập nhật...'; }
+
+  try {
+    const res = await apiChangePassword(pCurr, pNew);
+    if (res && res.success) {
+      closePasswordModal('modal-global-change-pass');
+      showToast('Đổi mật khẩu tài khoản thành công! Thông tin bảo mật đã được cập nhật.', 'success', 5000);
+    } else {
+      showToast(res.message || 'Mật khẩu hiện tại không chính xác.', 'error', 5000);
+      document.getElementById('gp-current')?.focus();
+    }
+  } catch (err) {
+    console.error(err);
+    showToast('Lỗi kết nối máy chủ khi cập nhật mật khẩu.', 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = oldText; }
   }
 }
 
