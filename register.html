@@ -312,6 +312,7 @@
                   <option value="Phó giáo sư">Phó giáo sư</option>
                   <option value="Giáo sư">Giáo sư</option>
                 </select>
+                <span id="regHocHamHint" style="display:none;font-size:12px;color:#c0392b;margin-top:4px;line-height:1.4;"></span>
               </div>
             </div>
 
@@ -522,6 +523,54 @@
     return isEligible;
   }
 
+  // =========================================================================
+  // RÀNG BUỘC CHÉO HỌC VỊ ↔ HỌC HÀM — FORM ĐĂNG KÝ
+  // Theo QĐ HĐGSNN: Học hàm PGS/GS yêu cầu Học vị tối thiểu là Tiến sĩ.
+  // Học hàm là danh hiệu xét thêm — không thể tồn tại ở bậc Cử nhân/Thạc sĩ.
+  // =========================================================================
+  const REG_HOC_HAM_ELIGIBLE = ['Tiến sĩ', 'TSKH'];
+
+  function validateHocHamRegister() {
+    const hocViSel  = document.getElementById('regHocVi');
+    const hocHamSel = document.getElementById('regHocHam');
+    const hint      = document.getElementById('regHocHamHint');
+    if (!hocViSel || !hocHamSel) return true;
+
+    const hv = hocViSel.value;
+    const hh = hocHamSel.value;
+    const eligible = REG_HOC_HAM_ELIGIBLE.includes(hv);
+
+    // Hiển thị/ẩn hint cảnh báo dưới dropdown
+    if (hint) {
+      hint.style.display = eligible ? 'none' : 'block';
+      hint.textContent = eligible
+        ? ''
+        : '⚠ Học hàm Phó giáo sư / Giáo sư yêu cầu Học vị tối thiểu là Tiến sĩ (theo QĐ HĐGSNN).';
+    }
+
+    // Disable/enable các option không hợp lệ
+    Array.from(hocHamSel.options).forEach(opt => {
+      if (opt.value !== 'Không') {
+        opt.disabled = !eligible;
+        opt.style.color = eligible ? '' : '#bbb';
+      }
+    });
+
+    // Nếu đang chọn PGS/GS mà học vị không đủ → tự động reset
+    if (hh !== 'Không' && !eligible) {
+      hocHamSel.value = 'Không';
+      // Inline toast nếu có hàm, ngược lại dùng giao diện hint
+      if (typeof showToast === 'function') {
+        showToast(
+          'Tổ hợp Học hàm Phó giáo sư/Giáo sư với Học vị hiện tại là không hợp lệ theo quy định học thuật. Học hàm đã được đặt lại về "Không".',
+          'error', 6000
+        );
+      }
+      return false;
+    }
+    return true;
+  }
+
   function validateUsernameRealtime(input) {
     const val = input.value;
     const hint = document.getElementById('regTenDangNhapHint');
@@ -650,6 +699,17 @@
     const tenDangNhap = document.getElementById('regTenDangNhap').value.trim();
     const hocVi = document.getElementById('regHocVi').value;
     const hocHam = document.getElementById('regHocHam').value;
+
+    // Ràng buộc chéo Học vị ↔ Học hàm (lần cuối trước khi gửi lên server)
+    if (hocHam !== 'Không' && !REG_HOC_HAM_ELIGIBLE.includes(hocVi)) {
+      showToast(
+        `Tổ hợp "Học hàm: ${hocHam}" với "Học vị: ${hocVi}" là không hợp lệ theo quy định của Hội đồng Giáo sư Nhà nước. Học hàm PGS/GS yêu cầu Học vị tối thiểu là Tiến sĩ.`,
+        'error', 7000
+      );
+      document.getElementById('regHocHam').focus();
+      return;
+    }
+
     const gioiTinh = document.getElementById('regGioiTinh').value;
     const ngonNgu = document.getElementById('regNgonNgu').value;
     const quocGia = document.getElementById('regQuocGia').value;
@@ -896,8 +956,15 @@
     document.getElementById('regHocVi')?.addEventListener('change', checkReviewerAcademicEligibility);
     document.getElementById('regHocHam')?.addEventListener('change', checkReviewerAcademicEligibility);
 
+    // Ràng buộc chéo Học vị ↔ Học hàm (Academic Integrity Constraint)
+    // Thay đổi Học vị → kiểm tra lại Học hàm có còn hợp lệ không
+    document.getElementById('regHocVi')?.addEventListener('change', validateHocHamRegister);
+    // Thay đổi Học hàm → chặn ngay nếu Học vị chưa đủ điều kiện
+    document.getElementById('regHocHam')?.addEventListener('change', validateHocHamRegister);
+
     // Kiểm tra ngay lúc tải trang
     checkReviewerAcademicEligibility();
+    validateHocHamRegister();
   });
 </script>
 </body>

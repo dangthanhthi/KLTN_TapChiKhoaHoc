@@ -673,8 +673,12 @@
           </select>
         </div>
         <div class="form-group-modal">
-          <label>Học hàm</label>
-          <select id="modal-input-hocham" class="form-control-modal">
+          <label>Học hàm
+            <span id="modal-hocham-hint" style="display:none;font-size:11px;font-weight:400;color:#e07b00;margin-left:6px;">
+              ⚠ Yêu cầu Học vị Tiến sĩ trở lên
+            </span>
+          </label>
+          <select id="modal-input-hocham" class="form-control-modal" title="Chỉ dành cho người có Học vị Tiến sĩ hoặc TSKH">
             <option value="Không">Không</option>
             <option value="Phó giáo sư">Phó giáo sư</option>
             <option value="Giáo sư">Giáo sư</option>
@@ -1559,11 +1563,67 @@
     }
 
     document.getElementById('modal-edit-profile').classList.add('open');
+    // Kích hoạt validation chéo Học vị / Học hàm ngay khi modal mở
+    setTimeout(_attachHocHamListeners, 0);
   }
   function closeProfileEditModal() { document.getElementById('modal-edit-profile').classList.remove('open'); }
 
+  // =========================================================================
+  // RÀNG BUỘC CHÉO HỌC VỊ ↔ HỌC HÀM (Academic Integrity Constraint)
+  // Theo QĐ HĐGSNN: Học hàm PGS/GS yêu cầu Học vị tối thiểu là Tiến sĩ
+  // =========================================================================
+  const HOC_HAM_ELIGIBLE = ['Tiến sĩ', 'TSKH'];
+
+  function validateHocHamVsHocVi() {
+    const hocViSel  = document.getElementById('modal-input-hocvi');
+    const hocHamSel = document.getElementById('modal-input-hocham');
+    const hint      = document.getElementById('modal-hocham-hint');
+    if (!hocViSel || !hocHamSel) return true;
+
+    const hv = hocViSel.value;
+    const hh = hocHamSel.value;
+    const eligible = HOC_HAM_ELIGIBLE.includes(hv);
+
+    // Cập nhật hint label
+    if (hint) hint.style.display = eligible ? 'none' : 'inline';
+
+    // Khóa/mở các option không hợp lệ
+    Array.from(hocHamSel.options).forEach(opt => {
+      if (opt.value !== 'Không') {
+        opt.disabled = !eligible;
+        if (!eligible) opt.style.color = '#bbb';
+        else opt.style.color = '';
+      }
+    });
+
+    // Nếu đang chọn PGS/GS mà học vị không đủ → reset và báo lỗi
+    if (hh !== 'Không' && !eligible) {
+      hocHamSel.value = 'Không';
+      if (typeof showToast === 'function') {
+        showToast('Học hàm Phó giáo sư / Giáo sư yêu cầu Học vị tối thiểu là Tiến sĩ (theo QĐ Hội đồng Giáo sư Nhà nước).', 'error', 5000);
+      }
+      return false;
+    }
+    return true;
+  }
+
+  // Khởi động validation ngay khi modal mở
+  function _attachHocHamListeners() {
+    const hv = document.getElementById('modal-input-hocvi');
+    const hh = document.getElementById('modal-input-hocham');
+    if (hv && !hv.dataset.hochamListenerAttached) {
+      hv.addEventListener('change', validateHocHamVsHocVi);
+      hh.addEventListener('change', validateHocHamVsHocVi);
+      hv.dataset.hochamListenerAttached = '1';
+    }
+    validateHocHamVsHocVi();
+  }
+
   async function handleSaveProfile(e) {
     e.preventDefault();
+    // Kiểm tra ràng buộc chéo Học vị / Học hàm trước khi gửi
+    if (!validateHocHamVsHocVi()) return;
+
     const hoDem = document.getElementById('modal-input-hodem').value.trim();
     const ten = document.getElementById('modal-input-ten').value.trim();
     const hoTenGoc = hoDem ? (hoDem + ' ' + ten) : ten;
