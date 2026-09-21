@@ -541,6 +541,24 @@
         <div class="lbl">Mã định danh ORCID</div>
         <div class="val" id="spec-orcid">0000-0002-1825-0097</div>
       </div>
+      <div class="spec-entry">
+        <div class="lbl">Vai trò trong hệ thống</div>
+        <div class="val" id="spec-vaitro" style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding-top:2px;">
+          <!-- Được render động bởi syncUserData() -->
+        </div>
+      </div>
+
+      <!-- NÚT ĐĂNG KÝ PHẢN BIỆN VIÊN (chỉ hiển thị khi HV ≥ Thạc sĩ & chưa có role phản biện) -->
+      <div id="reviewer-register-box" style="display:none;background:#f0f9ff;border:1px solid #bae6fd;border-radius:5px;padding:10px 12px;margin-top:4px;margin-bottom:2px;">
+        <div style="font-size:12px;font-weight:600;color:#0369a1;margin-bottom:4px;">🎓 Đủ điều kiện tham gia Hội đồng Phản biện</div>
+        <div style="font-size:11px;color:#0c4a6e;line-height:1.5;margin-bottom:8px;">Với học vị hiện tại, bạn đủ điều kiện đăng ký vai trò <strong>Chuyên gia Phản biện độc lập</strong> theo quy định của Tạp chí.</div>
+        <button type="button" onclick="handleRequestReviewerRole()" id="btn-request-reviewer"
+          style="width:100%;background:#0ea5e9;border:none;color:#fff;padding:7px;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;"
+          onmouseover="this.style.background='#0284c7'" onmouseout="this.style.background='#0ea5e9'">
+          + Đăng ký vai trò Phản biện viên
+        </button>
+      </div>
+
       <div style="margin-top:16px;display:flex;gap:8px;">
         <button type="button" onclick="openProfileEditModal()" style="flex:1;background:var(--sky-050);border:1px solid var(--sky-200);color:#1da1f2;padding:7px;border-radius:3px;font-size:12px;font-weight:700;cursor:pointer;">Cập nhật hồ sơ</button>
         <button type="button" onclick="openPasswordModal()" style="flex:1;background:#fff;border:1px solid #cbd5e1;color:var(--ink-700);padding:7px;border-radius:3px;font-size:12px;font-weight:600;cursor:pointer;">Đổi mật khẩu</button>
@@ -988,6 +1006,92 @@
       if (specImg) specImg.style.display = 'none';
       if (specPlaceholder) specPlaceholder.style.display = 'flex';
       if (btnDeleteAvatar) btnDeleteAvatar.style.display = 'none';
+    }
+
+    // ── Render Vai trò & Nút đăng ký Phản biện viên ──────────────────────────
+    _renderRoleBadgesAndReviewerBox(user);
+  }
+
+  // Badge màu sắc cho từng vai trò
+  const ROLE_BADGE_STYLE = {
+    'Tác giả':                'background:#dbeafe;color:#1e40af;',
+    'Độc giả':                'background:#f3f4f6;color:#374151;',
+    'Chuyên gia phản biện':   'background:#dcfce7;color:#166534;',
+    'Phản biện viên':         'background:#dcfce7;color:#166534;',
+    'Ban biên tập':           'background:#fef3c7;color:#92400e;',
+    'Thư ký tòa soạn':        'background:#fef3c7;color:#92400e;',
+    'Tổng biên tập':          'background:#fee2e2;color:#991b1b;',
+    'Quản trị hệ thống':      'background:#ede9fe;color:#5b21b6;',
+    '_default':               'background:#f1f5f9;color:#475569;'
+  };
+
+  function _renderRoleBadgesAndReviewerBox(user) {
+    const specVaitro = document.getElementById('spec-vaitro');
+    const reviewerBox = document.getElementById('reviewer-register-box');
+    if (!specVaitro) return;
+
+    // Lấy danh sách vai trò — vaiTros là mảng từ API, fallback sang 'Tác giả'
+    const roles = (user.vaiTros && user.vaiTros.length > 0)
+      ? user.vaiTros
+      : ['Tác giả'];
+
+    // Luôn thêm 'Độc giả' nếu chưa có (mọi tài khoản đều là Độc giả)
+    const allRoles = roles.includes('Độc giả') ? roles : [...roles, 'Độc giả'];
+
+    // Render badges
+    specVaitro.innerHTML = allRoles.map(role => {
+      const style = ROLE_BADGE_STYLE[role] || ROLE_BADGE_STYLE['_default'];
+      return `<span style="display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;${style}">${role}</span>`;
+    }).join('');
+
+    // Kiểm tra điều kiện hiển thị nút đăng ký phản biện viên
+    if (!reviewerBox) return;
+    const ELIGIBLE_HOC_VI = ['Thạc sĩ', 'Tiến sĩ', 'TSKH'];
+    const hocVi = user.hocVi || 'Không';
+    const isEligibleDegree = ELIGIBLE_HOC_VI.includes(hocVi);
+    const alreadyReviewer = allRoles.some(r =>
+      r === 'Chuyên gia phản biện' || r === 'Phản biện viên' ||
+      r === 'Ban biên tập' || r === 'Tổng biên tập' || r === 'Quản trị hệ thống'
+    );
+    // Hiển thị box nếu đủ điều kiện học vị VÀ chưa có role phản biện trở lên
+    reviewerBox.style.display = (isEligibleDegree && !alreadyReviewer) ? 'block' : 'none';
+  }
+
+  async function handleRequestReviewerRole() {
+    const btn = document.getElementById('btn-request-reviewer');
+    if (btn) { btn.disabled = true; btn.innerText = 'Đang gửi yêu cầu...'; }
+
+    // Gửi yêu cầu lên Backend API để cập nhật role
+    try {
+      const token = localStorage.getItem('journal_token');
+      const res = await fetch('http://localhost:5000/api/auth/request-reviewer', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        showToast('Đã thêm vai trò Chuyên gia Phản biện vào tài khoản của bạn!', 'success', 5000);
+        // Làm mới dữ liệu từ server
+        await syncUserData();
+      } else {
+        const err = await res.json().catch(() => ({}));
+        showToast(err.message || 'Không thể thêm vai trò. Vui lòng liên hệ Ban biên tập.', 'error');
+        if (btn) { btn.disabled = false; btn.innerText = '+ Đăng ký vai trò Phản biện viên'; }
+      }
+    } catch (e) {
+      // Backend offline → thêm tạm vào localStorage để demo
+      showToast('Server đang offline. Vai trò Phản biện viên được thêm tạm thời cho phiên này.', 'warning', 5000);
+      const user = getCurrentUser();
+      if (user) {
+        user.vaiTros = [...(user.vaiTros || ['Tác giả']), 'Phản biện viên'];
+        user.chucVu = user.vaiTros.join(', ');
+        setCurrentUser(user);
+        _renderRoleBadgesAndReviewerBox(user);
+      }
+      if (btn) { btn.disabled = false; btn.innerText = '+ Đăng ký vai trò Phản biện viên'; }
     }
   }
 
