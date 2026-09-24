@@ -18,3 +18,7 @@ Website chính thức và Cổng thông tin điện tử của Tạp chí Khoa h
 - **Frontend**: HTML5, CSS3 hiện đại, Vanilla JavaScript (Không phụ thuộc thư viện nặng).
 - **Thiết kế**: Chuẩn mực Typography học thuật (`Source Serif 4` & `Inter`), responsive hoàn hảo, hỗ trợ High-DPI.
 - **Triển khai (Deployment)**: Vercel Static Hosting.
+
+## 👤 Phân công thực hiện
+- **Đặng Thành Thi:** Phụ trách toàn diện lập trình phân hệ Web (Frontend HTML/CSS/JS, trải nghiệm người dùng, cơ chế Hybrid Dual-Engine và kiểm thử tự động Web E2E).
+- Các phân hệ khác (WinForms Desktop) do thành viên khác trong nhóm phụ trách độc lập.
