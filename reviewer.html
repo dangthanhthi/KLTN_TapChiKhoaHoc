@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Bàn làm việc phản biện · HUIT Journal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="reviewer.css">
+  <script src="reviewer-core.js" defer></script>
+  <script src="reviewer.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Đến nội dung chính</a>
+  <header class="masthead">
+    <div class="wrap masthead-inner">
+      <a class="brand" href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html"><span>HUIT JOURNAL</span><small>Tạp chí Khoa học Đại học Công Thương</small></a>
+      <nav aria-label="Điều hướng tài khoản"><a href="profile.html">Bàn làm việc tác giả</a><a href="reviewer.html" aria-current="page">Phản biện</a><button id="logout" type="button" hidden>Đăng xuất</button></nav>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+    <div class="page-heading"><div><p class="eyebrow">KHÔNG GIAN CHUYÊN GIA</p><h1>Bàn làm việc phản biện</h1><p class="muted">Theo dõi công việc, hoàn thiện nhận xét và xem lại các đánh giá của bạn.</p></div><a class="text-link" href="guidelines.html#review">Quy trình phản biện ↗</a></div>
+    <section id="access-state" class="empty-state" aria-live="polite"><h2>Đang kiểm tra phiên làm việc…</h2><p>Vui lòng chờ trong giây lát.</p></section>
+    <div id="workspace" hidden>
+      <div class="session-line"><span id="greeting"></span><span id="mode-label"></span></div>
+      <div id="demo-notice" class="notice" hidden><strong>Chế độ trình diễn — dữ liệu mô phỏng.</strong> Các thao tác chỉ lưu trên trình duyệt này, không gửi đến tòa soạn. <button id="load-demo" type="button">Nạp công việc mẫu</button></div>
+      <div class="summary" aria-label="Tổng quan công việc">
+        <div><strong id="count-active">0</strong><span>Đang xử lý</span></div><div><strong id="count-due">0</strong><span>Đến hạn trong 3 ngày</span></div><div><strong id="count-overdue">0</strong><span>Quá hạn</span></div><div><strong id="count-done">0</strong><span>Đã đánh giá</span></div>
+      </div>
+      <div class="workspace-layout">
+        <section class="queue" aria-labelledby="queue-heading">
+          <div class="section-title"><h2 id="queue-heading">Công việc của tôi</h2><button id="refresh" class="quiet" type="button">Làm mới</button></div>
+          <div class="tabs" role="group" aria-label="Loại công việc"><button type="button" data-view="active" aria-pressed="true">Cần xử lý</button><button type="button" data-view="history" aria-pressed="false">Lịch sử đánh giá</button><button type="button" data-view="all" aria-pressed="false">Tất cả</button></div>
+          <div class="filters"><label class="search">Tìm bài báo<input id="search" type="search" placeholder="Tiêu đề, mã bài hoặc chuyên ngành…" maxlength="200"></label><label>Trạng thái<select id="status-filter"><option value="all">Mọi trạng thái</option><option value="pending">Chờ phản hồi</option><option value="overdue">Quá hạn</option><option value="due">Sắp đến hạn</option><option value="draft">Có bản nháp</option></select></label><label>Sắp xếp<select id="sort"><option value="deadline">Hạn gần nhất</option><option value="newest">Phân công mới nhất</option><option value="title">Tên bài A–Z</option></select></label></div>
+          <p id="list-status" class="muted" role="status"></p>
+          <div id="assignment-list" aria-busy="false"></div>
+          <div class="pagination"><button id="prev-page" type="button">Trang trước</button><span id="page-number"></span><button id="next-page" type="button">Trang sau</button></div>
+        </section>
+        <aside id="detail" class="detail" aria-labelledby="detail-title" tabindex="-1"><p class="eyebrow">HỒ SƠ PHẢN BIỆN</p><h2 id="detail-title">Chọn một công việc</h2><p class="muted">Thông tin bản thảo, thời hạn và phiếu đánh giá sẽ xuất hiện tại đây.</p><div class="privacy-note"><strong>Phản biện độc lập</strong><p>Chỉ sử dụng bản thảo đã ẩn danh. Không đưa thông tin nhận diện cá nhân vào nhận xét gửi tác giả.</p></div></aside>
+      </div>
+    </div>
+  </main>
+  <dialog id="evaluation-dialog" aria-labelledby="evaluation-heading">
+    <form id="evaluation-form">
+      <div class="dialog-heading"><div><p class="eyebrow">PHIẾU NHẬN XÉT BM-04</p><h2 id="evaluation-heading">Đánh giá bản thảo</h2></div><button id="close-evaluation" type="button" aria-label="Đóng phiếu đánh giá">Đóng</button></div>
+      <p id="evaluation-title" class="paper-title"></p><p id="draft-status" class="muted" role="status">Bản nháp chưa được gửi.</p>
+      <fieldset><legend>Điểm đánh giá · thang 0–10</legend><div class="score-grid"><label>Tính mới<input name="diemTinhMoi" type="number" min="0" max="10" step="0.1" required></label><label>Phương pháp<input name="diemPhuongPhap" type="number" min="0" max="10" step="0.1" required></label><label>Kết quả<input name="diemKetQua" type="number" min="0" max="10" step="0.1" required></label><label>Trình bày<input name="diemTrinhBay" type="number" min="0" max="10" step="0.1" required></label></div><p>Điểm tổng kết (trung bình 4 tiêu chí): <output id="total-score">—</output>/10</p></fieldset>
+      <label>Nhận xét gửi tác giả<textarea name="nhanXetChoTacGia" rows="5" maxlength="20000" required placeholder="Nêu điểm mạnh, hạn chế và các yêu cầu chỉnh sửa cụ thể."></textarea></label>
+      <label>Nhận xét riêng cho Ban biên tập <span class="muted">(không bắt buộc)</span><textarea name="nhanXetBaoMat" rows="3" maxlength="20000" placeholder="Thông tin chỉ dành cho Ban biên tập."></textarea></label>
+      <label>Kiến nghị<select name="kienNghi" required><option value="">Chọn kiến nghị</option><option>Chấp nhận đăng</option><option>Chỉnh sửa nhỏ</option><option>Chỉnh sửa lớn và phản biện lại</option><option>Từ chối đăng</option></select></label>
+      <label class="check-row"><input id="confirm-review" type="checkbox" required><span>Tôi đã kiểm tra nội dung, không có xung đột lợi ích và đồng ý gửi phiếu này cho Ban biên tập.</span></label>
+      <p id="form-error" class="error" role="alert"></p>
+      <div class="dialog-actions"><button id="save-draft" type="button">Lưu nháp trong phiên</button><button id="submit-review" type="submit" class="primary">Gửi phiếu đánh giá</button></div>
+      <p class="fine-print">Nháp lưu riêng theo tài khoản trong tab này, không đồng bộ đến tòa soạn. Đóng tab hoặc đăng xuất sẽ xóa nháp.</p>
+    </form>
+  </dialog>
+  <div id="notice" class="toast" role="status" hidden></div>
+  <footer class="wrap footer"><span>HUIT Journal · Không gian phản biện</span><a href="contact.html">Liên hệ tòa soạn</a></footer>
+</body>
+</html>

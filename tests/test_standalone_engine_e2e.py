@@ -54,32 +54,65 @@ async def run():
         print("  [✓] TEST 1 PASS: Đăng nhập offline thành công, chuyển hướng vào Bàn làm việc!")
 
         # -------------------------------------------------------------
-        # TEST 2: Kiểm tra phân công phản biện & Nộp phiếu đánh giá BM-04
+        # TEST 2: Kiểm tra phân công phản biện & Nộp phiếu đánh giá BM-04 trên reviewer.html
         # -------------------------------------------------------------
-        print("\n[TEST 2] Kiểm tra phân công phản biện & nộp phiếu đánh giá BM-04...")
-        # Đợi danh sách phân công nạp xong
+        print("\n[TEST 2] Kiểm tra liên kết Bàn làm việc phản biện và nộp phiếu đánh giá BM-04...")
+        # Đợi khu vực phản biện trên profile.html nạp xong
         await page.wait_for_timeout(1000)
-        assignments_count = await page.locator("#my-assignments-container .sub-item-card").count()
-        print(f"  -> Số lượng nhiệm vụ phản biện hiển thị: {assignments_count}")
-        assert assignments_count > 0, "Lỗi: Không hiển thị danh sách nhiệm vụ phản biện!"
+        rev_link = page.locator("#my-assignments-container a[href='reviewer.html']").first
+        assert await rev_link.is_visible(), "Lỗi: Không hiển thị liên kết mở bàn làm việc phản biện trên profile.html!"
+        print("  -> Đã tìm thấy liên kết 'Mở bàn làm việc phản biện →' trên profile.html")
 
-        # Mở modal đánh giá BM-04
-        eval_btn = page.locator("#my-assignments-container button:has-text('BM-04')").first
+        # Mở bàn làm việc phản biện chuyên biệt
+        await rev_link.click()
+        await page.wait_for_url("**/reviewer.html*", timeout=5000)
+        await page.wait_for_load_state("networkidle")
+        print(f"  -> Đã chuyển hướng vào trang chuyên biệt: {page.url}")
+
+        # Kiểm tra hiển thị khối thông báo demo và nạp dữ liệu công việc mẫu
+        if await page.is_visible("#load-demo"):
+            print("  -> Nhấp nút 'Nạp công việc mẫu' cho phiên trình diễn...")
+            await page.click("#load-demo")
+            await page.wait_for_timeout(1200)
+
+        # Kiểm tra danh sách công việc hiển thị
+        assignments_count = await page.locator("#assignment-list .assignment").count()
+        print(f"  -> Số lượng nhiệm vụ phản biện hiển thị trên reviewer.html: {assignments_count}")
+        assert assignments_count > 0, "Lỗi: Không hiển thị danh sách nhiệm vụ phản biện trên reviewer.html!"
+
+        # Chọn nhiệm vụ đầu tiên và mở phiếu đánh giá BM-04
+        first_open_btn = page.locator("#assignment-list .assignment h3 button").first
+        await first_open_btn.click()
+        await page.wait_for_timeout(600)
+
+        eval_btn = page.locator("#detail .detail-actions button:has-text('Viết đánh giá'), #detail .detail-actions button:has-text('Tiếp tục bản nháp')").first
         if await eval_btn.is_visible():
-            print("  -> Nhấp nút 'Đánh giá bản thảo (BM-04)'...")
+            print("  -> Nhấp nút 'Viết đánh giá' mở form BM-04...")
             await eval_btn.click()
             await page.wait_for_timeout(600)
 
-            # Điền nhận xét và nộp
-            await page.fill("#eval-nhanxet-tacgia", "Bản thảo có tính mới cao, phương pháp nghiên cứu rõ ràng và số liệu thuyết phục.")
-            await page.fill("#eval-nhanxet-baomat", "Đề xuất thông qua bản thảo không cần sửa đổi lớn.")
-            await page.click("#modal-eval-paper button[type='submit']")
-            await page.wait_for_timeout(1000)
+            # Điền các điểm thành phần
+            await page.fill("#evaluation-form input[name='diemTinhMoi']", "8.5")
+            await page.fill("#evaluation-form input[name='diemPhuongPhap']", "8.0")
+            await page.fill("#evaluation-form input[name='diemKetQua']", "8.5")
+            await page.fill("#evaluation-form input[name='diemTrinhBay']", "8.0")
 
-            # Kiểm tra toast hoặc trạng thái đã hoàn thành
-            print("  [✓] TEST 2 PASS: Nộp phiếu đánh giá BM-04 offline thành công!")
+            # Điền nhận xét và chọn kiến nghị
+            await page.fill("#evaluation-form textarea[name='nhanXetChoTacGia']", "Bản thảo có tính mới cao, phương pháp nghiên cứu rõ ràng và số liệu thuyết phục.")
+            await page.select_option("#evaluation-form select[name='kienNghi']", "Chấp nhận đăng")
+            await page.check("#confirm-review")
+
+            # Gửi phiếu đánh giá
+            await page.click("#submit-review")
+            await page.wait_for_timeout(1500)
+            print("  [✓] TEST 2 PASS: Nộp phiếu đánh giá BM-04 trên Bàn làm việc phản biện thành công!")
         else:
             print("  [!] Nhiệm vụ phản biện đã được đánh giá trước đó.")
+
+        # Quay lại profile.html để tiếp tục TEST 3
+        await page.goto("http://localhost:8088/profile.html")
+        await page.wait_for_load_state("networkidle")
+        await page.wait_for_timeout(600)
 
         # -------------------------------------------------------------
         # TEST 3: Đổi mật khẩu tài khoản trong chế độ Standalone

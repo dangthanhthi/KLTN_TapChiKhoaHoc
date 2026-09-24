@@ -22,3 +22,12 @@ Website chính thức và Cổng thông tin điện tử của Tạp chí Khoa h
 ## 👤 Phân công thực hiện
 - **Đặng Thành Thi:** Phụ trách toàn diện lập trình phân hệ Web (Frontend HTML/CSS/JS, trải nghiệm người dùng, cơ chế Hybrid Dual-Engine và kiểm thử tự động Web E2E).
 - Các phân hệ khác (WinForms Desktop) do thành viên khác trong nhóm phụ trách độc lập.
+
+
+## Bàn làm việc phản biện riêng (24/09/2026)
+
+Trang `reviewer.html` dành cho tài khoản có vai trò phản biện. Truy cập qua menu tài khoản hoặc trang cá nhân. Có danh sách công việc, tìm kiếm/bộ lọc, hạn xử lý, lịch sử đánh giá, phiếu BM-04, nháp trong phiên, xuất bản ghi TXT và lịch ICS.
+
+Phiên thật xác minh vai trò bằng API, không tự chuyển sang dữ liệu mẫu khi lỗi hoặc danh sách rỗng. Phiên demo có nhãn riêng và phải chủ động nạp dữ liệu mẫu; dữ liệu tách theo tài khoản. Không coi phân quyền trên trình duyệt là bảo mật thay thế máy chủ.
+
+Phạm vi của Đặng Thành Thi: lập trình phân hệ Web; không sửa WinForms, SQL hoặc Backend trong đợt này. Công nghệ Web được chọn theo khả năng bảo trì và hợp đồng API, không bắt buộc dùng cùng framework với Desktop. Chi tiết ở `REVIEWER_WEB_HANDOFF.md`.

@@ -1545,76 +1545,20 @@
 
   // Tải danh sách nhiệm vụ phản biện được Ban biên tập phân công
   async function loadMyReviewAssignments() {
-    const user = getCurrentUser();
-    if (!user) return;
-
-    const roles = user.vaiTros || [];
-    const isReviewer = roles.includes('Chuyên gia phản biện') || roles.includes('Phản biện viên') || roles.includes('Ban biên tập') || roles.includes('Quản trị hệ thống');
-    
-    const reviewerSection = document.getElementById('reviewer-section');
+    const section = document.getElementById('reviewer-section');
     const container = document.getElementById('my-assignments-container');
-    if (!reviewerSection || !container) return;
-
-    if (!isReviewer) {
-      reviewerSection.style.display = 'none';
-      return;
-    }
-
-    reviewerSection.style.display = 'block';
-
-    try {
-      const assignments = await apiGetMyAssignments();
-      if (!assignments || assignments.length === 0) {
-        container.innerHTML = `
-          <div style="background:#f8fafc;border:1px dashed var(--line);border-radius:6px;padding:28px;text-align:center;">
-            <p style="font-size:13.5px;color:var(--ink-700);">Hiện tại bạn chưa được phân công phản biện bản thảo nào.</p>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = assignments.map(as => {
-        const assignDate = as.ngayPhanCong ? new Date(as.ngayPhanCong).toLocaleDateString('vi-VN') : '—';
-        const deadline = as.hanHoanThanh ? new Date(as.hanHoanThanh).toLocaleDateString('vi-VN') : '—';
-        const isDone = as.daDanhGia || as.trangThai === 'Đã đánh giá';
-
-        const token = localStorage.getItem('journal_token') || '';
-        const isStandalone = token.startsWith('standalone_token_');
-        const modeLabel = isStandalone ? 'Phiên độc lập Vercel' : 'Dữ liệu CSDL SQL Server';
-
-        return `
-          <article class="sub-item-card" style="border-left: 3px solid ${isDone ? '#10b981' : '#1da1f2'};">
-            <div class="sub-header-line">
-              <span class="sub-code-badge">PHẢN BIỆN VÒNG ${as.soVong}</span>
-              <span class="sub-stage-badge ${isDone ? 'stage-published' : 'stage-review'}">${isDone ? '✓ Đã hoàn thành đánh giá' : '⏳ Chờ chuyên gia đánh giá'}</span>
-            </div>
-            <h3>${escapeHtml(as.tieuDeBaiBao)}</h3>
-            <div class="sub-meta-specs">
-              <span>Chuyên ngành: <b>${escapeHtml(as.chuyenNganh)}</b></span>
-              <span>Ngày phân công: <b>${assignDate}</b></span>
-              <span>Hạn hoàn thành: <b>${deadline}</b></span>
-              ${as.diemTongKet ? `<span>Điểm tổng: <b>${as.diemTongKet}/10</b></span>` : ''}
-              ${as.kienNghi ? `<span>Kiến nghị: <b>${escapeHtml(as.kienNghi)}</b></span>` : ''}
-            </div>
-
-            <div class="sub-action-bar">
-              <span class="note">Trạng thái: <strong>${escapeHtml(as.trangThai)}</strong> · ${modeLabel}</span>
-              <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-                <button type="button" onclick="downloadReviewManuscript(${as.maPhanCong}, '${escapeJs(as.tieuDeBaiBao)}')" class="btn-action-view" style="cursor:pointer;border:1px solid var(--sky-200);background:#fff;color:#1da1f2;padding:6px 12px;border-radius:3px;font-weight:600;font-size:12px;display:inline-flex;align-items:center;gap:4px;">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                  Tải bản thảo (Bản ẩn danh)
-                </button>
-                ${isDone 
-                  ? `<span style="color:#0e7039;font-weight:600;font-size:13px;">✓ Đã nộp phiếu BM-04 (${escapeHtml(as.kienNghi || 'Đạt')})</span>` 
-                  : `<button onclick="openEvalModal(${as.maPhanCong}, '${escapeJs(as.tieuDeBaiBao)}')" class="btn-action-revise" style="background:#1da1f2;cursor:pointer;border:none;">Đánh giá bản thảo (BM-04) &rarr;</button>`}
-              </div>
-            </div>
-          </article>
-        `;
-      }).join('');
-    } catch (e) {
-      console.error('Lỗi khi tải phân công phản biện:', e);
-    }
+    const user = getCurrentUser();
+    if (!section || !container) return;
+    section.style.display = hasReviewerRole(user) ? 'block' : 'none';
+    container.replaceChildren();
+    if (!hasReviewerRole(user)) return;
+    const description = document.createElement('p');
+    description.textContent = 'Công việc được phân công, bản nháp và lịch sử đánh giá của bạn có trong không gian phản biện riêng.';
+    const link = document.createElement('a');
+    link.href = 'reviewer.html';
+    link.className = 'btn-action-view';
+    link.textContent = 'Mở bàn làm việc phản biện →';
+    container.append(description, link);
   }
 
   function openEvalModal(maPhanCong, tieuDe) {

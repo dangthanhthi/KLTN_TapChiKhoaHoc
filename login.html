@@ -310,7 +310,7 @@
         setCurrentUser(userObj);
         showToast(`Đăng nhập thành công! Xin chào ${res.user.hoTen}.`, 'success');
         setTimeout(() => {
-          window.location.href = 'profile.html';
+          window.location.href = new URLSearchParams(window.location.search).get('next') === 'reviewer.html' ? 'reviewer.html' : 'profile.html';
         }, 600);
       } else {
         showToast(res.message || 'Tài khoản hoặc mật khẩu không chính xác.', 'error');
