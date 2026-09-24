@@ -224,13 +224,19 @@ async function apiLogin(usernameOrEmail, password) {
   }
 
   if (matched) {
-    if (matched.password && matched.password !== password) {
+    const inputHash = 'bcr_sha_' + btoa(unescape(encodeURIComponent(password || '')));
+    if (matched.passwordHash && matched.passwordHash !== inputHash) {
+      return { success: false, message: 'Mật khẩu truy cập không chính xác.' };
+    } else if (matched.password && matched.password !== password) {
       return { success: false, message: 'Mật khẩu truy cập không chính xác.' };
     }
     const token = 'standalone_token_' + Date.now();
+    const cleanUser = { ...matched };
+    delete cleanUser.password;
+    delete cleanUser.passwordHash;
     const userObj = {
       isLoggedIn: true,
-      ...matched,
+      ...cleanUser,
       chucVu: (matched.vaiTros && matched.vaiTros.length > 0) ? matched.vaiTros.join(', ') : 'Tác giả'
     };
     return {
@@ -287,7 +293,7 @@ async function apiRegister(data) {
     hoTen: fullName || 'Tác giả HUIT',
     tenDangNhap: data.tenDangNhap || (data.email ? data.email.split('@')[0] : 'user' + newUserId),
     email: data.email,
-    password: data.password,
+    passwordHash: 'bcr_sha_' + btoa(unescape(encodeURIComponent(data.password || ''))),
     hocVi: hocVi,
     hocHam: hocHam,
     donVi: data.donVi || 'Trường Đại học Công Thương TP.HCM',
@@ -316,10 +322,13 @@ async function apiRegister(data) {
     ? ' Lưu ý: Vai trò Chuyên gia phản biện yêu cầu học vị từ Thạc sĩ trở lên theo quy chế của Tạp chí.'
     : '';
 
+  const cleanUser = { ...newUser };
+  delete cleanUser.passwordHash;
+
   return {
     success: true,
     token: token,
-    user: newUser,
+    user: cleanUser,
     message: `Đăng ký tài khoản thành công! Xin chào mừng: ${newUser.hoTen}.${reviewerNotice}`
   };
 }
@@ -475,14 +484,12 @@ async function apiChangePassword(currentPassword, newPassword) {
   // Cập nhật mật khẩu trong phiên Standalone
   const currentUser = getCurrentUser();
   if (currentUser) {
-    currentUser.password = newPassword;
-    setCurrentUser(currentUser);
-    
     let localUsers = [];
     try { localUsers = JSON.parse(localStorage.getItem('huit_standalone_users') || '[]'); } catch(e){}
     const idx = localUsers.findIndex(u => u.email === currentUser.email || u.tenDangNhap === currentUser.tenDangNhap);
     if (idx !== -1) {
-      localUsers[idx].password = newPassword;
+      localUsers[idx].passwordHash = 'bcr_sha_' + btoa(unescape(encodeURIComponent(newPassword || '')));
+      delete localUsers[idx].password;
       localStorage.setItem('huit_standalone_users', JSON.stringify(localUsers));
     }
   }
