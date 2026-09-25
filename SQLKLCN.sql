@@ -205,6 +205,7 @@ CREATE TABLE ThuMucBaiBao (
     CONSTRAINT CHK_ThuMuc_LoaiThuMuc CHECK (LoaiThuMuc IN (
         N'Bản thảo gốc', 
         N'File ẩn danh', 
+        N'Bản thảo ẩn danh',
         N'Bản chỉnh sửa', 
         N'Phụ lục',
         N'Bản giải trình BM-03',
@@ -212,6 +213,24 @@ CREATE TABLE ThuMucBaiBao (
         N'PDF thành phẩm',
         N'PDF Xuất bản'
     ))
+);
+GO
+
+-- 9.0 Bảng DonDangKyPhanBien (Quản lý đơn đăng ký phản biện chờ Ban biên tập phê duyệt)
+CREATE TABLE DonDangKyPhanBien (
+    MaDon INT IDENTITY(1,1) PRIMARY KEY,
+    MaNguoiDung INT NOT NULL,
+    NgayDangKy DATETIME NOT NULL DEFAULT GETDATE(),
+    GhiChu NVARCHAR(500) NULL,
+    TrangThai NVARCHAR(50) NOT NULL DEFAULT N'Chờ duyệt',
+    MaNguoiDuyet INT NULL,
+    NgayDuyet DATETIME NULL,
+    LyDoTuChoi NVARCHAR(500) NULL,
+    CONSTRAINT FK_DonDangKyPhanBien_NguoiDung FOREIGN KEY (MaNguoiDung) 
+        REFERENCES NguoiDung(MaNguoiDung) ON DELETE CASCADE,
+    CONSTRAINT FK_DonDangKyPhanBien_NguoiDuyet FOREIGN KEY (MaNguoiDuyet) 
+        REFERENCES NguoiDung(MaNguoiDung),
+    CONSTRAINT CHK_DonDangKy_TrangThai CHECK (TrangThai IN (N'Chờ duyệt', N'Đã duyệt', N'Từ chối'))
 );
 GO
 
