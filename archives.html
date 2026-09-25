@@ -980,10 +980,17 @@
           <a href="article-detail.html?id=${art.maBaiBao || art.id}" class="btn-article-detail">
             Xem chi tiết &amp; Trích dẫn &rarr;
           </a>
-          <a href="${art.pdfUrl || 'assets/sample-article.pdf'}" class="btn-article-pdf" target="_blank" rel="noopener">
+          ${art.pdfUrl ? `
+          <a href="${art.pdfUrl}" class="btn-article-pdf" target="_blank" rel="noopener">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             Tải toàn văn PDF
           </a>
+          ` : `
+          <span class="btn-article-pdf" style="opacity:0.55;cursor:not-allowed;background:#94a3b8;" title="Chưa có tệp PDF xuất bản thành phẩm">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Chưa có PDF
+          </span>
+          `}
         </div>
       </article>
     `).join('');
@@ -1138,7 +1145,7 @@
             ngayDang: a.ngayXuatBan ? new Date(a.ngayXuatBan).toLocaleDateString('vi-VN') : '2026',
             doi: a.doi || '10.59876/jst.jsc.2026.03.01',
             tomTat: a.tomTat || 'Tóm tắt bài báo khoa học công bố trên Tạp chí Khoa học Đại học Công Thương.',
-            pdfUrl: a.filePdfUrl || 'assets/sample-article.pdf'
+            pdfUrl: a.filePdfUrl || null
           }));
           allArticles = [...formatted, ...HUIT_SAMPLE_ARTICLES];
           filteredArticles = allArticles;
