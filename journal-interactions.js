@@ -224,6 +224,10 @@ async function apiLogin(usernameOrEmail, password) {
   }
 
   if (matched) {
+    // Lưu ý: Đối với tài khoản mẫu trong chế độ trình diễn (Standalone Demo),
+    // chuỗi mã hóa btoa đóng vai trò che giấu trực quan (Base64 obfuscation) trong phiên lưu trữ trình duyệt,
+    // không phải là hàm băm mật mã học (cryptographic hash). Cơ chế băm mật khẩu bảo mật chuẩn BCrypt
+    // được thực thi chính thức và duy nhất tại tầng máy chủ Backend C# (HuitJournal.Api/Services/AuthService.cs).
     const inputHash = 'bcr_sha_' + btoa(unescape(encodeURIComponent(password || '')));
     if (matched.passwordHash && matched.passwordHash !== inputHash) {
       return { success: false, message: 'Mật khẩu truy cập không chính xác.' };
@@ -570,16 +574,8 @@ async function apiRequestReviewerRole() {
     }
     return { success: false, message: data.message || 'Không thể thêm vai trò. Vui lòng liên hệ Ban biên tập.' };
   } catch (e) {
-    // Backend offline: Cập nhật cục bộ
-    let user = getCurrentUser() || {};
-    let roles = user.vaiTros || ['Tác giả'];
-    if (!roles.includes('Chuyên gia phản biện') && !roles.includes('Phản biện viên')) {
-      roles.push('Chuyên gia phản biện');
-      user.vaiTros = roles;
-      user.chucVu = roles.join(', ');
-      setCurrentUser(user);
-    }
-    return { success: true, message: 'Đã thêm vai trò Chuyên gia Phản biện vào tài khoản của bạn!' };
+    // Khi phiên Online bị mất kết nối, báo lỗi rõ ràng, không tự cấp quyền giả
+    return { success: false, message: 'Không thể kết nối đến máy chủ tòa soạn để gửi đơn đăng ký. Vui lòng thử lại sau.' };
   }
 }
 
@@ -588,19 +584,32 @@ async function apiRequestReviewerRole() {
 // -------------------------------------------------------------
 async function apiSubmitPaper(formData) {
   const token = localStorage.getItem('journal_token');
-  try {
-    const res = await fetchWithTimeout(`${API_BASE}/baibao/submit`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-      body: formData
-    });
-    if (res.ok) {
-      return await res.json();
+  const isStandalone = !token || token.startsWith('standalone_token_');
+
+  // 1. Chế độ Online: Gửi trực tiếp lên máy chủ Web API thực tế
+  if (!isStandalone) {
+    try {
+      const res = await fetchWithTimeout(`${API_BASE}/baibao/submit`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+      const errData = await res.json().catch(() => null);
+      return {
+        success: false,
+        message: errData?.message || `Máy chủ từ chối tiếp nhận bản thảo (Mã lỗi HTTP ${res.status}). Vui lòng kiểm tra lại dữ liệu và tệp đính kèm.`
+      };
+    } catch (e) {
+      return {
+        success: false,
+        message: 'Không thể kết nối đến máy chủ tòa soạn. Bản thảo CHƯA được nộp lên hệ thống. Vui lòng kiểm tra lại kết nối mạng hoặc thử lại sau.'
+      };
     }
-  } catch (e) {
-    console.log('Backend offline: Nộp bản thảo trong chế độ Standalone Engine');
   }
 
   // Standalone Engine: Lưu bản thảo mới vào danh sách bài nộp trên trình duyệt
@@ -645,7 +654,7 @@ async function apiSubmitPaper(formData) {
     success: true,
     maBaiBao: newId,
     maDinhDanh: code,
-    message: 'Nộp bản thảo bài báo thành công!'
+    message: 'Nộp bản thảo bài báo thành công (Chế độ trình diễn mô phỏng trên trình duyệt)!'
   };
 }
 
@@ -900,17 +909,30 @@ async function apiMakeDecision(data) {
 
 async function apiResubmitPaper(baiBaoId, formData) {
   const token = localStorage.getItem('journal_token');
-  try {
-    const res = await fetchWithTimeout(`${API_BASE}/baibao/${baiBaoId}/resubmit`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      },
-      body: formData
-    });
-    if (res.ok) return await res.json();
-  } catch (e) {
-    console.log('Backend offline: Nộp lại bản thảo trong Standalone Engine');
+  const isStandalone = !token || token.startsWith('standalone_token_');
+
+  // 1. Chế độ Online: Gửi bản thảo chỉnh sửa lên máy chủ Web API
+  if (!isStandalone) {
+    try {
+      const res = await fetchWithTimeout(`${API_BASE}/baibao/${baiBaoId}/resubmit`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+      if (res.ok) return await res.json();
+      const errData = await res.json().catch(() => null);
+      return {
+        success: false,
+        message: errData?.message || `Không thể nộp bản chỉnh sửa (Mã lỗi HTTP ${res.status}). Vui lòng thử lại.`
+      };
+    } catch (e) {
+      return {
+        success: false,
+        message: 'Không thể kết nối đến máy chủ tòa soạn. Bản thảo chỉnh sửa chưa được lưu.'
+      };
+    }
   }
 
   let localSubs = [];
