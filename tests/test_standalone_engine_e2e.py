@@ -36,7 +36,7 @@ async def run():
         # TEST 1: Đăng nhập tài khoản mẫu trong môi trường offline
         # -------------------------------------------------------------
         print("\n[TEST 1] Đăng nhập tài khoản mẫu (GS.TS. Đặng Thành Thi) khi backend offline...")
-        await page.goto("http://localhost:8088/login.html")
+        await page.goto("http://localhost:8088/login.html?mode=demo")
         await page.wait_for_load_state("networkidle")
 
         await page.fill("#username", "dangthanhthi")
@@ -169,7 +169,7 @@ async def run():
         print("\n[TEST 5] Đăng ký tài khoản mới (Học vị Tiến sĩ) và kích hoạt Phản biện viên...")
         # Xóa session hiện tại
         await page.evaluate("() => { localStorage.clear(); sessionStorage.clear(); }")
-        await page.goto("http://localhost:8088/register.html")
+        await page.goto("http://localhost:8088/register.html?mode=demo")
         await page.wait_for_load_state("networkidle")
 
         ts = int(time.time())

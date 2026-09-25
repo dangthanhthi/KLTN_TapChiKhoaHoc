@@ -208,7 +208,9 @@ CREATE TABLE ThuMucBaiBao (
         N'Bản chỉnh sửa', 
         N'Phụ lục',
         N'Bản giải trình BM-03',
-        N'Bản đánh dấu sửa đổi'
+        N'Bản đánh dấu sửa đổi',
+        N'PDF thành phẩm',
+        N'PDF Xuất bản'
     ))
 );
 GO

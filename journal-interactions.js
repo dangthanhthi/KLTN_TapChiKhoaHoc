@@ -185,29 +185,70 @@ const STANDALONE_DEFAULT_SUBMISSIONS = [
   }
 ];
 
+function isExplicitDemoMode() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const modeParam = urlParams.get('mode');
+  if (modeParam === 'demo') {
+    sessionStorage.setItem('journal_app_mode', 'demo');
+    return true;
+  }
+  if (modeParam === 'online') {
+    sessionStorage.removeItem('journal_app_mode');
+    return false;
+  }
+  if (sessionStorage.getItem('journal_app_mode') === 'demo') {
+    return true;
+  }
+  if (window.location.hostname.includes('vercel.app') || window.location.hostname.includes('github.io')) {
+    return true;
+  }
+  return false;
+}
+
+function renderDemoModeBanner() {
+  if (isExplicitDemoMode()) {
+    if (!document.getElementById('demo-mode-persistent-badge') && document.body) {
+      const b = document.createElement('div');
+      b.id = 'demo-mode-persistent-badge';
+      b.style.cssText = 'position:fixed;bottom:12px;left:12px;background:#c53030;color:#fff;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;z-index:999999;box-shadow:0 4px 12px rgba(0,0,0,0.3);display:flex;align-items:center;gap:8px;font-family:Inter,sans-serif;';
+      b.innerHTML = '<span>● CHẾ ĐỘ MÔ PHỎNG DEMO</span><a href="?mode=online" style="color:#fff;text-decoration:underline;font-size:11px;opacity:0.9;margin-left:4px;">Chuyển Online</a>';
+      document.body.appendChild(b);
+    }
+  }
+}
+if (typeof window !== 'undefined') {
+  window.addEventListener('DOMContentLoaded', renderDemoModeBanner);
+}
+
 async function apiLogin(usernameOrEmail, password) {
   const cleanInput = (usernameOrEmail || '').trim().toLowerCase();
 
-  // 1. Thử kết nối Backend API C# thật (nếu máy chủ đang bật)
-  try {
-    const res = await fetchWithTimeout(`${API_BASE}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ usernameOrEmail, password })
-    });
-    const json = await res.json().catch(() => null);
-    if (res.ok && json && json.success) {
-      return json;
+  // 1. Chế độ Online chính thức: Bắt buộc kết nối Backend C# thật
+  if (!isExplicitDemoMode()) {
+    try {
+      const res = await fetchWithTimeout(`${API_BASE}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usernameOrEmail, password })
+      });
+      const json = await res.json().catch(() => null);
+      if (res.ok && json && json.success) {
+        return json;
+      }
+      return {
+        success: false,
+        message: json?.message || 'Tài khoản hoặc mật khẩu không chính xác.'
+      };
+    } catch (e) {
+      // Khi ở phiên thật, nếu API lỗi mạng -> DỪNG LẠI Ở LỖI, KHÔNG tự ý rơi vào chế độ demo
+      return {
+        success: false,
+        message: 'Không thể kết nối đến máy chủ Tòa soạn (Backend API). Vui lòng kiểm tra lại dịch vụ Backend đang chạy tại http://localhost:5000 hoặc chuyển sang chế độ Demo mô phỏng (?mode=demo).'
+      };
     }
-    // Nếu Backend phản hồi mã 400 hoặc 401 thì báo lỗi đúng từ server
-    if (res.status === 400 || res.status === 401) {
-      return json || { success: false, message: 'Tài khoản hoặc mật khẩu không chính xác.' };
-    }
-  } catch (e) {
-    console.log('Backend offline hoặc chạy Vercel: Kích hoạt Standalone Auth Engine');
   }
 
-  // 2. Kích hoạt Standalone Engine dự phòng khi Backend tắt hoặc chạy trên Vercel / điện thoại
+  // 2. Chế độ Demo mô phỏng (Chỉ chạy khi có cờ ?mode=demo hoặc trên Vercel)
   let localUsers = [];
   try { localUsers = JSON.parse(localStorage.getItem('huit_standalone_users') || '[]'); } catch(e){}
 
@@ -224,15 +265,11 @@ async function apiLogin(usernameOrEmail, password) {
   }
 
   if (matched) {
-    // Lưu ý: Đối với tài khoản mẫu trong chế độ trình diễn (Standalone Demo),
-    // chuỗi mã hóa btoa đóng vai trò che giấu trực quan (Base64 obfuscation) trong phiên lưu trữ trình duyệt,
-    // không phải là hàm băm mật mã học (cryptographic hash). Cơ chế băm mật khẩu bảo mật chuẩn BCrypt
-    // được thực thi chính thức và duy nhất tại tầng máy chủ Backend C# (HuitJournal.Api/Services/AuthService.cs).
     const inputHash = 'bcr_sha_' + btoa(unescape(encodeURIComponent(password || '')));
     if (matched.passwordHash && matched.passwordHash !== inputHash) {
-      return { success: false, message: 'Mật khẩu truy cập không chính xác.' };
+      return { success: false, message: 'Mật khẩu truy cập Demo không chính xác.' };
     } else if (matched.password && matched.password !== password) {
-      return { success: false, message: 'Mật khẩu truy cập không chính xác.' };
+      return { success: false, message: 'Mật khẩu truy cập Demo không chính xác.' };
     }
     const token = 'standalone_token_' + Date.now();
     const cleanUser = { ...matched };
@@ -247,54 +284,55 @@ async function apiLogin(usernameOrEmail, password) {
       success: true,
       token: token,
       user: userObj,
-      message: `Đăng nhập thành công! Xin chào: ${matched.hoTen}.`
+      message: `Đăng nhập thành công (Chế độ mô phỏng Demo)! Xin chào: ${matched.hoTen}.`
     };
   }
 
   return {
     success: false,
-    message: 'Tài khoản hoặc mật khẩu không chính xác. Bạn có thể đăng ký tài khoản mới hoặc dùng tài khoản mẫu.'
+    message: 'Tài khoản hoặc mật khẩu không chính xác trong kho tài khoản Demo.'
   };
 }
 
 async function apiRegister(data) {
-  // 1. Thử gửi lên Backend C# thật
-  try {
-    const res = await fetchWithTimeout(`${API_BASE}/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    });
-    const json = await res.json().catch(() => null);
-    if (res.ok && json && json.success) {
-      return json;
+  // 1. Chế độ Online chính thức: Bắt buộc gửi lên Backend C# thật
+  if (!isExplicitDemoMode()) {
+    try {
+      const res = await fetchWithTimeout(`${API_BASE}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const json = await res.json().catch(() => null);
+      if (res.ok && json && json.success) {
+        return json;
+      }
+      return {
+        success: false,
+        message: json?.message || 'Không thể đăng ký tài khoản. Vui lòng kiểm tra lại thông tin.'
+      };
+    } catch (e) {
+      // Khi phiên thật gặp lỗi API -> DỪNG LẠI Ở LỖI, TUYỆT ĐỐI KHÔNG ghi thông tin thật vào demo localStorage
+      return {
+        success: false,
+        message: 'Không thể kết nối đến máy chủ Tòa soạn để ghi nhận đăng ký. Vui lòng kiểm tra lại kết nối mạng hoặc thử lại sau.'
+      };
     }
-    if (res.status === 400) {
-      return json || { success: false, message: 'Thông tin đăng ký không hợp lệ.' };
-    }
-  } catch (e) {
-    console.log('Backend offline hoặc chạy Vercel: Kích hoạt Standalone Register Engine');
   }
 
-  // 2. Kích hoạt Standalone Register Engine (Tạo tài khoản chuẩn quy chế học thuật HUIT)
+  // 2. Chế độ Demo mô phỏng (Chỉ chạy khi có cờ ?mode=demo hoặc trên Vercel)
   const newUserId = Math.floor(Math.random() * 90000) + 1000;
   const hocVi = data.hocVi || 'Không';
   const hocHam = data.hocHam || 'Không';
 
-  const isEligibleReviewer = (data.dangKyPhanBien) && (
-    ['Thạc sĩ', 'Tiến sĩ', 'TSKH'].includes(hocVi) ||
-    ['Phó giáo sư', 'Giáo sư'].includes(hocHam)
-  );
-
-  const vaiTros = isEligibleReviewer
-    ? ['Tác giả', 'Chuyên gia phản biện', 'Độc giả']
-    : ['Tác giả', 'Độc giả'];
+  // Theo chuẩn COPE: Người đăng ký mới chỉ nhận vai trò Tác giả và Độc giả
+  const vaiTros = ['Tác giả', 'Độc giả'];
 
   const fullName = (data.hoDem ? (data.hoDem + ' ' + data.ten) : (data.hoTen || '')).trim();
 
   const newUser = {
     maNguoiDung: newUserId,
-    hoTen: fullName || 'Tác giả HUIT',
+    hoTen: fullName || 'Tác giả HUIT (Demo)',
     tenDangNhap: data.tenDangNhap || (data.email ? data.email.split('@')[0] : 'user' + newUserId),
     email: data.email,
     passwordHash: 'bcr_sha_' + btoa(unescape(encodeURIComponent(data.password || ''))),
@@ -315,15 +353,14 @@ async function apiRegister(data) {
     chucVu: vaiTros.join(', ')
   };
 
-  // Lưu trữ cục bộ trên thiết bị
   let localUsers = [];
   try { localUsers = JSON.parse(localStorage.getItem('huit_standalone_users') || '[]'); } catch(e){}
   localUsers.push(newUser);
   localStorage.setItem('huit_standalone_users', JSON.stringify(localUsers));
 
   const token = 'standalone_token_' + Date.now();
-  const reviewerNotice = (data.dangKyPhanBien && !isEligibleReviewer)
-    ? ' Lưu ý: Vai trò Chuyên gia phản biện yêu cầu học vị từ Thạc sĩ trở lên theo quy chế của Tạp chí.'
+  const reviewerNotice = data.dangKyPhanBien
+    ? ' (Đơn xin tham gia phản biện đã được chuyển đến Ban biên tập để thẩm định hồ sơ).'
     : '';
 
   const cleanUser = { ...newUser };
@@ -333,7 +370,7 @@ async function apiRegister(data) {
     success: true,
     token: token,
     user: cleanUser,
-    message: `Đăng ký tài khoản thành công! Xin chào mừng: ${newUser.hoTen}.${reviewerNotice}`
+    message: `Đăng ký tài khoản thành công (Chế độ mô phỏng Demo)! Xin chào mừng: ${newUser.hoTen}.${reviewerNotice}`
   };
 }
 
