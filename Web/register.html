@@ -1753,7 +1753,7 @@
     } catch (e) {
       select.replaceChildren(new Option('Không tải được chuyên ngành từ tòa soạn', ''));
       select.disabled = true;
-      document.getElementById('regChuyenNganhError').textContent = 'Không kết nối được dữ liệu chuyên ngành. Vui lòng tải lại trang sau khi dịch vụ tòa soạn hoạt động.';
+      showFieldErrors({ regChuyenNganh: 'Lĩnh vực chuyên môn: Không kết nối được dữ liệu chuyên ngành. Vui lòng tải lại trang sau khi dịch vụ tòa soạn hoạt động.' });
     }
   }
 
