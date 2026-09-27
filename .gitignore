@@ -1,7 +1,55 @@
-.DS_Store
-Thumbs.db
-*.log
+# Backup archives (keep root clean for git)
+*.rar
+*.zip
+*.7z
+*.bak
+*.dacpac
+*.bacpac
 
-.vercel
+# Local credentials and private data
+**/appsettings.Local.json
+**/appsettings.*.local.json
+*.env
+.env.*
+.env
+.agents/
+Sao_Luu/
+docs/De_Cuong_Va_Bao_Cao/
+docs/Trich_Xuat_Tam/
+HoTro/GOI_MANG_DI_TRUONG_DU_LIEU/
+HoTro/GOI_MANG_DI_TRUONG_DANH_SACH_SHA256.txt
+TOAN_BO_DU_AN_VA_SOURCE_CODE_KLTN.txt
+TONG_QUAN_DU_AN_KLTN.txt
+Web/.git-web-backup/
+
+# OS files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# Build artifacts (.NET / Visual Studio)
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Web & Deployment
+.vercel/
 node_modules/
-tests/reviewer-artifacts/
+__pycache__/
+.pytest_cache/
+*.pyc
+Web/tests/shot_*.png
+tests/shot_*.png
+dist/
+Backend/HuitJournal.Api/Uploads/
+Backend/HuitJournal.Api/wwwroot/uploads/
+Web/uploads/
+
+# Temporary caches
+*.cache
+fontcache/

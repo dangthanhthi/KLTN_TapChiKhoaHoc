@@ -1,33 +1,15 @@
-# Hệ thống Tạp chí Khoa học & Xuất bản Học thuật (Scientific Journal System)
+# HUIT Journal of Science — Khóa luận tốt nghiệp
 
-Website chính thức và Cổng thông tin điện tử của Tạp chí Khoa học, phục vụ quy trình xuất bản học thuật trực tuyến: giới thiệu, công bố bài báo, kho lưu trữ, nộp bản thảo và bàn làm việc tác giả.
+Mã nguồn gồm `Web/` (HTML/CSS/JS), `Backend/HuitJournal.Api/` (ASP.NET Core .NET 9), `Winform/` (ứng dụng tòa soạn), các script SQL và tài liệu trong `HoTro/`.
 
-## 🚀 Các trang tính năng chính
-- **Trang chủ Tạp chí (`UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html`)**: Ấn phẩm mới phát hành, tiêu điểm nghiên cứu, bài báo mới nhất, tra cứu chuyên ngành.
-- **Giới thiệu Tạp chí (`about.html`)**: Tôn chỉ mục đích, mã chuẩn quốc tế ISSN / e-ISSN, định danh DOI CrossRef, chỉ mục dữ liệu Google Scholar, VCI, ACI.
-- **Chính sách xuất bản & Đạo đức (`publishing-policy.html`)**: Bản quyền truy cập mở Open Access CC-BY, quy định liêm chính, chống đạo văn, bình duyệt kín 2 chiều.
-- **Hội đồng biên tập (`editorial-board.html`)**: Danh sách Tổng biên tập, Phó Tổng biên tập, Thư ký tòa soạn và Hội đồng chuyên ngành.
-- **Quy trình & Biểu mẫu (`guidelines.html`)**: 6 giai đoạn nộp - biên tập - phản biện - xuất bản; tải biểu mẫu bản thảo mẫu Word (`.docx`).
-- **Kho lưu trữ chuyên ngành (`archives.html`)**: Tra cứu toàn bộ các số đã xuất bản qua các năm theo từng chuyên ngành.
-- **Chi tiết bài báo (`article-detail.html`)**: Tải PDF, trích dẫn học thuật tự động (BibTeX, RIS, APA), thông tin tác giả, chỉ số trích dẫn.
-- **Bàn làm việc Tác giả (`profile.html`)**: Theo dõi tiến trình 6 giai đoạn xử lý bản thảo thời gian thực, gửi bản thảo chỉnh sửa, cập nhật ORCID.
-- **Nộp bài trực tuyến (`submit-paper.html`)**: Biểu mẫu nộp bài 5 bước chuẩn hóa.
-- **Đăng nhập (`login.html`) & Đăng ký (`register.html`)**: Quản lý phiên làm việc tác giả và bạn đọc.
+## Chạy trên máy phát triển
 
-## 🛠️ Công nghệ sử dụng
-- **Frontend**: HTML5, CSS3 hiện đại, Vanilla JavaScript (Không phụ thuộc thư viện nặng).
-- **Thiết kế**: Chuẩn mực Typography học thuật (`Source Serif 4` & `Inter`), responsive hoàn hảo, hỗ trợ High-DPI.
-- **Triển khai (Deployment)**: Vercel Static Hosting.
+1. Khôi phục CSDL `QL_TapChiKhoaHoc` từ bản sao lưu **cục bộ** hoặc các script SQL phù hợp. Áp dụng `HoTro/Migration_20260927_EmailVerificationSchema.sql` cho luồng xác nhận email.
+2. Tạo `Backend/HuitJournal.Api/appsettings.Local.json` trên máy, đặt `Jwt:Key`, `EmailVerification:HmacSecretKey`, SMTP và chuỗi kết nối nếu khác mặc định. Tệp này bị Git bỏ qua. Có thể bắt đầu từ `Backend/HuitJournal.Api/appsettings.json`; không chép bí mật vào file được theo dõi.
+3. Chạy `Chay_Backend.bat`, `Chay_Web.bat` hoặc chạy Web trực tiếp từ Backend ở `http://localhost:5000`.
 
-## 👤 Phân công thực hiện
-- **Đặng Thành Thi:** Phụ trách toàn diện lập trình phân hệ Web (Frontend HTML/CSS/JS, trải nghiệm người dùng, cơ chế Hybrid Dual-Engine và kiểm thử tự động Web E2E).
-- Các phân hệ khác (WinForms Desktop) do thành viên khác trong nhóm phụ trách độc lập.
+## Triển khai
 
+GitHub chứa mã nguồn, script và tài liệu dự án. Tệp `.bak`, `.zip`, thư mục Uploads và cấu hình bí mật được giữ ngoài Git. Vercel xuất bản thư mục `dist/` do `scripts/build-web.mjs` tạo từ các tài nguyên Web cần thiết, không đưa SQL/test lên website; API .NET và SQL Server cần máy chủ riêng. Khi API có HTTPS, đặt biến môi trường Vercel `HUIT_API_ORIGIN=https://api.ten-mien-cua-ban` rồi redeploy. Cấu hình sẽ chuyển `/api/*` và ảnh đại diện công khai `/uploads/avatars/*` từ Vercel đến máy chủ API; Web vẫn gọi `/api` cùng origin.
 
-## Bàn làm việc phản biện riêng (24/09/2026)
-
-Trang `reviewer.html` dành cho tài khoản có vai trò phản biện. Truy cập qua menu tài khoản hoặc trang cá nhân. Có danh sách công việc, tìm kiếm/bộ lọc, hạn xử lý, lịch sử đánh giá, phiếu BM-04, nháp trong phiên, xuất bản ghi TXT và lịch ICS.
-
-Phiên thật xác minh vai trò bằng API, không tự chuyển sang dữ liệu mẫu khi lỗi hoặc danh sách rỗng. Phiên demo có nhãn riêng và phải chủ động nạp dữ liệu mẫu; dữ liệu tách theo tài khoản. Không coi phân quyền trên trình duyệt là bảo mật thay thế máy chủ.
-
-Phạm vi của Đặng Thành Thi: lập trình phân hệ Web; không sửa WinForms, SQL hoặc Backend trong đợt này. Công nghệ Web được chọn theo khả năng bảo trì và hợp đồng API, không bắt buộc dùng cùng framework với Desktop. Chi tiết ở `REVIEWER_WEB_HANDOFF.md`.
+Hướng dẫn máy chủ tại `deploy/vps/README.md`. Bản Web Vercel chưa thể dùng dữ liệu thật hoặc gửi mã email cho đến khi máy chủ API và CSDL được triển khai, tên miền HTTPS hoạt động, dữ liệu đã được chuyển an toàn và `HUIT_API_ORIGIN` được cấu hình.

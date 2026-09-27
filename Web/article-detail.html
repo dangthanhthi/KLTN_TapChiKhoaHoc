@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chi tiết bài báo · Tạp chí Khoa học &amp; Công nghệ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="journal-interactions.css">
+
+<style>
+  :root {
+    --serif: 'Source Serif 4', Georgia, serif;
+    --sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --sky-050: #F3F8FD;
+    --sky-100: #E4EFFA;
+    --sky-200: #C9DFF4;
+    --sky-400: #8FB8E3;
+    --sky-500: #6699D1;
+    --sky-600: #4C7FB8;
+    --sky-700: #3A6497;
+    --ink-900: #16202B;
+    --ink-700: #3D4A57;
+    --ink-500: #6B7684;
+    --ink-300: #A9B2BC;
+    --white: #FFFFFF;
+    --line: #E1E9F1;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--sans);color:var(--ink-900);background:#fff;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:1360px;margin:0 auto;padding:0 20px;}
+
+  /* ---------- BREADCRUMB & METADATA BAR ---------- */
+  .breadcrumb-bar{background:var(--sky-050);border-bottom:1px solid var(--line);padding:12px 0;font-size:12px;color:var(--ink-500);}
+  .breadcrumb-bar a{color:#1da1f2;font-weight:500;}
+  .breadcrumb-bar a:hover{text-decoration:underline;}
+  .breadcrumb-bar span.sep{margin:0 8px;color:var(--sky-200);}
+
+  /* ---------- ARTICLE DETAIL LAYOUT ---------- */
+  .detail-grid{display:grid;grid-template-columns:1fr 340px;gap:48px;padding:36px 0 60px;}
+
+  /* Main Article Column */
+  .article-header{border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:28px;}
+  .article-badge{display:inline-block;background:var(--sky-050);color:#1da1f2;border:1px solid var(--sky-200);font-size:11px;font-weight:700;letter-spacing:.05em;padding:4px 10px;border-radius:3px;margin-bottom:14px;text-transform:uppercase;}
+  .article-title-vn{font-family:var(--serif);font-size:32px;line-height:1.26;font-weight:600;color:var(--ink-900);margin-bottom:12px;}
+  .article-title-en{font-family:var(--serif);font-size:22px;line-height:1.32;font-weight:400;color:var(--ink-700);margin-bottom:20px;}
+  
+  .author-list{display:flex;flex-wrap:wrap;gap:18px;margin-bottom:16px;font-size:14px;}
+  .author-item{display:flex;align-items:center;gap:6px;}
+  .author-name{font-weight:700;color:var(--ink-900);}
+  .author-affiliation{font-size:12px;color:var(--ink-500);background:var(--sky-050);padding:2px 6px;border-radius:3px;border:1px solid var(--sky-200);}
+  .author-orcid{color:#a6ce39;font-size:11px;font-weight:700;display:inline-flex;align-items:center;}
+
+  .article-pub-meta{display:flex;flex-wrap:wrap;gap:20px;font-size:12.5px;color:var(--ink-500);background:#fafcff;padding:12px 16px;border-radius:4px;border:1px solid var(--line);}
+  .article-pub-meta strong{color:var(--ink-700);}
+  .doi-link{color:#1da1f2;font-weight:600;}
+  .doi-link:hover{text-decoration:underline;}
+
+  /* Ảnh minh họa bài nghiên cứu nổi bật (Hero Figure) */
+  .article-hero-figure{margin:24px 0 28px;border-radius:6px;overflow:hidden;border:1px solid var(--line);background:#000;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+  .article-hero-figure img{width:100%;height:360px;object-fit:cover;display:block;}
+  .article-hero-figure figcaption{padding:10px 16px;background:#f8fafc;border-top:1px solid var(--line);font-size:12px;color:var(--ink-500);display:flex;justify-content:space-between;align-items:center;}
+  .article-hero-figure figcaption span.source{color:var(--ink-700);font-weight:600;}
+
+  /* Action Toolbar (Tải PDF, Trích dẫn, Chia sẻ) */
+  .action-toolbar{display:flex;gap:12px;margin:24px 0 32px;}
+  .btn-download-pdf{background:#1da1f2;color:#ffffff;padding:10px 22px;font-size:13.5px;font-weight:700;border-radius:4px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 2px 6px rgba(29,161,242,0.25);transition:all .2s;}
+  .btn-download-pdf:hover{background:#0d8ddc;transform:translateY(-1px);}
+  .btn-cite{background:#ffffff;color:var(--ink-700);border:1px solid var(--line);padding:10px 18px;font-size:13px;font-weight:600;border-radius:4px;display:inline-flex;align-items:center;gap:6px;transition:all .2s;}
+  .btn-cite:hover{border-color:#1da1f2;color:#1da1f2;background:var(--sky-050);}
+
+  /* Content Sections */
+  .content-block{margin-bottom:32px;}
+  .block-heading{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--ink-900);margin-bottom:12px;padding-bottom:6px;position:relative;}
+  .block-heading::after{content:'';position:absolute;left:0;bottom:0;width:30px;height:2px;background:#1da1f2;}
+  
+  .abstract-body{font-size:14.5px;line-height:1.68;color:var(--ink-700);text-align:justify;margin-bottom:14px;}
+  .keywords-tag-list{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12.5px;margin-top:10px;}
+  .keyword-label{font-weight:700;color:var(--ink-900);}
+  .kw-tag{background:var(--sky-050);border:1px solid var(--sky-200);padding:3px 10px;border-radius:3px;color:var(--ink-700);}
+
+  /* References Box */
+  .ref-list{padding-left:22px;font-size:13px;line-height:1.65;color:var(--ink-700);}
+  .ref-list li{margin-bottom:10px;}
+
+  /* ---------- SIDEBAR COLUMN ---------- */
+  .side-card{background:#ffffff;border:1px solid var(--line);border-radius:4px;padding:20px;margin-bottom:28px;}
+  .side-card-title{font-family:var(--serif);font-size:16px;font-weight:600;color:var(--ink-900);margin-bottom:14px;padding-bottom:8px;position:relative;}
+  .side-card-title::after{content:'';position:absolute;left:0;bottom:0;width:32px;height:2px;background:#1da1f2;}
+
+  /* Journal Issue Mini Box */
+  .issue-mini-info{display:flex;gap:14px;align-items:flex-start;margin-bottom:14px;}
+  .issue-mini-cover{width:64px;height:88px;border:1px solid var(--sky-200);border-radius:3px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,0.08);}
+  .issue-mini-cover img{width:100%;height:100%;object-fit:cover;display:block;}
+  .issue-mini-meta h4{font-family:var(--serif);font-size:15px;font-weight:600;margin-bottom:4px;}
+  .issue-mini-meta p{font-size:12px;color:var(--ink-500);line-height:1.4;}
+
+  /* Article History Timeline */
+  .timeline-list{list-style:none;padding:0;margin:0;}
+  .timeline-item{position:relative;padding-left:20px;padding-bottom:14px;font-size:12.5px;}
+  .timeline-item:last-child{padding-bottom:0;}
+  .timeline-item::before{content:'';position:absolute;left:4px;top:6px;width:7px;height:7px;border-radius:50%;background:#1da1f2;}
+  .timeline-item::after{content:'';position:absolute;left:7px;top:13px;width:1px;height:calc(100% - 7px);background:var(--sky-200);}
+  .timeline-item:last-child::after{display:none;}
+  .timeline-date{font-weight:700;color:var(--ink-900);}
+  .timeline-event{color:var(--ink-500);}
+
+  /* Metric Counter */
+  .metrics-box{display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:center;padding:12px;background:var(--sky-050);border:1px solid var(--sky-200);border-radius:4px;}
+  .metric-val{font-size:22px;font-weight:700;color:#1da1f2;font-family:var(--serif);}
+  .metric-lbl{font-size:11px;color:var(--ink-500);text-transform:uppercase;font-weight:600;}
+
+  /* Related Papers */
+  .related-item{padding:10px 0;border-bottom:1px solid var(--line);font-size:13px;}
+  .related-item:last-child{border-bottom:none;padding-bottom:0;}
+  .related-item a{color:var(--ink-900);font-weight:600;line-height:1.4;display:block;margin-bottom:4px;}
+  .related-item a:hover{color:#1da1f2;}
+  .related-item span{font-size:11.5px;color:var(--ink-500);}
+
+  /* ---------- FOOTER (#1da1f2) ---------- */
+  footer{background:#1da1f2;padding:32px 24px;text-align:center;font-size:13px;color:#ffffff;box-shadow:0 -2px 10px rgba(29,161,242,0.15);}
+  footer .flinks{margin-top:12px;}
+  footer .flinks a{margin:0 14px;color:rgba(255,255,255,0.9);font-weight:600;transition:all .2s;}
+  footer .flinks a:hover{color:#ffffff;text-decoration:underline;}
+</style>
+</head>
+<body>
+
+<!-- KHỐI HEADER CHUNG (SHARED LAYOUT) -->
+<div id="huit-header" data-active="article"></div>
+
+<!-- BREADCRUMB -->
+<div class="breadcrumb-bar">
+  <div class="wrap" id="article-breadcrumb-wrap">
+    <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Trang chủ</a>
+    <span class="sep">/</span>
+    <a href="archives.html" id="bc-major">Chuyên ngành</a>
+    <span class="sep">/</span>
+    <a href="issue-detail.html" id="bc-issue">Số tạp chí</a>
+    <span class="sep">/</span>
+    <span style="color:var(--ink-700);">Chi tiết bài báo</span>
+  </div>
+</div>
+
+<!-- NỘI DUNG CHI TIẾT BÀI BÁO -->
+<div class="detail-grid wrap">
+  
+  <!-- CỘT NỘI DUNG CHÍNH (TRÁI) -->
+  <main>
+    <div class="article-header">
+      <!-- ẢNH BÌA / MINH HỌA BÀI NGHIÊN CỨU (ẨN MẶC ĐỊNH NẾU KHÔNG CÓ) -->
+      <figure id="article-hero-figure" class="article-hero-figure" style="display:none;margin-top:0;margin-bottom:24px;">
+        <img id="article-hero-img" src="" alt="Minh họa bài nghiên cứu">
+        <figcaption id="article-hero-caption">
+          <span id="article-hero-title"></span>
+          <span class="source" id="article-hero-source">Nhóm tác giả cung cấp</span>
+        </figcaption>
+      </figure>
+
+      <span class="article-badge">BÀI BÁO NGHIÊN CỨU GỐC (ORIGINAL RESEARCH)</span>
+      <h1 class="article-title-vn">Đang nạp tiêu đề bài báo...</h1>
+      <h2 class="article-title-en" style="display:none;"></h2>
+
+      <div class="author-list" style="display:flex;flex-direction:column;gap:10px;">
+        <!-- Danh sách tác giả render từ CSDL -->
+      </div>
+
+      <div class="article-pub-meta">
+        <div><strong>Tạp chí:</strong> Tạp chí Khoa học Đại học Công Thương</div>
+        <div><strong>Xuất bản:</strong> Đang cập nhật</div>
+        <div><strong>Chỉ số:</strong> p-ISSN 3030-4113 · e-ISSN 3030-413X</div>
+        <div><strong>Trang:</strong> Toàn văn</div>
+        <div><strong>DOI:</strong> Đang cấp mã DOI</div>
+        <div><strong>Bản quyền:</strong> © Trường ĐH Công Thương TP.HCM (CC BY-NC 4.0)</div>
+      </div>
+
+      <!-- THANH THAO TÁC -->
+      <div class="action-toolbar" style="margin-bottom:0;">
+        <a href="#download-pdf" class="btn-download-pdf">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Tải toàn văn PDF
+        </a>
+        <button type="button" class="btn-cite">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg>
+          Trích dẫn (BibTeX / RIS)
+        </button>
+      </div>
+    </div>
+
+    <!-- TÓM TẮT TIẾNG VIỆT -->
+    <section class="content-block" id="block-abstract-vn">
+      <h3 class="block-heading">Tóm tắt (Abstract - Vietnamese)</h3>
+      <p class="abstract-body" id="article-abstract-vn">
+        Đang nạp tóm tắt từ cơ sở dữ liệu...
+      </p>
+      <div class="keywords-tag-list" id="article-keywords-vn"></div>
+    </section>
+
+    <!-- TÓM TẮT TIẾNG ANH -->
+    <section class="content-block" id="block-abstract-en" style="display:none;">
+      <h3 class="block-heading">Abstract (English)</h3>
+      <p class="abstract-body" id="article-abstract-en"></p>
+      <div class="keywords-tag-list" id="article-keywords-en"></div>
+    </section>
+
+    <!-- TÀI LIỆU THAM KHẢO -->
+    <section class="content-block" id="block-references" style="display:none;">
+      <h3 class="block-heading">Tài liệu tham khảo (References)</h3>
+      <div id="article-references-content"></div>
+    </section>
+  </main>
+
+  <!-- CỘT PHỤ (PHẢI) -->
+  <aside>
+    <!-- Số tạp chí chứa bài viết -->
+    <div class="side-card" id="side-issue-card">
+      <h3 class="side-card-title">Ấn phẩm phát hành</h3>
+      <div class="issue-mini-info">
+        <div class="issue-mini-cover">
+          <img id="side-issue-cover" src="assets/images/cover_huit_vol26_no3e.jpg" alt="Bìa số báo" onerror="this.src='assets/images/cover_huit_vol26_no3e.jpg'">
+        </div>
+        <div class="issue-mini-meta">
+          <h4 id="side-issue-title">Đang nạp số tạp chí...</h4>
+          <p id="side-issue-theme">Công trình nghiên cứu khoa học</p>
+          <p style="margin-top:4px;"><a id="side-issue-link" href="issue-detail.html" style="color:#1da1f2;font-weight:700;font-size:12px;">Xem toàn bộ mục lục số này →</a></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Thống kê tương tác -->
+    <div class="side-card">
+      <h3 class="side-card-title">Chỉ số bài viết</h3>
+      <div class="metrics-box">
+        <div>
+          <div class="metric-val">1.420</div>
+          <div class="metric-lbl">Lượt xem tóm tắt</div>
+        </div>
+        <div>
+          <div class="metric-val">580</div>
+          <div class="metric-lbl">Tải bản PDF</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dòng thời gian thẩm định (Quy trình xuất bản 6 giai đoạn) -->
+    <div class="side-card">
+      <h3 class="side-card-title">Lịch sử thẩm định bản thảo</h3>
+      <div class="timeline-list" id="article-timeline-list">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- Bài viết liên quan -->
+    <div class="side-card">
+      <h3 class="side-card-title">Bài báo cùng chuyên mục</h3>
+      <div id="side-related-articles">
+        <div style="font-size:12.5px;color:var(--ink-500);padding:8px 0;">Đang nạp bài báo liên quan...</div>
+      </div>
+    </div>
+  </aside>
+
+</div>
+
+<!-- KHỐI FOOTER CHUNG (SHARED LAYOUT) -->
+<div id="huit-footer"></div>
+
+<script src="journal-layout.js"></script>
+<script src="journal-interactions.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const params = new URLSearchParams(window.location.search);
+  let articleId = params.get('id');
+
+  // Nếu không có id, nạp bài báo mới nhất từ CSDL
+  if (!articleId && typeof apiGetLatestArticles === 'function') {
+    try {
+      const latest = await apiGetLatestArticles(1);
+      if (latest && latest.length > 0) {
+        articleId = latest[0].maBaiBao;
+      }
+    } catch (e) {
+      console.warn('Lỗi lấy bài báo mới nhất:', e);
+    }
+  }
+
+  if (articleId && !isNaN(parseInt(articleId, 10)) && typeof apiGetPublicArticle === 'function') {
+    try {
+      const art = await apiGetPublicArticle(parseInt(articleId, 10));
+      if (art) {
+        document.title = `${art.tieuDe} · Tạp chí Khoa học Đại học Công Thương`;
+        if (typeof generateArticleCitations === 'function') generateArticleCitations(art);
+        
+        // 1. Breadcrumb
+        const bcMajor = document.getElementById('bc-major');
+        if (bcMajor) {
+          bcMajor.href = `archives.html?major=${encodeURIComponent(art.chuyenNganh)}`;
+          bcMajor.innerText = art.chuyenNganh;
+        }
+        const bcIssue = document.getElementById('bc-issue');
+        if (bcIssue) {
+          bcIssue.href = art.maSoTapChi ? `issue-detail.html?id=${art.maSoTapChi}` : 'archives.html';
+          bcIssue.innerText = art.tenSoTapChi || `Tập ${art.tap || 15}, Số ${art.so || 42} (${art.nam || 2026})`;
+        }
+
+        // 2. Hero figure (chỉ hiển thị nếu bài báo có hình minh họa thực tế)
+        const heroFigure = document.getElementById('article-hero-figure');
+        if (heroFigure) {
+          if (art.anhMinhHoaUrl) {
+            heroFigure.style.display = 'block';
+            const heroImg = document.getElementById('article-hero-img');
+            if (heroImg) heroImg.src = art.anhMinhHoaUrl;
+            const heroTitle = document.getElementById('article-hero-title');
+            if (heroTitle) heroTitle.innerText = art.tieuDeMinhHoa || 'Hình 1: Dữ liệu minh họa công trình nghiên cứu';
+          } else {
+            heroFigure.style.display = 'none';
+          }
+        }
+
+        // 3. Tiêu đề tiếng Việt & tiếng Anh
+        const titleVn = document.querySelector('.article-title-vn');
+        if (titleVn) titleVn.innerText = art.tieuDe;
+
+        const titleEn = document.querySelector('.article-title-en');
+        if (titleEn) {
+          if (art.tieuDeTiengAnh && art.tieuDeTiengAnh.trim()) {
+            titleEn.style.display = 'block';
+            titleEn.innerText = art.tieuDeTiengAnh;
+          } else {
+            titleEn.style.display = 'none';
+          }
+        }
+
+        // 4. Tóm tắt tiếng Việt & Từ khóa
+        const absVi = document.getElementById('article-abstract-vn') || document.querySelector('.abstract-body');
+        if (absVi) absVi.innerText = art.tomTat || 'Chưa có tóm tắt tiếng Việt.';
+
+        const kwListVi = document.getElementById('article-keywords-vn');
+        if (kwListVi) {
+          if (art.tuKhoa) {
+            const kwItems = art.tuKhoa.split(/[,;]/).map(k => k.trim()).filter(Boolean);
+            kwListVi.innerHTML = '<span class="keyword-label">Từ khóa:</span> ' + 
+              kwItems.map(k => `<span class="kw-tag">${k}</span>`).join(' ');
+          } else {
+            kwListVi.innerHTML = '';
+          }
+        }
+
+        // 5. Tóm tắt tiếng Anh & Từ khóa tiếng Anh
+        const blockEn = document.getElementById('block-abstract-en');
+        if (blockEn) {
+          if (art.tomTatTiengAnh && art.tomTatTiengAnh.trim()) {
+            blockEn.style.display = 'block';
+            const absEn = document.getElementById('article-abstract-en');
+            if (absEn) absEn.innerText = art.tomTatTiengAnh;
+          } else {
+            blockEn.style.display = 'none';
+          }
+        }
+
+        // 6. Tài liệu tham khảo
+        const blockRef = document.getElementById('block-references');
+        if (blockRef) {
+          if (art.taiLieuThamKhao && art.taiLieuThamKhao.trim()) {
+            blockRef.style.display = 'block';
+            const refContent = document.getElementById('article-references-content');
+            if (refContent) refContent.innerHTML = art.taiLieuThamKhao;
+          } else {
+            blockRef.style.display = 'none';
+          }
+        }
+
+        // 7. Danh sách tác giả
+        const authorList = document.querySelector('.author-list');
+        const esc = typeof escapeHtml === 'function' ? escapeHtml : (t) => t || '';
+        if (authorList && art.tacGias && art.tacGias.length > 0) {
+          authorList.innerHTML = art.tacGias.map((tg, idx) => `
+            <div class="author-item" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;">
+              <span class="author-name" style="font-size:14.5px;">${esc(tg.hoTen)}</span>
+              <span class="author-affiliation">${esc(tg.donVi || 'Trường Đại học Công Thương TP.HCM')}</span>
+              ${tg.maORCID ? `
+                <a href="https://orcid.org/${encodeURIComponent(tg.maORCID)}" target="_blank" rel="noopener" class="author-orcid" title="Hồ sơ ORCID: ${esc(tg.maORCID)}">
+                  <span style="background:#a6ce39;color:#fff;border-radius:50%;width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;margin-right:2px;">iD</span>
+                  ${esc(tg.maORCID)}
+                </a>` : ''}
+              ${tg.laTacGiaLienHe ? `<span style="background:#1da1f2;color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px;">✉ Tác giả liên hệ</span>` : `<span style="background:#f1f5f9;color:#475569;font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px;">Đồng tác giả (${idx + 1})</span>`}
+              ${tg.daLienKetTaiKhoan ? `<span style="background:#ecfdf5;color:#059669;font-size:11px;font-weight:600;padding:1px 6px;border-radius:3px;border:1px solid #a7f3d0;">✓ Tài khoản hệ thống</span>` : ''}
+            </div>
+          `).join('');
+        }
+
+        // 8. Siêu dữ liệu xuất bản
+        const pubMeta = document.querySelector('.article-pub-meta');
+        if (pubMeta) {
+          pubMeta.innerHTML = `
+            <div><strong>Tạp chí:</strong> Tạp chí Khoa học Đại học Công Thương</div>
+            <div><strong>Xuất bản:</strong> ${esc(art.tenSoTapChi || `Tập ${art.tap || 15}, Số ${art.so || 42} (${art.nam || 2026})`)}</div>
+            <div><strong>Chỉ số:</strong> p-ISSN 3030-4113 · e-ISSN 3030-413X</div>
+            <div><strong>Trang:</strong> ${art.trangBatDau && art.trangKetThuc ? `${esc(art.trangBatDau)}–${esc(art.trangKetThuc)}` : 'Toàn văn'}</div>
+            <div><strong>DOI:</strong> <a href="javascript:void(0)" onclick="showToast('Mã định danh DOI: ' + (window.escapeHtml ? window.escapeHtml('${esc(art.maDOI || 'Đang cập nhật')}') : '${esc(art.maDOI || 'Đang cập nhật')}'))" class="doi-link">${esc(art.maDOI || 'Đang cấp mã DOI')}</a></div>
+            <div><strong>Chuyên ngành:</strong> ${esc(art.chuyenNganh)}</div>
+          `;
+        }
+
+        // 9. Nút Tải PDF
+        const btnPdf = document.querySelector('.btn-download-pdf');
+        if (btnPdf) {
+          if (art.filePdfUrl) {
+            btnPdf.href = art.filePdfUrl;
+            btnPdf.target = '_blank';
+            btnPdf.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Tải toàn văn PDF (Bản in)`;
+          } else {
+            btnPdf.href = 'javascript:void(0)';
+            btnPdf.style.opacity = '0.65';
+            btnPdf.style.cursor = 'not-allowed';
+            btnPdf.title = 'Bài báo chưa có tệp PDF thành phẩm chính thức';
+            btnPdf.onclick = (e) => {
+              e.preventDefault();
+              if (typeof showToast === 'function') {
+                showToast('Bài báo này hiện đang trong quá trình chế bản, chưa phát hành tệp PDF toàn văn chính thức.');
+              }
+            };
+            btnPdf.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Chưa có PDF thành phẩm`;
+          }
+        }
+
+        // 10. Sidebar: Ấn phẩm phát hành
+        const sideIssueCover = document.getElementById('side-issue-cover');
+        if (sideIssueCover) {
+          let coverImg = (art.tenSoTapChi && art.tenSoTapChi.includes('Yersin') && art.so >= 1 && art.so <= 23)
+            ? `assets/images/cover_yersin_no${art.so}.svg`
+            : (art.anhBiaUrl || `assets/images/cover_huit_vol${art.tap || 15}_no${art.so || 42}e.jpg`);
+          sideIssueCover.src = coverImg;
+          sideIssueCover.onerror = function() { this.src = 'assets/images/cover_huit_vol26_no3e.jpg'; };
+          sideIssueCover.alt = `Bìa ${art.tenSoTapChi || 'Số tạp chí'}`;
+        }
+
+        const sideIssueTitle = document.getElementById('side-issue-title');
+        if (sideIssueTitle) {
+          sideIssueTitle.innerText = art.tenSoTapChi || `Tập ${art.tap || 15}, Số ${art.so || 42} (${art.nam || 2026})`;
+        }
+
+        const sideIssueTheme = document.getElementById('side-issue-theme');
+        if (sideIssueTheme) {
+          sideIssueTheme.innerText = `Chuyên mục: ${art.chuyenNganh}`;
+        }
+
+        const sideIssueLink = document.getElementById('side-issue-link');
+        if (sideIssueLink && art.maSoTapChi) {
+          sideIssueLink.href = `issue-detail.html?id=${art.maSoTapChi}`;
+        }
+
+        // 11. Sidebar: Lịch sử thẩm định bản thảo
+        const timelineList = document.getElementById('article-timeline-list');
+        if (timelineList) {
+          const dateGui = art.ngayGui ? new Date(art.ngayGui).toLocaleDateString('vi-VN') : null;
+          const datePhatHanh = art.ngayPhatHanh ? new Date(art.ngayPhatHanh).toLocaleDateString('vi-VN') : null;
+          timelineList.innerHTML = `
+            <div class="timeline-item">
+              <div class="timeline-date">${dateGui || 'Tiếp nhận'}</div>
+              <div class="timeline-event">Tòa soạn tiếp nhận bản thảo sơ duyệt</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-date">Bình duyệt</div>
+              <div class="timeline-event">Phản biện độc lập hai chiều (Double-Blind Peer Review)</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-date">${datePhatHanh || 'Đã xuất bản'}</div>
+              <div class="timeline-event">Công bố chính thức trên ấn phẩm ${art.tenSoTapChi || ''}</div>
+            </div>
+          `;
+        }
+
+        // 12. Sidebar: Bài báo cùng chuyên mục
+        const sideRelated = document.getElementById('side-related-articles');
+        if (sideRelated && typeof apiGetLatestArticles === 'function') {
+          try {
+            const latest = await apiGetLatestArticles(15);
+            const related = latest.filter(item => item.maBaiBao !== art.maBaiBao);
+            const matchingMajor = related.filter(item => item.chuyenNganh === art.chuyenNganh);
+            const finalList = (matchingMajor.length >= 2 ? matchingMajor : related).slice(0, 3);
+            if (finalList.length > 0) {
+              sideRelated.innerHTML = finalList.map(r => {
+                const authorText = (r.tacGias && r.tacGias.length > 0) ? r.tacGias[0].hoTen : (r.tacGiaChinh || 'Tác giả');
+                const rDate = r.ngayPhatHanh ? new Date(r.ngayPhatHanh).toLocaleDateString('vi-VN') : `${r.nam || 2026}`;
+                return `
+                  <div class="related-item">
+                    <a href="article-detail.html?id=${r.maBaiBao}">${r.tieuDe}</a>
+                    <span>Bởi ${authorText} · ${rDate}</span>
+                  </div>
+                `;
+              }).join('');
+            } else {
+              sideRelated.innerHTML = '<div style="font-size:12.5px;color:var(--ink-500);padding:4px 0;">Chưa có bài báo liên quan khác trong chuyên mục này.</div>';
+            }
+          } catch (err) {
+            console.warn('Không thể nạp bài báo cùng chuyên mục:', err);
+          }
+        }
+      }
+    } catch (e) {
+      console.warn('Lỗi nạp bài báo qua API:', e);
+    }
+  }
+});
+</script>
+</body>
+</html>

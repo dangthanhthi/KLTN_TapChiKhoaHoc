@@ -1,0 +1,84 @@
+================================================================================
+KHOÁ LUẬN TỐT NGHIỆP CỬ NHÂN CÔNG NGHỆ THÔNG TIN - HUIT 2026
+ĐỀ TÀI: XÂY DỰNG HỆ THỐNG QUẢN LÝ QUY TRÌNH BIÊN TẬP VÀ XUẤT BẢN TẠP CHÍ KHOA HỌC
+================================================================================
+
+I. CẤU TRÚC GÓI BÀN GIAO:
+--------------------------------------------------------------------------------
+1. KLTN_011.docx
+   - Cuốn báo cáo khóa luận tốt nghiệp hoàn chỉnh nhất (chuẩn cấu trúc HUIT 2025-2026).
+   - Bao gồm toàn bộ các chương, mục lục tự động, danh mục hình vẽ, bảng biểu, tài liệu tham khảo.
+
+2. QL_TapChi_WinForms/
+   - Mã nguồn ứng dụng WinForms hoàn chỉnh (C# / .NET 8 / Windows Forms).
+   - Kiến trúc 3 lớp (3-Tier Architecture): Models, Services (Data Access), UI (Forms, Views, Styles).
+   - Đã xử lý toàn diện RBAC (phân tách Quản trị viên & Ban biên tập), tính năng chuyển đổi chế độ xem,
+     sắp xếp lưới tự động, kiểm tra trùng lặp dữ liệu, chống lỗi tràn layout/vỡ giao diện.
+   - Thư mục Database/: Chứa file script tạo CSDL SQL Server `QL_TapChiKhoaHoc.sql`.
+
+3. web_source/
+   - Bản thiết kế giao diện web mockup và bản mẫu tương tác (HTML/CSS/JS).
+   - Chứa file SQL gốc `SQLKLCN.sql`.
+
+4. Sơ đồ UML kiến trúc (Hinh_*.png, Hinh_*.puml, Hinh_*.svg, Xem_tat_ca_so_do.html)
+   - Sơ đồ ca sử dụng (Use Case) tổng quát, Ban biên tập, Tác giả.
+   - Sơ đồ lớp thiết kế chi tiết (Class Diagram).
+   - Sơ đồ máy trạng thái bài báo 6 chặng (State Machine Diagram).
+   - Sơ đồ gói phân tầng (Package Diagram).
+   - Sơ đồ thành phần (Component Diagram).
+   - Sơ đồ triển khai vật lý (Deployment Diagram).
+
+
+II. YÊU CẦU MÔI TRƯỜNG:
+--------------------------------------------------------------------------------
+- Hệ điều hành: Windows 10 / Windows 11.
+- Nền tảng phát triển: Visual Studio 2022 (hoặc .NET 8.0 SDK trở lên).
+- Cơ sở dữ liệu: Microsoft SQL Server 2016 trở lên (hoặc LocalDB / SQL Express).
+
+
+III. HƯỚNG DẪN CÀI ĐẶT CƠ SỞ DỮ LIỆU:
+--------------------------------------------------------------------------------
+1. Mở SQL Server Management Studio (SSMS).
+2. Mở file script:
+   `QL_TapChi_WinForms\Database\QL_TapChiKhoaHoc.sql` (hoặc `web_source\SQLKLCN.sql`).
+3. Nhấn phím F5 (hoặc nút Execute) để chạy toàn bộ script.
+   Script sẽ tự động tạo CSDL `QL_TapChiKhoaHoc` cùng toàn bộ bảng, khóa chính/ngoại,
+   ràng buộc kiểm tra và nạp sẵn bộ dữ liệu mẫu đầy đủ.
+
+
+IV. HƯỚNG DẪN CHẠY ỨNG DỤNG:
+--------------------------------------------------------------------------------
+Cách 1: Chạy trực tiếp từ Visual Studio
+1. Mở file `QL_TapChi_WinForms\QL_TapChi_WinForms.csproj` bằng Visual Studio 2022.
+2. Chọn cấu hình Debug hoặc Release (x64 / Any CPU).
+3. Nhấn phím F5 để bắt đầu chạy.
+
+Cách 2: Chạy trực tiếp từ file thực thi đã biên dịch
+- Vào thư mục: `QL_TapChi_WinForms\bin\Debug\net8.0-windows\`
+- Nhấp đúp vào file `QL_TapChi_WinForms.exe`.
+
+
+V. TÀI KHOẢN ĐĂNG NHẬP THỬ NGHIỆM:
+--------------------------------------------------------------------------------
+Hệ thống hỗ trợ cả chế độ CSDL thật (SQL Server) và chế độ Demo ngoại tuyến (Offline Fallback):
+
+1. Quản trị hệ thống (System Admin):
+   - Email: admin@huit.edu.vn
+   - Mật khẩu: 123456
+   - Quyền hạn: Quản lý người dùng, chuyên ngành, sao lưu/phục hồi CSDL, cấu hình hệ thống,
+     và có nút chuyển nhanh sang chế độ làm việc Ban biên tập.
+
+2. Ban biên tập / Thư ký tòa soạn (Editor / Managing Editor):
+   - Email: editor@huit.edu.vn
+   - Mật khẩu: 123456
+   - Quyền hạn: Tiếp nhận bản thảo, sơ duyệt, phân công phản biện, ra quyết định chấp nhận/từ chối,
+     biên tập chế bản, phát hành số tạp chí.
+
+3. Phản biện viên (Reviewer):
+   - Email: dangvang@vnuhcm.edu.vn
+   - Mật khẩu: 123456
+
+4. Tác giả (Author):
+   - Email: vuthif@huit.edu.vn
+   - Mật khẩu: 123456
+================================================================================

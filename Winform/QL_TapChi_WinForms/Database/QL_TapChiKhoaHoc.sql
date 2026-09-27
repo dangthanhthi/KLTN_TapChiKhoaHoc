@@ -1,11 +1,6 @@
 USE master;
 GO
 
-SET ANSI_NULLS ON;
-GO
-SET QUOTED_IDENTIFIER ON;
-GO
-
 IF EXISTS (SELECT name FROM sys.databases WHERE name = N'QL_TapChiKhoaHoc')
 BEGIN
     ALTER DATABASE QL_TapChiKhoaHoc SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
@@ -17,11 +12,6 @@ CREATE DATABASE QL_TapChiKhoaHoc;
 GO
 
 USE QL_TapChiKhoaHoc;
-GO
-
-SET ANSI_NULLS ON;
-GO
-SET QUOTED_IDENTIFIER ON;
 GO
 
 -- ==========================================
@@ -36,38 +26,23 @@ CREATE TABLE VaiTro (
 );
 GO
 
--- 2. Bảng NguoiDung (Bổ sung đầy đủ các trường học thuật, cá nhân và tài khoản)
+-- 2. Bảng NguoiDung
 CREATE TABLE NguoiDung (
     MaNguoiDung INT IDENTITY(1,1) PRIMARY KEY,
-    TenDangNhap VARCHAR(100) NULL UNIQUE,
-    HoDem NVARCHAR(100) NULL,
-    Ten NVARCHAR(50) NULL,
-    HoTen NVARCHAR(150) NOT NULL,
+    HoTen NVARCHAR(100) NOT NULL,
     Email VARCHAR(150) NOT NULL UNIQUE,
     MatKhau VARCHAR(255) NOT NULL,
-    HocVi NVARCHAR(50) NOT NULL DEFAULT N'Không',
-    HocHam NVARCHAR(50) NOT NULL DEFAULT N'Không',
-    GioiTinh NVARCHAR(10) NOT NULL DEFAULT N'Nam',
-    NgonNgu NVARCHAR(50) NOT NULL DEFAULT N'Tiếng Việt',
-    QuocGia NVARCHAR(100) NOT NULL DEFAULT N'Vietnam',
     SoDienThoai VARCHAR(20) NULL,
     DonVi NVARCHAR(255) NULL,
-    DiaChi NVARCHAR(255) NULL,
-    SoTaiKhoan VARCHAR(50) NULL,
-    ChuTaiKhoan NVARCHAR(150) NULL,
-    NganHang NVARCHAR(150) NULL,
+    HocVi NVARCHAR(50) NULL,
     MaORCID VARCHAR(50) NULL,
-    AnhDaiDien NVARCHAR(500) NULL,
     TrangThai BIT NOT NULL DEFAULT 1,
-    NgayTao DATETIME NOT NULL DEFAULT GETDATE(),
-    CONSTRAINT CHK_NguoiDung_HocVi CHECK (HocVi IN (N'Không', N'Cử nhân', N'Thạc sĩ', N'Tiến sĩ', N'TSKH')),
-    CONSTRAINT CHK_NguoiDung_HocHam CHECK (HocHam IN (N'Không', N'Phó giáo sư', N'Giáo sư')),
-    CONSTRAINT CHK_NguoiDung_GioiTinh CHECK (GioiTinh IN (N'Nam', N'Nữ', N'Khác'))
+    NgayTao DATETIME NOT NULL DEFAULT GETDATE()
 );
 GO
 
--- Filtered Unique Index cho MaORCID (cho phép nhiều NULL hoặc rỗng, nhưng có giá trị thì phải duy nhất)
-CREATE UNIQUE INDEX UQ_NguoiDung_ORCID ON NguoiDung(MaORCID) WHERE MaORCID IS NOT NULL AND MaORCID <> '';
+-- Filtered Unique Index cho MaORCID (cho phép nhiều NULL, nhưng có giá trị thì phải duy nhất)
+CREATE UNIQUE INDEX UQ_NguoiDung_ORCID ON NguoiDung(MaORCID) WHERE MaORCID IS NOT NULL;
 GO
 
 -- 3. Bảng NguoiDung_VaiTro (Bảng trung gian n - n giữa Người dùng và Vai trò)
@@ -87,21 +62,6 @@ CREATE TABLE ChuyenNganh (
     MaChuyenNganh INT IDENTITY(1,1) PRIMARY KEY,
     TenChuyenNganh NVARCHAR(255) NOT NULL UNIQUE,
     MoTa NVARCHAR(500) NULL
-);
-GO
-
--- 4.1 Bảng NguoiDung_ChuyenMon (Bảng nối Người dùng / Tác giả / Phản biện với Chuyên ngành chuyên môn)
-CREATE TABLE NguoiDung_ChuyenMon (
-    MaNguoiDung INT NOT NULL,
-    MaChuyenNganh INT NOT NULL,
-    LaChuyenMonChinh BIT NOT NULL DEFAULT 1,
-    GhiChu NVARCHAR(255) NULL,
-    NgayDangKy DATETIME NOT NULL DEFAULT GETDATE(),
-    PRIMARY KEY (MaNguoiDung, MaChuyenNganh),
-    CONSTRAINT FK_NguoiDung_ChuyenMon_NguoiDung FOREIGN KEY (MaNguoiDung) 
-        REFERENCES NguoiDung(MaNguoiDung) ON DELETE CASCADE,
-    CONSTRAINT FK_NguoiDung_ChuyenMon_ChuyenNganh FOREIGN KEY (MaChuyenNganh) 
-        REFERENCES ChuyenNganh(MaChuyenNganh) ON DELETE CASCADE
 );
 GO
 
@@ -160,7 +120,6 @@ CREATE TABLE BaiBao (
         N'Đang chế bản', 
         N'Sẵn sàng xuất bản', 
         N'Đã xuất bản', 
-        N'Đã rút',
         N'Từ chối'
     ))
 );
@@ -170,86 +129,42 @@ GO
 CREATE UNIQUE INDEX UQ_BaiBao_DOI ON BaiBao(MaDOI) WHERE MaDOI IS NOT NULL;
 GO
 
--- 8. Bảng DongTacGia (Lưu snapshot tác giả tại thời điểm nộp; hỗ trợ tác giả khách và liên kết tài khoản hệ thống)
+-- 8. Bảng DongTacGia (Bổ sung MaNguoiDung tùy chọn liên kết tài khoản)
 CREATE TABLE DongTacGia (
     MaDongTacGia INT IDENTITY(1,1) PRIMARY KEY,
     HoTen NVARCHAR(100) NOT NULL,
-    Email VARCHAR(150) NOT NULL,
+    Email VARCHAR(150) NULL,
     DonVi NVARCHAR(255) NULL,
-    MaORCID VARCHAR(50) NULL,
-    LaTacGiaLienHe BIT NOT NULL DEFAULT 0,
     ThuTu INT NOT NULL DEFAULT 1,
     MaBaiBao INT NOT NULL,
-    MaNguoiDung INT NULL,         -- Tùy chọn: NULL nếu đồng tác giả khách chưa có tài khoản
+    MaNguoiDung INT NULL,         -- Tùy chọn: liên kết tới NguoiDung nếu đồng tác giả đã có tài khoản
     CONSTRAINT FK_DongTacGia_BaiBao FOREIGN KEY (MaBaiBao) 
         REFERENCES BaiBao(MaBaiBao) ON DELETE CASCADE,
     CONSTRAINT FK_DongTacGia_NguoiDung FOREIGN KEY (MaNguoiDung) 
         REFERENCES NguoiDung(MaNguoiDung) ON DELETE SET NULL,
     CONSTRAINT UQ_DongTacGia_BaiBao_ThuTu UNIQUE (MaBaiBao, ThuTu),
-    CONSTRAINT UQ_DongTacGia_BaiBao_Email UNIQUE (MaBaiBao, Email),
     CONSTRAINT CHK_DongTacGia_ThuTu CHECK (ThuTu > 0)
 );
 GO
 
--- 9. Bảng ThuMucBaiBao (Bổ sung SoVong và CHECK ràng buộc loại thư mục tài liệu)
-CREATE TABLE ThuMucBaiBao (
-    MaThuMuc INT IDENTITY(1,1) PRIMARY KEY,
-    TenThuMuc NVARCHAR(255) NOT NULL,
+-- 9. Bảng TapTinBaiBao (Bổ sung SoVong và CHECK ràng buộc loại tập tin)
+CREATE TABLE TapTinBaiBao (
+    MaTapTin INT IDENTITY(1,1) PRIMARY KEY,
+    TenTapTin NVARCHAR(255) NOT NULL,
     DuongDan NVARCHAR(500) NOT NULL,
-    LoaiThuMuc NVARCHAR(50) NOT NULL,
+    LoaiTapTin NVARCHAR(50) NOT NULL,
     KichThuoc BIGINT NOT NULL,
     SoVong INT NOT NULL DEFAULT 1,    -- Vòng nộp bản thảo (Vòng 1, Vòng 2...)
     NgayTaiLen DATETIME NOT NULL DEFAULT GETDATE(),
     MaBaiBao INT NOT NULL,
-    CONSTRAINT FK_ThuMucBaiBao_BaiBao FOREIGN KEY (MaBaiBao) 
+    CONSTRAINT FK_TapTinBaiBao_BaiBao FOREIGN KEY (MaBaiBao) 
         REFERENCES BaiBao(MaBaiBao) ON DELETE CASCADE,
-    CONSTRAINT CHK_ThuMuc_LoaiThuMuc CHECK (LoaiThuMuc IN (
+    CONSTRAINT CHK_TapTin_LoaiTapTin CHECK (LoaiTapTin IN (
         N'Bản thảo gốc', 
         N'File ẩn danh', 
-        N'Bản thảo ẩn danh',
         N'Bản chỉnh sửa', 
-        N'Phụ lục',
-        N'Bản giải trình BM-03',
-        N'Bản đánh dấu sửa đổi',
-        N'PDF thành phẩm',
-        N'PDF Xuất bản'
+        N'Phụ lục'
     ))
-);
-GO
-
--- 9.0 Bảng DonDangKyPhanBien (Quản lý đơn đăng ký phản biện chờ Ban biên tập phê duyệt)
-CREATE TABLE DonDangKyPhanBien (
-    MaDon INT IDENTITY(1,1) PRIMARY KEY,
-    MaNguoiDung INT NOT NULL,
-    NgayDangKy DATETIME NOT NULL DEFAULT GETDATE(),
-    GhiChu NVARCHAR(500) NULL,
-    TrangThai NVARCHAR(50) NOT NULL DEFAULT N'Chờ duyệt',
-    MaNguoiDuyet INT NULL,
-    NgayDuyet DATETIME NULL,
-    LyDoTuChoi NVARCHAR(500) NULL,
-    CONSTRAINT FK_DonDangKyPhanBien_NguoiDung FOREIGN KEY (MaNguoiDung) 
-        REFERENCES NguoiDung(MaNguoiDung) ON DELETE CASCADE,
-    CONSTRAINT FK_DonDangKyPhanBien_NguoiDuyet FOREIGN KEY (MaNguoiDuyet) 
-        REFERENCES NguoiDung(MaNguoiDung),
-    CONSTRAINT CHK_DonDangKy_TrangThai CHECK (TrangThai IN (N'Chờ duyệt', N'Đã duyệt', N'Từ chối'))
-);
-GO
-
--- 9.1 Bảng PhanBienDeXuat (Lưu danh sách chuyên gia phản biện do tác giả đề xuất lúc nộp bài)
-CREATE TABLE PhanBienDeXuat (
-    MaDeXuat INT IDENTITY(1,1) PRIMARY KEY,
-    HoTen NVARCHAR(150) NOT NULL,
-    Email VARCHAR(150) NOT NULL,
-    DonVi NVARCHAR(255) NULL,
-    LinhVuc NVARCHAR(255) NULL,
-    LaChuyenGiaHeThong BIT NOT NULL DEFAULT 0,
-    MaBaiBao INT NOT NULL,
-    MaNguoiDung INT NULL,
-    NgayTao DATETIME NOT NULL DEFAULT GETDATE(),
-    CONSTRAINT FK_PhanBienDeXuat_BaiBao FOREIGN KEY (MaBaiBao) 
-        REFERENCES BaiBao(MaBaiBao) ON DELETE CASCADE,
-    CONSTRAINT FK_PhanBienDeXuat_NguoiDung FOREIGN KEY (MaNguoiDung) 
-        REFERENCES NguoiDung(MaNguoiDung) ON DELETE SET NULL
 );
 GO
 
@@ -328,7 +243,6 @@ CREATE TABLE LichSuTrangThaiBaiBao (
     NgayChuyen DATETIME NOT NULL DEFAULT GETDATE(),
     MaNguoiThucHien INT NULL,         -- Người thực hiện thao tác chuyển (Editor/Admin)
     GhiChu NVARCHAR(500) NULL,
-    ThongBaoChoTacGia NVARCHAR(2000) NULL,
     CONSTRAINT FK_LichSu_BaiBao FOREIGN KEY (MaBaiBao) 
         REFERENCES BaiBao(MaBaiBao) ON DELETE CASCADE,
     CONSTRAINT FK_LichSu_NguoiDung FOREIGN KEY (MaNguoiThucHien) 
@@ -337,10 +251,8 @@ CREATE TABLE LichSuTrangThaiBaiBao (
 GO
 
 -- ==========================================
--- 4. TRIGGER RÀNG BUỘC NGHIỆP VỤ XUẤT BẢN
+-- 4. TRIGGER TỰ ĐỘNG CẬP NHẬT NGÀY CẬP NHẬT
 -- ==========================================
-
--- 4.1 Trigger tự động cập nhật ngày cập nhật bài báo
 CREATE TRIGGER TRG_BaiBao_NgayCapNhat
 ON BaiBao
 AFTER UPDATE
@@ -354,149 +266,8 @@ BEGIN
 END;
 GO
 
--- 4.2 Trigger kiểm tra bài báo người đó viết phải liên quan đến chuyên môn của họ
-CREATE TRIGGER TRG_BaiBao_KiemTraChuyenMonTacGia
-ON BaiBao
-AFTER INSERT, UPDATE
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    -- Kiểm tra nếu tác giả gửi bài báo có chuyên ngành chưa đăng ký trong danh mục chuyên môn
-    IF EXISTS (
-        SELECT 1
-        FROM inserted i
-        LEFT JOIN NguoiDung_ChuyenMon cm 
-            ON i.MaNguoiDung = cm.MaNguoiDung 
-            AND i.MaChuyenNganh = cm.MaChuyenNganh
-        WHERE cm.MaChuyenNganh IS NULL
-    )
-    BEGIN
-        RAISERROR (N'LỖI NGHIỆP VỤ: Bài báo người đó viết phải liên quan đến chuyên môn của họ! Tác giả chưa đăng ký chuyên ngành này trong danh mục chuyên môn.', 16, 1);
-        ROLLBACK TRANSACTION;
-        RETURN;
-    END;
-END;
-GO
-
--- 4.3 Trigger kiểm tra chuyên gia phản biện phải phù hợp chuyên môn & chống xung đột lợi ích
-CREATE TRIGGER TRG_PhanCongPhanBien_KiemTraChuyenMon
-ON PhanCongPhanBien
-AFTER INSERT, UPDATE
-AS
-BEGIN
-    SET NOCOUNT ON;
-
-    -- 1. Chống xung đột lợi ích: Tác giả chính không được tự phản biện bài của mình
-    IF EXISTS (
-        SELECT 1
-        FROM inserted pc
-        INNER JOIN BaiBao bb ON pc.MaBaiBao = bb.MaBaiBao
-        WHERE pc.MaNguoiDung = bb.MaNguoiDung
-    )
-    BEGIN
-        RAISERROR (N'LỖI XUNG ĐỘT LỢI ÍCH: Tác giả chính của bài báo không được phép làm chuyên gia phản biện cho chính bài báo của mình!', 16, 1);
-        ROLLBACK TRANSACTION;
-        RETURN;
-    END;
-
-    -- 2. Chống xung đột lợi ích: Đồng tác giả không được làm chuyên gia phản biện
-    -- (Kiểm tra cả liên kết tài khoản MaNguoiDung lẫn đối chiếu Email để chặn triệt để)
-    IF EXISTS (
-        SELECT 1
-        FROM inserted pc
-        INNER JOIN DongTacGia dtg ON pc.MaBaiBao = dtg.MaBaiBao 
-        INNER JOIN NguoiDung nd ON pc.MaNguoiDung = nd.MaNguoiDung
-        WHERE (dtg.MaNguoiDung IS NOT NULL AND pc.MaNguoiDung = dtg.MaNguoiDung)
-           OR (dtg.Email IS NOT NULL AND LOWER(LTRIM(RTRIM(dtg.Email))) = LOWER(LTRIM(RTRIM(nd.Email))))
-    )
-    BEGIN
-        RAISERROR (N'LỖI XUNG ĐỘT LỢI ÍCH: Đồng tác giả của bài báo không được phép làm chuyên gia phản biện cho bài báo này (trùng tài khoản hoặc trùng email)!', 16, 1);
-        ROLLBACK TRANSACTION;
-        RETURN;
-    END;
-
-    -- 3. Ràng buộc chuyên môn: Gửi mời chuyên gia phản biện phải phù hợp với chuyên môn của họ
-    IF EXISTS (
-        SELECT 1
-        FROM inserted pc
-        INNER JOIN BaiBao bb ON pc.MaBaiBao = bb.MaBaiBao
-        LEFT JOIN NguoiDung_ChuyenMon cm 
-            ON pc.MaNguoiDung = cm.MaNguoiDung 
-            AND bb.MaChuyenNganh = cm.MaChuyenNganh
-        WHERE cm.MaChuyenNganh IS NULL
-    )
-    BEGIN
-        RAISERROR (N'LỖI NGHIỆP VỤ: Gửi mời chuyên gia phản biện phải phù hợp với chuyên môn của họ! Chuyên gia này chưa đăng ký chuyên môn thuộc chuyên ngành của bài báo.', 16, 1);
-        ROLLBACK TRANSACTION;
-        RETURN;
-    END;
-END;
-GO
-
 -- ==============================================================================
--- 4.4 STORED PROCEDURES NGHIỆP VỤ (CHUẨN OJS & SCOPUS AUTHOR CLAIMING)
--- ==============================================================================
-
--- Thủ tục 1: Đồng bộ liên kết đồng tác giả theo Email khi tác giả chủ động xác nhận tác quyền (Author Claiming)
-CREATE OR ALTER PROCEDURE sp_DongBoDongTacGia_TheoEmail
-    @MaNguoiDung INT,
-    @SoBaiDaLienKet INT = 0 OUTPUT
-AS
-BEGIN
-    SET NOCOUNT ON;
-    DECLARE @EmailUser VARCHAR(150);
-
-    -- Lấy thông tin email của tài khoản
-    SELECT @EmailUser = Email FROM NguoiDung WHERE MaNguoiDung = @MaNguoiDung;
-
-    IF @EmailUser IS NULL
-    BEGIN
-        RAISERROR (N'LỖI NGHIỆP VỤ: Không tìm thấy tài khoản người dùng với mã cung cấp.', 16, 1);
-        RETURN;
-    END;
-
-    -- Cập nhật MaNguoiDung cho các bài báo có email trùng khớp mà trước đó đang là NULL (Tác giả khách)
-    UPDATE DongTacGia
-    SET MaNguoiDung = @MaNguoiDung
-    WHERE LOWER(LTRIM(RTRIM(Email))) = LOWER(LTRIM(RTRIM(@EmailUser)))
-      AND MaNguoiDung IS NULL;
-
-    SET @SoBaiDaLienKet = @@ROWCOUNT;
-END;
-GO
-
--- Thủ tục 2: Truy vấn danh sách bài báo đồng tác giả chưa liên kết theo Email của tài khoản
-CREATE OR ALTER PROCEDURE sp_KiemTraDongTacGiaChuaLienKet
-    @MaNguoiDung INT
-AS
-BEGIN
-    SET NOCOUNT ON;
-    DECLARE @EmailUser VARCHAR(150);
-
-    SELECT @EmailUser = Email FROM NguoiDung WHERE MaNguoiDung = @MaNguoiDung;
-
-    SELECT 
-        dtg.MaDongTacGia,
-        dtg.MaBaiBao,
-        bb.TieuDe AS TieuDeBaiBao,
-        cn.TenChuyenNganh,
-        dtg.HoTen AS HoTenSnapshot,
-        dtg.DonVi AS DonViSnapshot,
-        dtg.LaTacGiaLienHe,
-        dtg.ThuTu,
-        bb.NgayGui,
-        bb.TrangThai AS TrangThaiBaiBao
-    FROM DongTacGia dtg
-    INNER JOIN BaiBao bb ON dtg.MaBaiBao = bb.MaBaiBao
-    INNER JOIN ChuyenNganh cn ON bb.MaChuyenNganh = cn.MaChuyenNganh
-    WHERE LOWER(LTRIM(RTRIM(dtg.Email))) = LOWER(LTRIM(RTRIM(@EmailUser)))
-      AND dtg.MaNguoiDung IS NULL;
-END;
-GO
-
--- ==============================================================================
--- 5. DỮ LIỆU MẪU (SEED DATA CHUẨN ĐỒ ÁN JST)
+-- 5. DỮ LIỆU MẪU (SEED DATA CHUẨN ĐỒ ÁN HUIT)
 -- ==============================================================================
 
 -- 5.1 Thêm 5 vai trò chuẩn
@@ -510,7 +281,7 @@ INSERT INTO VaiTro (MaVaiTro, TenVaiTro, MoTa) VALUES
 SET IDENTITY_INSERT VaiTro OFF;
 GO
 
--- 5.2 Thêm Chuyên ngành học thuật JST
+-- 5.2 Thêm Chuyên ngành học thuật HUIT
 SET IDENTITY_INSERT ChuyenNganh ON;
 INSERT INTO ChuyenNganh (MaChuyenNganh, TenChuyenNganh, MoTa) VALUES
 (1, N'Công nghệ thông tin & Trí tuệ nhân tạo', N'Khoa học máy tính, Học máy, Xử lý ngôn ngữ tự nhiên, An toàn thông tin'),
@@ -530,19 +301,19 @@ INSERT INTO SoTapChi (MaSoTapChi, TenSo, Tap, So, Nam, NgayPhatHanh, TrangThai) 
 SET IDENTITY_INSERT SoTapChi OFF;
 GO
 
--- 5.4 Thêm Người dùng mẫu (Đầy đủ Học vị, Học hàm, Giới tính, Quốc gia, Ngân hàng, Địa chỉ)
+-- 5.4 Thêm Người dùng mẫu
 SET IDENTITY_INSERT NguoiDung ON;
-INSERT INTO NguoiDung (MaNguoiDung, TenDangNhap, HoDem, Ten, HoTen, Email, MatKhau, HocVi, HocHam, GioiTinh, NgonNgu, QuocGia, SoDienThoai, DonVi, DiaChi, SoTaiKhoan, ChuTaiKhoan, NganHang, MaORCID, TrangThai, NgayTao) VALUES
-(1, 'txhuong', N'Trần Xuân', N'Hướng', N'Trần Xuân Hướng', 'editor@huit.edu.vn', '123456', N'Tiến sĩ', N'Phó giáo sư', N'Nam', N'Tiếng Việt', N'Vietnam', '0901234567', N'Trường Đại học Công Thương TP.HCM', N'140 Lê Trọng Tấn, Tây Thạnh, Tân Phú, TP.HCM', '10123456789', N'TRAN XUAN HUONG', N'Vietcombank', '0000-0002-1825-0091', 1, '2026-01-10'),
-(2, 'admin', N'Quản trị', N'Tạp chí', N'Quản trị Tạp chí', 'admin@huit.edu.vn', '123456', N'Thạc sĩ', N'Không', N'Nam', N'Tiếng Việt', N'Vietnam', '0907654321', N'Trường Đại học Công Thương TP.HCM', N'140 Lê Trọng Tấn, Tây Thạnh, Tân Phú, TP.HCM', '10987654321', N'QUAN TRI HE THONG', N'BIDV', NULL, 1, '2026-01-10'),
-(3, 'vuthif', N'Vũ Thị', N'F', N'Vũ Thị F', 'vuthif@huit.edu.vn', '123456', N'Tiến sĩ', N'Không', N'Nữ', N'Tiếng Việt', N'Vietnam', '0912345678', N'Khoa CNTT, Trường Đại học Công Thương TP.HCM', N'140 Lê Trọng Tấn, Tây Thạnh, Tân Phú, TP.HCM', '1903456789012', N'VU THI F', N'Vietcombank', '0000-0002-1825-0097', 1, '2026-02-15'),
-(4, 'dangvang', N'Đặng Văn', N'G', N'Đặng Văn G', 'dangvang@vnuhcm.edu.vn', '123456', N'Tiến sĩ', N'Phó giáo sư', N'Nam', N'Tiếng Việt', N'Vietnam', '0923456789', N'Viện Công nghệ Tiên tiến, ĐHQG-HCM', N'Khu phố 6, Linh Trung, TP. Thủ Đức, TP.HCM', '0071001234567', N'DANG VAN G', N'Vietcombank', '0000-0003-4567-8901', 1, '2026-02-18'),
-(5, 'tranthih', N'Trần Thị', N'H', N'Trần Thị H', 'tranthih@ctub.edu.vn', '123456', N'Tiến sĩ', N'Không', N'Nữ', N'Tiếng Việt', N'Vietnam', '0934567890', N'Khoa Môi trường & Tài nguyên Thiên nhiên, Đại học Cần Thơ', N'Khu II, đường 3/2, Q. Ninh Kiều, TP. Cần Thơ', '0111000234567', N'TRAN THI H', N'VietinBank', '0000-0001-2345-6789', 1, '2026-03-01'),
-(6, 'nguyenvank', N'Nguyễn Văn', N'K', N'Nguyễn Văn K', 'nguyenvank@hcmut.edu.vn', '123456', N'Tiến sĩ', N'Không', N'Nam', N'Tiếng Việt', N'Vietnam', '0945678901', N'Khoa Cơ khí, Đại học Bách Khoa TP.HCM', N'268 Lý Thường Kiệt, Quận 10, TP.HCM', '0251009876543', N'NGUYEN VAN K', N'Vietcombank', NULL, 1, '2026-03-05'),
-(7, 'lythim', N'Lý Thị', N'M', N'Lý Thị M', 'lythim@huit.edu.vn', '123456', N'Thạc sĩ', N'Không', N'Nữ', N'Tiếng Việt', N'Vietnam', '0956789012', N'Khoa Cơ khí, Trường ĐH Công Thương TP.HCM', N'140 Lê Trọng Tấn, Tây Thạnh, Tân Phú, TP.HCM', '1902888999111', N'LY THI M', N'Techcombank', NULL, 1, '2026-03-10'),
-(8, 'tranvann', N'Trần Văn', N'N', N'Trần Văn N', 'tranvann@huit.edu.vn', '123456', N'Tiến sĩ', N'Không', N'Nam', N'Tiếng Việt', N'Vietnam', '0967890123', N'Khoa CNTT, Trường ĐH Công Thương TP.HCM', N'140 Lê Trọng Tấn, Tây Thạnh, Tân Phú, TP.HCM', '0441003456789', N'TRAN VAN N', N'Vietcombank', '0000-0002-9876-5432', 1, '2026-03-12'),
-(9, 'phamthiq', N'Phạm Thị', N'Q', N'Phạm Thị Q', 'phamthiq@ueh.edu.vn', '123456', N'Tiến sĩ', N'Không', N'Nữ', N'Tiếng Việt', N'Vietnam', '0978901234', N'Đại học Kinh tế TP.HCM', N'59C Nguyễn Đình Chiểu, Quận 3, TP.HCM', '119000123888', N'PHAM THI Q', N'VietinBank', NULL, 1, '2026-03-15'),
-(10, 'dangthanhthi', N'Đặng Thành', N'Thi', N'Đặng Thành Thi', 'dangthanhthi@huit.edu.vn', '123456', N'Tiến sĩ', N'Không', N'Nam', N'Tiếng Việt', N'Vietnam', '0989012345', N'Khoa CNTT, Trường ĐH Công Thương TP.HCM', N'140 Lê Trọng Tấn, Tây Thạnh, Tân Phú, TP.HCM', '0531002345678', N'DANG THANH THI', N'Vietcombank', '0000-0001-8765-4321', 1, '2026-03-20');
+INSERT INTO NguoiDung (MaNguoiDung, HoTen, Email, MatKhau, SoDienThoai, DonVi, HocVi, MaORCID, TrangThai, NgayTao) VALUES
+(1, N'Ban Thư Ký Tòa Soạn', 'editor@huit.edu.vn', '123456', '0901234567', N'Trường Đại học Công Thương TP.HCM', N'PGS.TS', '0000-0002-1825-0091', 1, '2026-01-10'),
+(2, N'Quản trị Tạp chí', 'admin@huit.edu.vn', '123456', '0907654321', N'Trường Đại học Công Thương TP.HCM', N'ThS', NULL, 1, '2026-01-10'),
+(3, N'Vũ Thị F', 'vuthif@huit.edu.vn', '123456', '0912345678', N'Khoa CNTT, Trường Đại học Công Thương TP.HCM', N'TS', '0000-0002-1825-0097', 1, '2026-02-15'),
+(4, N'Đặng Văn G', 'dangvang@vnuhcm.edu.vn', '123456', '0923456789', N'Viện Công nghệ Tiên tiến, ĐHQG-HCM', N'PGS.TS', '0000-0003-4567-8901', 1, '2026-02-18'),
+(5, N'Trần Thị H', 'tranthih@ctub.edu.vn', '123456', '0934567890', N'Đại học Cần Thơ', N'TS', '0000-0001-2345-6789', 1, '2026-03-01'),
+(6, N'Nguyễn Văn K', 'nguyenvank@hcmut.edu.vn', '123456', '0945678901', N'Đại học Bách Khoa TP.HCM', N'TS', NULL, 1, '2026-03-05'),
+(7, N'Lý Thị M', 'lythim@huit.edu.vn', '123456', '0956789012', N'Khoa Cơ khí, Trường ĐH Công Thương TP.HCM', N'ThS', NULL, 1, '2026-03-10'),
+(8, N'Trần Văn N', 'tranvann@huit.edu.vn', '123456', '0967890123', N'Khoa CNTT, Trường ĐH Công Thương TP.HCM', N'TS', '0000-0002-9876-5432', 1, '2026-03-12'),
+(9, N'Phạm Thị Q', 'phamthiq@ueh.edu.vn', '123456', '0978901234', N'Đại học Kinh tế TP.HCM', N'TS', NULL, 1, '2026-03-15'),
+(10, N'Đặng Thành Thi', 'dangthanhthi@huit.edu.vn', '123456', '0989012345', N'Khoa CNTT, Trường ĐH Công Thương TP.HCM', N'TS', '0000-0001-8765-4321', 1, '2026-03-20');
 SET IDENTITY_INSERT NguoiDung OFF;
 GO
 
@@ -563,45 +334,7 @@ INSERT INTO NguoiDung_VaiTro (MaNguoiDung, MaVaiTro) VALUES
 (10, 4); -- Đặng Thành Thi kiêm Phản biện viên
 GO
 
--- 5.6 Thêm Chuyên môn của Người dùng (Bảng nối NguoiDung_ChuyenMon)
--- Cần nạp trước BaiBao để thỏa mãn trigger kiểm tra chuyên môn
-INSERT INTO NguoiDung_ChuyenMon (MaNguoiDung, MaChuyenNganh, LaChuyenMonChinh, GhiChu) VALUES
--- 1. Trần Xuân Hướng: Ban biên tập
-(1, 1, 1, N'Trí tuệ nhân tạo & Khai phá dữ liệu'),
-(1, 2, 0, N'Hệ thống điều khiển tự động'),
-
--- 2. Quản trị Tạp chí
-(2, 1, 1, N'Khoa học máy tính & Mạng máy tính'),
-
--- 3. Vũ Thị F: Tác giả (CNTT & AI)
-(3, 1, 1, N'Xử lý ngôn ngữ tự nhiên & Học sâu'),
-
--- 4. Đặng Văn G: Phản biện viên (CNTT & Cơ khí)
-(4, 1, 1, N'Thị giác máy tính & Robot tự hành'),
-(4, 2, 0, N'Hệ thống Cơ điện tử thông minh'),
-
--- 5. Trần Thị H: Tác giả & Phản biện viên (Môi trường & Thực phẩm)
-(5, 3, 1, N'Khoa học môi trường & Xử lý chất thải'),
-(5, 5, 0, N'Hợp chất sinh học & Công nghệ sau thu hoạch'),
-
--- 6. Nguyễn Văn K: Tác giả & Phản biện viên (Cơ khí & Chế tạo máy)
-(6, 2, 1, N'Gia công chính xác & Tối ưu hóa cơ khí'),
-
--- 7. Lý Thị M: Tác giả (Cơ khí & Robot)
-(7, 2, 1, N'Cánh tay robot công nghiệp & Điều khiển thích nghi'),
-
--- 8. Trần Văn N: Tác giả & Phản biện viên (CNTT & AI)
-(8, 1, 1, N'Học sâu & Tăng cường dữ liệu văn bản'),
-
--- 9. Phạm Thị Q: Tác giả (Kinh tế & Quản trị)
-(9, 4, 1, N'Kinh tế số & Quản trị chuỗi cung ứng'),
-
--- 10. Đặng Thành Thi: Tác giả & Phản biện viên (CNTT & Thực phẩm)
-(10, 1, 1, N'Bảo mật Blockchain & Mạng cảm biến IoT'),
-(10, 5, 0, N'Bảo quản nông sản & Màng bao sinh học');
-GO
-
--- 5.7 Thêm Bài báo mẫu (Bao quát 6 giai đoạn quy trình JST và khớp với Web)
+-- 5.6 Thêm Bài báo mẫu (Bao quát 6 giai đoạn quy trình HUIT và khớp với Web)
 SET IDENTITY_INSERT BaiBao ON;
 INSERT INTO BaiBao (MaBaiBao, TieuDe, TieuDeTiengAnh, TomTat, TomTatTiengAnh, TuKhoa, TrangThai, MaDOI, NgayGui, NgayCapNhat, MaNguoiDung, MaChuyenNganh, MaSoTapChi, TrangBatDau, TrangKetThuc) VALUES
 -- Bài 1: Bài nổi bật trên Web & Đã xuất bản
@@ -658,7 +391,7 @@ INSERT INTO BaiBao (MaBaiBao, TieuDe, TieuDeTiengAnh, TomTat, TomTatTiengAnh, Tu
     N'Đánh giá hiệu quả kháng khuẩn và kéo dài thời gian bảo quản trái cây tươi của màng bao sinh học polysaccharide.', 
     N'Evaluating antimicrobial efficacy and shelf-life extension of fresh fruits using polysaccharide edible films.', 
     N'Màng sinh học, Bảo quản thực phẩm, Rong biển, Kháng khuẩn', 
-    N'Chờ quyết định', NULL, '2026-10-15', '2026-11-20', 10, 5, NULL, NULL, NULL),
+    N'Chờ quyết định', NULL, '2026-10-15', '2026-11-20', 7, 5, NULL, NULL, NULL),
 
 -- Bài 8: Đang phản biện (Giai đoạn 2)
 (8, N'Thiết kế bộ điều khiển thích nghi cho cánh tay robot 6 bậc tự do', 
@@ -666,7 +399,7 @@ INSERT INTO BaiBao (MaBaiBao, TieuDe, TieuDeTiengAnh, TomTat, TomTatTiengAnh, Tu
     N'Áp dụng lý thuyết Lyapunov để thiết kế bộ điều khiển thích nghi bù trừ phi tuyến và nhiễu ngoài cho cánh tay robot công nghiệp.', 
     N'Applying Lyapunov stability theory to design an adaptive controller compensating nonlinear dynamics and disturbances for industrial robots.', 
     N'Cánh tay robot, Điều khiển thích nghi, Lyapunov, Tự động hóa', 
-    N'Đang phản biện', NULL, '2026-11-01', '2026-11-15', 7, 2, NULL, NULL, NULL),
+    N'Đang phản biện', NULL, '2026-11-01', '2026-11-15', 6, 2, NULL, NULL, NULL),
 
 -- Bài 9: Chờ chỉnh sửa (Giai đoạn 4)
 (9, N'Thu hồi kim loại nặng từ nguồn nước thải công nghiệp bằng vật liệu nano từ tính', 
@@ -686,16 +419,15 @@ INSERT INTO BaiBao (MaBaiBao, TieuDe, TieuDeTiengAnh, TomTat, TomTatTiengAnh, Tu
 SET IDENTITY_INSERT BaiBao OFF;
 GO
 
--- 5.8 Thêm Đồng tác giả (Gồm cả tác giả nội bộ liên kết tài khoản và tác giả khách ngoài hệ thống)
-INSERT INTO DongTacGia (MaBaiBao, HoTen, Email, DonVi, MaORCID, LaTacGiaLienHe, ThuTu, MaNguoiDung) VALUES
-(1, N'Đặng Văn G', 'dangvang@vnuhcm.edu.vn', N'Viện Công nghệ Tiên tiến, ĐHQG-HCM', '0000-0002-4512-8890', 0, 2, 4),
-(3, N'Lý Thị M', 'lythim@huit.edu.vn', N'Khoa Cơ khí, Trường ĐH Công Thương TP.HCM', '0000-0002-3344-5566', 0, 2, 7),
-(5, N'Ngô Văn R', 'ngovanr@ueh.edu.vn', N'Đại học Kinh tế TP.HCM', '0000-0003-7788-9900', 0, 2, NULL),
-(10, N'Lê Hoàng Long', 'longlh@vast.ac.vn', N'Viện Công nghệ Thông tin, Viện Hàn lâm KH&CN VN', '0000-0001-9988-7766', 1, 2, NULL);
+-- 5.7 Thêm Đồng tác giả
+INSERT INTO DongTacGia (MaBaiBao, HoTen, Email, DonVi, ThuTu, MaNguoiDung) VALUES
+(1, N'Đặng Văn G', 'dangvang@vnuhcm.edu.vn', N'Viện Công nghệ Tiên tiến, ĐHQG-HCM', 2, 4),
+(3, N'Lý Thị M', 'lythim@huit.edu.vn', N'Khoa Cơ khí, Trường ĐH Công Thương TP.HCM', 2, 7),
+(5, N'Ngô Văn R', 'ngovanr@ueh.edu.vn', N'Đại học Kinh tế TP.HCM', 2, NULL);
 GO
 
--- 5.9 Thêm Thư mục bài báo
-INSERT INTO ThuMucBaiBao (TenThuMuc, DuongDan, LoaiThuMuc, KichThuoc, SoVong, NgayTaiLen, MaBaiBao) VALUES
+-- 5.8 Thêm Tập tin bài báo
+INSERT INTO TapTinBaiBao (TenTapTin, DuongDan, LoaiTapTin, KichThuoc, SoVong, NgayTaiLen, MaBaiBao) VALUES
 ('BanThao_Goctoanvan_v1.docx', '/uploads/2026/09/BanThao_Goctoanvan_v1.docx', N'Bản thảo gốc', 2450000, 1, '2026-09-10', 1),
 ('BanThao_AnDanh_PhanBien.docx', '/uploads/2026/09/BanThao_AnDanh_PhanBien.docx', N'File ẩn danh', 2300000, 1, '2026-09-12', 1),
 ('BanThao_Galley_InAn.pdf', '/uploads/2026/11/BanThao_Galley_InAn.pdf', N'Bản chỉnh sửa', 1450000, 1, '2026-11-25', 1),
@@ -703,21 +435,21 @@ INSERT INTO ThuMucBaiBao (TenThuMuc, DuongDan, LoaiThuMuc, KichThuoc, SoVong, Ng
 ('Robot_Arm_Adaptive_Review.docx', '/uploads/2026/11/Robot_Arm_Adaptive_Review.docx', N'File ẩn danh', 3120000, 1, '2026-11-01', 8);
 GO
 
--- 5.10 Thêm Phân công phản biện (Thỏa mãn ràng buộc đúng chuyên môn và chống xung đột lợi ích)
+-- 5.9 Thêm Phân công phản biện
 SET IDENTITY_INSERT PhanCongPhanBien ON;
 INSERT INTO PhanCongPhanBien (MaPhanCong, SoVong, NgayPhanCong, HanPhanHoi, HanHoanThanh, TrangThai, MaBaiBao, MaNguoiDung) VALUES
--- Bài 1 (CNTT & AI): Phản biện Đặng Thành Thi (10) & Trần Văn N (8) - Cả 2 đều có chuyên môn CNTT, không xung đột tác giả
-(1, 1, '2026-09-15', '2026-09-22', '2026-10-15', N'Đã đánh giá', 1, 10),
+-- Bài 1 (Đã phản biện xong)
+(1, 1, '2026-09-15', '2026-09-22', '2026-10-15', N'Đã đánh giá', 1, 4),
 (2, 1, '2026-09-15', '2026-09-22', '2026-10-15', N'Đã đánh giá', 1, 8),
--- Bài 7 (Thực phẩm): Phản biện Trần Thị H (5) - Có chuyên môn Thực phẩm, tác giả là Đặng Thành Thi (10)
+-- Bài 7 (Đã đánh giá xong vòng 1)
 (3, 1, '2026-10-18', '2026-10-25', '2026-11-15', N'Đã đánh giá', 7, 5),
--- Bài 8 (Cơ khí & Robot): Phản biện Nguyễn Văn K (6) & Đặng Văn G (4) - Cả 2 đều có chuyên môn Cơ khí, tác giả là Lý Thị M (7)
+-- Bài 8 (Đang đánh giá)
 (4, 1, '2026-11-05', '2026-11-12', '2026-12-05', N'Đang đánh giá', 8, 6),
 (5, 1, '2026-11-05', '2026-11-12', '2026-12-05', N'Đang đánh giá', 8, 4);
 SET IDENTITY_INSERT PhanCongPhanBien OFF;
 GO
 
--- 5.11 Thêm Phiếu đánh giá của phản biện
+-- 5.10 Thêm Phiếu đánh giá của phản biện
 INSERT INTO PhieuDanhGia (DiemTinhMoi, DiemPhuongPhap, DiemKetQua, DiemTrinhBay, DiemTongKet, NhanXetChoTacGia, NhanXetBaoMat, KienNghi, NgayDanhGia, MaPhanCong) VALUES
 (9.0, 9.5, 9.5, 9.0, 9.3, 
  N'Bài viết có chất lượng học thuật rất tốt, mô hình đề xuất cải tiến rõ rệt so với các baseline hiện nay. Cần bổ sung bảng so sánh độ phức tạp tính toán.', 
@@ -735,7 +467,7 @@ INSERT INTO PhieuDanhGia (DiemTinhMoi, DiemPhuongPhap, DiemKetQua, DiemTrinhBay,
  N'Chỉnh sửa nhỏ', '2026-11-14', 3);
 GO
 
--- 5.12 Thêm Lịch sử trạng thái bài báo (Audit Trail)
+-- 5.11 Thêm Lịch sử trạng thái bài báo (Audit Trail)
 INSERT INTO LichSuTrangThaiBaiBao (MaBaiBao, TrangThaiCu, TrangThaiMoi, NgayChuyen, MaNguoiThucHien, GhiChu) VALUES
 -- Lịch sử Bài 1 (Khớp hoàn toàn với Timeline trên Web article-detail.html)
 (1, NULL, N'Chờ sơ duyệt', '2026-09-10 08:30:00', 3, N'Tác giả Vũ Thị F nộp bản thảo mới lên hệ thống'),
@@ -746,6 +478,6 @@ INSERT INTO LichSuTrangThaiBaiBao (MaBaiBao, TrangThaiCu, TrangThaiMoi, NgayChuy
 (1, N'Đang chế bản', N'Đã xuất bản', '2026-11-28 08:00:00', 1, N'Công bố chính thức trong Tập 15, Số 42 (2026)'),
 
 -- Lịch sử Bài 8
-(8, NULL, N'Chờ sơ duyệt', '2026-11-01 10:00:00', 7, N'Tác giả Lý Thị M nộp bài'),
+(8, NULL, N'Chờ sơ duyệt', '2026-11-01 10:00:00', 6, N'Tác giả nộp bài'),
 (8, N'Chờ sơ duyệt', N'Đang phản biện', '2026-11-05 15:30:00', 1, N'Phân công 2 chuyên gia phản biện');
 GO

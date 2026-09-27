@@ -1,0 +1,178 @@
+KẾ HOẠCH LÀM VIỆC TẠI TRƯỜNG — HỆ THỐNG TẠP CHÍ KHOA HỌC HUIT
+Ngày lập: 26/09/2026
+Gói mang theo dự kiến: KLTN_HUIT_MANG_DEN_TRUONG_20260926.zip
+Phạm vi: Web Portal + Backend API + WinForms + SQL Server + tệp bài báo + tài liệu + kiểm thử.
+
+QUAN TRỌNG TRƯỚC KHI ĐỌC
+Tài liệu này được đối chiếu với các file đang nằm trong thư mục dự án ngày 26/09/2026. Các báo cáo cũ như TONG_QUAN_DU_AN_KLTN.txt, HoTro/DANH_GIA_DU_AN_KLTN.md và HUONG_DAN_TIEP_TUC_KHI_VE_NHA.md có một số mô tả lỗi thời. Khi mâu thuẫn, kiểm tra mã nguồn, cấu hình đang chạy và dữ liệu SQL thực tế trước khi kết luận. Kết quả 9/9 là lần kiểm thử đã ghi nhận ngày 25/09/2026 trên CSDL Testing, không phải cam kết tự động đúng trên máy trường.
+
+1. MỤC TIÊU CỦA BUỔI LÀM VIỆC Ở TRƯỜNG
+
+1.1. Có thể giải nén một gói duy nhất rồi khởi động hệ thống trên máy Windows ở trường. Sau khi khởi động, Web, Backend và WinForms phải nhìn thấy cùng dữ liệu SQL Server.
+1.2. Chứng minh được luồng thật: Tác giả nộp bài trên Web → Ban biên tập xử lý trên WinForms/API → hai chuyên gia phản biện trên Web → quyết định/sửa bài → xếp số và phát hành → độc giả xem, tải đúng PDF thành phẩm.
+1.3. Ghi lại lỗi, chứng cứ sửa lỗi và ảnh demo để chuyển thành nội dung báo cáo khóa luận. Không lấy dữ liệu Demo trong localStorage làm bằng chứng đồng bộ thật.
+1.4. Đánh giá điều kiện đưa sản phẩm ra thị trường theo hai mốc: hoàn thành demo khóa luận; hoàn thành hệ thống có thể vận hành thật. Không quảng bá các chức năng chưa kiểm chứng.
+
+2. BẢN ĐỒ DỰ ÁN VÀ HIỆN TRẠNG ĐÃ KIỂM TRA
+
+2.1. Web: thư mục Web/, HTML/CSS/JavaScript thuần. Điểm vào chính Web/UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html; các trang quan trọng: login.html, register.html, submit-paper.html, profile.html, reviewer.html, archives.html, issue-detail.html, article-detail.html. Logic chung nằm trong journal-interactions.js; module phản biện riêng nằm ở reviewer.js và reviewer-core.js. Chế độ Demo có dữ liệu trình duyệt; chế độ Online phải gọi API thật. Trên một số hàm Web cũ trong journal-interactions.js vẫn có fallback dữ liệu mẫu khi API trả rỗng/lỗi; cần rà soát trong Buổi 2.
+2.2. Backend: Backend/HuitJournal.Api/ dùng ASP.NET Core .NET 9, EF Core và SQL Server. Controllers gồm AuthController, BaiBaoController, PhanBienController, SoTapChiController, EditorialArticleController, DesktopAdminController. Logic chính trong Services/. Backend phục vụ Web trực tiếp qua cổng 5000 khi chạy từ gốc dự án.
+2.3. Desktop: Winform/QL_TapChi_WinForms/ dùng .NET 8 Windows Forms. JournalApiClient.cs gọi API bằng JWT. Đăng nhập, đổi mật khẩu, phân công phản biện, quyết định biên tập, xếp số, phát hành và quản trị một phần người dùng đã chuyển qua API. Các màn đọc SQL, một số thao tác tạo/sửa/xóa bài, chuyên ngành và sao lưu/phục hồi còn truy cập SQL trực tiếp. Đây là hạng mục cần tiếp tục trước triển khai thực tế.
+2.4. SQL: SQLKLCN.sql là script tạo mới CSDL QL_TapChiKhoaHoc trong dự án hiện tại. HoTro/Create_Test_DB.sql tạo lại CSDL QL_TapChiKhoaHoc_Test và XÓA CSDL test cũ nếu tồn tại. HoTro/Migration_20260925_AuthorVisibleNote.sql thêm cột ThongBaoChoTacGia cho CSDL cũ; HoTro/Migration_20260925_UpdateSchema.sql dùng tên QL_TapChiKhoaHoc cố định. Không chạy lại script tạo mới/migration theo thói quen trên CSDL đã khôi phục; trước tiên kiểm tra schema.
+2.5. Tệp bài báo riêng tư: Backend/HuitJournal.Api/Uploads/ có bản thảo, bản sửa, PDF phát hành và ảnh đại diện. SQL .bak không chứa các tệp này. Chỉ xem bản thảo qua API có quyền; PDF công khai phải là PDF thành phẩm gắn bài đã xuất bản và số đã phát hành.
+2.6. Tài liệu: docs/De_Cuong_Va_Bao_Cao/, docs/so_do/, Web/templates/ và HoTro/. TOAN_BO_DU_AN_VA_SOURCE_CODE_KLTN.txt chỉ là bản tập hợp văn bản để đọc/tra cứu; chỉnh sửa và build phải dùng các file nguồn thật.
+2.7. Bộ kiểm thử: Web/tests/test_live_backend_6_stages_integration.py là bài tích hợp trên CSDL Testing; Web/tests/test_reviewer_workspace.cjs kiểm tra module phản biện với API mô phỏng; còn các bài Python E2E giao diện khác trong Web/tests/. Kết quả của một bài test mô phỏng không thay thế kiểm thử CSDL và WinForms thật.
+2.8. Bản sao dữ liệu ngày 26/09/2026 đã có tại HoTro/GOI_MANG_DI_TRUONG_DU_LIEU/: QL_TapChiKhoaHoc_full.bak (745472 byte) và QL_TapChiKhoaHoc_Test_full.bak (700416 byte). Cả hai được tạo bằng BACKUP DATABASE với CHECKSUM và đã qua RESTORE VERIFYONLY WITH CHECKSUM trên máy nguồn SQL Server 2022. Đọc HUONG_DAN_KHOI_PHUC_DB.txt cùng thư mục để biết SHA-256 của từng .bak và cách khôi phục. Khi sang máy trường, vẫn phải restore thử và đối chiếu dữ liệu/tệp thực tế.
+2.9. Những gì chưa thể xác nhận chỉ từ file: cấu hình SQL Server và dữ liệu trên máy trường; .bak có được khôi phục thành công ở máy trường hay không; tệp Uploads có khớp DuongDan trong CSDL hay không; việc mở đúng máy/phần mềm thực tế; tình trạng gói NuGet/Playwright trên máy trường; tình trạng build và chạy ở thời điểm mới.
+
+3. TRƯỚC KHI RỜI NHÀ: KIỂM TRA GÓI BÀN GIAO
+
+[ ] Xác nhận file KLTN_HUIT_MANG_DEN_TRUONG_20260926.zip tồn tại và có kích thước hợp lý, mở được bằng Explorer/7-Zip.
+[ ] Trong ZIP có: Backend/, Web/, Winform/, SQLKLCN.sql, HoTro/, docs/, Web/templates/, Backend/HuitJournal.Api/Uploads/, file kế hoạch này và hai file .bak trong HoTro/GOI_MANG_DI_TRUONG_DU_LIEU/. Kiểm tra tên, kích thước và SHA-256 của từng .bak theo HUONG_DAN_KHOI_PHUC_DB.txt.
+[ ] Lấy SHA-256 của ZIP bằng PowerShell: Get-FileHash -Algorithm SHA256 -LiteralPath '.\KLTN_HUIT_MANG_DEN_TRUONG_20260926.zip'. Ghi hash vào điện thoại/sổ để so trên máy trường. Nếu gói có manifest checksum, dùng giá trị đó; đừng đoán hash.
+[ ] Sao chép một bản ZIP vào thiết bị hoặc kênh riêng đáng tin cậy, kiểm tra mở được bản sao. Không đẩy ZIP này lên GitHub công khai: gói có thể chứa CSDL, dữ liệu người dùng, bản thảo và khóa cấu hình.
+[ ] Bản sao SQL live/test hiện đã được tạo và kiểm chứng trên máy nguồn. Nếu file bị thiếu/hỏng trong ZIP sau khi sao chép, tạo lại gói từ nguồn hoặc sao chép lại; không thay thế bằng script SQL rồi ghi nhận như đã khôi phục dữ liệu gốc.
+[ ] Sau khi ZIP hoàn tất, không tiếp tục sửa mã nguồn tại nhà mà quên nén lại; nếu sửa thì phải tạo lại ZIP và ghi lại SHA-256.
+
+4. BUỔI 0 — ĐƯA DỰ ÁN LÊN MÁY TRƯỜNG (60–120 PHÚT)
+
+4.1. Chuẩn bị Windows 10/11, dung lượng trống, .NET SDK 9 và 8, SQL Server 2022 hoặc mới hơn để khôi phục hai .bak, SSMS hoặc sqlcmd, Python 3, Node.js nếu muốn chạy bộ kiểm thử Web. Kiểm tra bằng: dotnet --list-sdks; python --version; node --version; sqlcmd -? (nếu đã cài). Nếu trường hạn chế cài phần mềm, ưu tiên máy có sẵn .NET và SQL; ghi lại phiên bản thực tế. NuGet/Playwright có thể cần mạng khi cài phụ thuộc. Nếu máy chưa có SQL Server/SDK và không có Internet/quyền cài, vẫn có thể đọc code, tài liệu, lập sơ đồ, phân tích lỗi và ghi kế hoạch; chưa thể chạy full-stack thật cho đến khi đủ môi trường.
+4.2. So SHA-256 gói nhận được bằng Get-FileHash. Nếu khác, sao chép lại trước khi giải nén. Giải nén vào thư mục người dùng có quyền ghi và đường dẫn ngắn, ví dụ D:\KLTN_HUIT. Trong PowerShell: Expand-Archive -LiteralPath '.\KLTN_HUIT_MANG_DEN_TRUONG_20260926.zip' -DestinationPath 'D:\KLTN_HUIT' -Force. Nếu ZIP có thư mục dự án bao ngoài, chuyển vào đúng thư mục chứa Backend/, Web/, Winform/ trước khi chạy lệnh tiếp theo.
+4.3. Kiểm kê nhanh: Test-Path '.\Backend\HuitJournal.Api\HuitJournal.Api.csproj'; Test-Path '.\Winform\QL_TapChi_WinForms\QL_TapChi_WinForms.csproj'; Test-Path '.\Web\reviewer.html'; Test-Path '.\HoTro\KE_HOACH_LAM_VIEC_TAI_TRUONG_20260926.txt'. Bốn kết quả cần là True.
+4.4. Xác định server SQL ở máy trường bằng SSMS hoặc sqlcmd. Mã nguồn mặc định dùng Server=. và tên QL_TapChiKhoaHoc. Tránh để WinForms tự chọn một SQL Express/LocalDB khác trong khi Backend trỏ Server=.; cả hai phải dùng cùng instance + database.
+4.5. Mở HoTro/GOI_MANG_DI_TRUONG_DU_LIEU/HUONG_DAN_KHOI_PHUC_DB.txt và so hash hai .bak. Trong SSMS dùng RESTORE VERIFYONLY/Restore Database để kiểm tra trên máy trường. Khôi phục QL_TapChiKhoaHoc_full.bak vào QL_TapChiKhoaHoc và QL_TapChiKhoaHoc_Test_full.bak vào QL_TapChiKhoaHoc_Test. Nếu CSDL đích đã tồn tại, sao lưu/đổi tên dữ liệu cần giữ trước, không chọn WITH REPLACE theo thói quen. Khi đường dẫn vật lý trong .bak thuộc máy cũ, dùng Relocate all files/Move trong SSMS hoặc RESTORE FILELISTONLY rồi MOVE. Ghi tên instance/CSDL thật vào nhật ký.
+4.6. Sau restore, kiểm tra hai CSDL ONLINE, đếm bản ghi BaiBao/NguoiDung, kiểm tra bảng SoTapChi, ThuMucBaiBao, LichSuTrangThaiBaiBao, DonDangKyPhanBien và cột ThongBaoChoTacGia. Nếu restore không thực hiện được, ghi nguyên nhân; chỉ tạo CSDL mẫu mới bằng SQLKLCN.sql khi đã quyết định chấp nhận mất dữ liệu live trong phiên demo riêng. Script này có CREATE DATABASE nên không chạy trên CSDL đã tồn tại. Không chạy HoTro/Create_Journal_DB.sql vì file này tạo tên Journal_DB, không phải tên mặc định của ứng dụng. Migration trên CSDL đã restore chỉ được chạy sau khi xác định schema thật sự thiếu và đã sao lưu.
+4.7. Chép đúng thư mục Backend/HuitJournal.Api/Uploads/ từ ZIP. Kiểm tra ngẫu nhiên 2–3 bản ghi ThuMucBaiBao.DuongDan có file thật tương ứng trong Uploads; mở một file thử bằng chức năng có phân quyền. Nếu .bak khôi phục nhưng mất Uploads, cần mang lại tệp gốc; tạo mới dữ liệu mẫu không phục hồi bản thảo đã mất.
+4.8. Cấu hình phiên PowerShell trước khi chạy nếu instance SQL khác mặc định: $env:ConnectionStrings__DefaultConnection='Server=TEN_INSTANCE;Database=QL_TapChiKhoaHoc;Integrated Security=True;TrustServerCertificate=True;'; $env:HUIT_JOURNAL_DB_CONNECTION=$env:ConnectionStrings__DefaultConnection; $env:HUIT_JOURNAL_API_URL='http://localhost:5000'. Biến môi trường chỉ có hiệu lực trong cửa sổ/tiến trình kế thừa; mở WinForms từ cửa sổ đã đặt biến. Đặt JWT key qua biến môi trường riêng khi đưa lên môi trường thật; không gửi khóa vào chat/tài liệu công khai.
+4.9. Từ gốc dự án chạy dotnet restore Backend/HuitJournal.Api/HuitJournal.Api.csproj và dotnet restore Winform/QL_TapChi_WinForms/QL_TapChi_WinForms.csproj. Sau đó dotnet build cho hai project. Ghi nguyên văn lỗi đầu tiên nếu build thất bại; đừng sửa hàng loạt theo suy đoán. WinForms chỉ build/chạy trên Windows.
+4.10. Khởi động Backend: .\Chay_Backend.bat (hoặc dotnet run --project Backend/HuitJournal.Api --launch-profile http). Mở http://localhost:5000/login.html và http://localhost:5000/archives.html. Khởi động WinForms bằng dotnet run --project Winform/QL_TapChi_WinForms/QL_TapChi_WinForms.csproj sau khi build để chắc chắn chạy mã mới. Chay_WinForms.bat ưu tiên file exe Debug đã có nên có thể mở bản cũ nếu chưa build lại. Chay_Web.bat ở cổng 8088 là tùy chọn khi cần thử Web tĩnh riêng.
+4.11. Kiểm tra liên thông không ghi dữ liệu: đăng nhập Web và WinForms bằng tài khoản thử phù hợp; xem cùng một số bài/số báo, trạng thái và tên tài khoản. Trên trình duyệt nhấn F12, xem Console/Network; xác nhận request /api trả 2xx/401 đúng ngữ cảnh và không dùng mode=demo. Không dùng tài khoản thật của người khác.
+4.12. Kết thúc Buổi 0 bằng file nhật ký HoTro/NHAT_KY_TAI_TRUONG.txt: thời gian, tên máy, hệ điều hành, SDK, SQL instance, tên DB, nguồn .bak/script, SHA-256 ZIP, build Backend/WinForms, URL API, 3 ảnh chụp Web/WinForms/SSMS. Không ghi mật khẩu, JWT, khóa bí mật hoặc nội dung bản thảo riêng tư vào nhật ký.
+
+5. KIẾN TRÚC ĐÚNG KHI TIẾP TỤC PHÁT TRIỂN
+
+5.1. Một nguồn sự thật nghiệp vụ: Web và WinForms đều gửi thao tác thay đổi trạng thái/phân quyền/đăng bài qua Backend API; Backend kiểm tra role, điều kiện nghiệp vụ và lưu SQL. CSDL chỉ là tầng lưu trữ, không phải nơi từng giao diện tự diễn giải nghiệp vụ riêng.
+5.2. Luồng đọc công khai: Web → GET /api/sotapchi, /api/baibao/public/latest, /api/baibao/public/{id}, /api/baibao/public/{id}/pdf → chỉ bài/số đã phát hành và PDF thành phẩm. Không cho URL bản thảo nội bộ đi vào DTO công khai.
+5.3. Luồng riêng tư: Web/WinForms gửi JWT → API xác minh vai trò và quan hệ với bài/phân công → SQL và kho Uploads. Chuyên gia chỉ tải bản ẩn danh đúng vòng; tác giả chỉ xem nội dung dành cho tác giả; GhiChu nội bộ tách khỏi ThongBaoChoTacGia.
+5.4. Năm vai trò hiện có: Quản trị hệ thống, Ban biên tập, Tác giả, Chuyên gia phản biện, Độc giả. Một người có thể có nhiều vai trò. Việc đăng ký không được tự cấp quyền phản biện; Ban biên tập/Quản trị duyệt đơn trong AuthController.
+5.5. Tách chế độ Demo thật rõ: `?mode=demo`/token standalone chỉ dùng trình diễn trên trình duyệt; dữ liệu localStorage không tự đồng bộ về SQL. Khi chứng minh liên thông, dùng Web qua Backend cổng 5000 và JWT thật. Không nhập dữ liệu nghiên cứu thật vào Demo.
+
+6. KỊCH BẢN NGHIỆP VỤ 6 GIAI ĐOẠN CẦN DIỄN TẬP TRÊN MÁY TRƯỜNG
+
+Giai đoạn 1 — Nộp bài. Vai trò: Tác giả. Màn: Web/submit-paper.html. Cần đăng nhập Online, điền các bước, đồng tác giả, chuyên ngành, tải DOCX/PDF, chấp nhận cam đoan. Kết quả: API /api/baibao/submit tạo BaiBao trạng thái Chờ sơ duyệt, ThuMucBaiBao trỏ file tồn tại, Web/profile.html hiện đúng mã và lịch sử. Thử phủ định: tệp sai loại/không hợp lệ, thiếu trường, API ngắt giữa chừng phải báo chưa nộp.
+Giai đoạn 2 — Sơ duyệt. Vai trò: Ban biên tập. Màn: WinForms UcQuanLyBaiBao/FrmChiTietBaiBao. Kiểm tra bài đã nhận, thể thức và hồ sơ; quyết định sơ duyệt theo trạng thái hợp lệ qua API. Kết quả: tác giả thấy trạng thái và ThongBaoChoTacGia, không thấy GhiChu nội bộ. Cần ghi rõ hiện tại WinForms còn đọc SQL trực tiếp.
+Giai đoạn 3 — Chuẩn bị phản biện kín. Vai trò: Ban biên tập. Dùng API /api/baibao/{id}/upload-anonymous-manuscript gắn SoVong rồi WinForms phân công qua /api/phanbien/assign cho ít nhất hai chuyên gia phù hợp cùng vòng. Kết quả: chỉ sau phân công thứ hai bài mới chuyển Đang phản biện. Thử phủ định: thiếu file ẩn danh cùng vòng, chuyên gia là tác giả/đồng tác giả, sai chuyên môn, phân công trùng.
+Giai đoạn 4 — Phản biện BM-04. Vai trò: hai chuyên gia riêng biệt. Màn: Web/reviewer.html. Mỗi người đăng nhập JWT riêng, nhận đúng phân công, tải bản ẩn danh qua /api/phanbien/assignments/{id}/manuscript, chấm 4 tiêu chí, nhận xét cho tác giả và nhận xét bảo mật, gửi /api/phanbien/evaluate. Thử phủ định: tài khoản không được phân công không tải được file/không nộp được phiếu. Kiểm tra WinForms nhìn thấy hai phiếu. Hiện service còn cho cập nhật phiếu đã có; xem Buổi 4.
+Giai đoạn 5 — Quyết định và chỉnh sửa. Vai trò: Ban biên tập → Tác giả. Sau đủ phiếu, biên tập chọn Chờ chỉnh sửa hoặc hướng xử lý phù hợp qua /api/phanbien/decision; tác giả đọc góp ý được phép công bố trong profile, nộp lại bản sạch/bản đánh dấu/BM-03 qua /api/baibao/{id}/resubmit. Kiểm tra đúng vòng, không lộ tên reviewer hoặc nhận xét bảo mật. Ghi trạng thái và file theo từng bước.
+Giai đoạn 6 — Chế bản, xếp số, phát hành. Vai trò: Ban biên tập. Tải PDF thành phẩm bằng /api/baibao/{id}/upload-published-pdf; gán số/trang/DOI qua /api/baibao/{id}/assign-issue và các thao tác biên tập liên quan; phát hành bằng /api/sotapchi/{id}/publish. API kiểm tra số có bài, bài Sẵn sàng xuất bản, trang hợp lệ, có PDF. Độc giả mở archives.html → issue-detail.html → article-detail.html → tải /api/baibao/public/{id}/pdf. Thử phủ định: không PDF hoặc chưa sẵn sàng thì không công khai.
+
+7. LỊCH TRIỂN KHAI CHI TIẾT THEO BUỔI (ƯU TIÊN THEO MỨC ẢNH HƯỞNG)
+
+BUỔI 1 — CHỐT NỀN CHẠY VÀ DỮ LIỆU THẬT (P0; 2–4 GIỜ)
+Đầu vào: ZIP đã xác minh, CSDL đã restore/tạo, Uploads đã chép.
+1. Chạy Buổi 0 đầy đủ; chụp ảnh build sạch. Kiểm tra API và WinForms cùng QL_TapChiKhoaHoc bằng hai danh sách bài; đọc Winform/QL_TapChi_WinForms/AppConfig.cs và Backend/HuitJournal.Api/appsettings*.json để tránh lệch instance.
+2. Tạo một bài thử qua Web Online và xác nhận xuất hiện ngay trong WinForms. Nếu không xuất hiện: kiểm tra Network request, connection string hai bên, CSDL instance, JWT, rồi ThuMucBaiBao. Không sửa SQL tay để che lỗi luồng.
+3. Kiểm tra bản sao .bak và Uploads bằng restore thử trên máy trường; nếu không có dữ liệu gốc thì ghi giới hạn vào nhật ký. Không phát hành/sửa các bài live trước khi có backup khôi phục được.
+4. Ghi lỗi theo mẫu: bước tái hiện, vai trò, bài/số, URL/API, HTTP status, SQL instance, kết quả mong muốn/thực tế, ảnh/log. Che email nhạy cảm và token trước khi chia sẻ.
+Xong khi: Web nộp bài thật thành công, WinForms thấy cùng bài, dữ liệu/tệp khớp, đủ nhật ký và ảnh.
+
+BUỔI 2 — ĐÓNG LỖ HỔNG GIAO DIỆN VÀ CHẾ ĐỘ DEMO (P0; 2–4 GIỜ)
+File chính: Web/journal-interactions.js, Web/reviewer.js, Web/profile.html, Web/submit-paper.html; đối chiếu Web/tests/test_standalone_engine_e2e.py và test_reviewer_workspace.cjs.
+1. Rà soát mọi hàm `apiGet...`, `apiSubmit...`, đặc biệt hàm lấy danh sách bài của tác giả và phân công phản biện cũ trong journal-interactions.js. Khi Online mà API lỗi, rỗng hoặc 401, không trả bài/phân công mẫu; trang phải báo lỗi/rỗng trung thực. Reviewer mới đã có module riêng, nhưng logic cũ vẫn cần sửa hoặc loại bỏ chỗ gọi.
+2. Kiểm tra banner Demo hiện đủ rõ trên mọi trang và dữ liệu Demo không lẫn dữ liệu thật. Phân biệt `?mode=online`, `?mode=demo`, token JWT và standalone_token_.
+3. Thử mất API giữa lúc nộp bài: UI phải nói chưa nộp; không được có bài mới trong localStorage dưới danh nghĩa đã nộp thật. Thử danh sách phản biện rỗng trên API thật: không hiện sample.
+4. Chạy node --check Web/journal-interactions.js, node --check Web/reviewer.js; kiểm thử 320/375/768/1024px và Console/Network. Ghi ảnh trước/sau.
+Xong khi: không có kết quả thật giả lẫn nhau trong ba tình huống API rỗng, API lỗi, Demo được bật chủ động.
+
+BUỔI 3 — HOÀN THÀNH LUỒNG BIÊN TẬP QUA API (P0/P1; 3–5 GIỜ)
+File chính: Winform/QL_TapChi_WinForms/Services/BaiBaoService.cs, ChuyenNganhService.cs, SoTapChiService.cs, các UcQuanLy*.cs; Backend/HuitJournal.Api/Controllers/EditorialArticleController.cs và Services tương ứng.
+1. Liệt kê từng thao tác WinForms còn dùng INSERT/UPDATE/DELETE trực tiếp. Trong BaiBaoService hiện còn tạo/sửa/xóa bài SQL; ChuyenNganhService còn CRUD SQL. Chốt quyền ai được làm, hợp đồng DTO và quy tắc trạng thái cho từng thao tác.
+2. Bổ sung endpoint Backend có [Authorize] đúng vai trò, kiểm tra input, thay đổi trong transaction khi cần, trả lỗi dễ hiểu. Chuyển WinForms gọi JournalApiClient. Giữ đọc SQL tạm nếu phải, nhưng giao diện cần báo mất kết nối DB rõ ràng và không hiển thị dữ liệu giả.
+3. Không cho xóa cứng bài đã qua phản biện/xuất bản; thiết kế lưu trữ/ẩn và lịch sử thay đổi. Với chuyên ngành đã có bài/người dùng liên kết, cấm xóa nếu vi phạm khóa ngoại; đưa thông báo rõ.
+4. Chạy lại build và thử cùng một thao tác từ hai máy/client nếu có thể; kiểm tra Web thấy kết quả ngay, lịch sử/audit đúng.
+Xong khi: các thao tác ghi cốt lõi của WinForms không còn bypass API, mỗi thao tác có quyền và lỗi rõ; ghi danh sách các SQL write còn sót.
+
+BUỔI 4 — SIẾT QUY TRÌNH PHẢN BIỆN VÀ BẢO MẬT HỒ SƠ (P0/P1; 3–5 GIỜ)
+File chính: Backend/HuitJournal.Api/Services/PhanBienService.cs, BaiBaoService.cs; Controllers/PhanBienController.cs, BaiBaoController.cs; Web/reviewer.js; Web/tests/test_live_backend_6_stages_integration.py.
+1. Kiểm tra tính toàn vẹn tệp ẩn danh bằng mở chính file được reviewer tải. Tên file và metadata DOCX/PDF cũng có thể lộ danh tính; lập checklist khử metadata trước khi upload và chọn cách xác minh tự động nếu khả thi.
+2. Hiện SubmitEvaluationAsync cập nhật PhieuDanhGia nếu đã có. Quyết định nghiệp vụ thời điểm khóa phiếu, quyền sửa và lịch sử phiên bản; triển khai trong API, không chỉ khóa nút trên Web. Tính lại DiemTongKet phía server từ bốn điểm hoặc xác nhận sai số; không tin điểm tổng từ client.
+3. Kiểm tra API quyết định biên tập đòi đủ hai BM-04 trong vòng hiện tại; kiểm tra xử lý vòng 2, lời mời bổ sung, reviewer từ chối/quá hạn, hai người nộp đồng thời.
+4. Kiểm tra nội dung GhiChu và ThongBaoChoTacGia ở mỗi bước; tác giả không được thấy người đánh giá, nhận xét bảo mật hoặc path bản thảo ẩn danh. Thử truy cập endpoint bằng token sai vai trò.
+5. Nếu cần xem phiếu từ máy/phiên khác, thêm endpoint đọc phiếu đúng quyền; hiện reviewer.js có tóm tắt và receipt trong session, nhưng hợp đồng xem đầy đủ phiếu cũ cần kiểm chứng rồi mới tuyên bố hoàn thành.
+Xong khi: hai phản biện độc lập, quyền tải/nộp đúng, phiếu đã chốt không bị sửa trái phép, tác giả chỉ thấy thông tin được phép.
+
+BUỔI 5 — XUẤT BẢN VÀ NỘI DUNG CÔNG KHAI (P1; 3–5 GIỜ)
+File chính: Backend/HuitJournal.Api/Services/SoTapChiService.cs, BaiBaoService.cs; Controllers/SoTapChiController.cs; Web/archives.html, issue-detail.html, article-detail.html; Winform/Services/SoTapChiService.cs.
+1. Dựng một số thử trong Test DB. Kiểm tra gán trang không trùng, DOI không trùng, PDF đúng bài, file tồn tại; bài chưa sẵn sàng bị chặn phát hành. Kiểm tra trạng thái số Đã xuất bản và tất cả bài liên quan cập nhật đồng nhất.
+2. Sau phát hành, Web public phải hiện đúng tiêu đề, tác giả, số/tập/năm/trang/DOI và tải đúng PDF thành phẩm. Bài chưa xuất bản không được hiện trên public/latest hoặc có URL PDF giả.
+3. Kiểm tra trang kho lưu trữ khi rỗng, thiếu ảnh bìa, ấn phẩm nhiều bài, bài có nhiều tác giả; chỉ dùng nội dung tạp chí đã đối chiếu nguồn chính thức. Không tự gán DOI hợp lệ ngoài hệ thống cấp DOI thực tế.
+4. Tách rõ việc lưu DOI nội bộ và việc đăng ký DOI với bên cấp định danh; nếu chưa có đăng ký, ghi là chưa thực hiện trong demo và báo cáo.
+Xong khi: người không đăng nhập chỉ tải được PDF công khai của bài đã phát hành và dữ liệu hiển thị khớp CSDL.
+
+BUỔI 6 — KIỂM THỬ TỰ ĐỘNG TRÊN CSDL TESTING (P1; 2–4 GIỜ)
+File chính: HoTro/Create_Test_DB.sql, Backend/HuitJournal.Api/appsettings.Testing.json, Web/tests/test_live_backend_6_stages_integration.py.
+1. Chỉ dùng DB Test. Nếu Test DB đã có dữ liệu cần giữ, sao lưu trước; Create_Test_DB.sql sẽ DROP toàn bộ DB Test hiện có. Tuyệt đối không chạy script test trên QL_TapChiKhoaHoc live.
+2. Mở cửa sổ PowerShell riêng, đặt `$env:ASPNETCORE_ENVIRONMENT='Testing'` và `$env:ASPNETCORE_URLS='http://localhost:5001'`; chạy `dotnet run --project Backend/HuitJournal.Api --no-launch-profile`. appsettings.Testing.json mặc định Server=. và QL_TapChiKhoaHoc_Test.
+3. Trước khi test, mở `http://localhost:5001/api/testing/environment`; phải thấy environment=Testing, database=QL_TapChiKhoaHoc_Test, dataSource='.'. Nếu máy trường dùng instance khác, bài test hiện tại sẽ từ chối; điều chỉnh cấu hình và guard một cách có kiểm soát, không bỏ guard để chạy cho qua.
+4. Cửa sổ khác đặt `$env:JOURNAL_TEST_BASE_URL='http://localhost:5001/api'` rồi chạy `python Web/tests/test_live_backend_6_stages_integration.py`. Script có thao tác tạo và xóa dữ liệu; đọc kết quả cleanup. Nếu lỗi giữa chừng, kiểm tra DB/file Test còn sót trước khi chạy lại.
+5. Chạy thêm các bài UI phù hợp sau khi cài Playwright/Edge: reviewer workspace, responsive, nộp bài; tách rõ bài dùng mock và bài dùng API/SQL thật.
+Xong khi: build sạch, bài tích hợp qua hết các nhóm và cleanup sạch trên Test DB. Nếu không đạt, lưu nguyên log và dừng kết luận 9/9.
+
+BUỔI 7 — BẢO MẬT VÀ VẬN HÀNH THẬT (P1 TRƯỚC KHI BÁN; 4–6 GIỜ)
+File chính: Backend/HuitJournal.Api/Program.cs, appsettings*.json, Services/AuthService.cs, BaiBaoService.cs; Winform/Services/BackupRestoreService.cs; Web/journal-interactions.js.
+1. Bỏ khóa JWT cứng khỏi appsettings.json và fallback trong Program.cs; cấu hình qua secret/biến môi trường trên từng máy, xoay khóa mặc định và buộc mật khẩu thật mạnh. Không đưa file cấu hình chứa khóa/chuỗi kết nối thật vào gói phát hành công khai.
+2. CORS hiện AllowAnyOrigin/AnyHeader/AnyMethod, RequireHttpsMetadata=false. Thiết kế danh sách origin Web thật, HTTPS/TLS ở reverse proxy và cấu hình production riêng. Kiểm tra token hết hạn/thu hồi, RBAC tại từng endpoint, dữ liệu riêng tư trong phản hồi và log.
+3. AuthService hiện hỗ trợ mật khẩu seed/legacy dạng thuần để tương thích; WinForms đã đăng nhập qua API nên lập kế hoạch chuyển toàn bộ tài khoản cũ sang BCrypt, xóa seed/default password và bỏ nhánh so sánh thuần sau migration. Không lưu mật khẩu demo bằng Base64 rồi gọi đó là băm an toàn.
+4. BackupRestoreService của WinForms hiện có nhánh không kết nối SQL nhưng trả thành công và tạo `.bak` văn bản mô phỏng. Sửa để báo thất bại rõ, phân biệt backup thật và demo; chỉ coi backup hợp lệ sau RESTORE VERIFYONLY + restore thử + kiểm tra số bản ghi/tệp Uploads. Chức năng restore hiện dùng WITH REPLACE/SINGLE_USER, cần quyền riêng và quy trình xác nhận trên môi trường vận hành.
+5. Thiết kế sao lưu định kỳ gồm cả .bak SQL, thư mục Uploads, cấu hình an toàn và tài liệu; luyện khôi phục trên máy khác. Bổ sung theo dõi lỗi, giới hạn tải lên/rate limit, xử lý tệp độc hại bằng công cụ kiểm tra chuyên dụng nếu có, nhật ký thao tác nhạy cảm.
+Xong khi: demo khóa luận vẫn chạy, cấu hình thật không lộ khóa, bản sao lưu khôi phục được, và danh sách rủi ro tồn đọng có người phụ trách/thời hạn.
+
+BUỔI 8 — HOÀN THIỆN BÁO CÁO VÀ DEMO HỘI ĐỒNG (P1; 3–5 GIỜ)
+File chính: docs/De_Cuong_Va_Bao_Cao/KLTN_011.docx, docs/so_do/, TONG_QUAN_DU_AN_KLTN.txt, HoTro/KetNoi_WinForms_Web.md, nhật ký mới.
+1. Đối chiếu nội dung báo cáo với mã nguồn: Backend .NET 9, WinForms .NET 8, Web nhiều trang JS thuần, API trung gian, SQL Server. Sửa mọi câu “đã hoàn thiện 100%”, “an toàn tuyệt đối”, “SPA” nếu không có chứng cứ tương ứng.
+2. Chèn sơ đồ kiến trúc Web + WinForms → API → SQL/Uploads; sơ đồ trạng thái 6 giai đoạn; ma trận 5 vai trò; CSDL; ảnh mỗi màn demo. Dùng hình đã có trong docs/so_do/ khi đúng với code; sửa sơ đồ nếu quy trình thực tế đã đổi.
+3. Lập bảng kiểm thử: ca, vai trò, đầu vào, kết quả mong đợi, kết quả thực tế, ngày/máy/DB, ảnh/log. Tách test unit/mô phỏng và test end-to-end SQL thật.
+4. Chuẩn bị kịch bản demo 8–12 phút với dữ liệu giả được kiểm soát: nộp → hai phản biện → quyết định → phát hành. Chuẩn bị bản ghi màn hình và ảnh dự phòng, nhưng khi nói “live” phải dùng API/SQL thật. Không hiển thị mật khẩu, JWT hay bài nghiên cứu riêng tư không được phép.
+5. Dùng một trang “giới hạn còn lại”: tích hợp một số CRUD WinForms, bảo mật production, DOI thật, backup, kiểm thử tải/đa máy. Nêu rõ mục nào đã làm, mục nào là kế hoạch thị trường.
+Xong khi: báo cáo, sơ đồ, mã nguồn và demo cùng mô tả một hệ thống; không có mâu thuẫn công nghệ/trạng thái.
+
+8. MA TRẬN NGHIỆM THU NGẮN GỌN
+
+Vai trò Tác giả: đăng ký/đăng nhập; nộp bài; xem đúng bài của mình; nhận thông báo dành cho tác giả; nộp BM-03. Không xem GhiChu bảo mật hoặc bài người khác.
+Vai trò Chuyên gia phản biện: chỉ thấy phân công của mình; tải đúng bản ẩn danh theo vòng; nộp phiếu; không thấy tác giả hoặc nhận xét riêng của chuyên gia khác.
+Vai trò Ban biên tập: sơ duyệt; tạo file ẩn danh; chọn 2 chuyên gia; ra quyết định sau đủ phiếu; tải PDF thành phẩm; xếp số; phát hành sau đủ điều kiện.
+Vai trò Quản trị hệ thống: quản lý tài khoản/role, khóa tài khoản, xem trạng thái hệ thống; không dùng quyền admin để bỏ qua điều kiện xuất bản.
+Vai trò Độc giả: tìm số và bài đã xuất bản; tải đúng PDF thành phẩm; không tải được bản thảo nội bộ.
+Kết nối: cùng tài khoản, cùng trạng thái và cùng CSDL trên Web/WinForms; khi API/SQL mất kết nối, thao tác phải báo lỗi thật, không báo thành công giả.
+
+9. CÁCH GHI NHẬT KÝ SAU MỖI BUỔI VÀ BÀN GIAO VỀ NHÀ
+
+Cuối mỗi buổi ghi vào HoTro/NHAT_KY_TAI_TRUONG.txt: ngày/giờ, phiên bản code/gói, máy và CSDL, việc đã làm, file đã sửa, lệnh build/test, kết quả pass/fail, dữ liệu test đã tạo/dọn, lỗi còn lại, bước đầu tiên cho buổi sau. Chụp ảnh lỗi và ảnh nghiệm thu vào thư mục riêng trong workspace. Hiện gốc dự án không có .git; Web/ có repository riêng trên nhánh main và các thay đổi chưa commit. Trước khi thiết lập Git cho toàn dự án, quyết định cách xử lý repository lồng nhau với đồng đội; lưu bản sao thay đổi Web trước. Tạo .gitignore cho .bak/Uploads dữ liệu thật/bin/obj/secrets trước khi đẩy bất kỳ repository nào. Không dùng Day_Len_Github.bat để đẩy tất cả file một cách mù quáng.
+
+Trước khi rời trường: backup SQL thật nếu đã sửa dữ liệu; sao chép Uploads tương ứng; đóng ứng dụng để file ổn định; tạo ZIP mới từ toàn bộ workspace cần thiết; kiểm tra mở ZIP và SHA-256; lưu ở kênh riêng. Nếu chỉ có bản code mà thiếu .bak/Uploads mới, về nhà sẽ không thấy các bài/tệp đã tạo tại trường. Nếu có nhiều người cùng sửa, ghi rõ file ai phụ trách và thời điểm để tránh ghi đè lẫn nhau.
+
+10. DANH SÁCH VIỆC ƯU TIÊN KHI THỜI GIAN TẠI TRƯỜNG RẤT NGẮN
+
+Nếu chỉ có 1–2 giờ: hoàn thành Buổi 0, xác minh ZIP/.bak/Uploads, build và chạy 3 thành phần, chụp ảnh, ghi lỗi. Nếu có nửa ngày: thêm một luồng Web nộp bài → WinForms nhìn thấy → Web thấy trạng thái; sau đó chạy bài test Testing trên DB riêng. Nếu có một ngày: diễn tập đủ 6 giai đoạn, ưu tiên sửa lỗi chặn demo trước; cuối ngày tạo backup mới và cập nhật nhật ký. Các việc thương mại hóa được đưa vào backlog có thứ tự, không ép làm vội trên DB live.
+
+11. CÂU LỆNH VÀ ĐIỂM MỞ NHANH
+
+Gốc dự án: thư mục sau giải nén chứa Backend/, Web/, Winform/.
+Build API: dotnet build Backend/HuitJournal.Api/HuitJournal.Api.csproj
+Build Desktop: dotnet build Winform/QL_TapChi_WinForms/QL_TapChi_WinForms.csproj
+Chạy API + Web: .\Chay_Backend.bat → http://localhost:5000/login.html
+Chạy WinForms: .\Chay_WinForms.bat
+Web tĩnh phụ: .\Chay_Web.bat → http://localhost:8088/
+Tài liệu bridge: HoTro/KetNoi_WinForms_Web.md
+SQL schema chính: SQLKLCN.sql
+Kiểm thử tích hợp: Web/tests/test_live_backend_6_stages_integration.py (CHỈ môi trường Testing/DB Test sau khi xác minh endpoint guard)
+
+12. ĐOẠN BÀN GIAO ĐỂ TIẾP TỤC VỚI TRỢ LÝ MÃ NGUỒN Ở TRƯỜNG
+
+Sau khi giải nén và mở đúng thư mục dự án trên máy trường, có thể gửi nguyên văn yêu cầu sau cho trợ lý đang làm việc với mã nguồn:
+
+"Tôi đang tiếp tục dự án Tạp chí Khoa học HUIT từ gói KLTN_HUIT_MANG_DEN_TRUONG_20260926.zip. Hãy đọc AGENTS.md, HoTro/KE_HOACH_LAM_VIEC_TAI_TRUONG_20260926.txt, HoTro/KetNoi_WinForms_Web.md, HoTro/GOI_MANG_DI_TRUONG_DU_LIEU/HUONG_DAN_KHOI_PHUC_DB.txt và .agents/memory/project_memory.json trước khi sửa. Đây là dự án Web + Backend API .NET 9 + WinForms .NET 8 + SQL Server; Web/ có Git riêng. Hai .bak chính và Test đã được tạo và kiểm tra trên máy nguồn, nhưng hãy xác minh phục hồi trên máy hiện tại. Bắt đầu từ Buổi 0 của kế hoạch, kiểm tra môi trường và đối chiếu mã nguồn thực tế. Không chạy script DROP/CREATE hoặc bộ test ghi dữ liệu vào CSDL chính. Ghi lại việc đã làm, file đã sửa, kết quả build/test và bước tiếp theo vào HoTro/NHAT_KY_TAI_TRUONG.txt. Nếu thiếu SDK, SQL Server hoặc quyền cài đặt, hãy chỉ ra hạng mục có thể làm ngoại tuyến ngay."
+
+Nếu trợ lý không đọc được ZIP trực tiếp, giải nén trước rồi mở thư mục gốc chứa Backend/, Web/, Winform/; gửi đường dẫn đến file kế hoạch này. Gói không chứa ứng dụng SQL Server, .NET SDK, môi trường trình duyệt hoặc dữ liệu localStorage của chế độ Demo. Các tài khoản/bản thảo thật trong .bak và Uploads cần được giữ riêng tư.
+
+KẾT THÚC TÀI LIỆU. Mọi quyết định sửa cấu trúc DB hoặc quyền truy cập cần ghi lại trong nhật ký trước khi triển khai sang dữ liệu thật.

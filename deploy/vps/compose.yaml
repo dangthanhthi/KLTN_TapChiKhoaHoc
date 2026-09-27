@@ -1,0 +1,62 @@
+services:
+  sql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: ${ACCEPT_MSSQL_EULA:?Review SQL Server license and set Y}
+      MSSQL_PID: ${MSSQL_PID:-Express}
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD}
+    volumes:
+      - sql_data:/var/opt/mssql
+    networks: [internal]
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ../..
+      dockerfile: deploy/vps/Dockerfile.api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+      ConnectionStrings__DefaultConnection: "Server=sql,1433;Database=QL_TapChiKhoaHoc;User Id=sa;Password=${MSSQL_SA_PASSWORD};Encrypt=True;TrustServerCertificate=True"
+      Jwt__Key: ${JWT_KEY:?Set JWT_KEY}
+      EmailVerification__HmacSecretKey: ${OTP_HMAC_KEY:?Set OTP_HMAC_KEY}
+      EmailVerification__SenderEmail: ${SMTP_FROM:?Set SMTP_FROM}
+      EmailVerification__PublicWebBaseUrl: https://kltn-tap-chi-khoa-hoc.vercel.app
+      EmailVerification__SmtpUsername: ${SMTP_USERNAME:?Set SMTP_USERNAME}
+      EmailVerification__SmtpPassword: ${SMTP_PASSWORD:?Set SMTP_PASSWORD}
+      EmailVerification__SmtpHost: ${SMTP_HOST:?Set SMTP_HOST}
+      EmailVerification__SmtpPort: ${SMTP_PORT:-587}
+      EmailVerification__EnableSsl: "true"
+      EmailVerification__SimulateDeliveryInDev: "false"
+      Cors__AllowedOrigins__0: https://kltn-tap-chi-khoa-hoc.vercel.app
+      AllowedHosts: ${API_DOMAIN:?Set API_DOMAIN}
+    volumes:
+      - uploads:/app/Backend/HuitJournal.Api/Uploads
+    depends_on: [sql]
+    networks: [internal]
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2
+    environment:
+      API_DOMAIN: ${API_DOMAIN:?Set API_DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [api]
+    networks: [internal]
+    restart: unless-stopped
+
+networks:
+  internal:
+
+volumes:
+  sql_data:
+  uploads:
+  caddy_data:
+  caddy_config:

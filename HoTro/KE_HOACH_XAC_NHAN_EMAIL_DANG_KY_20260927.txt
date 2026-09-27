@@ -1,0 +1,93 @@
+KẾ HOẠCH THÊM XÁC NHẬN EMAIL KHI ĐĂNG KÝ TÀI KHOẢN
+Ngày lập: 27/09/2026
+Phạm vi: Web Portal + Backend API + SQL Server; WinForms chỉ cần thích nghi nếu có chức năng tự đăng ký.
+Trạng thái: KẾ HOẠCH, chưa triển khai và chưa kiểm thử theo yêu cầu hiện tại.
+
+1. THÔNG TIN ĐÃ GHI NHỚ
+
+Người dùng báo cáo đã hoàn thành các ca đăng ký hợp lệ qua API/Web, củng cố ràng buộc mật khẩu, điện thoại theo quốc gia, học vị/học hàm, thông tin ngân hàng, ORCID, email và tên đăng nhập. Đây là thông tin người dùng cung cấp; trong phiên này không chạy lại kiểm thử.
+
+Qua đọc mã nguồn để lập kế hoạch: POST /api/auth/register hiện tạo NguoiDung, gán vai trò Tác giả/Độc giả, chạy sp_DongBoDongTacGia_TheoEmail, cấp JWT ngay và Web/register.html chuyển đến profile.html. Việc liên kết bài báo theo email trước khi chứng minh sở hữu hộp thư là điểm cần chuyển sang sau xác nhận.
+
+2. MỤC TIÊU VÀ QUYẾT ĐỊNH THIẾT KẾ
+
+Người đăng ký có thể dùng bất kỳ email hợp lệ, trong đó có abc@gmail.com. "Gmail" ở đây là hộp thư nhận, không bắt buộc hệ thống phải dùng tài khoản Gmail cá nhân để gửi.
+
+Luồng mới: nhập thông tin -> hệ thống ghi hồ sơ CHỜ XÁC NHẬN và gửi mã -> người dùng nhập đúng mã còn hạn -> tạo tài khoản chính thức, gán vai trò, liên kết bài đồng tác giả -> cấp JWT và vào hồ sơ. Không cấp JWT, quyền nộp bài hay quyền truy cập hồ sơ trước khi xác nhận.
+
+Khuyến nghị dùng bảng đăng ký chờ riêng, không tạo NguoiDung hoạt động trước bước xác nhận. Như vậy tài khoản chưa xác nhận không xuất hiện trong danh sách người dùng, phân quyền hay luồng WinForms. Giữ bảng NguoiDung và cơ chế đăng nhập hiện tại cho các tài khoản cũ; không phải đánh dấu giả rằng email cũ đã được xác nhận.
+
+Xác nhận email chỉ chứng minh người dùng truy cập được hộp thư tại thời điểm đăng ký. Nó không phải xác thực đa yếu tố mạnh cho thao tác nhạy cảm.
+
+3. DỮ LIỆU VÀ MIGRATION
+
+Tạo bảng DangKyChoXacNhan (tên có thể chỉnh theo quy ước SQL hiện hữu): MaDangKy kiểu GUID/UUID ngẫu nhiên; EmailGoc; EmailSoSanh; TenDangNhapSoSanh; MatKhauHash BCrypt; dữ liệu hồ sơ đã chuẩn hóa cần để tạo NguoiDung; ChuyenNganhId; DangKyPhanBien; TaoLucUtc; HetHanHoSoUtc; TrangThai (Pending/Verified/Expired/Cancelled); RowVersion. Không lưu mật khẩu thô. Những trường nhạy cảm như thông tin ngân hàng phải được mã hóa khi lưu tạm hoặc được yêu cầu bổ sung sau xác nhận; phương án ưu tiên là chưa thu thông tin ngân hàng ở bước đăng ký ban đầu.
+
+Tạo bảng MaXacNhanEmail: MaId ngẫu nhiên; MaDangKy; MaHash; TaoLucUtc; HetHanUtc; SoLanNhapSai; DaDungLucUtc; LanGuiCuoiUtc. Chỉ giữ một mã đang có hiệu lực cho một hồ sơ. Khi gửi lại, vô hiệu mã cũ. Tạo chỉ mục phù hợp cho mã đăng ký và trạng thái; quy định dọn dữ liệu chờ/mã hết hạn định kỳ.
+
+Tạo bảng EmailOutbox hoặc hàng đợi bền vững: loại thư, người nhận, template, trạng thái gửi, số lần thử lại, lỗi kỹ thuật đã lược bỏ bí mật. Lưu hồ sơ chờ + mã + sự kiện gửi trong một giao dịch; worker gửi thư sau commit. Nếu gửi lỗi, không báo rằng tài khoản đã xác nhận; cho phép gửi lại sau khi hệ thống gửi thư hoạt động. Không đặt mã thô trong log hoặc outbox tồn tại lâu: nội dung thư có mã chỉ tồn tại đủ để worker gửi, được mã hóa khi lưu tạm và xóa ngay sau gửi; có thể chọn gửi đồng bộ sau commit ở bản đầu nếu chưa có outbox, nhưng phải xử lý lỗi rõ ràng.
+
+Ràng buộc duy nhất cuối cùng của Email/TenDangNhap/ORCID vẫn do CSDL áp dụng ở NguoiDung. Hồ sơ chờ không được chiếm email vô thời hạn; hết hạn rồi dọn. Hai yêu cầu đồng thời cùng email phải được xử lý bằng transaction + unique index, không chỉ AnyAsync.
+
+4. SINH VÀ KIỂM TRA MÃ 6 CHỮ SỐ
+
+Sinh bằng RandomNumberGenerator.GetInt32(0, 1_000_000).ToString("D6") trong .NET, nên mã 000000 vẫn hợp lệ và đủ đúng 6 chữ số. Không dùng Random thông thường, timestamp hoặc bộ đếm. Mã 6 chữ số có đúng 1.000.000 khả năng, nên bắt buộc giới hạn số lần thử và tốc độ yêu cầu.
+
+Mã hết hạn sau 10 phút tính theo thời gian UTC phía server; dùng một lần. Lưu HMAC-SHA256 của MaId + mã với khóa bí mật riêng của server, không lưu mã rõ và không dùng SHA256 trần vì không gian 6 chữ số có thể dò hết nếu lộ CSDL. So sánh hash theo thời gian cố định. Khóa HMAC đặt trong secret manager/biến môi trường, không commit vào repository và phải có kế hoạch xoay khóa.
+
+Đề xuất giới hạn ban đầu: tối đa 5 lần nhập sai cho mỗi mã; khóa mã khi vượt ngưỡng, cần yêu cầu mã mới. Chờ 60 giây giữa hai lần gửi; tối đa 3 lần gửi mỗi giờ và 10 lần mỗi ngày cho mỗi email, kết hợp giới hạn theo IP và theo định danh hồ sơ. Đây là ngưỡng cấu hình sản phẩm, điều chỉnh theo log vận hành. Kiểm tra giới hạn ở server; đồng hồ đếm trên Web chỉ để hiển thị.
+
+Phản hồi đăng ký/gửi lại cần tránh tiết lộ email đã tồn tại. Với email thuộc tài khoản cũ, có thể trả thông báo chung và gửi thông báo bảo vệ tài khoản đến chủ hộp thư, không gửi mã đăng ký mới. Không để API trả mã, hash, bí mật gửi mail hoặc lý do quá chi tiết giúp dò tài khoản.
+
+5. API VÀ NGHIỆP VỤ BACKEND
+
+POST /api/auth/register: tái sử dụng tất cả kiểm tra hiện tại, chuẩn hóa dữ liệu một lần tại server; tạo hồ sơ chờ, mã và yêu cầu gửi mail; trả HTTP 202 với registrationId ngẫu nhiên, email được che, expiresAtUtc/resendAfterSeconds; không có token hoặc user profile chính thức. Trường hợp email đã có tài khoản xử lý theo chính sách thông báo chung.
+
+POST /api/auth/verify-email: nhận registrationId + code (chuỗi đúng 6 số, giữ số 0 đầu); kiểm tra mã, hạn dùng, số lần sai và trạng thái; trong một transaction đánh dấu mã đã dùng, tạo NguoiDung cùng vai trò/chuyên môn, đánh dấu đăng ký hoàn tất. Chỉ sau commit mới chạy sp_DongBoDongTacGia_TheoEmail hoặc đưa việc liên kết này vào tác vụ tin cậy sau commit; tuyệt đối không chạy ở bước gửi mã. Trả JWT/user hoặc yêu cầu đăng nhập theo quyết định UX; đề xuất cấp JWT ở đây để giữ trải nghiệm tự động vào hồ sơ. Chống hai yêu cầu xác nhận đồng thời tạo hai tài khoản bằng unique index và kiểm soát đồng thời.
+
+POST /api/auth/resend-verification: nhận registrationId; kiểm tra cooldown/quota; tạo mã mới, vô hiệu mã cũ, xếp thư gửi; trả thông báo chung và thời gian có thể gửi lại. Có thao tác sửa email: hủy hồ sơ/mã cũ rồi tạo yêu cầu đăng ký mới với email mới, không tái sử dụng mã cũ.
+
+POST /api/auth/login: tài khoản mới chỉ tồn tại sau xác nhận nên không thể đăng nhập trước xác nhận. Nếu sau này chọn mô hình tạo NguoiDung sớm, bắt buộc chặn JWT ở LoginAsync và mọi đường cấp token, kể cả WinForms. Rà soát đổi email, quên mật khẩu và đăng nhập xã hội sau khi hoàn thành luồng này để không tạo lối đi vòng.
+
+Tách xử lý đăng ký hiện tại thành: ValidateAndNormalizeRegistration; CreatePendingRegistration; FinalizeVerifiedRegistration. Phần gán vai trò và đồng bộ đồng tác giả phải nằm ở FinalizeVerifiedRegistration. Không lặp quy tắc nghiệp vụ ở hai nhánh. Controller không trả exception/InnerException từ SQL hay mail provider cho client; ghi log kỹ thuật có mã tương quan riêng.
+
+6. DỊCH VỤ GỬI MAIL VÀ MẪU THƯ
+
+Dùng một nhà cung cấp gửi email giao dịch có địa chỉ gửi thuộc tên miền đã xác minh mà nhóm kiểm soát. Cấu hình From, provider endpoint/SMTP và credential bằng biến môi trường hoặc kho bí mật. Dựng cấu hình dev riêng bằng mailbox thử nghiệm; production cần TLS, SPF/DKIM/DMARC cho miền gửi, theo dõi bounce và giới hạn gửi. Không lưu mật khẩu Gmail cá nhân trong appsettings.json/source code. Nếu chỉ demo bằng Gmail SMTP, dùng cơ chế xác thực được Google hỗ trợ và giữ thông tin đăng nhập ngoài mã nguồn; phương án thương mại nên dùng dịch vụ gửi thư chuyên dụng.
+
+Mẫu thư (HTML + plain text, UTF-8):
+Chủ đề: Xác nhận đăng ký Tạp chí Khoa học HUIT
+Nội dung: "Xin chào {TenHienThi}, mã xác nhận của bạn là {Ma6So}. Mã có hiệu lực trong 10 phút và chỉ dùng một lần. Nếu bạn không tạo tài khoản, hãy bỏ qua thư này. Hệ thống không bao giờ yêu cầu bạn gửi lại mật khẩu hoặc thông tin ngân hàng qua email."
+Trong thư ghi rõ tên hệ thống và địa chỉ hỗ trợ thật khi có. Không đưa link tự đăng nhập bằng mã; không gửi dữ liệu ngân hàng hay hồ sơ học thuật trong thư.
+
+7. WEB VÀ WINFORMS
+
+Web/register.html: sau phản hồi 202, hiện bước nhập mã 6 số trên trang xác nhận; hiển thị email đã che, hạn dùng, nút gửi lại với cooldown, khả năng sửa email. Cho phép dán đủ 6 số; không tự động lưu mã vào localStorage/sessionStorage. Chỉ sau verify thành công mới lưu JWT, xóa bản nháp đăng ký và chuyển profile.html. Không hiển thị mật khẩu trong bản nháp. Đáp ứng responsive/High-DPI và chuẩn Hallmark; trên giao diện Web không dùng bullet point theo quy tắc dự án.
+
+Web/journal-interactions.js: apiRegister phải chấp nhận HTTP 202 và kết quả pending thay vì chỉ nhánh success + token; bổ sung apiVerifyEmail/apiResendVerification. Bảo đảm không có nhánh online/demo khác tạo tài khoản thật hoặc cấp quyền khi chưa xác nhận. Chế độ demo hiện có phải ghi rõ là mô phỏng và tách hoàn toàn dữ liệu thật; không giả gửi mail trong phiên online.
+
+WinForms: nếu ứng dụng chỉ cho nhân sự đăng nhập, không cần form nhập mã; xác thực email áp dụng cho đăng ký qua Web và dùng chung API/DB. Nếu WinForms có màn tạo tài khoản tự phục vụ, phải gọi cùng 3 endpoint đăng ký/xác nhận/gửi lại. Màn quản trị tạo tài khoản cho nhân sự nội bộ cần quy tắc riêng (mời qua email hay nhập thủ công), ghi rõ trong tài liệu vận hành, không dùng lại luồng đăng ký tác giả để tự cấp vai trò cao.
+
+8. THỨ TỰ TRIỂN KHAI ĐỀ XUẤT
+
+Bước 1: Chốt chính sách email hợp lệ, thời hạn, quota, thời gian giữ hồ sơ chờ, nhà cung cấp gửi thư và môi trường thử nghiệm.
+Bước 2: Migration SQL + model EF cho hồ sơ chờ, mã và outbox; backup DB trước migration theo quy trình dự án.
+Bước 3: Dịch vụ sinh/kiểm tra mã, kiểm soát đồng thời, rate limit, gửi mail và template.
+Bước 4: Tách AuthService và thêm API register/verify/resend; dời liên kết đồng tác giả sang sau xác nhận; sửa kết quả trả về và xử lý lỗi.
+Bước 5: Cập nhật Web/register.html và journal-interactions.js, bao gồm tiếp tục luồng sau tải lại trang bằng registrationId (không lưu mật khẩu hay mã).
+Bước 6: Kiểm thử trong môi trường cách ly, sau đó triển khai cấu hình gửi mail thật, theo dõi delivery, lỗi gửi, quota và số đăng ký chờ hết hạn.
+
+9. TIÊU CHÍ CHẤP NHẬN ĐỂ KIỂM THỬ SAU NÀY (CHƯA CHẠY LÚC NÀY)
+
+Đăng ký hợp lệ nhận 202, nhận thư thật trong hộp thư thử, chưa có JWT/chưa có NguoiDung hoạt động/chưa liên kết bài báo. Nhập đúng mã còn hạn tạo đúng một tài khoản với vai trò Tác giả/Độc giả, JWT dùng được ở Web và WinForms. Mã sai, hết hạn, đã dùng, bị thay bởi mã mới, vượt số lần thử đều không tạo tài khoản. Mã có số 0 đầu được nhận đúng. Gửi lại bị giới hạn. Hai yêu cầu xác nhận đồng thời không tạo trùng. Email đã tồn tại và email chờ hết hạn xử lý nhất quán. Lỗi gửi mail không báo thành công giả. Web không chuyển profile trước xác nhận và không lưu mã/mật khẩu trong storage. Nhật ký không chứa mã, mật khẩu hoặc credential. Kiểm thử cả API, Web E2E và đăng nhập WinForms với tài khoản mới đã xác nhận.
+
+10. TÀI LIỆU THAM KHẢO BẢO MẬT
+
+OWASP Email Validation and Verification Cheat Sheet:
+https://cheatsheetseries.owasp.org/cheatsheets/Email_Validation_and_Verification_Cheat_Sheet.html
+
+NIST SP 800-63B (mã ngắn cần giới hạn số lần thử; email không phải yếu tố xác thực mạnh):
+https://pages.nist.gov/800-63-4/sp800-63b.html
+
+Google Help về App Passwords nếu chọn Gmail SMTP cho bản thử nghiệm:
+https://support.google.com/mail/answer/185833?hl=en

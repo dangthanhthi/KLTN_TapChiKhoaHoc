@@ -1,0 +1,6 @@
+@HuitJournal.Api_HostAddress = http://localhost:5095
+
+GET {{HuitJournal.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

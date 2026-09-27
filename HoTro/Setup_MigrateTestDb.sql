@@ -6,17 +6,17 @@ GO
 SET QUOTED_IDENTIFIER ON;
 GO
 
-IF EXISTS (SELECT name FROM sys.databases WHERE name = N'QL_TapChiKhoaHoc')
+IF EXISTS (SELECT name FROM sys.databases WHERE name = N'QL_TapChiKhoaHoc_MigrateTest')
 BEGIN
-    ALTER DATABASE QL_TapChiKhoaHoc SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-    DROP DATABASE QL_TapChiKhoaHoc;
+    ALTER DATABASE QL_TapChiKhoaHoc_MigrateTest SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE QL_TapChiKhoaHoc_MigrateTest;
 END
 GO
 
-CREATE DATABASE QL_TapChiKhoaHoc;
+CREATE DATABASE QL_TapChiKhoaHoc_MigrateTest;
 GO
 
-USE QL_TapChiKhoaHoc;
+USE QL_TapChiKhoaHoc_MigrateTest;
 GO
 
 SET ANSI_NULLS ON;
@@ -749,3 +749,4 @@ INSERT INTO LichSuTrangThaiBaiBao (MaBaiBao, TrangThaiCu, TrangThaiMoi, NgayChuy
 (8, NULL, N'Chờ sơ duyệt', '2026-11-01 10:00:00', 7, N'Tác giả Lý Thị M nộp bài'),
 (8, N'Chờ sơ duyệt', N'Đang phản biện', '2026-11-05 15:30:00', 1, N'Phân công 2 chuyên gia phản biện');
 GO
+

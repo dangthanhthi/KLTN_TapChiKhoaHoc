@@ -6,17 +6,17 @@ GO
 SET QUOTED_IDENTIFIER ON;
 GO
 
-IF EXISTS (SELECT name FROM sys.databases WHERE name = N'QL_TapChiKhoaHoc')
+IF EXISTS (SELECT name FROM sys.databases WHERE name = N'QL_TapChiKhoaHoc_Test')
 BEGIN
-    ALTER DATABASE QL_TapChiKhoaHoc SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-    DROP DATABASE QL_TapChiKhoaHoc;
+    ALTER DATABASE QL_TapChiKhoaHoc_Test SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE QL_TapChiKhoaHoc_Test;
 END
 GO
 
-CREATE DATABASE QL_TapChiKhoaHoc;
+CREATE DATABASE QL_TapChiKhoaHoc_Test;
 GO
 
-USE QL_TapChiKhoaHoc;
+USE QL_TapChiKhoaHoc_Test;
 GO
 
 SET ANSI_NULLS ON;
@@ -160,7 +160,6 @@ CREATE TABLE BaiBao (
         N'Đang chế bản', 
         N'Sẵn sàng xuất bản', 
         N'Đã xuất bản', 
-        N'Đã rút',
         N'Từ chối'
     ))
 );

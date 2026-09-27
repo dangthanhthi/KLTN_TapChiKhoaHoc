@@ -1,0 +1,13 @@
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+WORKDIR /src
+COPY Backend/HuitJournal.Api/HuitJournal.Api.csproj Backend/HuitJournal.Api/
+RUN dotnet restore Backend/HuitJournal.Api/HuitJournal.Api.csproj
+COPY Backend/HuitJournal.Api/ Backend/HuitJournal.Api/
+RUN dotnet publish Backend/HuitJournal.Api/HuitJournal.Api.csproj -c Release --no-restore -o /publish /p:UseAppHost=false
+
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
+WORKDIR /app/Backend/HuitJournal.Api
+COPY --from=build /publish/ ./
+ENV ASPNETCORE_URLS=http://+:8080
+EXPOSE 8080
+ENTRYPOINT ["dotnet", "HuitJournal.Api.dll"]

@@ -1,0 +1,57 @@
+KẾ HOẠCH ĐỒNG BỘ WEB – WINFORMS – BACKEND
+Cập nhật: 27/09/2026
+
+I. ĐÃ THỰC HIỆN
+
+1. Hợp nhất 298 tệp từ KLTN_HUIT_MANG_VE_NHA_20260926.zip vào bản làm việc, gồm DTO/Service Backend, trang Web, ảnh bìa, 235 PDF và bản .bak. Không ghi đè các tệp người dùng đã sửa ở máy nhà, không restore backup ZIP lên DB đang dùng, giữ Web/.git.
+2. Web Online chỉ dùng API thật; khi API lỗi không báo thao tác thành công giả hoặc thay danh sách rỗng bằng dữ liệu demo. Demo chỉ khi chọn ?mode=demo. Web chạy cùng Backend ở localhost:5000/5001 dùng /api cùng origin; Web tĩnh ở 8088/5500/5501 dùng API localhost:5000 hoặc HUIT_JOURNAL_API_URL.
+3. WinForms đã chuyển các thao tác nghiệp vụ thường ngày sang API JWT: đọc/lọc bài và hồ sơ, đồng tác giả, tệp và lịch sử; tạo/sửa/rút bài; đọc/lưu/xóa chuyên ngành; đọc số báo, phân công, phiếu phản biện, người dùng, vai trò, thống kê và dashboard. Các thao tác phân công, quyết định, xếp số, phát hành, lưu người dùng đã qua API từ trước. Đăng nhập WinForms không còn buộc máy khách mở kết nối SQL trực tiếp.
+4. API desktop-editorial và desktop-admin mới dùng phân quyền Ban biên tập/Quản trị hệ thống. Rút bài chỉ trước phản biện, giữ lịch sử thay vì xóa cứng. Đã thêm trạng thái Đã rút vào Web/SQLKLCN.sql và migration HoTro/Migration_20260927_ArticleWithdrawStatus.sql. Migration chạy trên QL_TapChiKhoaHoc_Test và QL_TapChiKhoaHoc. Trước khi đổi DB chính đã sao lưu và RESTORE VERIFYONLY WITH CHECKSUM: HoTro/QL_TapChiKhoaHoc_before_withdraw_20260927.bak. DB chính sau migration có 10 bài, 10 người dùng, 0 bài Đã rút.
+5. WinForms màn chi tiết bài báo đã có nút tải bản thảo ẩn danh, tải PDF thành phẩm, tải tệp đã chọn qua API. Backend kiểm tra tệp PDF thực sự còn trên đĩa trước phát hành và dọn tệp mới nếu ghi DB thất bại. Nút đạo văn và gửi in thử chưa có dịch vụ thật được vô hiệu hóa, không báo kết quả giả.
+6. Bỏ Email.Contains("admin") khỏi chuyển chế độ WinForms. Dashboard không còn vai trò và nhật ký giả. Sao lưu/phục hồi không trả thành công giả khi DB lỗi và chỉ cho quản trị viên dùng; trước thao tác còn so CSDL với API. SQL trực tiếp chỉ còn trong module sao lưu/phục hồi.
+7. Production từ chối JWT key mặc định; CORS Production chỉ cho origin khai báo trong Cors:AllowedOrigins, bật HTTPS redirect. Web mobile 320px có thanh cuộn điều hướng hiển thị và trạng thái rỗng/lỗi rõ hơn trên trang chủ.
+
+II. KIỂM THỬ ĐÃ CHẠY
+
+1. dotnet build Backend và WinForms: 0 warning, 0 error.
+2. node Web/tests/test_online_api_fail_closed.cjs: pass, gồm API 5001 cùng origin và Web tĩnh 8088 gọi API 5000.
+3. node Web/tests/test_online_profile_error_playwright.cjs: pass ở 375px và 1024px.
+4. API Testing trên localhost:5001 trỏ QL_TapChiKhoaHoc_Test: editor đọc 10 bài, 5 chuyên ngành, 3 số, 5 phân công; admin đọc 5 vai trò và 8 mục nhật ký gần đây. Editor bị chặn 403 ở API admin; reviewer bị chặn 403 ở API editorial.
+5. API Testing: tạo/sửa/rút bài thành công, dọn đúng bài thử về 10 bài; tạo/sửa/xóa chuyên ngành thành công, dọn về 5 chuyên ngành. Tải PDF bản thảo ẩn danh lên, đọc metadata và tải lại qua API thành công; đã dọn tệp vật lý và bài thử, kiểm tra còn 10 bài và 0 bài có tiêu đề thử. File không tồn tại trả 404. Bộ lọc ID/trạng thái/chuyên ngành và bài chưa gán số trả kết quả hợp lệ. Không chạy kiểm thử ghi dữ liệu trên DB chính.
+6. Trình duyệt kiểm tra trang chủ ở 320, 375, 768, 1024px; không tràn ngang. CSDL Testing chưa có số đã phát hành nên Web hiển thị trạng thái rỗng đúng. Trình duyệt thử nghiệm tích hợp chặn trực tiếp /api (ERR_BLOCKED_BY_CLIENT), nên xác nhận dữ liệu API bằng PowerShell thay vì khẳng định đã kiểm thử end-to-end ngay trong tab đó.
+
+III. VIỆC CẦN LÀM TIẾP TRƯỚC KHI BÁN/ĐƯA VÀO VẬN HÀNH
+
+P0 – Kiểm thử luồng xuất bản đầy đủ trên CSDL Testing qua giao diện thật
+  1. Chạy Web + Backend Testing + WinForms, đăng nhập đủ 5 vai trò.
+  2. Tác giả nộp bài và tệp thật trên Web; editor thấy đúng ID ở WinForms.
+  3. Editor tải bản ẩn danh, phân công đúng 2 phản biện theo vòng; hai phản biện nộp BM-04; tác giả không thấy danh tính/ghi chú bảo mật.
+  4. Editor ra quyết định, tác giả nộp BM-03 nếu yêu cầu, editor tải PDF thành phẩm, xếp bài/số, phát hành.
+  5. Độc giả mở bài/PDF; bài chưa xuất bản và tệp nội bộ bị chặn. Cố ý xóa tệp PDF thử trên đĩa để xác nhận API từ chối phát hành.
+  6. Chạy lại bộ Web/tests/test_live_backend_6_stages_integration.py khi Python có requests. Hiện Python bundled thiếu requests nên chưa chạy lại được trong phiên này. Bài test có guard DB Testing và cleanup; không bỏ guard.
+
+P0 – Hoàn thiện vận hành tệp và dữ liệu
+  1. Kiểm tra đối chiếu 235 PDF và ảnh bìa từ ZIP với từng bản ghi ThuMucBaiBao/SoTapChi. Nhiều PDF nhập từ ZIP không tự động gắn vào DB hoặc thư mục Uploads của Backend; đừng coi việc có file trong Web là đã xuất bản.
+  2. Chọn kho lưu trữ chung cho nhiều máy chủ, quy tắc sao lưu, đường dẫn tệp tương đối, checksum và dọn file mồ côi. Không phục vụ bản thảo chưa xuất bản bằng static route.
+  3. Viết migration dữ liệu/tệp có đối chiếu ID và log; thử trên Testing rồi mới áp dụng Production.
+
+P1 – Chất lượng WinForms và bảo mật
+  1. Chuyển những lời gọi HTTP đồng bộ còn lại thành async để UI không đứng tối đa 15 giây khi API chậm. Hiện thao tác tải lên/tải về đã async; các màn danh sách, đăng nhập và lệnh POST nghiệp vụ còn đồng bộ.
+  2. Hiển thị rõ lỗi API ở từng màn danh sách và dashboard, phân biệt API lỗi với kết quả hợp lệ bằng 0. Hiện các service trả danh sách rỗng khi lỗi và LastError; một số màn chưa đưa LastError ra giao diện.
+  3. Thay module sao lưu/phục hồi SQL cục bộ bằng quy trình vận hành ở máy chủ. WinForms hiện còn yêu cầu quyền SQL chỉ cho hai chức năng này; restore dùng WITH REPLACE nên cần quy trình duyệt, backup, diễn tập và nhật ký riêng.
+  4. Tích hợp dịch vụ kiểm tra đạo văn thật và email/gửi bản in thử thật, kèm bằng chứng và trạng thái gửi. Hai nút này hiện được vô hiệu hóa để không tạo số liệu/biên nhận giả.
+  5. Migrate toàn bộ mật khẩu seed/legacy sang BCrypt, đổi mật khẩu mặc định và bỏ nhánh so sánh plaintext trong AuthService trước khi triển khai công khai. Không công bố appsettings chứa key phát triển.
+
+P1 – Triển khai nhiều máy
+  1. Đặt HTTPS domain, HUIT_JOURNAL_API_URL cho WinForms/Web khi tách domain, Jwt:Key riêng trong secret store, Cors:AllowedOrigins chính xác, AllowedHosts và kết nối SQL chỉ ở Backend.
+  2. Thử login và upload từ một máy WinForms không cài SQL Server; thử mất mạng, token hết hạn, 401/403/500, và phục hồi phiên.
+  3. Thêm request ID/log nghiệp vụ để đối chiếu Web–API–WinForms, giới hạn tốc độ, giám sát lỗi và backup định kỳ.
+
+P2 – Khả năng bán ra thị trường
+  1. Phân trang API danh sách, lọc phía server, kiểm thử dữ liệu lớn; hiện danh sách trả toàn bộ dữ liệu và bộ lọc đa trạng thái thực hiện ở WinForms.
+  2. Rà soát hiển thị dữ liệu từ DB trên Web để chống HTML injection/XSS ở các template dùng innerHTML.
+  3. Hoàn thiện hướng dẫn cài đặt/khôi phục và quy trình cập nhật schema không làm mất dữ liệu khách hàng; thử trên máy sạch và dữ liệu giả lập nhiều tòa soạn.
+
+IV. LƯU Ý AN TOÀN
+
+Không restore bất kỳ .bak nào lên DB chính bằng WITH REPLACE để kiểm thử. Migration đã chạy chỉ thêm giá trị trạng thái vào CHECK constraint, không sửa/xóa bài báo. Trước khi chạy script tương tự trên máy khác, chọn đúng DB bằng -d, dùng sqlcmd -f 65001 cho tiếng Việt và sao lưu/VERIFYONLY trước.
