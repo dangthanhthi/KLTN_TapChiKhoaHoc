@@ -809,12 +809,8 @@
             <!-- Lĩnh vực chuyên môn chính (RÀNG BUỘC CƠ SỞ DỮ LIỆU) -->
             <div class="form-group">
               <label for="regChuyenNganh">Lĩnh vực chuyên môn nghiên cứu chính <span class="req">*</span></label>
-              <select id="regChuyenNganh" class="form-control" required>
-                <option value="1">1. Công nghệ thông tin &amp; Trí tuệ nhân tạo</option>
-                <option value="2">2. Cơ khí – Chế tạo máy – Tự động hóa</option>
-                <option value="3">3. Khoa học Môi trường &amp; Nông nghiệp</option>
-                <option value="4">4. Kinh tế – Quản trị kinh doanh &amp; Tài chính</option>
-                <option value="5">5. Hóa học &amp; Công nghệ thực phẩm</option>
+              <select id="regChuyenNganh" class="form-control" required disabled>
+                <option value="">Đang tải chuyên ngành từ tòa soạn...</option>
               </select>
               <div style="font-size:11.5px;color:var(--sky-700);margin-top:4px;">
                 ✦ Ràng buộc học thuật: Bài báo bạn gửi nộp và lời mời phản biện bạn nhận sẽ được hệ thống kiểm tra đối sánh đúng với chuyên môn này.
@@ -1491,7 +1487,8 @@
     const soTaiKhoan = document.getElementById('regSoTaiKhoan')?.value.trim() || '';
     const chuTaiKhoan = document.getElementById('regChuTaiKhoan')?.value.trim() || '';
     const nganHang = document.getElementById('regNganHang')?.value.trim() || '';
-    const chuyenNganhId = parseInt(document.getElementById('regChuyenNganh')?.value || '1', 10);
+    const categorySelect = document.getElementById('regChuyenNganh');
+    const chuyenNganhId = Number(categorySelect?.value);
     const email = document.getElementById('regEmail')?.value.trim() || '';
     const tenDangNhap = document.getElementById('regTenDangNhap')?.value.trim() || '';
     const pass = document.getElementById('regPassword')?.value || '';
@@ -1525,6 +1522,10 @@
     // 4. Đơn vị công tác
     if (!donVi) {
       clientErrors['regDonVi'] = 'Đơn vị/ Tổ chức: Vui lòng nhập cơ quan, viện nghiên cứu hoặc trường đại học.';
+    }
+
+    if (!categorySelect || categorySelect.disabled || !Number.isInteger(chuyenNganhId) || chuyenNganhId <= 0) {
+      clientErrors['regChuyenNganh'] = 'Lĩnh vực chuyên môn: Chưa thể xác nhận chuyên ngành từ tòa soạn. Vui lòng thử tải lại trang hoặc liên hệ tòa soạn.';
     }
 
     // 5. Ngân hàng
@@ -1725,6 +1726,37 @@
   // =========================================================================
   const DRAFT_KEY = 'huit_journal_register_draft';
 
+  async function loadRegistrationCategories() {
+    const select = document.getElementById('regChuyenNganh');
+    if (!select) return;
+    let draftCategory = '';
+    try {
+      const saved = sessionStorage.getItem(DRAFT_KEY) || localStorage.getItem(DRAFT_KEY);
+      draftCategory = saved ? String(JSON.parse(saved).chuyenNganh || '') : '';
+    } catch (e) {}
+
+    try {
+      const response = await fetchWithTimeout(`${API_BASE}/chuyennganh`, { cache: 'no-store', timeout: 10000 });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const categories = await response.json();
+      if (!Array.isArray(categories) || !categories.length) throw new Error('Danh sách chuyên ngành trống');
+      select.replaceChildren(new Option('Chọn lĩnh vực chuyên môn', ''));
+      for (const category of categories) {
+        const id = Number(category.maChuyenNganh);
+        const name = String(category.tenChuyenNganh || '').trim();
+        if (Number.isInteger(id) && id > 0 && name) select.add(new Option(name, String(id)));
+      }
+      if (select.options.length < 2) throw new Error('Dữ liệu chuyên ngành không hợp lệ');
+      select.disabled = false;
+      if (draftCategory && [...select.options].some(option => option.value === draftCategory)) select.value = draftCategory;
+      document.getElementById('regChuyenNganhError').textContent = '';
+    } catch (e) {
+      select.replaceChildren(new Option('Không tải được chuyên ngành từ tòa soạn', ''));
+      select.disabled = true;
+      document.getElementById('regChuyenNganhError').textContent = 'Không kết nối được dữ liệu chuyên ngành. Vui lòng tải lại trang sau khi dịch vụ tòa soạn hoạt động.';
+    }
+  }
+
   function saveRegistrationDraft() {
     const draft = {
       hoDem: document.getElementById('regHoDem')?.value || '',
@@ -1740,7 +1772,7 @@
       soTaiKhoan: document.getElementById('regSoTaiKhoan')?.value || '',
       chuTaiKhoan: document.getElementById('regChuTaiKhoan')?.value || '',
       nganHang: document.getElementById('regNganHang')?.value || '',
-      chuyenNganh: document.getElementById('regChuyenNganh')?.value || '1',
+      chuyenNganh: document.getElementById('regChuyenNganh')?.value || '',
       email: document.getElementById('regEmail')?.value || '',
       tenDangNhap: document.getElementById('regTenDangNhap')?.value || '',
       password: document.getElementById('regPassword')?.value || '',
@@ -2319,6 +2351,7 @@
   document.addEventListener('DOMContentLoaded', () => {
     initOtpInputs();
     restoreRegistrationDraft();
+    loadRegistrationCategories();
     restorePendingRegistrationOnLoad();
     checkUrlAutoVerification();
 
