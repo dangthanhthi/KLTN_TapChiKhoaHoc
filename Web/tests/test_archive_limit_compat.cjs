@@ -20,6 +20,22 @@ function createPage(fetch) {
   return context;
 }
 
+function createLayout(menu) {
+  const context = vm.createContext({
+    document: {
+      readyState: 'loading',
+      addEventListener() {},
+      querySelector: () => menu
+    },
+    window: { location: { pathname: '/archives.html', hostname: 'kltn-tap-chi-khoa-hoc.vercel.app' } },
+    URL,
+    URLSearchParams
+  });
+  const source = fs.readFileSync(path.join(__dirname, '..', 'journal-layout.js'), 'utf8');
+  vm.runInContext(source, context);
+  return context;
+}
+
 async function main() {
   const requestedUrls = [];
   const articles = [{ maBaiBao: 41, chuyenNganh: 'Cơ khí – Chế tạo máy – Tự động hóa' }];
@@ -53,6 +69,20 @@ async function main() {
   await vm.runInContext('apiGetLatestArticles(15)', boundedApi);
   assert.equal(boundedUrls.length, 1, 'normal positive limits should remain unchanged');
   assert.match(boundedUrls[0], /limit=15$/);
+
+  const badge = { textContent: '8 bài' };
+  const label = { textContent: 'Cơ khí – Chế tạo máy – Tự động hóa' };
+  const menu = {
+    querySelectorAll: () => [{
+      querySelector: selector => selector === 'span:first-child' ? label : selector === '.badge-count' ? badge : null
+    }]
+  };
+  const layout = createLayout(menu);
+  vm.runInContext(
+    "window.HuitLayout.setPublicArchiveArticleCounts({ 'cơ khí – chế tạo máy – tự động hóa': 7 })",
+    layout
+  );
+  assert.equal(badge.textContent, '7 bài', 'header category badge should match the public archive result set');
 
   console.log('Archive API compatibility checks passed.');
 }

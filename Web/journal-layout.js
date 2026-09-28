@@ -184,7 +184,30 @@
     targetEl.innerHTML = footerHtml;
   }
 
-  // 5. CẬP NHẬT SỐ LIỆU ĐỘNG TỪ CSDL BACKEND CHO DROPDOWN LĨNH VỰC (REAL-TIME TỪ SQL SERVER)
+  let publicArchiveArticleCounts = null;
+
+  function normalizeMajorName(value) {
+    return String(value || '').trim().normalize('NFC').toLocaleLowerCase('vi-VN');
+  }
+
+  function applyPublicArchiveArticleCounts(menu) {
+    if (!menu || !publicArchiveArticleCounts) return;
+    menu.querySelectorAll('.field-menu-item').forEach(link => {
+      const label = link.querySelector('span:first-child');
+      const badge = link.querySelector('.badge-count');
+      if (!label || !badge) return;
+      const count = publicArchiveArticleCounts[normalizeMajorName(label.textContent)];
+      if (Number.isFinite(count)) badge.textContent = `${count} bài`;
+    });
+  }
+
+  function setPublicArchiveArticleCounts(counts) {
+    if (!counts || typeof counts !== 'object' || Array.isArray(counts)) return;
+    publicArchiveArticleCounts = counts;
+    applyPublicArchiveArticleCounts(document.querySelector('[data-major-menu-items]'));
+  }
+
+  // 5. CẬP NHẬT SỐ LIỆU ĐỘNG TỪ API CHO DROPDOWN LĨNH VỰC
   async function updateNavFieldBadges() {
     const menu = document.querySelector('[data-major-menu-items]');
     if (!menu) return;
@@ -198,8 +221,14 @@
       const escape = typeof escapeHtml === 'function' ? escapeHtml : value => String(value ?? '');
       const available = categories.filter(category => category?.tenChuyenNganh);
       menu.innerHTML = available.length
-        ? available.map(category => `<a href="archives.html?major=${encodeURIComponent(category.tenChuyenNganh)}" class="field-menu-item"><span>${escape(category.tenChuyenNganh)}</span><span class="badge-count">${Number(category.tongSoBaiBao) || 0} bài</span></a>`).join('')
+        ? available.map(category => {
+          const major = normalizeMajorName(category.tenChuyenNganh);
+          const publicCount = publicArchiveArticleCounts?.[major];
+          const count = Number.isFinite(publicCount) ? publicCount : (Number(category.tongSoBaiBao) || 0);
+          return `<a href="archives.html?major=${encodeURIComponent(category.tenChuyenNganh)}" class="field-menu-item"><span>${escape(category.tenChuyenNganh)}</span><span class="badge-count">${count} bài</span></a>`;
+        }).join('')
         : 'Chưa có lĩnh vực khoa học.';
+      applyPublicArchiveArticleCounts(menu);
     } catch (e) {
       menu.textContent = 'Không tải được danh mục lĩnh vực. Vui lòng thử lại sau.';
     }
@@ -257,6 +286,7 @@
     config: HUIT_CONFIG,
     renderHeader: renderHeader,
     renderFooter: renderFooter,
+    setPublicArchiveArticleCounts: setPublicArchiveArticleCounts,
     init: initLayout
   };
 

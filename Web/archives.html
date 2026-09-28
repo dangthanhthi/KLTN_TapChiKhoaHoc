@@ -736,8 +736,8 @@
 <!-- KHỐI FOOTER CHUNG (SHARED LAYOUT) -->
 <div id="huit-footer"></div>
 
-<script src="journal-layout.js?v=issn_banner"></script>
-<script src="journal-interactions.js?v=issn_banner"></script>
+<script src="journal-layout.js?v=archive-live-counts-20260928"></script>
+<script src="journal-interactions.js?v=archive-live-counts-20260928"></script>
 <script>
   // =========================================================================
   // DỮ LIỆU ĐƯỢC NẠP TRỰC TIẾP TỪ CSDL SQL SERVER (.NET 9 WEB API)
@@ -750,6 +750,32 @@
   let archiveIssues = [];
   let allArticles = [];
   let filteredArticles = [];
+
+  function normalizeMajorName(value) {
+    return String(value || '').trim().normalize('NFC').toLocaleLowerCase('vi-VN');
+  }
+
+  function syncArchiveCategoryCounts() {
+    if (allArticles.length === 0) return;
+    const counts = Object.create(null);
+    for (const article of allArticles) {
+      const major = normalizeMajorName(article.chuyenNganh);
+      if (!major || major === normalizeMajorName('—')) continue;
+      counts[major] = (counts[major] || 0) + 1;
+    }
+
+    const selectMajor = document.getElementById('filter-major');
+    if (selectMajor) {
+      Array.from(selectMajor.options).forEach(option => {
+        if (!option.value) return;
+        option.textContent = `${option.value} (${counts[normalizeMajorName(option.value)] || 0} bài)`;
+      });
+    }
+
+    if (window.HuitLayout?.setPublicArchiveArticleCounts) {
+      window.HuitLayout.setPublicArchiveArticleCounts(counts);
+    }
+  }
 
   // Render danh sách các số phát hành
   function renderArchivePage(page) {
@@ -1003,6 +1029,7 @@
             if (currentVal) {
               selectMajor.value = currentVal;
             }
+            syncArchiveCategoryCounts();
           }
         }
       } catch (err) {
@@ -1096,6 +1123,7 @@
             });
             filteredArticles = allArticles;
             document.getElementById('articlesCountBadge').innerText = `${allArticles.length} bài`;
+            syncArchiveCategoryCounts();
           } else {
             document.getElementById('articlesCountBadge').innerText = '0 bài';
           }
