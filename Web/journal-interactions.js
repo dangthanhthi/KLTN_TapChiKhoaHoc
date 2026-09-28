@@ -394,9 +394,21 @@ async function apiGetPublicArticle(id) {
 
 async function apiGetLatestArticles(limit = 10) {
   try {
-    const res = await fetchWithTimeout(`${API_BASE}/baibao/public/latest?limit=${limit}`);
-    if (!res.ok) return [];
-    return await res.json();
+    const requestLatest = async requestedLimit => {
+      const res = await fetchWithTimeout(`${API_BASE}/baibao/public/latest?limit=${requestedLimit}`);
+      if (!res.ok) return [];
+      const data = await res.json();
+      return Array.isArray(data) ? data : [];
+    };
+
+    const articles = await requestLatest(limit);
+    // Older deployed APIs may interpret limit=0 as Take(0), while newer APIs
+    // use it to mean the complete published archive. Retry with a bounded
+    // compatibility limit so the public archive keeps working during rollout.
+    if (Number(limit) === 0 && articles.length === 0) {
+      return await requestLatest(1000);
+    }
+    return articles;
   } catch (e) {
     return [];
   }
