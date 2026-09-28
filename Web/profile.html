@@ -550,7 +550,7 @@
 
       <div style="margin-top:16px;display:flex;gap:8px;">
         <button type="button" onclick="openProfileEditModal()" style="flex:1;background:var(--sky-050);border:1px solid var(--sky-200);color:#1da1f2;padding:7px;border-radius:3px;font-size:12px;font-weight:700;cursor:pointer;">Cập nhật hồ sơ</button>
-        <button type="button" onclick="openPasswordModal()" style="flex:1;background:#fff;border:1px solid #cbd5e1;color:var(--ink-700);padding:7px;border-radius:3px;font-size:12px;font-weight:600;cursor:pointer;">Đổi mật khẩu</button>
+        <a href="change-password.html" style="flex:1;background:#fff;border:1px solid #cbd5e1;color:var(--ink-700);padding:7px;border-radius:3px;font-size:12px;font-weight:600;cursor:pointer;text-align:center;">Đổi mật khẩu</a>
       </div>
       <div style="margin-top:8px;">
         <button type="button" onclick="handleUserLogout()" style="width:100%;background:#fff;border:1px solid #fecaca;color:#b91c1c;padding:7px;border-radius:3px;font-size:12px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:all .2s;" onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='#fff'">
@@ -587,7 +587,10 @@
 <!-- DIALOG NỘP BẢN GIẢI TRÌNH CHỈNH SỬA (REVISION MODAL CHUYÊN NGHIỆP) -->
 <div class="modal-overlay" id="modal-revision">
   <div class="modal-box-edit" style="max-width:620px;">
-    <h3>Nộp bản thảo chỉnh sửa &amp; Bản giải trình phản biện</h3>
+    <h3 style="display:flex;align-items:center;gap:8px;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+      Nộp bản thảo chỉnh sửa &amp; Bản giải trình phản biện
+    </h3>
     <p style="font-size:12.5px;color:var(--ink-500);margin-bottom:14px;">
       Mã bản thảo: <strong id="rev-modal-code">Chưa chọn bản thảo</strong> · Chuyên san: <span id="rev-modal-major">—</span>
     </p>
@@ -639,7 +642,10 @@
 <!-- MODAL CẬP NHẬT HỒ SƠ -->
 <div class="modal-overlay" id="modal-edit-profile">
   <div class="modal-box-edit" style="max-width:640px;">
-    <h3>Cập nhật lý lịch khoa học &amp; Thông tin tài khoản</h3>
+    <h3 style="display:flex;align-items:center;gap:8px;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1da1f2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+      Cập nhật lý lịch khoa học &amp; Thông tin tài khoản
+    </h3>
     <form onsubmit="handleSaveProfile(event)">
       <!-- Ảnh đại diện trong Modal -->
       <div style="display:flex;align-items:center;gap:16px;padding:12px 14px;background:#f8fafc;border:1px solid var(--line);border-radius:6px;margin-bottom:16px;">
@@ -734,76 +740,13 @@
   </div>
 </div>
 
-<!-- MODAL ĐỔI MẬT KHẨU HOÀN CHỈNH (HALLMARK COMPLIANT) -->
-<div class="modal-overlay" id="modal-change-pass">
-  <div class="modal-box-edit pass-modal-box">
-    <div class="pass-modal-header">
-      <div>
-        <h3>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1da1f2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-          Thiết lập mật khẩu bảo mật
-        </h3>
-        <p>Cập nhật mật khẩu tài khoản tác giả &amp; chuyên gia phản biện của Tạp chí.</p>
-      </div>
-      <button type="button" class="pass-modal-close" onclick="closePasswordModal('modal-change-pass')">&times;</button>
-    </div>
-    <form onsubmit="handleSavePass(event)">
-      <div class="form-group-modal">
-        <label>Mật khẩu hiện tại <span style="color:#ef4444;">*</span></label>
-        <div class="pass-input-wrap">
-          <input type="password" id="p-current" class="form-control-modal" required placeholder="Nhập mật khẩu hiện tại">
-          <button type="button" class="pass-toggle-btn" onclick="togglePasswordVisibility('p-current', this)" title="Ẩn/hiện mật khẩu">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-          </button>
-        </div>
-      </div>
-      <div class="form-group-modal">
-        <label>Mật khẩu mới <span style="color:#ef4444;">*</span></label>
-        <div class="pass-input-wrap">
-          <input type="password" id="p-new" class="form-control-modal" required placeholder="Tối thiểu 6 ký tự" oninput="evaluatePasswordStrength(this.value, 'pass-bar-', 'pass-strength-text'); evaluatePasswordMatch('p-new', 'p-conf', 'p-match-hint');">
-          <button type="button" class="pass-toggle-btn" onclick="togglePasswordVisibility('p-new', this)" title="Ẩn/hiện mật khẩu">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-          </button>
-        </div>
-        <div class="pass-strength-meter">
-          <div class="pass-strength-bar" id="pass-bar-1"></div>
-          <div class="pass-strength-bar" id="pass-bar-2"></div>
-          <div class="pass-strength-bar" id="pass-bar-3"></div>
-          <div class="pass-strength-bar" id="pass-bar-4"></div>
-        </div>
-        <div class="pass-strength-label" id="pass-strength-text">
-          <span>Độ mạnh mật khẩu</span>
-          <span style="color:#94a3b8;">Chưa nhập</span>
-        </div>
-      </div>
-      <div class="form-group-modal">
-        <label>Xác nhận lại mật khẩu mới <span style="color:#ef4444;">*</span></label>
-        <div class="pass-input-wrap">
-          <input type="password" id="p-conf" class="form-control-modal" required placeholder="Nhập lại chính xác mật khẩu mới" oninput="evaluatePasswordMatch('p-new', 'p-conf', 'p-match-hint');">
-          <button type="button" class="pass-toggle-btn" onclick="togglePasswordVisibility('p-conf', this)" title="Ẩn/hiện mật khẩu">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-          </button>
-        </div>
-        <div class="pass-match-hint" id="p-match-hint"></div>
-      </div>
-      <div class="pass-policy-notice">
-        <strong>Quy định an toàn thông tin Tòa soạn HUIT:</strong>
-        <div style="margin-top:3px;">1. Mật khẩu mới cần tối thiểu từ 6 ký tự trở lên.</div>
-        <div>2. Mật khẩu mới không được trùng hoàn toàn với mật khẩu hiện tại.</div>
-        <div>3. Nên kết hợp chữ hoa, chữ thường và chữ số để gia tăng độ an toàn.</div>
-      </div>
-      <div class="modal-btn-row">
-        <button type="button" class="btn-modal-cancel" onclick="closePasswordModal('modal-change-pass')">Hủy bỏ</button>
-        <button type="submit" class="btn-modal-save" id="btn-save-pass-submit">Cập nhật mật khẩu</button>
-      </div>
-    </form>
-  </div>
-</div>
-
 <!-- MODAL ĐÁNH GIÁ PHẢN BIỆN BM-04 -->
 <div class="modal-overlay" id="modal-eval-paper">
   <div class="modal-box-edit" style="max-width:680px;max-height:90vh;overflow-y:auto;">
-    <h3>Phiếu nhận xét và đánh giá phản biện (BM-04)</h3>
+    <h3 style="display:flex;align-items:center;gap:8px;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1da1f2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><path d="m9 14 2 2 4-4"></path></svg>
+      Phiếu nhận xét và đánh giá phản biện (BM-04)
+    </h3>
     <p id="eval-modal-subtitle" style="font-size:13px;color:var(--ink-500);margin-bottom:16px;"></p>
     <form onsubmit="handleSaveEvaluation(event)">
       <input type="hidden" id="eval-maphancong">
@@ -866,7 +809,10 @@
   <div class="modal-box-edit" style="max-width:780px;max-height:90vh;overflow-y:auto;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;border-bottom:1px solid var(--line);padding-bottom:12px;">
       <div>
-        <h3 style="margin-bottom:4px;">Hồ Sơ Bản Thảo &amp; Tiến Trình Phê Duyệt</h3>
+        <h3 style="margin-bottom:4px;display:flex;align-items:center;gap:8px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1da1f2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Hồ Sơ Bản Thảo &amp; Tiến Trình Phê Duyệt
+        </h3>
         <p id="dt-modal-subtitle" style="font-size:12.5px;color:var(--ink-500);margin:0;"></p>
       </div>
       <button type="button" class="btn-modal-cancel" onclick="closeSubmissionDetailModal()" style="padding:4px 10px;font-size:16px;line-height:1;">&times;</button>
@@ -1769,89 +1715,7 @@
   }
 
   function openPasswordModal() {
-    const modal = document.getElementById('modal-change-pass');
-    if (!modal) return;
-    const form = modal.querySelector('form');
-    if (form) form.reset();
-    if (typeof evaluatePasswordStrength === 'function') {
-      evaluatePasswordStrength('', 'pass-bar-', 'pass-strength-text');
-    }
-    const matchHint = document.getElementById('p-match-hint');
-    if (matchHint) matchHint.innerHTML = '';
-    
-    // Đảm bảo các input hiển thị dạng password ban đầu
-    ['p-current', 'p-new', 'p-conf'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.type = 'password';
-    });
-
-    modal.classList.add('open');
-    document.body.style.overflow = 'hidden';
-    const firstInput = document.getElementById('p-current');
-    if (firstInput) setTimeout(() => firstInput.focus(), 120);
-  }
-
-  function closePasswordModal(modalId = 'modal-change-pass') {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-      modal.classList.remove('open');
-      document.body.style.overflow = '';
-      const form = modal.querySelector('form');
-      if (form) form.reset();
-    }
-    if (window.location.hash === '#tab-password' || window.location.hash === '#change-password' || window.location.hash === '#password') {
-      history.replaceState(null, document.title, window.location.pathname + window.location.search);
-    }
-  }
-
-  async function handleSavePass(e) {
-    e.preventDefault();
-    const pCurr = document.getElementById('p-current').value;
-    const p1 = document.getElementById('p-new').value;
-    const p2 = document.getElementById('p-conf').value;
-
-    if (!pCurr) {
-      showToast('Vui lòng nhập mật khẩu hiện tại.', 'error');
-      document.getElementById('p-current').focus();
-      return;
-    }
-    if (p1.length < 6) {
-      showToast('Mật khẩu mới phải có tối thiểu 6 ký tự theo quy định.', 'error');
-      document.getElementById('p-new').focus();
-      return;
-    }
-    if (p1 === pCurr) {
-      showToast('Mật khẩu mới không được trùng hoàn toàn với mật khẩu hiện tại.', 'error');
-      document.getElementById('p-new').focus();
-      return;
-    }
-    if (p1 !== p2) {
-      showToast('Mật khẩu mới và xác nhận mật khẩu không trùng khớp.', 'error');
-      document.getElementById('p-conf').focus();
-      return;
-    }
-
-    const btn = document.getElementById('btn-save-pass-submit') || e.target.querySelector('button[type="submit"]');
-    const oldBtnText = btn.innerHTML;
-    btn.disabled = true;
-    btn.innerText = 'Đang cập nhật mật khẩu...';
-
-    try {
-      const res = await apiChangePassword(pCurr, p1);
-      if (res && res.success) {
-        closePasswordModal();
-        showToast('Đổi mật khẩu tài khoản thành công! Thông tin bảo mật đã được cập nhật.', 'success', 5000);
-      } else {
-        showToast(res.message || 'Mật khẩu hiện tại không chính xác.', 'error', 5000);
-        document.getElementById('p-current').focus();
-      }
-    } catch (err) {
-      console.error(err);
-      showToast('Lỗi kết nối máy chủ khi đổi mật khẩu.', 'error');
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = oldBtnText;
-    }
+    window.location.href = 'change-password.html';
   }
 
   function escapeJs(str) {

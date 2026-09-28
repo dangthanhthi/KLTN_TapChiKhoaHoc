@@ -30,6 +30,7 @@
     --emerald-bg: #ecfdf5;
     --amber: #d97706;
     --amber-bg: #fffbeb;
+    --corresponding-blue: #1da1f2;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -138,6 +139,11 @@
   .custom-table th { background: #f8fafc; border: 1px solid var(--line); padding: 9px 12px; text-align: left; font-weight: 600; color: var(--ink-700); font-size: 12px; }
   .custom-table td { border: 1px solid var(--line); padding: 10px 12px; vertical-align: middle; }
   .badge-tag { display: inline-block; font-size: 10.5px; padding: 2px 7px; border-radius: 3px; font-weight: 600; }
+  .author-table-scroll { max-width: 100%; overflow-x: auto; }
+  .author-table-scroll .custom-table th:nth-child(6) { min-width: 150px; }
+  .author-roles { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+  .author-roles .badge-tag { white-space: nowrap; }
+  .badge-corresponding { background: var(--corresponding-blue); color: var(--white); }
   .badge-primary { background: var(--sky-100); color: var(--sky-700); }
   .badge-neutral { background: #f1f5f9; color: var(--ink-700); }
   .badge-success { background: var(--emerald-bg); color: var(--emerald); }
@@ -303,7 +309,7 @@
           <!-- BANNER TẢI BIỂU MẪU CHUẨN BM-01 -->
           <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:14px 18px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;">
             <div>
-              <div style="font-size:13px;font-weight:700;color:var(--ink-900);">💡 Tác giả chưa định dạng bài theo quy chuẩn Tạp chí?</div>
+              <div style="font-size:13px;font-weight:700;color:var(--ink-900);">Tác giả chưa định dạng bài theo quy chuẩn Tạp chí?</div>
               <div style="font-size:12px;color:var(--ink-700);margin-top:2px;">Hãy tải tệp bản thảo mẫu <strong>BM-01 (IMRaD Paper Template)</strong> đã căn sẵn cỡ chữ, lề giấy và phong cách trích dẫn.</div>
             </div>
             <a href="templates/BM01_Mau_Bai_Bao_Template.docx" download class="btn-download" style="white-space:nowrap;background:#ffffff;border:1px solid #cbd5e1;color:#1da1f2;padding:6px 14px;border-radius:4px;font-size:12px;font-weight:700;display:inline-flex;align-items:center;gap:6px;">
@@ -411,7 +417,7 @@
           <div class="writing-helper-card">
             <div class="wh-header">
               <div class="wh-title">
-                <span>✦ Trợ lý Cấu trúc Tóm tắt Chuẩn Quốc Tế (IMRaD)</span>
+                <span>Trợ lý Cấu trúc Tóm tắt Chuẩn Quốc Tế (IMRaD)</span>
                 <span class="wh-badge">Tiêu chuẩn xuất bản</span>
               </div>
               <div class="wh-tools">
@@ -476,6 +482,7 @@
             <button type="button" class="btn-outline" style="padding:6px 14px;font-size:12px;" onclick="openAddAuthorModal()">+ Thêm đồng tác giả</button>
           </div>
 
+          <div class="author-table-scroll" tabindex="0" aria-label="Bảng danh sách tác giả, cuộn ngang để xem toàn bộ">
           <table class="custom-table" id="authors-list-table">
             <thead>
               <tr>
@@ -493,9 +500,10 @@
               <!-- Render động qua hàm renderAuthorsTable() -->
             </tbody>
           </table>
+          </div>
 
           <div style="background:#f8fafc;border:1px dashed var(--line);border-radius:4px;padding:12px 16px;margin-top:16px;font-size:12px;color:var(--ink-500);">
-            💡 <strong>Quy định tác quyền:</strong> Thứ tự tác giả trên hệ thống phải trùng khớp với danh sách công bố chính thức sau khi bài báo được chấp nhận xuất bản.
+            <strong>Quy định tác quyền:</strong> Thứ tự tác giả trên hệ thống phải trùng khớp với danh sách công bố chính thức sau khi bài báo được chấp nhận xuất bản.
           </div>
 
           <div class="form-actions">
@@ -639,6 +647,7 @@
               </div>
             </div>
 
+            <div class="author-table-scroll" tabindex="0" aria-label="Bảng tác giả trong tổng duyệt, cuộn ngang để xem toàn bộ">
             <table class="custom-table">
               <thead>
                 <tr>
@@ -655,6 +664,7 @@
                 <!-- Được sao chép động từ Bước 3 -->
               </tbody>
             </table>
+            </div>
           </div>
 
           <!-- PHẦN 3: THƯ MỤC TÀI LIỆU ĐÍNH KÈM -->
@@ -914,6 +924,14 @@
     switchStep(step);
   }
 
+  function authorRoleBadges(author) {
+    const role = author.isMain ? 'Tác giả chính' : 'Đồng tác giả';
+    const corresponding = author.isCorresponding
+      ? '<span class="badge-tag badge-corresponding">✉ Tác giả liên hệ</span>'
+      : '';
+    return `<div class="author-roles"><span class="badge-tag badge-neutral">${role}</span>${corresponding}</div>`;
+  }
+
   // TỔNG HỢP VÀ RENDER TOÀN DIỆN BƯỚC 5 (XEM LẠI VÀ GỬI)
   function renderStep5Review() {
     // 1. Thông tin bài báo
@@ -953,23 +971,13 @@
         ? `<span class="badge-tag" style="background:#ecfdf5;color:#059669;border:1px solid #a7f3d0;font-size:11px;">✓ Tài khoản hệ thống (#${author.userId})</span>`
         : `<span class="badge-tag" style="background:#f8fafc;color:#64748b;border:1px dashed #cbd5e1;font-size:11px;">Tác giả khách</span>`;
 
-      const roleBadges = [];
-      if (author.isMain) {
-        roleBadges.push(`<span class="badge-tag badge-neutral">Tác giả chính</span>`);
-      } else {
-        roleBadges.push(`<span class="badge-tag badge-neutral">Đồng tác giả</span>`);
-      }
-      if (author.isCorresponding) {
-        roleBadges.push(`<span class="badge-tag badge-primary" style="background:#1da1f2;color:#fff;font-size:10.5px;">✉ Tác giả liên hệ</span>`);
-      }
-
       newTr.innerHTML = `
         <td>${author.order || (idx + 1)}</td>
         <td><strong>${author.name}</strong></td>
         <td>${author.affil}</td>
         <td><span style="font-family:monospace;font-size:12px;">${author.email}</span></td>
         <td>${author.orcid || 'Chưa liên kết'}</td>
-        <td><div style="display:flex;flex-direction:column;gap:3px;align-items:flex-start;">${roleBadges.join('')}</div></td>
+        <td>${authorRoleBadges(author)}</td>
         <td>${linkedBadge}</td>
       `;
       destAuthors.appendChild(newTr);
@@ -1095,16 +1103,6 @@
         ? `<span class="badge-tag" style="background:#ecfdf5;color:#059669;border:1px solid #a7f3d0;font-weight:600;" title="Đã liên kết tài khoản ID #${author.userId}">✓ Tài khoản hệ thống</span>`
         : `<span class="badge-tag" style="background:#f8fafc;color:#64748b;border:1px dashed #cbd5e1;" title="Đồng tác giả ngoài hệ thống, lưu dữ liệu snapshot (MaNguoiDung = NULL)">Tác giả khách</span>`;
 
-      const roleBadges = [];
-      if (author.isMain) {
-        roleBadges.push(`<span class="badge-tag badge-neutral">Tác giả chính</span>`);
-      } else {
-        roleBadges.push(`<span class="badge-tag badge-neutral">Đồng tác giả</span>`);
-      }
-      if (author.isCorresponding) {
-        roleBadges.push(`<span class="badge-tag badge-primary" style="background:#1da1f2;color:#fff;">✉ Tác giả liên hệ</span>`);
-      }
-
       const orcidDisplay = (author.orcid && author.orcid !== 'Chưa liên kết')
         ? `<a href="https://orcid.org/${encodeURIComponent(author.orcid)}" target="_blank" rel="noopener" style="color:#a6ce39;font-weight:600;display:inline-flex;align-items:center;gap:3px;" title="Xem hồ sơ ORCID">
              <span style="background:#a6ce39;color:#fff;border-radius:50%;width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;">iD</span>
@@ -1127,7 +1125,7 @@
         <td>${author.affil}</td>
         <td><span style="font-family:monospace;font-size:12.5px;">${author.email}</span></td>
         <td>${orcidDisplay}</td>
-        <td><div style="display:flex;flex-direction:column;gap:3px;align-items:flex-start;">${roleBadges.join('')}</div></td>
+        <td>${authorRoleBadges(author)}</td>
         <td>${linkedBadge}</td>
         <td>${actionHtml}</td>
       `;

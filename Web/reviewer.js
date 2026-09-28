@@ -3,9 +3,11 @@
   'use strict';
   const C = window.ReviewerCore;
   const $ = id => document.getElementById(id);
-  const state = { user:null, token:null, mode:null, items:[], selected:null, page:1, view:'active', busy:false, selectionVersion:0 };
+  const state = { user:null, token:null, mode:null, items:[], selected:null, page:1, view:'active', busy:false, selectionVersion:0, drafts:new Map(), draftVersion:0 };
   const PAGE_SIZE = 8;
   let toastTimer;
+  let draftTimer;
+  let draftSaveQueue = Promise.resolve();
   function read(store,key,fallback=null) { try { return JSON.parse(store.getItem(key)) ?? fallback; } catch { return fallback; } }
   function token() { try { return localStorage.getItem('journal_token'); } catch { return null; } }
   function el(tag,text,cls) { const n=document.createElement(tag); if(text != null)n.textContent=String(text); if(cls)n.className=cls; return n; }
@@ -41,6 +43,7 @@
         if(!['application/pdf','application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/msword','application/octet-stream'].includes(type)) throw new Error('Phản hồi không phải tệp bản thảo hợp lệ.');
         return {blob:await res.blob(),type};
       }
+      if(res.status===204 || res.status===205)return null;
       return await res.json();
     } catch(e) {
       if(e.name==='AbortError') throw new Error('Kết nối quá thời gian chờ. Dữ liệu chưa được xác nhận; hãy làm mới trước khi gửi lại.');
@@ -66,7 +69,7 @@
       state.user=await request('/auth/profile');
       if(!C.hasRole(state.user)) { deny('Tài khoản của bạn chưa có vai trò người phản biện. Liên hệ Ban biên tập để được phân quyền.'); return; }
       if(!(state.user.maNguoiDung ?? state.user.id ?? state.user.email)) throw new Error('Thiếu định danh tài khoản. Vui lòng đăng nhập lại.');
-      $('access-state').hidden=true; $('workspace').hidden=false; $('logout').hidden=false;
+      $('access-state').hidden=true; $('workspace').hidden=false;
       $('greeting').textContent=`Xin chào, ${state.user.hoTen || 'chuyên gia'}`;
       await refresh();
     } catch(e) { deny(e.message,e.status===401); }
@@ -78,13 +81,18 @@
       assertSession();
       const items=await request('/phanbien/my-assignments');
       if(!Array.isArray(items) || items.some(a=>!Number.isInteger(a.maPhanCong)||a.maPhanCong<1)) throw new Error('Danh sách phân công không đúng định dạng. Vui lòng liên hệ tòa soạn.');
-      state.items=items; render();
+      state.items=items;
+      try {
+        const drafts=await request('/phanbien/my-evaluation-drafts');
+        state.drafts=new Map((Array.isArray(drafts)?drafts:[]).map(d=>[d.maPhanCong,{savedAt:d.ngayCapNhatUtc}]));
+      } catch(e) { if(![404,405].includes(e.status))throw e; state.drafts=new Map(); }
+      render();
       if(state.selected) { const found=items.find(a=>a.maPhanCong===state.selected.maPhanCong); if(found)await select(found,false); else clearDetail(); }
     } catch(e) {
       state.items=[]; render(); clearDetail(); $('list-status').textContent=e.message; $('list-status').classList.add('error'); fail(e);
     } finally { state.busy=false; $('refresh').disabled=false; $('assignment-list').setAttribute('aria-busy','false'); }
   }
-  function draft(a) { return read(sessionStorage,key('draft',a)); }
+  function draft(a) { return state.drafts.has(a.maPhanCong) || !!read(sessionStorage,key('draft',a)); }
   function render() {
     $('count-active').textContent=state.items.filter(a=>!C.inactive(a)).length;
     $('count-due').textContent=state.items.filter(a=>C.deadline(a)==='due').length;
@@ -102,24 +110,237 @@
       const h=el('h3'); const open=button(a.tieuDeBaiBao,()=>select(a,true)); open.setAttribute('aria-label',`Mở công việc: ${a.tieuDeBaiBao}`); h.append(open);
       const deadlineText=C.completed(a)?`Kiến nghị: ${a.kienNghi || 'Chưa có thông tin'}`:`${a.trangThai==='Chờ phản hồi'?'Hạn phản hồi':'Hạn hoàn thành'}: ${date(a.trangThai==='Chờ phản hồi'?(a.hanPhanHoi||a.hanHoanThanh):a.hanHoanThanh)}`;
       article.append(top,h,el('p',a.chuyenNganh,'meta'),el('p',deadlineText+(C.deadline(a)==='overdue'?' · Quá hạn':''),'deadline '+(C.deadline(a)==='overdue'?'overdue':'')));
-      if(draft(a)&&!C.inactive(a))article.append(el('span','Có nháp trong phiên','draft-tag'));
+      if(draft(a)&&!C.inactive(a))article.append(el('span','Có bản nháp đã lưu','draft-tag'));
       list.append(article);
     }
   }
   function clearDetail() { state.selectionVersion++; state.selected=null; $('detail').replaceChildren(el('p','HỒ SƠ PHẢN BIỆN','eyebrow'),el('h2','Chọn một công việc'),el('p','Mở một bài trong danh sách để xem thông tin.','muted')); }
   function row(dl,label,value) { const r=el('div'); r.append(el('dt',label),el('dd',value??'Chưa có')); dl.append(r); }
+  function formatFileSize(bytes) {
+    if(!bytes || bytes <= 0) return '';
+    if(bytes < 1024) return bytes + ' B';
+    if(bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+  let activeBlobUrl = null;
+  let isSplitView = false;
+  function restoreEvaluationForm() {
+    const form = $('evaluation-form');
+    const evalDialog = $('evaluation-dialog');
+    if (form && evalDialog && form.parentElement !== evalDialog) {
+      evalDialog.append(form);
+    }
+    const slot = $('manuscript-split-form-slot');
+    if (slot) {
+      slot.replaceChildren();
+      slot.hidden = true;
+    }
+    $('manuscript-dialog')?.classList.remove('is-split');
+    isSplitView = false;
+  }
+  function closeManuscriptReader() {
+    restoreEvaluationForm();
+    $('manuscript-dialog')?.close();
+    const frame = $('manuscript-frame');
+    if(frame) frame.src = 'about:blank';
+    if(activeBlobUrl) {
+      URL.revokeObjectURL(activeBlobUrl);
+      activeBlobUrl = null;
+    }
+  }
+  async function loadDraftIntoForm(a) {
+    $('evaluation-title').textContent = a.tieuDeBaiBao;
+    $('draft-status').textContent = 'Đang tải bản nháp từ hệ thống…';
+    $('confirm-review').checked = false;
+    setEvaluationLoading(true);
+    updateTotal();
+    await draftSaveQueue.catch(() => {});
+    let saved = null;
+    try {
+      saved = await request(`/phanbien/assignments/${a.maPhanCong}/evaluation-draft`);
+    } catch(e) {
+      if (![404, 405].includes(e.status)) {
+        $('draft-status').textContent = `Không tải được bản nháp từ hệ thống: ${e.message}`;
+        setEvaluationLoading(false);
+        return;
+      }
+    }
+    if (state.selected?.maPhanCong !== a.maPhanCong) return;
+    let localOnly = false;
+    if (!saved) {
+      saved = read(sessionStorage, key('draft', a));
+      localOnly = !!saved;
+    }
+    if (saved) {
+      for (const [k, v] of Object.entries(saved)) {
+        const input = $('evaluation-form').elements.namedItem(k);
+        if (input) input.value = v;
+      }
+    }
+    $('draft-status').textContent = saved
+      ? (localOnly ? 'Đã tải bản nháp chỉ lưu trong tab này. Phiếu chưa được gửi.' : 'Đã tải bản nháp đã lưu trên hệ thống. Phiếu chưa được gửi.')
+      : 'Bản nháp chưa được gửi.';
+    setEvaluationLoading(false);
+    updateTotal();
+  }
+  async function setSplitView(enable, a) {
+    isSplitView = enable;
+    const dialog = $('manuscript-dialog');
+    const slot = $('manuscript-split-form-slot');
+    const toggleBtn = $('modal-toggle-split');
+    if (enable && C.canEvaluate(a)) {
+      dialog.classList.add('is-split');
+      slot.hidden = false;
+      const form = $('evaluation-form');
+      slot.append(form);
+      if (toggleBtn) {
+        toggleBtn.textContent = 'Toàn màn hình';
+        toggleBtn.classList.add('primary');
+        toggleBtn.classList.remove('quiet');
+      }
+      await loadDraftIntoForm(a);
+    } else {
+      restoreEvaluationForm();
+      if (toggleBtn) {
+        toggleBtn.textContent = 'Đánh giá song song';
+        toggleBtn.classList.remove('primary');
+        toggleBtn.classList.add('quiet');
+      }
+    }
+  }
+  async function openManuscriptReader(a, startInSplit = false) {
+    const dialog = $('manuscript-dialog');
+    if(!dialog) return;
+    state.selected = a;
+    $('manuscript-dialog-title-text').textContent = a.tieuDeBaiBao;
+    $('manuscript-dialog-eyebrow').textContent = `BẢN THẢO ẨN DANH · VÒNG ${a.soVong} · BÀI #${a.maBaiBao}`;
+    $('manuscript-loading').hidden = false;
+    $('manuscript-frame').hidden = true;
+    $('manuscript-fallback').hidden = true;
+
+    $('modal-download-manuscript').onclick = (e) => downloadManuscript(a, e.currentTarget);
+    const toggleBtn = $('modal-toggle-split');
+    if (C.canEvaluate(a)) {
+      toggleBtn.hidden = false;
+      toggleBtn.onclick = () => setSplitView(!isSplitView, a);
+    } else {
+      toggleBtn.hidden = true;
+    }
+
+    dialog.showModal();
+
+    if (startInSplit && C.canEvaluate(a)) {
+      await setSplitView(true, a);
+    } else {
+      await setSplitView(false, a);
+    }
+
+    try {
+      const result = await request(`/phanbien/assignments/${a.maPhanCong}/manuscript?inline=true`, { blob: true });
+      if(activeBlobUrl) {
+        URL.revokeObjectURL(activeBlobUrl);
+        activeBlobUrl = null;
+      }
+      activeBlobUrl = URL.createObjectURL(result.blob);
+      const frame = $('manuscript-frame');
+      frame.src = activeBlobUrl;
+      $('manuscript-loading').hidden = true;
+      frame.hidden = false;
+
+      const fallbackLink = $('manuscript-fallback-link');
+      fallbackLink.href = activeBlobUrl;
+      const ext = result.type === 'application/pdf' ? 'pdf' : result.type.includes('word') ? 'docx' : 'bin';
+      fallbackLink.download = `Ban-thao-an-danh-${a.maPhanCong}-vong-${a.soVong}.${ext}`;
+    } catch(e) {
+      $('manuscript-loading').hidden = true;
+      $('manuscript-fallback').hidden = false;
+      toast('Không thể tải bản thảo trực tuyến: ' + e.message);
+    }
+  }
   async function select(a,focus) {
     const version=++state.selectionVersion; state.selected=a; render();
     const panel=$('detail'); panel.replaceChildren(el('p',`BÀI #${a.maBaiBao} · PHÂN CÔNG #${a.maPhanCong}`,'eyebrow'));
     const title=el('h2',a.tieuDeBaiBao); title.id='detail-title'; panel.append(title);
-    const dl=el('dl'); row(dl,'Chuyên ngành',a.chuyenNganh); row(dl,'Vòng phản biện',a.soVong); row(dl,'Trạng thái',a.trangThai); row(dl,'Ngày phân công',date(a.ngayPhanCong)); row(dl,'Hạn phản hồi',date(a.hanPhanHoi)); row(dl,'Hạn hoàn thành',date(a.hanHoanThanh)); panel.append(dl);
+    const dl=el('dl'); row(dl,'Chuyên ngành',a.chuyenNganh); row(dl,'Vòng phản biện',a.soVong); row(dl,'Trạng thái',a.trangThai); row(dl,'Ngày phân công',date(a.ngayPhanCong));
+    if(a.trangThai==='Chờ phản hồi')row(dl,'Hạn phản hồi',date(a.hanPhanHoi));
+    row(dl,'Hạn hoàn thành',date(a.hanHoanThanh)); panel.append(dl);
+    const deadlineState=C.deadline(a);
+    if(deadlineState==='overdue' || deadlineState==='due') {
+      const deadlineLabel=a.trangThai==='Chờ phản hồi'?'phản hồi lời mời':'hoàn thành đánh giá';
+      const deadlineDate=date(a.trangThai==='Chờ phản hồi'?(a.hanPhanHoi||a.hanHoanThanh):a.hanHoanThanh);
+      panel.append(el('p',deadlineState==='overdue'
+        ? `Đã quá hạn ${deadlineLabel} (${deadlineDate}). Vui lòng liên hệ Ban biên tập nếu cần điều chỉnh hạn.`
+        : `Sắp đến hạn ${deadlineLabel} (${deadlineDate}).`,
+      `deadline-callout ${deadlineState}`));
+    }
+
+    // Scholarly Content: Abstract & Keywords
+    if(a.tomTat || a.tomTatTiengAnh || a.tuKhoa) {
+      const summarySec = el('section', null, 'paper-summary-section');
+      summarySec.append(el('h3', 'Tóm tắt bài báo (Abstract)'));
+      if(a.tomTat) summarySec.append(el('p', a.tomTat, 'paper-abstract-text vi'));
+      if(a.tomTatTiengAnh) summarySec.append(el('p', a.tomTatTiengAnh, 'paper-abstract-text en'));
+      if(a.tuKhoa) {
+        const kwWrap = el('div', null, 'paper-keywords-wrap');
+        kwWrap.append(el('span', 'Từ khóa: ', 'keywords-label'));
+        const tags = a.tuKhoa.split(/[,;]+/).map(s => s.trim()).filter(Boolean);
+        const tagContainer = el('div', null, 'keywords-badges');
+        tags.forEach(t => tagContainer.append(el('span', t, 'keyword-badge')));
+        kwWrap.append(tagContainer);
+        summarySec.append(kwWrap);
+      }
+      panel.append(summarySec);
+    }
+
+    if(a.trangThai === 'Chờ phản hồi') {
+      const guide = el('div', null, 'invitation-guidance');
+      guide.textContent = 'Bạn được mời phản biện bài báo này. Vui lòng đọc tóm tắt nghiên cứu ở trên và phản hồi lời mời. Sau khi nhận phản biện, bạn có thể đọc toàn văn bản thảo và gửi phiếu đánh giá.';
+      panel.append(guide);
+    }
+
+    // Manuscript Document Card
+    if(C.canDownload(a)) {
+      const docSec = el('section', null, 'manuscript-file-section');
+      docSec.append(el('h3', 'Tài liệu bản thảo ẩn danh'));
+      const fileCard = el('div', null, 'manuscript-file-card');
+      const fileMain = el('div', null, 'manuscript-file-main');
+      const icon = el('div', null, 'manuscript-file-icon');
+      icon.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>';
+      const fileInfo = el('div', null, 'manuscript-file-info');
+      const fileName = el('strong', a.tenFileAnDanh || `Ban-thao-an-danh-${a.maPhanCong}-vong-${a.soVong}.pdf`, 'manuscript-filename');
+      const sizeStr = a.kichThuocFile ? formatFileSize(a.kichThuocFile) : 'Định dạng PDF';
+      const fileMeta = el('span', `Bản thảo ẩn danh (Double-Blind) · ${sizeStr}`, 'manuscript-file-sub muted');
+      fileInfo.append(fileName, fileMeta);
+      fileMain.append(icon, fileInfo);
+
+      const fileBtns = el('div', null, 'manuscript-card-actions');
+      const readBtn = button('Đọc trực tuyến', () => openManuscriptReader(a, false), 'primary read-online-button');
+      readBtn.setAttribute('title', 'Đọc bản thảo trực tiếp');
+      const dlBtn = button('Tải bản thảo ẩn danh', e => downloadManuscript(a, e.currentTarget), 'download-file-btn');
+      dlBtn.setAttribute('title', 'Tải tệp bản thảo về máy tính');
+      fileBtns.append(readBtn, dlBtn);
+
+      fileCard.append(fileMain, fileBtns);
+      docSec.append(fileCard);
+      panel.append(docSec);
+    }
+
     const actions=el('div',null,'detail-actions');
     if(a.trangThai==='Chờ phản hồi') {
       actions.append(button('Nhận phản biện',e=>respond(a,true,e.currentTarget),'primary'));
       actions.append(button('Từ chối lời mời',e=>respond(a,false,e.currentTarget)));
     }
-    if(C.canEvaluate(a)) actions.append(button(draft(a)?'Tiếp tục bản nháp':'Viết đánh giá',()=>openEvaluation(a),'primary'));
-    if(C.canDownload(a)) actions.append(button('Tải bản thảo ẩn danh',e=>downloadManuscript(a,e.currentTarget)));
+    if(C.canEvaluate(a)) {
+      const dedicatedBtn = button(draft(a)?'Tiếp tục đánh giá':'Viết đánh giá', () => {
+        location.href = `reviewer-evaluation.html?id=${a.maPhanCong}`;
+      }, 'primary');
+      dedicatedBtn.setAttribute('title', 'Mở không gian đọc bản thảo và viết phiếu BM-04');
+      actions.append(
+        dedicatedBtn,
+        button('Mở phiếu nhanh', () => openEvaluation(a), 'primary'),
+        button('Đọc và đánh giá song song',()=>openManuscriptReader(a, true),'primary')
+      );
+    }
     if(!C.inactive(a)&&Number.isFinite(C.due(a)))actions.append(button('Lưu hạn vào lịch',()=>calendar(a)));
     panel.append(actions);
 
@@ -169,20 +390,52 @@
   }
   function formData() { const data=Object.fromEntries(new FormData($('evaluation-form'))); data.maPhanCong=state.selected.maPhanCong; return data; }
   function updateTotal() { const d=formData(); $('total-score').textContent=C.scoreKeys.every(k=>d[k]!==''&&Number.isFinite(Number(d[k])))?C.total(d).toFixed(1):'—'; }
-  function saveDraft(silent=false) {
-    try { assertSession(); const data=formData();
-      const hasContent=[...C.scoreKeys,'nhanXetChoTacGia','nhanXetBaoMat','kienNghi'].some(k=>String(data[k]??'').trim()!=='');
-      if(!hasContent) { sessionStorage.removeItem(key('draft',state.selected)); $('draft-status').textContent='Bản nháp đang trống.'; render(); return; }
-      sessionStorage.setItem(key('draft',state.selected),JSON.stringify({...data,savedAt:new Date().toISOString()})); $('draft-status').textContent='Đã lưu nháp trong phiên · '+new Date().toLocaleTimeString('vi-VN'); if(!silent)toast('Đã lưu nháp trong tab này. Phiếu chưa được gửi.'); render();
-    } catch(e) { $('draft-status').textContent='Không lưu được nháp. Giữ tab mở và sao chép nội dung trước khi rời trang.'; }
+  function hasDraftContent(data) { return [...C.scoreKeys,'nhanXetChoTacGia','nhanXetBaoMat','kienNghi'].some(k=>String(data[k]??'').trim()!==''); }
+  function setEvaluationLoading(loading) {
+    $('evaluation-form').querySelectorAll('input,textarea,select,button').forEach(control=>{
+      if(control.id!=='close-evaluation')control.disabled=loading;
+    });
+    $('evaluation-dialog').setAttribute('aria-busy',String(loading));
   }
-  function openEvaluation(a) {
+  function saveDraft(silent=false) {
+    clearTimeout(draftTimer);
+    try {
+      assertSession(); const a=state.selected; const version=++state.draftVersion; const data=formData();
+      const normalized={};
+      C.scoreKeys.forEach(k=>normalized[k]=data[k]===''?null:Number(data[k]));
+      normalized.nhanXetChoTacGia=data.nhanXetChoTacGia?.trim()||null;
+      normalized.nhanXetBaoMat=data.nhanXetBaoMat?.trim()||null;
+      normalized.kienNghi=data.kienNghi||null;
+      if(!hasDraftContent(data)) {
+        sessionStorage.removeItem(key('draft',a));
+        $('draft-status').textContent='Đang xóa bản nháp trên hệ thống…';
+        draftSaveQueue=draftSaveQueue.catch(()=>{}).then(()=>request(`/phanbien/assignments/${a.maPhanCong}/evaluation-draft`,{method:'DELETE'}))
+          .then(()=>{state.drafts.delete(a.maPhanCong); $('draft-status').textContent='Bản nháp đã được xóa khỏi hệ thống.'; render();})
+          .catch(e=>{$('draft-status').textContent=`Chưa xóa được bản nháp trên hệ thống: ${e.message}`;});
+        return draftSaveQueue;
+      }
+      sessionStorage.setItem(key('draft',a),JSON.stringify({...normalized,savedAt:new Date().toISOString()}));
+      $('draft-status').textContent='Đang đồng bộ bản nháp…';
+      draftSaveQueue=draftSaveQueue.catch(()=>{}).then(()=>request(`/phanbien/assignments/${a.maPhanCong}/evaluation-draft`,{method:'PUT',body:normalized}))
+        .then(result=>{
+          if(version!==state.draftVersion)return;
+          state.drafts.set(a.maPhanCong,{savedAt:result.savedAtUtc});
+          sessionStorage.removeItem(key('draft',a));
+          $('draft-status').textContent=`Đã đồng bộ lên hệ thống · ${new Date(result.savedAtUtc).toLocaleTimeString('vi-VN')}`;
+          if(!silent)toast('Bản nháp BM-04 đã được lưu trên hệ thống. Phiếu chưa được gửi.'); render();
+        }).catch(e=>{
+          if(version===state.draftVersion)$('draft-status').textContent=`Chưa đồng bộ được bản nháp. Nội dung tạm được giữ trong tab này. ${e.message}`;
+        });
+      return draftSaveQueue;
+    } catch(e) { $('draft-status').textContent=`Không lưu được bản nháp: ${e.message}`; return Promise.reject(e); }
+  }
+  async function openEvaluation(a) {
     if(!C.canEvaluate(a))return;
+    restoreEvaluationForm();
     state.selected=a; $('evaluation-form').reset(); $('form-error').textContent='';
-    $('evaluation-title').textContent=a.tieuDeBaiBao; const saved=draft(a);
-    if(saved)for(const [k,v] of Object.entries(saved)) { const input=$('evaluation-form').elements.namedItem(k); if(input)input.value=v; }
-    $('draft-status').textContent=saved?'Đã khôi phục nháp trong phiên. Phiếu chưa được gửi.':'Bản nháp chưa được gửi.';
-    $('confirm-review').checked=false; updateTotal(); $('evaluation-dialog').showModal();
+    $('confirm-review').checked=false;
+    $('evaluation-dialog').showModal();
+    await loadDraftIntoForm(a);
   }
   async function submit(event) {
     event.preventDefault(); if($('submit-review').disabled)return;
@@ -195,23 +448,32 @@
       if(result.success!==true)throw new Error(result.message||'Tòa soạn chưa xác nhận phiếu đánh giá.');
       try { sessionStorage.setItem(key('receipt',a),JSON.stringify(data)); } catch {}
       state.items=state.items.map(x=>x.maPhanCong===a.maPhanCong?{...x,daDanhGia:true,trangThai:'Đã đánh giá',diemTongKet:data.diemTongKet,kienNghi:data.kienNghi}:x);
-      try { sessionStorage.removeItem(key('draft',a)); } catch {}
-      $('evaluation-dialog').close(); state.view='history'; setView(); state.selected=state.items.find(x=>x.maPhanCong===a.maPhanCong); render(); await select(state.selected,false);
+      try { sessionStorage.removeItem(key('draft',a)); state.drafts.delete(a.maPhanCong); } catch {}
+      if(isSplitView) closeManuscriptReader();
+      else $('evaluation-dialog').close();
+      restoreEvaluationForm();
+      state.view='history'; setView(); state.selected=state.items.find(x=>x.maPhanCong===a.maPhanCong); render(); await select(state.selected,false);
       toast('Tòa soạn đã xác nhận phiếu đánh giá.');
     } catch(e) { $('form-error').textContent=e.message; if(e.status===401||e.status===403)fail(e); }
     finally { $('submit-review').disabled=false; $('close-evaluation').disabled=false; $('submit-review').textContent='Gửi phiếu đánh giá'; }
   }
   function setView() { document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===state.view))); $('status-filter').value='all'; state.page=1; }
   function clearSessionDrafts() { try { for(let i=sessionStorage.length-1;i>=0;i--) { const k=sessionStorage.key(i); if(k.startsWith('huit-reviewer:'))sessionStorage.removeItem(k); } } catch {} }
-  $('logout').addEventListener('click',()=>{ clearSessionDrafts(); localStorage.removeItem('journal_token'); localStorage.removeItem('journal_user'); location.href='login.html'; });
   window.addEventListener('storage',e=>{ if(e.key==='journal_token' || e.key===null) { clearSessionDrafts(); deny('Phiên làm việc đã thay đổi ở tab khác. Vui lòng đăng nhập lại.',true); } });
   $('refresh').addEventListener('click',refresh);
   document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{state.view=b.dataset.view;setView();render();}));
   ['search','status-filter','sort'].forEach(id=>$(id).addEventListener(id==='search'?'input':'change',()=>{state.page=1;render();}));
   $('prev-page').addEventListener('click',()=>{state.page--;render();}); $('next-page').addEventListener('click',()=>{state.page++;render();});
-  $('evaluation-form').addEventListener('input',()=>{updateTotal();saveDraft(true);});
-  $('evaluation-form').addEventListener('submit',submit); $('save-draft').addEventListener('click',()=>saveDraft());
-  $('close-evaluation').addEventListener('click',()=>{saveDraft(true);$('evaluation-dialog').close();select(state.selected,false);});
+  $('evaluation-form').addEventListener('input',()=>{updateTotal(); clearTimeout(draftTimer); draftTimer=setTimeout(()=>saveDraft(true),900);});
+  $('evaluation-form').addEventListener('submit',submit); $('save-draft').addEventListener('click',()=>saveDraft(false).catch(()=>{}));
+  $('close-evaluation').addEventListener('click',()=>{
+    saveDraft(true);
+    if(isSplitView) setSplitView(false, state.selected);
+    else $('evaluation-dialog').close();
+    select(state.selected,false);
+  });
   $('evaluation-dialog').addEventListener('cancel',e=>{if($('submit-review').disabled)e.preventDefault();else {saveDraft(true);select(state.selected,false);}});
+  $('close-manuscript')?.addEventListener('click', closeManuscriptReader);
+  $('manuscript-dialog')?.addEventListener('cancel', closeManuscriptReader);
   boot();
 })();

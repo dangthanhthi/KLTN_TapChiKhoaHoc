@@ -8,19 +8,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="journal-interactions.css">
   <link rel="stylesheet" href="reviewer.css">
   <script src="reviewer-core.js" defer></script>
   <script src="reviewer.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Đến nội dung chính</a>
-  <header class="masthead">
-    <div class="wrap masthead-inner">
-      <a class="brand" href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html"><span>HUIT JOURNAL</span><small>Tạp chí Khoa học Đại học Công Thương</small></a>
-      <nav aria-label="Điều hướng tài khoản"><a href="profile.html">Bàn làm việc tác giả</a><a href="reviewer.html" aria-current="page">Phản biện</a><button id="logout" type="button" hidden>Đăng xuất</button></nav>
-    </div>
-  </header>
-  <main id="main" class="wrap">
+  <div id="huit-header" data-active="profile"></div>
+  <main id="main" class="wrap reviewer-main">
+    <nav class="breadcrumb" aria-label="Đường dẫn"><a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Trang chủ</a><span aria-hidden="true">/</span><span aria-current="page">Bàn làm việc phản biện</span></nav>
     <div class="page-heading"><div><p class="eyebrow">KHÔNG GIAN CHUYÊN GIA</p><h1>Bàn làm việc phản biện</h1><p class="muted">Theo dõi công việc, hoàn thiện nhận xét và xem lại các đánh giá của bạn.</p></div><a class="text-link" href="guidelines.html#review">Quy trình phản biện ↗</a></div>
     <section id="access-state" class="empty-state" aria-live="polite"><h2>Đang kiểm tra phiên làm việc…</h2><p>Vui lòng chờ trong giây lát.</p></section>
     <div id="workspace" hidden>
@@ -43,7 +40,7 @@
   </main>
   <dialog id="evaluation-dialog" aria-labelledby="evaluation-heading">
     <form id="evaluation-form">
-      <div class="dialog-heading"><div><p class="eyebrow">PHIẾU NHẬN XÉT BM-04</p><h2 id="evaluation-heading">Đánh giá bản thảo</h2></div><button id="close-evaluation" type="button" aria-label="Đóng phiếu đánh giá">Đóng</button></div>
+      <div class="dialog-heading"><div><p class="eyebrow">PHIẾU NHẬN XÉT BM-04</p><h2 id="evaluation-heading" style="display:flex;align-items:center;gap:8px;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1da1f2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><path d="m9 14 2 2 4-4"></path></svg>Đánh giá bản thảo</h2></div><button id="close-evaluation" type="button" aria-label="Đóng phiếu đánh giá">Đóng</button></div>
       <p id="evaluation-title" class="paper-title"></p><p id="draft-status" class="muted" role="status">Bản nháp chưa được gửi.</p>
       <fieldset><legend>Điểm đánh giá · thang 0–10</legend><div class="score-grid"><label>Tính mới<input name="diemTinhMoi" type="number" min="0" max="10" step="0.1" required></label><label>Phương pháp<input name="diemPhuongPhap" type="number" min="0" max="10" step="0.1" required></label><label>Kết quả<input name="diemKetQua" type="number" min="0" max="10" step="0.1" required></label><label>Trình bày<input name="diemTrinhBay" type="number" min="0" max="10" step="0.1" required></label></div><p>Điểm tổng kết (trung bình 4 tiêu chí): <output id="total-score">—</output>/10</p></fieldset>
       <label>Nhận xét gửi tác giả<textarea name="nhanXetChoTacGia" rows="5" maxlength="20000" required placeholder="Nêu điểm mạnh, hạn chế và các yêu cầu chỉnh sửa cụ thể."></textarea></label>
@@ -51,11 +48,40 @@
       <label>Kiến nghị<select name="kienNghi" required><option value="">Chọn kiến nghị</option><option>Chấp nhận đăng</option><option>Chỉnh sửa nhỏ</option><option>Chỉnh sửa lớn và phản biện lại</option><option>Từ chối đăng</option></select></label>
       <label class="check-row"><input id="confirm-review" type="checkbox" required><span>Tôi đã kiểm tra nội dung, không có xung đột lợi ích và đồng ý gửi phiếu này cho Ban biên tập.</span></label>
       <p id="form-error" class="error" role="alert"></p>
-      <div class="dialog-actions"><button id="save-draft" type="button">Lưu nháp trong phiên</button><button id="submit-review" type="submit" class="primary">Gửi phiếu đánh giá</button></div>
-      <p class="fine-print">Nháp lưu riêng theo tài khoản trong tab này, không đồng bộ đến tòa soạn. Đóng tab hoặc đăng xuất sẽ xóa nháp.</p>
+      <div class="dialog-actions"><button id="save-draft" type="button">Lưu nháp lên hệ thống</button><button id="submit-review" type="submit" class="primary">Gửi phiếu đánh giá</button></div>
+      <p class="fine-print">Bản nháp được lưu riêng theo phân công và tài khoản phản biện. Ban biên tập và tác giả không xem được trước khi bạn gửi phiếu.</p>
     </form>
   </dialog>
+  <dialog id="manuscript-dialog" class="manuscript-modal" aria-labelledby="manuscript-dialog-title">
+    <div class="dialog-heading manuscript-modal-heading">
+      <div>
+        <p class="eyebrow" id="manuscript-dialog-eyebrow">TOÀN VĂN BẢN THẢO ẨN DANH</p>
+        <h2 id="manuscript-dialog-title" style="display:flex;align-items:center;gap:8px;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1da1f2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          <span id="manuscript-dialog-title-text">Đọc bản thảo trực tuyến</span>
+        </h2>
+      </div>
+      <div class="manuscript-modal-top-actions">
+        <button id="modal-toggle-split" type="button" class="quiet" title="Bật chế độ đánh giá song song">Đánh giá song song</button>
+        <button id="modal-download-manuscript" type="button" class="quiet">Tải bản thảo</button>
+        <button id="close-manuscript" type="button" aria-label="Đóng khung đọc bản thảo">Đóng</button>
+      </div>
+    </div>
+    <div id="manuscript-modal-body" class="manuscript-modal-body">
+      <div id="manuscript-viewer-container" class="manuscript-viewer-container">
+        <div id="manuscript-loading" class="manuscript-loading">Đang nạp dữ liệu bản thảo…</div>
+        <iframe id="manuscript-frame" title="Xem toàn văn bản thảo ẩn danh" hidden></iframe>
+        <div id="manuscript-fallback" class="manuscript-fallback" hidden>
+          <p>Trình duyệt không hỗ trợ nạp trực tiếp bản thảo này trong khung xem.</p>
+          <a id="manuscript-fallback-link" href="#" target="_blank" rel="noopener" class="primary" style="display:inline-block;padding:10px 18px;text-decoration:none;border-radius:4px;color:#fff;">Mở bản thảo trong tab mới</a>
+        </div>
+      </div>
+      <div id="manuscript-split-form-slot" class="manuscript-split-form-slot" hidden></div>
+    </div>
+  </dialog>
   <div id="notice" class="toast" role="status" hidden></div>
-  <footer class="wrap footer"><span>HUIT Journal · Không gian phản biện</span><a href="contact.html">Liên hệ tòa soạn</a></footer>
+  <div id="huit-footer"></div>
+  <script src="journal-layout.js"></script>
+  <script src="journal-interactions.js"></script>
 </body>
 </html>

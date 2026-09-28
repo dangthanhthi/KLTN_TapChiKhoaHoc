@@ -87,10 +87,10 @@
   /* WORKFLOW STEP BOXES */
   .workflow-list { display: flex; flex-direction: column; gap: 16px; margin: 24px 0; }
   .wf-step-card { display: flex; gap: 18px; border: 1px solid var(--line); border-radius: 6px; padding: 18px 20px; background: #fff; position: relative; }
-  .wf-step-num { width: 36px; height: 36px; border-radius: 50%; background: #1da1f2; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; }
+  .wf-step-num { width: 36px; height: 36px; border-radius: 50%; background: #111827; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px; flex-shrink: 0; }
   .wf-step-body h3 { font-size: 16px; font-weight: 700; color: var(--ink-900); margin-bottom: 4px; }
   .wf-step-body p { font-size: 13.5px; color: var(--ink-700); margin-bottom: 6px; }
-  .wf-step-meta { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #1da1f2; background: var(--sky-050); padding: 3px 8px; border-radius: 3px; }
+  .wf-step-meta { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #1f2937; background: #f3f4f6; border: 1px solid #e5e7eb; padding: 3px 8px; border-radius: 3px; }
 
   /* ACADEMIC CONTENT SECTIONS (CLEAN TYPOGRAPHY, NO BOXING) */
   .academic-section {
@@ -111,25 +111,21 @@
     margin-bottom: 10px;
   }
 
-  /* CALLOUT BOX (CHỈ SỬ DỤNG KHI THỰC SỰ CẦN THIẾT - LƯU Ý QUAN TRỌNG) */
+  /* GHI CHÚ HỌC THUẬT (CHỈ CHỮ, KHÔNG KHUNG, KHÔNG ICON THEO PHONG CÁCH TẠP CHÍ) */
+  .academic-note,
   .notice-callout {
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-left: 4px solid #475569;
-    border-radius: 6px;
-    padding: 14px 18px;
-    margin: 20px 0;
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-    font-size: 13.5px;
+    font-size: 14px;
     color: var(--ink-700);
-    line-height: 1.6;
+    line-height: 1.7;
+    margin: 20px 0 10px;
+    background: transparent;
+    border: none;
+    padding: 0;
+    display: block;
   }
-  .notice-callout svg {
-    flex-shrink: 0;
-    margin-top: 2px;
-    color: #475569;
+  .academic-note strong,
+  .notice-callout strong {
+    color: var(--ink-900);
   }
 
   /* 4 MỨC ĐÁNH GIÁ PHẢN BIỆN (KHÔNG BULLET POINT) */
@@ -421,19 +417,15 @@
     <div class="guidelines-sidebar-title">Mục lục hướng dẫn</div>
     <div class="guidelines-nav-item active" id="btn-submission" onclick="switchTab('submission')">
       <span>Quy trình đăng bài</span>
-      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
     </div>
     <div class="guidelines-nav-item" id="btn-review" onclick="switchTab('review')">
       <span>Quy trình phản biện</span>
-      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
     </div>
     <div class="guidelines-nav-item" id="btn-format" onclick="switchTab('format')">
       <span>Thể lệ viết và gửi bài</span>
-      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
     </div>
     <div class="guidelines-nav-item" id="btn-templates" onclick="switchTab('templates')">
       <span>Các biểu mẫu download</span>
-      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"></polyline></svg>
     </div>
   </aside>
 
@@ -449,16 +441,13 @@
       <figure class="diagram-figure">
         <div class="diagram-toolbar">
           <div class="diagram-title-badge">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
             Sơ đồ 1: Quy trình Xuất bản Học thuật Tổng thể (6 Giai đoạn)
           </div>
           <div class="diagram-actions">
             <button type="button" class="btn-diagram-tool" onclick="openDiagramModal('assets/images/So_Do_1_Quy_Trinh_Xuat_Ban_Tong_The.png', 'Sơ đồ 1: Quy trình Xuất bản Học thuật Tổng thể (6 Giai đoạn)')">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
               Xem phóng to
             </button>
             <a href="assets/images/So_Do_1_Quy_Trinh_Xuat_Ban_Tong_The.svg" target="_blank" class="btn-diagram-tool">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
               Mở Vector SVG
             </a>
           </div>
@@ -477,7 +466,7 @@
           <div class="wf-step-body">
             <h3>Nộp bản thảo trực tuyến</h3>
             <p>Tác giả đăng ký tài khoản, khai báo thông tin bài viết theo chuẩn IMRaD, nộp file Word (.docx) đã ẩn danh và các tệp đính kèm dữ liệu thực nghiệm.</p>
-            <span class="wf-step-meta">⏱️ Thời gian xử lý: Ngay lập tức trên hệ thống</span>
+            <span class="wf-step-meta">Thời gian xử lý: Ngay lập tức trên hệ thống</span>
           </div>
         </div>
 
@@ -486,7 +475,7 @@
           <div class="wf-step-body">
             <h3>Kiểm tra sơ bộ &amp; Quét trùng lặp Turnitin</h3>
             <p>Thư ký tòa soạn kiểm tra tính phù hợp tôn chỉ mục đích, định dạng thể lệ bài viết và tỷ lệ trùng lặp. Bài viết hợp lệ sẽ được chuyển Tổng biên tập phân công chuyên ban.</p>
-            <span class="wf-step-meta">⏱️ Thời gian xử lý: 03 - 05 ngày làm việc</span>
+            <span class="wf-step-meta">Thời gian xử lý: 03 - 05 ngày làm việc</span>
           </div>
         </div>
 
@@ -495,7 +484,7 @@
           <div class="wf-step-body">
             <h3>Phản biện kín hai chiều (Peer Review)</h3>
             <p>Bài báo được gửi thẩm định độc lập tới tối thiểu 02 chuyên gia phản biện am hiểu sâu về lĩnh vực nghiên cứu. Tác giả và chuyên gia không biết danh tính của nhau.</p>
-            <span class="wf-step-meta">⏱️ Thời gian thẩm định: 20 - 30 ngày</span>
+            <span class="wf-step-meta">Thời gian thẩm định: 20 - 30 ngày</span>
           </div>
         </div>
 
@@ -504,7 +493,7 @@
           <div class="wf-step-body">
             <h3>Tác giả chỉnh sửa &amp; Giải trình phản biện</h3>
             <p>Tác giả nhận thông báo kết quả (Chấp nhận, Sửa chữa nhỏ, Sửa chữa lớn hoặc Từ chối). Nộp lại bản thảo chỉnh sửa kèm Bảng giải trình chi tiết theo từng ý kiến phản biện.</p>
-            <span class="wf-step-meta">⏱️ Thời hạn sửa chữa: Tối đa 15 ngày</span>
+            <span class="wf-step-meta">Thời hạn sửa chữa: Tối đa 15 ngày</span>
           </div>
         </div>
 
@@ -513,7 +502,7 @@
           <div class="wf-step-body">
             <h3>Biên tập kỹ thuật &amp; Đọc bông (Proofreading)</h3>
             <p>Biên tập viên định dạng trang in, chuẩn hóa trích dẫn tài liệu tham khảo, đối chiếu thuật ngữ tiếng Anh và gửi bản in thử (PDF Galley Proof) cho tác giả xác nhận lần cuối.</p>
-            <span class="wf-step-meta">⏱️ Thời gian hoàn tất: 05 - 07 ngày</span>
+            <span class="wf-step-meta">Thời gian hoàn tất: 05 - 07 ngày</span>
           </div>
         </div>
 
@@ -522,7 +511,7 @@
           <div class="wf-step-body">
             <h3>Cấp mã DOI &amp; Xuất bản chính thức</h3>
             <p>Bài viết được cấp mã định danh quốc tế CrossRef DOI, đưa lên trang web tạp chí điện tử (Online First) và gom vào số ấn phẩm định kỳ tiếp theo.</p>
-            <span class="wf-step-meta">⏱️ Xuất bản trực tuyến: Ngay sau khi duyệt bản bông</span>
+            <span class="wf-step-meta">Xuất bản trực tuyến: Ngay sau khi duyệt bản bông</span>
           </div>
         </div>
       </div>
@@ -638,14 +627,11 @@
         </figcaption>
       </figure>
 
-      <!-- KHUNG XANH CHỈ DÙNG KHI CẦN THIẾT: LƯU Ý BẢO MẬT KIN 2 CHIỀU -->
-      <div class="notice-callout">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <div>
-          <strong>Lưu ý quan trọng về tính bảo mật phản biện:</strong>
-          Danh tính của tác giả và các chuyên gia phản biện được bảo mật tuyệt đối trong toàn bộ chu trình thẩm định theo chuẩn Double-blind Peer Review quốc tế. Mọi trao đổi phản biện và giải trình đều được luân chuyển trung gian qua Thư ký tòa soạn.
-        </div>
-      </div>
+      <!-- LƯU Ý BẢO MẬT KÍN 2 CHIỀU (CHỈ CHỮ, KHÔNG KHUNG, KHÔNG ICON) -->
+      <p class="academic-note">
+        <strong>Lưu ý quan trọng về tính bảo mật phản biện:</strong>
+        Danh tính của tác giả và các chuyên gia phản biện được bảo mật tuyệt đối trong toàn bộ chu trình thẩm định theo chuẩn Double-blind Peer Review quốc tế. Mọi trao đổi phản biện và giải trình đều được luân chuyển trung gian qua Thư ký tòa soạn.
+      </p>
     </div>
 
     <!-- TAB 3: THỂ LỆ VIẾT VÀ GỬI BÀI -->
@@ -719,14 +705,11 @@
         </div>
       </section>
 
-      <!-- KHUNG XANH CHỈ DÙNG KHI CẦN THIẾT: YÊU CẦU BẢN THẢO MẪU -->
-      <div class="notice-callout">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <div>
-          <strong>Yêu cầu bắt buộc khi chuẩn bị bản thảo:</strong>
-          Tác giả vui lòng tải mẫu bài báo chuẩn <strong>BM-01</strong> tại mục Biểu mẫu và định dạng nội dung trực tiếp trên mẫu này trước khi nộp trực tuyến để đảm bảo bài nộp được xử lý nhanh chóng ở khâu sơ duyệt.
-        </div>
-      </div>
+      <!-- YÊU CẦU BẢN THẢO MẪU (CHỈ CHỮ, KHÔNG KHUNG, KHÔNG ICON) -->
+      <p class="academic-note">
+        <strong>Yêu cầu bắt buộc khi chuẩn bị bản thảo:</strong>
+        Tác giả vui lòng tải mẫu bài báo chuẩn <strong>BM-01</strong> tại mục Biểu mẫu và định dạng nội dung trực tiếp trên mẫu này trước khi nộp trực tuyến để đảm bảo bài nộp được xử lý nhanh chóng ở khâu sơ duyệt.
+      </p>
     </div>
 
     <!-- TAB 4: CÁC BIỂU MẪU DOWNLOAD -->

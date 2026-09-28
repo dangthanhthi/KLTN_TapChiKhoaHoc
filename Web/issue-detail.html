@@ -389,12 +389,22 @@
     const descValEl = document.getElementById('issueDescVal');
     if (descValEl) descValEl.textContent = issueDesc;
 
+    const coverContainer = document.querySelector('.issue-cover-container');
     const coverImgEl = document.getElementById('issueCoverImg');
     if (coverImgEl) {
-      coverImgEl.style.display = issueCover ? 'block' : 'none';
-      if (issueCover) coverImgEl.src = issueCover;
-      coverImgEl.onerror = function() { this.style.display = 'none'; };
-      coverImgEl.alt = 'Bìa ' + issueTitle;
+      if (issueCover) {
+        coverImgEl.src = issueCover;
+        coverImgEl.style.display = 'block';
+        if (coverContainer) coverContainer.style.display = 'block';
+        coverImgEl.onerror = function() {
+          this.style.display = 'none';
+          if (coverContainer) coverContainer.style.display = 'none';
+        };
+        coverImgEl.alt = 'Bìa ' + issueTitle;
+      } else {
+        coverImgEl.style.display = 'none';
+        if (coverContainer) coverContainer.style.display = 'none';
+      }
     }
 
     // Nút tải mục lục PDF

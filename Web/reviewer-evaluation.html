@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Không gian phản biện học thuật · HUIT Journal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="journal-interactions.css">
+  <link rel="stylesheet" href="reviewer-evaluation.css">
+  <script src="reviewer-core.js" defer></script>
+  <script src="reviewer-evaluation.js" defer></script>
+</head>
+<body class="evaluation-workspace-body">
+  <header class="eval-topbar">
+    <div class="eval-topbar-left">
+      <a id="back-link" href="reviewer.html" class="back-link" title="Quay lại bàn làm việc phản biện">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        <span>Bàn làm việc</span>
+      </a>
+      <div class="eval-paper-heading">
+        <span class="paper-badge" id="paper-badge">BÀI BÁO · VÒNG 1</span>
+        <h1 id="paper-title" class="paper-title">Đang nạp dữ liệu bài báo…</h1>
+      </div>
+    </div>
+    <div class="eval-topbar-right">
+      <div class="sync-indicator" id="sync-indicator">
+        <span class="sync-dot"></span>
+        <span id="sync-text">Hệ thống sẵn sàng</span>
+      </div>
+      <div class="eval-header-actions">
+        <button id="save-draft-header" type="button" class="quiet-btn">Lưu nháp</button>
+        <button id="submit-header" type="button" class="primary-btn">Gửi phiếu đánh giá</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="eval-workspace">
+    <!-- Left Pane: Manuscript Reader & Abstract -->
+    <section class="pane-manuscript" aria-label="Bản thảo bài báo khoa học">
+      <div class="manuscript-pane-header">
+        <div class="manuscript-tabs" role="tablist">
+          <button type="button" id="tab-pdf" role="tab" aria-selected="true" class="tab-btn is-active">Toàn văn bản thảo (PDF)</button>
+          <button type="button" id="tab-abstract" role="tab" aria-selected="false" class="tab-btn">Tóm tắt &amp; Từ khóa</button>
+        </div>
+        <div class="manuscript-pane-tools">
+          <span id="file-size-tag" class="file-size-tag">Bản thảo PDF</span>
+          <button id="btn-download-pdf" type="button" class="tool-btn" title="Tải tệp bản thảo về máy">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            <span>Tải tệp</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="manuscript-pane-body">
+        <!-- PDF Viewer Container -->
+        <div id="pdf-view-panel" class="tab-content is-active">
+          <div id="pdf-loading" class="pdf-loading">
+            <div class="spinner"></div>
+            <span>Đang nạp toàn văn bản thảo từ máy chủ…</span>
+          </div>
+          <iframe id="pdf-frame" title="Xem toàn văn bản thảo ẩn danh" hidden></iframe>
+          <div id="pdf-fallback" class="pdf-fallback" hidden>
+            <p id="pdf-fallback-text">Trình duyệt không hỗ trợ xem trực tiếp tài liệu trong khung này.</p>
+            <a id="pdf-fallback-link" href="#" target="_blank" rel="noopener" class="primary-btn">Mở bản thảo trong tab mới</a>
+          </div>
+        </div>
+
+        <!-- Abstract & Metadata Panel -->
+        <div id="abstract-view-panel" class="tab-content" hidden>
+          <div class="scholarly-abstract-container">
+            <div class="meta-strip">
+              <div><span class="meta-label">Chuyên ngành:</span> <strong id="meta-discipline">—</strong></div>
+              <div><span class="meta-label">Ngày phân công:</span> <span id="meta-assigned-date">—</span></div>
+              <div><span class="meta-label">Hạn hoàn thành:</span> <span id="meta-deadline">—</span></div>
+            </div>
+            <div class="abstract-section">
+              <h2>Tóm tắt nghiên cứu (Abstract)</h2>
+              <div id="abstract-vi" class="abstract-body vi"></div>
+              <div id="abstract-en" class="abstract-body en"></div>
+            </div>
+            <div class="keywords-section">
+              <h3>Từ khóa học thuật (Keywords)</h3>
+              <div id="keywords-container" class="keywords-list"></div>
+            </div>
+            <div class="double-blind-notice">
+              <strong>Quy trình phản biện kín hai chiều (Double-Blind Peer Review)</strong>
+              <p>Mọi thông tin nhận diện tác giả và đơn vị công tác đã được ẩn danh. Quý chuyên gia vui lòng không đưa thông tin nhận diện cá nhân vào phiếu đánh giá.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Pane: Evaluation Form BM-04 -->
+    <aside class="pane-evaluation" aria-label="Phiếu nhận xét BM-04">
+      <div class="eval-pane-header">
+        <div>
+          <span class="eyebrow">BIỂU MẪU ĐÁNH GIÁ CHUẨN</span>
+          <h2>Phiếu nhận xét BM-04</h2>
+        </div>
+        <div class="deadline-pill" id="deadline-pill">Hạn: —</div>
+      </div>
+
+      <form id="evaluation-form" class="evaluation-form">
+        <fieldset class="score-fieldset">
+          <legend>Đánh giá theo tiêu chuẩn học thuật (Thang 0 – 10)</legend>
+          <div class="score-grid">
+            <div class="score-field">
+              <label for="score-newness">1. Tính mới &amp; Sáng tạo</label>
+              <input id="score-newness" name="diemTinhMoi" type="number" min="0" max="10" step="0.1" required placeholder="0 - 10">
+            </div>
+            <div class="score-field">
+              <label for="score-method">2. Phương pháp nghiên cứu</label>
+              <input id="score-method" name="diemPhuongPhap" type="number" min="0" max="10" step="0.1" required placeholder="0 - 10">
+            </div>
+            <div class="score-field">
+              <label for="score-result">3. Kết quả &amp; Thảo luận</label>
+              <input id="score-result" name="diemKetQua" type="number" min="0" max="10" step="0.1" required placeholder="0 - 10">
+            </div>
+            <div class="score-field">
+              <label for="score-presentation">4. Quy chuẩn trình bày</label>
+              <input id="score-presentation" name="diemTrinhBay" type="number" min="0" max="10" step="0.1" required placeholder="0 - 10">
+            </div>
+          </div>
+          <div class="total-score-row">
+            <span>Điểm tổng kết (Trung bình 4 tiêu chí):</span>
+            <strong id="total-score">— / 10</strong>
+          </div>
+        </fieldset>
+
+        <div class="form-group">
+          <label for="comment-author">
+            <strong>Nhận xét gửi tác giả</strong>
+            <span class="hint">Nêu rõ các ưu điểm, các thiếu sót cụ thể về số liệu, phương pháp và hướng dẫn chỉnh sửa chi tiết.</span>
+          </label>
+          <textarea id="comment-author" name="nhanXetChoTacGia" rows="8" maxlength="20000" required placeholder="Ghi nhận xét chi tiết gửi tác giả (tối đa 20.000 ký tự)..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="comment-editor">
+            <strong>Nhận xét riêng cho Ban biên tập</strong> <span class="muted">(Bảo mật, tác giả không nhìn thấy)</span>
+            <span class="hint">Đánh giá tính liêm chính, các nghi vấn trùng lặp hoặc lưu ý kín gửi Trưởng Ban biên tập.</span>
+          </label>
+          <textarea id="comment-editor" name="nhanXetBaoMat" rows="4" maxlength="20000" placeholder="Thông tin chỉ dành riêng cho Ban biên tập..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="recommendation"><strong>Kiến nghị của chuyên gia</strong></label>
+          <select id="recommendation" name="kienNghi" required>
+            <option value="">-- Chọn kiến nghị xuất bản --</option>
+            <option value="Chấp nhận đăng">Chấp nhận đăng (Không cần sửa đổi)</option>
+            <option value="Chỉnh sửa nhỏ">Chỉnh sửa nhỏ (Tác giả sửa theo góp ý)</option>
+            <option value="Chỉnh sửa lớn và phản biện lại">Chỉnh sửa lớn và phản biện lại (Cần vòng 2)</option>
+            <option value="Từ chối đăng">Từ chối đăng (Không đạt chuẩn xuất bản)</option>
+          </select>
+        </div>
+
+        <div class="form-group check-group">
+          <label class="check-label">
+            <input id="confirm-coi" type="checkbox" required>
+            <span>Tôi xác nhận không có xung đột lợi ích đối với công trình nghiên cứu này và hoàn toàn chịu trách nhiệm về tính khách quan của phiếu nhận xét.</span>
+          </label>
+        </div>
+
+        <p id="form-error-msg" class="error-msg" role="alert"></p>
+
+        <div class="form-actions">
+          <button id="btn-save-draft" type="button" class="secondary-btn">Lưu nháp lên hệ thống</button>
+          <button id="btn-submit-review" type="submit" class="primary-btn">Gửi phiếu đánh giá chính thức</button>
+        </div>
+      </form>
+    </aside>
+  </main>
+
+  <dialog id="submit-confirmation" class="submit-confirmation" aria-labelledby="confirmation-title">
+    <h2 id="confirmation-title">Xác nhận gửi phiếu BM-04</h2>
+    <p>Phiếu sẽ được chuyển đến tòa soạn để xử lý chính thức.</p>
+    <div class="confirmation-summary"><span>Điểm tổng kết</span><strong id="confirm-score">—</strong></div>
+    <div class="confirmation-summary"><span>Kiến nghị</span><strong id="confirm-recommendation">—</strong></div>
+    <p class="confirmation-privacy">Nhận xét riêng cho Ban biên tập chỉ hiển thị với tòa soạn, không gửi cho tác giả.</p>
+    <div class="confirmation-actions">
+      <button id="cancel-send" type="button" class="secondary-btn">Xem lại phiếu</button>
+      <button id="confirm-send" type="button" class="primary-btn">Xác nhận gửi</button>
+    </div>
+  </dialog>
+  <div id="notice" class="toast" role="status" hidden></div>
+</body>
+</html>

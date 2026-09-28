@@ -26,6 +26,7 @@
     --ink-300: #A9B2BC;
     --white: #FFFFFF;
     --line: #E1E9F1;
+    --pdf-preview-bg: #F3F8FD;
   }
 
   *{box-sizing:border-box;margin:0;padding:0;}
@@ -71,6 +72,16 @@
   .btn-download-pdf:hover{background:#0d8ddc;transform:translateY(-1px);}
   .btn-cite{background:#ffffff;color:var(--ink-700);border:1px solid var(--line);padding:10px 18px;font-size:13px;font-weight:600;border-radius:4px;display:inline-flex;align-items:center;gap:6px;transition:all .2s;}
   .btn-cite:hover{border-color:#1da1f2;color:#1da1f2;background:var(--sky-050);}
+  .pdf-preview{margin:0 0 32px;}
+  .pdf-preview-header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px;}
+  .pdf-preview-header .block-heading{margin-bottom:0;}
+  .pdf-preview-header a,.pdf-preview-fallback a{color:var(--sky-700);font-size:12.5px;font-weight:600;text-decoration:underline;}
+  .pdf-preview-status{background:var(--pdf-preview-bg);border:1px solid var(--line);padding:18px;font-size:13px;color:var(--ink-700);}
+  .pdf-preview-frame{display:block;width:100%;height:min(76vh,760px);min-height:420px;border:1px solid var(--line);background:var(--pdf-preview-bg);}
+  .pdf-preview-frame[hidden]{display:none;}
+  .pdf-preview-fallback{margin-top:8px;font-size:12.5px;color:var(--ink-500);}
+  @media(max-width:900px){.detail-grid{grid-template-columns:minmax(0,1fr);gap:24px;}.action-toolbar{flex-wrap:wrap;}}
+  @media(max-width:600px){.pdf-preview-frame{height:60vh;min-height:320px;}}
 
   /* Content Sections */
   .content-block{margin-bottom:32px;}
@@ -189,6 +200,16 @@
       </div>
     </div>
 
+    <section class="pdf-preview" id="article-pdf-preview" hidden aria-label="Xem trước toàn văn PDF">
+      <div class="pdf-preview-header">
+        <h3 class="block-heading">Xem trước toàn văn PDF</h3>
+        <a id="article-pdf-open" href="#" target="_blank" rel="noopener noreferrer">Mở PDF trong tab mới</a>
+      </div>
+      <p class="pdf-preview-status" id="article-pdf-status" role="status">Đang tải bản xem trước PDF...</p>
+      <iframe class="pdf-preview-frame" id="article-pdf-frame" title="Bản xem trước toàn văn bài báo dạng PDF" loading="lazy" hidden></iframe>
+      <p class="pdf-preview-fallback">Nếu bản xem trước không hiển thị, hãy <a id="article-pdf-fallback" href="#" target="_blank" rel="noopener noreferrer">mở PDF trong tab mới</a>.</p>
+    </section>
+
     <!-- TÓM TẮT TIẾNG VIỆT -->
     <section class="content-block" id="block-abstract-vn">
       <h3 class="block-heading">Tóm tắt (Abstract - Vietnamese)</h3>
@@ -218,7 +239,7 @@
     <div class="side-card" id="side-issue-card">
       <h3 class="side-card-title">Ấn phẩm phát hành</h3>
       <div class="issue-mini-info">
-        <div class="issue-mini-cover">
+        <div class="issue-mini-cover" id="side-issue-cover-wrap" style="display:none;">
           <img id="side-issue-cover" src="" alt="Bìa số báo" style="display:none;">
         </div>
         <div class="issue-mini-meta">
@@ -246,6 +267,43 @@
 <script src="journal-layout.js"></script>
 <script src="journal-interactions.js"></script>
 <script>
+function resolvePublicPdfUrl(rawUrl) {
+  if (!rawUrl || typeof API_BASE === 'undefined') return '';
+  try {
+    const apiOrigin = new URL(API_BASE, window.location.href).origin;
+    const url = new URL(rawUrl, apiOrigin);
+    return ['http:', 'https:'].includes(url.protocol) && url.origin === apiOrigin
+      && /^\/api\/baibao\/public\/\d+\/pdf\/?$/.test(url.pathname) ? url.href : '';
+  } catch (_) {
+    return '';
+  }
+}
+
+async function showPublicPdfPreview(pdfUrl) {
+  const section = document.getElementById('article-pdf-preview');
+  if (!section || !pdfUrl) return;
+  const frame = document.getElementById('article-pdf-frame');
+  const status = document.getElementById('article-pdf-status');
+  section.hidden = false;
+  document.getElementById('article-pdf-open').href = pdfUrl;
+  document.getElementById('article-pdf-fallback').href = pdfUrl;
+  try {
+    const response = await fetch(pdfUrl, { headers: { Accept: 'application/pdf' } });
+    if (!response.ok || !response.headers.get('content-type')?.toLowerCase().includes('application/pdf')) {
+      throw new Error('PDF không khả dụng');
+    }
+    const pdf = await response.blob();
+    if (!pdf.size) throw new Error('PDF rỗng');
+    const objectUrl = URL.createObjectURL(pdf);
+    frame.src = objectUrl;
+    frame.hidden = false;
+    status.hidden = true;
+    window.addEventListener('pagehide', () => URL.revokeObjectURL(objectUrl), { once: true });
+  } catch (_) {
+    status.textContent = 'Không thể hiển thị bản xem trước PDF. Bạn có thể mở tệp trong tab mới.';
+  }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   const params = new URLSearchParams(window.location.search);
   let articleId = params.get('id');
@@ -373,26 +431,30 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 8. Siêu dữ liệu xuất bản
         const pubMeta = document.querySelector('.article-pub-meta');
         if (pubMeta) {
-          const doi = String(art.maDOI || '').trim().replace(/^https?:\/\/doi\.org\//i, '');
+          const doi = typeof getPublicDoi === 'function' ? getPublicDoi(art.maDOI) : '';
           const doiUrl = doi ? `https://doi.org/${encodeURIComponent(doi).replace(/%2F/gi, '/')}` : '';
+          const doiStatus = art.maDOI && !doi ? 'Chưa xác thực DOI' : 'Chưa được cấp';
           const issueName = art.tenSoTapChi || (art.tap && art.so && art.nam ? `Tập ${art.tap}, Số ${art.so} (${art.nam})` : 'Chưa cập nhật');
           pubMeta.innerHTML = `
             <div><strong>Tạp chí:</strong> Tạp chí Khoa học Đại học Công Thương</div>
             <div><strong>Xuất bản:</strong> ${esc(issueName)}</div>
             <div><strong>Chỉ số:</strong> p-ISSN 3030-4113 · e-ISSN 3030-413X</div>
             <div><strong>Trang:</strong> ${art.trangBatDau && art.trangKetThuc ? `${esc(art.trangBatDau)}–${esc(art.trangKetThuc)}` : 'Chưa cập nhật'}</div>
-            <div><strong>DOI:</strong> ${doiUrl ? `<a href="${doiUrl}" target="_blank" rel="noopener noreferrer" class="doi-link">${esc(doi)}</a>` : 'Chưa được cấp'}</div>
+            <div><strong>DOI:</strong> ${doiUrl ? `<a href="${doiUrl}" target="_blank" rel="noopener noreferrer" class="doi-link">${esc(doi)}</a>` : doiStatus}</div>
             <div><strong>Chuyên ngành:</strong> ${esc(art.chuyenNganh || 'Chưa cập nhật')}</div>
           `;
         }
 
         // 9. Nút Tải PDF
         const btnPdf = document.querySelector('.btn-download-pdf');
+        const publicPdfUrl = resolvePublicPdfUrl(art.filePdfUrl);
         if (btnPdf) {
-          if (art.filePdfUrl) {
-            btnPdf.href = art.filePdfUrl;
+          if (publicPdfUrl) {
+            btnPdf.href = publicPdfUrl;
             btnPdf.target = '_blank';
+            btnPdf.rel = 'noopener noreferrer';
             btnPdf.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg> Tải toàn văn PDF (Bản in)`;
+            showPublicPdfPreview(publicPdfUrl);
           } else {
             btnPdf.removeAttribute('href');
             btnPdf.setAttribute('aria-disabled', 'true');
@@ -410,12 +472,23 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         // 10. Sidebar: Ấn phẩm phát hành
+        const sideCoverWrap = document.getElementById('side-issue-cover-wrap');
         const sideIssueCover = document.getElementById('side-issue-cover');
-        if (sideIssueCover) {
-          sideIssueCover.style.display = art.anhBiaUrl ? 'block' : 'none';
-          if (art.anhBiaUrl) sideIssueCover.src = art.anhBiaUrl;
-          sideIssueCover.onerror = function() { this.style.display = 'none'; };
+        const resolvedCover = art.anhBiaUrl || (art.tenSoTapChi && art.tenSoTapChi.includes('Yersin') && art.so
+          ? `assets/images/cover_yersin_no${art.so}.svg`
+          : (art.tap && art.so ? `assets/images/cover_huit_vol${art.tap}_no${art.so}e.jpg` : ''));
+
+        if (sideIssueCover && resolvedCover) {
+          sideIssueCover.src = resolvedCover;
+          sideIssueCover.style.display = 'block';
+          if (sideCoverWrap) sideCoverWrap.style.display = 'block';
+          sideIssueCover.onerror = function() {
+            this.style.display = 'none';
+            if (sideCoverWrap) sideCoverWrap.style.display = 'none';
+          };
           sideIssueCover.alt = `Bìa ${art.tenSoTapChi || 'Số tạp chí'}`;
+        } else if (sideCoverWrap) {
+          sideCoverWrap.style.display = 'none';
         }
 
         const sideIssueTitle = document.getElementById('side-issue-title');
