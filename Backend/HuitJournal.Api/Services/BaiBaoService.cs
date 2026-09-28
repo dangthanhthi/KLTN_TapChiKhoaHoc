@@ -366,9 +366,11 @@ public class BaiBaoService : IBaiBaoService
                 TrangThaiCu = ls.TrangThaiCu,
                 TrangThaiMoi = ls.TrangThaiMoi,
                 NgayChuyen = ls.NgayChuyen,
-                NguoiThucHien = isEditorOrAdmin 
-                    ? ls.NguoiThucHien?.HoTen 
-                    : (ls.MaNguoiThucHien == b.MaNguoiDung ? b.TacGia.HoTen : "Ban biên tập"),
+                NguoiThucHien = ls.MaNguoiThucHien == null
+                    ? "Hệ thống"
+                    : isEditorOrAdmin
+                        ? ls.NguoiThucHien?.HoTen
+                        : (ls.MaNguoiThucHien == b.MaNguoiDung ? b.TacGia.HoTen : "Ban biên tập"),
                 GhiChu = isEditorOrAdmin 
                     ? ls.GhiChu 
                     : GetAuthorSafeHistoryNote(ls)
@@ -497,9 +499,12 @@ public class BaiBaoService : IBaiBaoService
             return (false, $"Bài báo đang ở trạng thái '{baiBao.TrangThai}', chỉ được phép nộp bản chỉnh sửa và giải trình BM-03 khi bài ở trạng thái 'Chờ chỉnh sửa'.");
         }
 
-        var trangThaiCu = baiBao.TrangThai;
-        baiBao.TrangThai = "Chờ quyết định";
-        baiBao.NgayCapNhat = DateTime.Now;
+        if (string.IsNullOrWhiteSpace(dto.GiaiTrinh))
+            return (false, "Vui lòng nhập nội dung giải trình tiếp thu ý kiến phản biện.");
+        if (dto.FileBm03 == null || dto.FileBm03.Length == 0)
+            return (false, "Vui lòng tải lên bản giải trình BM-03.");
+        if (dto.FileClean == null || dto.FileClean.Length == 0)
+            return (false, "Vui lòng tải lên bản thảo đã chỉnh sửa.");
 
         // Tính số vòng chỉnh sửa dựa trên các vòng phân công trước đó
         var currentAssignmentRound = await _context.PhanCongPhanBiens
@@ -523,6 +528,10 @@ public class BaiBaoService : IBaiBaoService
             var (validTr, trErr) = await ValidateUploadedFileAsync(dto.FileTracked, new[] { ".pdf", ".docx", ".doc" }, 30 * 1024 * 1024);
             if (!validTr) return (false, trErr);
         }
+
+        var trangThaiCu = baiBao.TrangThai;
+        baiBao.TrangThai = "Chờ quyết định";
+        baiBao.NgayCapNhat = DateTime.Now;
 
         var uploadDir = Path.Combine(_env.ContentRootPath, "Uploads", "revisions", $"paper_{maBaiBao}");
         Directory.CreateDirectory(uploadDir);
@@ -596,7 +605,7 @@ public class BaiBaoService : IBaiBaoService
             TrangThaiMoi = "Chờ quyết định",
             NgayChuyen = DateTime.Now,
             MaNguoiThucHien = maNguoiDung,
-            GhiChu = $"Tác giả nộp bản thảo chỉnh sửa và giải trình BM-03: {dto.GiaiTrinh}"
+            GhiChu = $"Tác giả nộp bản thảo chỉnh sửa và giải trình BM-03: {dto.GiaiTrinh.Trim()}"
         });
 
         await _context.SaveChangesAsync();

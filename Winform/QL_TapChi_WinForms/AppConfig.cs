@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Text.Json;
 
 namespace QL_TapChi_WinForms
 {
@@ -8,9 +10,41 @@ namespace QL_TapChi_WinForms
         public static string ShortName => "JST";
         public static string Version => "1.0.0 (KLCN-2026)";
 
-        // Nghiệp vụ WinForms và Web đều dùng Backend API. Cấu hình URL khi triển khai nhiều máy.
-        public static string ApiBaseUrl =>
-            (Environment.GetEnvironmentVariable("HUIT_JOURNAL_API_URL") ?? "http://localhost:5000").TrimEnd('/');
+        // Máy tòa soạn dùng cùng API với Web; desktop-settings.json chỉ chứa URL công khai, không chứa bí mật.
+        // Biến môi trường ưu tiên hơn tệp để hỗ trợ môi trường phát triển và triển khai.
+        private static readonly Lazy<string> ConfiguredApiBaseUrl = new(LoadApiBaseUrl);
+        public static string ApiBaseUrl => ConfiguredApiBaseUrl.Value;
+
+        private static string LoadApiBaseUrl()
+        {
+            var raw = Environment.GetEnvironmentVariable("HUIT_JOURNAL_API_URL");
+            if (string.IsNullOrWhiteSpace(raw))
+            {
+                var configPath = Path.Combine(AppContext.BaseDirectory, "desktop-settings.json");
+                if (File.Exists(configPath))
+                {
+                    try
+                    {
+                        using var document = JsonDocument.Parse(File.ReadAllText(configPath));
+                        raw = document.RootElement.GetProperty("ApiBaseUrl").GetString();
+                    }
+                    catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException or KeyNotFoundException or InvalidOperationException)
+                    {
+                        throw new InvalidOperationException("Tệp desktop-settings.json không hợp lệ. Hãy kiểm tra ApiBaseUrl.", ex);
+                    }
+                }
+            }
+
+            raw = string.IsNullOrWhiteSpace(raw) ? "http://localhost:5000" : raw.Trim().TrimEnd('/');
+            if (!Uri.TryCreate(raw, UriKind.Absolute, out var uri) ||
+                (uri.Scheme != Uri.UriSchemeHttps && !(uri.Scheme == Uri.UriSchemeHttp && uri.IsLoopback)) ||
+                uri.AbsolutePath != "/" || !string.IsNullOrEmpty(uri.Query) ||
+                !string.IsNullOrEmpty(uri.Fragment) || !string.IsNullOrEmpty(uri.UserInfo))
+            {
+                throw new InvalidOperationException("ApiBaseUrl phải là origin HTTPS công khai hoặc HTTP localhost, không có đường dẫn /api.");
+            }
+            return uri.GetLeftPart(UriPartial.Authority);
+        }
 
         // Chỉ dùng cho công cụ sao lưu/phục hồi cục bộ của quản trị viên.
         public static string[] ConnectionStrings =

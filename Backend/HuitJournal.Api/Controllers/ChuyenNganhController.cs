@@ -30,7 +30,11 @@ public class ChuyenNganhController : ControllerBase
                 c.MaChuyenNganh,
                 c.TenChuyenNganh,
                 c.MoTa,
-                TongSoBaiBao = c.BaiBaos.Count(b => b.TrangThai == "Đã xuất bản" && b.SoTapChi != null && (b.SoTapChi.TrangThai == "Đã xuất bản" || b.SoTapChi.TrangThai == "Đã phát hành"))
+                TongSoBaiBao = c.BaiBaos.Count(b => b.TrangThai == "Đã xuất bản"
+                    && b.SoTapChi != null
+                    && (b.SoTapChi.TrangThai == "Đã xuất bản" || b.SoTapChi.TrangThai == "Đã phát hành")
+                    && b.ThuMucBaiBaos.Any(f => (f.LoaiThuMuc == "PDF thành phẩm" || f.LoaiThuMuc == "PDF Xuất bản")
+                        && f.TenThuMuc.EndsWith(".pdf")))
             })
             .OrderByDescending(c => c.TongSoBaiBao)
             .ThenBy(c => c.MaChuyenNganh)

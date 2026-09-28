@@ -155,15 +155,16 @@ public class SoTapChiService : ISoTapChiService
 
     public async Task<List<BaiBaoPublicDto>> GetLatestArticlesAsync(int limit = 10)
     {
-        var targetIds = await _context.BaiBaos
+        // A non-positive limit is used by the archive to request the complete published set.
+        var publishedArticles = _context.BaiBaos
             .AsNoTracking()
             .Where(b => b.TrangThai == "Đã xuất bản" && b.SoTapChi != null && (b.SoTapChi.TrangThai == "Đã xuất bản" || b.SoTapChi.TrangThai == "Đã phát hành")
                      && b.ThuMucBaiBaos.Any(f => (f.LoaiThuMuc == "PDF thành phẩm" || f.LoaiThuMuc == "PDF Xuất bản")
                                              && f.TenThuMuc.EndsWith(".pdf")))
-            .OrderByDescending(b => b.NgayCapNhat)
-            .Take(limit)
-            .Select(b => b.MaBaiBao)
-            .ToListAsync();
+            .OrderByDescending(b => b.NgayCapNhat);
+        var targetIds = limit > 0
+            ? await publishedArticles.Take(limit).Select(b => b.MaBaiBao).ToListAsync()
+            : await publishedArticles.Select(b => b.MaBaiBao).ToListAsync();
 
         if (targetIds.Count == 0)
         {

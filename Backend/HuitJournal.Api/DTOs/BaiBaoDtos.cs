@@ -206,7 +206,9 @@ public class BaiBaoResubmitDto
     [Required(ErrorMessage = "Vui lòng nhập nội dung giải trình tiếp thu ý kiến phản biện.")]
     public string GiaiTrinh { get; set; } = null!;
 
+    [Required(ErrorMessage = "Vui lòng tải lên bản giải trình BM-03.")]
     public IFormFile? FileBm03 { get; set; }
+    [Required(ErrorMessage = "Vui lòng tải lên bản thảo đã chỉnh sửa.")]
     public IFormFile? FileClean { get; set; }
     public IFormFile? FileTracked { get; set; }
 }

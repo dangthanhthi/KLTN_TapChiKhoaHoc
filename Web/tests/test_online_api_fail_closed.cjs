@@ -62,12 +62,11 @@ async function main() {
   assert.equal(failure.success, false, 'network failure must not save a local review for an online token');
 
   const deployed = createPage('example.vercel.app');
-  assert.equal(vm.runInContext('isExplicitDemoMode()', deployed.context), false,
-    'a deployed host must not silently enter demo mode');
-  deployed.context.window.location.search = '?mode=demo';
-  deployed.localStorage.setItem('journal_token', 'standalone_token_test');
-  assert.ok((await vm.runInContext('apiGetMySubmissions()', deployed.context)).length > 0,
-    'explicit demo mode must remain available');
+  await assert.rejects(vm.runInContext('apiGetMySubmissions()', deployed.context), /API đang bảo trì/,
+    'a deployed host must not replace unavailable API data with sample records');
+  deployed.context.fetch = async () => ({ ok: true, status: 200, json: async () => [] });
+  assert.equal((await vm.runInContext('apiGetMySubmissions()', deployed.context)).length, 0,
+    'an empty API response must remain empty instead of showing sample records');
 
   assert.equal(vm.runInContext('API_BASE', createPage('localhost', '5001').context), '/api',
     'Web hosted by Testing backend must use its same-origin API');

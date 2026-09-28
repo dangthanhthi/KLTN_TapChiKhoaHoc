@@ -41,7 +41,19 @@ if (builder.Environment.IsProduction())
 }
 
 // 1. Cấu hình DbContext kết nối SQL Server
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+var configuredConnectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (builder.Environment.IsProduction())
+{
+    var configuredDatabase = string.IsNullOrWhiteSpace(configuredConnectionString)
+        ? null
+        : new SqlConnectionStringBuilder(configuredConnectionString);
+    if (configuredDatabase is null ||
+        string.IsNullOrWhiteSpace(configuredDatabase.InitialCatalog) ||
+        configuredDatabase.DataSource is "." or ".\\CSSQL22" or ".\\SQLEXPRESS" or "(localdb)\\MSSQLLocalDB")
+        throw new InvalidOperationException("Production yêu cầu ConnectionStrings:DefaultConnection trỏ tới SQL Server công khai đã cấu hình.");
+}
+
+var connectionString = configuredConnectionString
     ?? "Server=.\\CSSQL22;Database=QL_TapChiKhoaHoc;Integrated Security=True;TrustServerCertificate=True;";
 
 if (builder.Environment.IsEnvironment("Testing") &&

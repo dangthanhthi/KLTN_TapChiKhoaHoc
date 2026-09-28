@@ -1056,48 +1056,20 @@ function initModals() {
           <form id="auth-login-form" onsubmit="handleLoginSubmit(event)">
             <div class="auth-form-group">
               <label>Email hoặc Tên đăng nhập</label>
-              <input type="email" required placeholder="nhapemail@journal.edu.vn" value="vuthif@journal.edu.vn">
+              <input type="text" name="usernameOrEmail" required autocomplete="username" placeholder="Email hoặc tên đăng nhập">
             </div>
             <div class="auth-form-group">
               <label>Mật khẩu</label>
-              <input type="password" required placeholder="••••••••" value="MatKhau@123">
-            </div>
-            <div class="auth-form-group">
-              <label>Phân hệ truy cập</label>
-              <select>
-                <option value="author">Tác giả (Nộp bài & Theo dõi bản thảo)</option>
-                <option value="reviewer">Phản biện viên (Chuyên gia đánh giá)</option>
-                <option value="editor">Biên tập viên / Thư ký tòa soạn</option>
-                <option value="reader">Bạn đọc / Nghiên cứu sinh</option>
-              </select>
+              <input type="password" name="password" required autocomplete="current-password" placeholder="Nhập mật khẩu">
             </div>
             <button type="submit" class="auth-submit-btn">Đăng nhập vào hệ thống</button>
           </form>
 
           <!-- FORM ĐĂNG KÝ -->
-          <form id="auth-register-form" style="display:none;" onsubmit="handleRegisterSubmit(event)">
-            <div class="auth-form-group">
-              <label>Họ và tên đầy đủ</label>
-              <input type="text" required placeholder="Ví dụ: TS. Vũ Thị F">
-            </div>
-            <div class="auth-form-group">
-              <label>Email liên hệ học thuật</label>
-              <input type="email" required placeholder="name@institution.edu.vn">
-            </div>
-            <div class="auth-form-group">
-              <label>Cơ quan công tác / Trường đại học</label>
-              <input type="text" required placeholder="Trường Đại học">
-            </div>
-            <div class="auth-form-group">
-              <label>Mã định danh khoa học ORCID (tùy chọn)</label>
-              <input type="text" placeholder="0000-0002-XXXX-XXXX">
-            </div>
-            <div class="auth-form-group">
-              <label>Mật khẩu mới</label>
-              <input type="password" required placeholder="Tối thiểu 8 ký tự">
-            </div>
-            <button type="submit" class="auth-submit-btn">Hoàn tất đăng ký tài khoản</button>
-          </form>
+          <div id="auth-register-form" style="display:none;">
+            <p>Đăng ký tài khoản qua biểu mẫu đăng ký chính thức.</p>
+            <a class="auth-submit-btn" href="register.html">Mở trang đăng ký</a>
+          </div>
         </div>
       </div>
     </div>`;
@@ -1182,16 +1154,42 @@ function switchAuthTab(tab) {
   }
 }
 
-function handleLoginSubmit(e) {
+async function handleLoginSubmit(e) {
   e.preventDefault();
-  closeModal('modal-auth');
-  showToast('Đăng nhập thành công! Chào mừng tác giả Vũ Thị F quay lại.');
-}
+  const form = e.currentTarget;
+  const usernameOrEmail = form.elements.usernameOrEmail?.value.trim();
+  const password = form.elements.password?.value;
+  const submitButton = form.querySelector('button[type="submit"]');
+  if (!usernameOrEmail || !password) return;
 
-function handleRegisterSubmit(e) {
-  e.preventDefault();
-  closeModal('modal-auth');
-  showToast('Đăng ký tài khoản thành công! Tòa soạn đã gửi email kích hoạt.');
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.textContent = 'Đang xác thực...';
+  }
+  try {
+    const result = await apiLogin(usernameOrEmail, password);
+    if (!result?.success || !result.token || !result.user) {
+      showToast(result?.message || 'Không thể xác thực tài khoản.', 'error');
+      return;
+    }
+    localStorage.setItem('journal_token', result.token);
+    const user = {
+      isLoggedIn: true,
+      ...result.user,
+      chucVu: Array.isArray(result.user.vaiTros) && result.user.vaiTros.length
+        ? result.user.vaiTros.join(', ')
+        : 'Tác giả'
+    };
+    setCurrentUser(user);
+    closeModal('modal-auth');
+    showToast(`Đăng nhập thành công. Xin chào ${result.user.hoTen || result.user.email || ''}.`, 'success');
+    setTimeout(() => { window.location.href = 'profile.html'; }, 600);
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.textContent = 'Đăng nhập vào hệ thống';
+    }
+  }
 }
 
 function initAuthTriggers() {
@@ -1223,37 +1221,37 @@ function generateArticleCitations(art) {
   if (!art) return;
   const authorNames = (art.tacGias && art.tacGias.length > 0)
     ? art.tacGias.map(t => t.hoTen).join(', ')
-    : (art.tacGiaChinh || 'Ban biên tập');
-  const year = art.nam || 2026;
-  const vol = art.tap || 1;
-  const no = art.so || 1;
-  const pages = (art.trangBatDau && art.trangKetThuc) ? `${art.trangBatDau}–${art.trangKetThuc}` : '1–10';
-  const doiStr = art.maDOI ? ` https://doi.org/${art.maDOI}` : '';
+    : (art.tacGiaChinh || '');
+  const year = art.nam || (art.ngayPhatHanh ? new Date(art.ngayPhatHanh).getFullYear() : 'n.d.');
+  const vol = art.tap ? String(art.tap) : '';
+  const no = art.so ? String(art.so) : '';
+  const pages = art.trangBatDau && art.trangKetThuc ? `${art.trangBatDau}–${art.trangKetThuc}` : '';
+  const doi = String(art.maDOI || '').trim().replace(/^https?:\/\/doi\.org\//i, '');
+  const doiStr = doi ? ` https://doi.org/${doi}` : '';
   const journalName = art.tenSoTapChi && art.tenSoTapChi.includes('Yersin')
     ? 'Tạp chí Khoa học Yersin'
     : 'Tạp chí Khoa học Đại học Công Thương';
+  const volumeIssue = `${vol ? `, ${vol}` : ''}${no ? `(${no})` : ''}`;
+  const pagePart = pages ? `, ${pages}` : '';
+  const authorBib = authorNames.replace(/,/g, ' and');
+  const citationAuthors = authorNames || 'Chưa có thông tin tác giả';
 
-  citations.apa = `${authorNames} (${year}). ${art.tieuDe}. ${journalName}, ${vol}(${no}), ${pages}.${doiStr}`;
-  citations.bibtex = `@article{jst_${art.maBaiBao}_${year},
+  citations.apa = `${citationAuthors} (${year}). ${art.tieuDe}. ${journalName}${volumeIssue}${pagePart}.${doiStr}`;
+  citations.bibtex = `@article{article_${art.maBaiBao || 'unknown'}${art.nam ? `_${art.nam}` : ''},
   title={${art.tieuDe}},
-  author={${authorNames.replace(/,/g, ' and')}},
+  ${authorNames ? `author={${authorBib}},` : ''}
   journal={${journalName}},
-  volume={${vol}},
-  number={${no}},
-  pages={${pages.replace('–', '--')}},
-  year={${year}},
-  doi={${art.maDOI || ''}}
+  ${vol ? `volume={${vol}},` : ''}
+  ${no ? `number={${no}},` : ''}
+  ${pages ? `pages={${pages.replace('–', '--')}},` : ''}
+  ${art.nam ? `year={${art.nam}},` : ''}
+  ${doi ? `doi={${doi}}` : ''}
 }`;
   citations.ris = `TY  - JOUR
 TI  - ${art.tieuDe}
-${(art.tacGias && art.tacGias.length > 0 ? art.tacGias : [{hoTen: art.tacGiaChinh || 'Tác giả'}]).map(t => `AU  - ${t.hoTen}`).join('\n')}
+${(art.tacGias && art.tacGias.length > 0 ? art.tacGias : (art.tacGiaChinh ? [{hoTen: art.tacGiaChinh}] : [])).map(t => `AU  - ${t.hoTen}`).join('\n')}
 JO  - ${journalName}
-VL  - ${vol}
-IS  - ${no}
-SP  - ${art.trangBatDau || 1}
-EP  - ${art.trangKetThuc || 10}
-PY  - ${year}
-DO  - ${art.maDOI || ''}
+${vol ? `VL  - ${vol}\n` : ''}${no ? `IS  - ${no}\n` : ''}${art.trangBatDau ? `SP  - ${art.trangBatDau}\n` : ''}${art.trangKetThuc ? `EP  - ${art.trangKetThuc}\n` : ''}${art.nam ? `PY  - ${art.nam}\n` : ''}${doi ? `DO  - ${doi}\n` : ''}
 ER  - `;
 }
 
@@ -1406,11 +1404,10 @@ function initNewsletterTriggers() {
   document.querySelectorAll('.newsletter-box button').forEach(btn => {
     btn.addEventListener('click', () => {
       const input = btn.parentElement.querySelector('input');
-      if (input && input.value.trim()) {
-        showToast(`Đã ghi nhận đăng ký cho email ${input.value.trim()}! Tòa soạn sẽ gửi mục lục số mới nhất.`);
-        input.value = '';
+      if (input && input.value.trim() && input.checkValidity()) {
+        showToast('Chức năng nhận bản tin chưa kết nối với máy chủ; email chưa được đăng ký.', 'warning', 6000);
       } else {
-        showToast('Vui lòng nhập địa chỉ email hợp lệ trước khi bấm đăng ký.');
+        showToast('Vui lòng nhập địa chỉ email hợp lệ trước khi bấm đăng ký.', 'warning');
       }
     });
   });

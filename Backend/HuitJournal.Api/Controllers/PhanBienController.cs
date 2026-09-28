@@ -62,6 +62,26 @@ public class PhanBienController : ControllerBase
         return Ok(assignments);
     }
 
+    [HttpPost("assignments/{id:int}/respond")]
+    [Authorize(Roles = "Chuyên gia phản biện")]
+    public async Task<IActionResult> RespondToAssignment(int id, [FromBody] PhanBienResponseDto dto)
+    {
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+            return Unauthorized(new { message = "Phiên đăng nhập không hợp lệ." });
+        var (success, message) = await _phanBienService.RespondToAssignmentAsync(id, userId, dto.Accept!.Value);
+        return success ? Ok(new { success = true, message }) : BadRequest(new { message });
+    }
+
+    [HttpGet("assignments/{id:int}/evaluation")]
+    [Authorize(Roles = "Chuyên gia phản biện")]
+    public async Task<IActionResult> GetMyEvaluation(int id)
+    {
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId))
+            return Unauthorized(new { message = "Phiên đăng nhập không hợp lệ." });
+        var evaluation = await _phanBienService.GetMyEvaluationAsync(id, userId);
+        return evaluation == null ? NotFound(new { message = "Không tìm thấy phiếu đánh giá của bạn." }) : Ok(evaluation);
+    }
+
     /// <summary>
     /// Chuyên gia phản biện nộp Phiếu nhận xét và đánh giá BM-04
     /// </summary>

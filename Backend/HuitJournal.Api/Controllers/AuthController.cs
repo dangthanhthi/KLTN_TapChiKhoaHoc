@@ -312,29 +312,6 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// POST /api/auth/request-reviewer
-    /// Tự đăng ký vai trò Chuyên gia Phản biện (tự phục vụ).
-    /// Yêu cầu: Học vị ≥ Thạc sĩ, chưa có role phản biện trở lên.
-    /// </summary>
-    [HttpPost("request-reviewer")]
-    [Authorize]
-    public async Task<IActionResult> RequestReviewerRole([FromBody] RequestReviewerRoleDto? dto = null)
-    {
-        var maNguoiDungClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)
-                            ?? User.FindFirstValue("MaNguoiDung");
-
-        if (!int.TryParse(maNguoiDungClaim, out int maNguoiDung))
-            return Unauthorized(new { message = "Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại." });
-
-        var (success, message, profile) = await _authService.RequestReviewerRoleAsync(maNguoiDung, dto?.GhiChu);
-
-        if (!success)
-            return BadRequest(new { success = false, message });
-
-        return Ok(new { success = true, message, profile });
-    }
-
-    /// <summary>
     /// GET /api/auth/pending-reviewers
     /// Ban biên tập / Quản trị viên lấy danh sách đơn đăng ký phản biện đang chờ thẩm định
     /// </summary>
@@ -348,12 +325,12 @@ public class AuthController : ControllerBase
 
     /// <summary>
     /// POST /api/auth/approve-reviewer/{id}
-    /// Ban biên tập / Quản trị viên thẩm định và phê duyệt vai trò Chuyên gia phản biện
+    /// Quản trị viên xử lý các hồ sơ phản biện cũ còn chờ duyệt.
     /// POST /api/auth/approve-reviewer/{maDon}
     /// Ban biên tập / Quản trị viên thẩm định và chính thức phê duyệt vai trò Chuyên gia phản biện theo mã đơn
     /// </summary>
     [HttpPost("approve-reviewer/{maDon}")]
-    [Authorize(Roles = "Quản trị hệ thống,Ban biên tập")]
+    [Authorize(Roles = "Quản trị hệ thống")]
     public async Task<IActionResult> ApproveReviewerRole(int maDon)
     {
         var editorIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)
@@ -371,10 +348,10 @@ public class AuthController : ControllerBase
 
     /// <summary>
     /// POST /api/auth/reject-reviewer/{maDon}
-    /// Ban biên tập / Quản trị viên từ chối đơn đăng ký phản biện theo mã đơn
+    /// Quản trị viên xử lý các hồ sơ phản biện cũ còn chờ duyệt.
     /// </summary>
     [HttpPost("reject-reviewer/{maDon}")]
-    [Authorize(Roles = "Quản trị hệ thống,Ban biên tập")]
+    [Authorize(Roles = "Quản trị hệ thống")]
     public async Task<IActionResult> RejectReviewerRole(int maDon, [FromBody] RejectReviewerRequestDto? dto = null)
     {
         var editorIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)

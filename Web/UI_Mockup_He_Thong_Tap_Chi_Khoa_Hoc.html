@@ -181,7 +181,7 @@
         <!-- Bìa tạp chí -->
         <div style="width: 250px; min-width: 220px; border: 1px solid #E5E7EB; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-radius: 2px; overflow: hidden; background: #fff;">
           <a href="issue-detail.html" id="home-issue-cover-link" title="Xem toàn bộ bài viết trong số này">
-            <img id="home-issue-cover-img" src="assets/images/cover_huit_vol26_no3e.svg" alt="Bìa Tạp chí Khoa học" style="width: 100%; height: auto; display: block; transition: transform .2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+            <img id="home-issue-cover-img" alt="Bìa số tạp chí" style="width: 100%; height: auto; display: none; transition: transform .2s;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
           </a>
         </div>
 
@@ -189,14 +189,14 @@
         <div style="flex: 1; min-width: 260px; padding-top: 6px;">
           <h3 style="font-family: var(--sans); font-size: 18px; font-weight: 700; color: #111827; line-height: 1.45; margin: 0 0 16px;">
             <a href="issue-detail.html" id="home-issue-theme-link" style="color: #111827; text-decoration: none; transition: color .2s;" onmouseover="this.style.color='#1da1f2'" onmouseout="this.style.color='#111827'">
-              Ấn phẩm khoa học công bố mới nhất
+              Thông tin số phát hành
             </a>
           </h3>
           <p style="font-family: var(--sans); font-size: 14.5px; font-weight: 700; color: #111827; margin: 0 0 12px;">
             Đã Xuất bản: <span id="home-issue-date" style="font-weight: 700; color: #374151;">--</span>
           </p>
           <p id="home-issue-desc" style="font-size: 13.5px; color: #4B5563; line-height: 1.6; margin: 0;">
-            Ấn phẩm định kỳ Tạp chí Khoa học xuất bản các công trình nghiên cứu khoa học và phát triển công nghệ đã qua bình duyệt.
+            Thông tin chuyên đề chưa được cập nhật.
           </p>
         </div>
       </div>
@@ -249,12 +249,12 @@
             </a>
           </div>
           <div class="indexing-logo-item" style="background: #ffffff; border: 1px solid #f1f5f9; border-radius: 4px; padding: 10px 12px; display: flex; align-items: center; justify-content: center; transition: all .2s ease;">
-            <a href="https://search.crossref.org/?from_ui=&q=3030-413X&page=2" target="_blank" rel="noopener" title="Crossref DOI Indexing">
+            <a href="https://search.crossref.org/?q=3030-413X" target="_blank" rel="noopener" title="Tìm kiếm trên Crossref">
               <img src="assets/images/indexing/crossref-logo.png" alt="Crossref" style="max-width: 75%; max-height: 44px; height: auto; margin: 0 auto; display: block;">
             </a>
           </div>
           <div class="indexing-logo-item" style="background: #ffffff; border: 1px solid #f1f5f9; border-radius: 4px; padding: 10px 12px; display: flex; align-items: center; justify-content: center; transition: all .2s ease;">
-            <a href="https://scholar.google.com/citations?hl=vi&user=M-lHDdYAAAAJ&view_op=list_works&authuser=2&gmla=AP6z3OZ8DknU5cOu35nUET7P_2pcQDmXYXJDzQuGLhFkfkVFzcGLQnVhd0iEGA3bt5Gq0Eu7ksbt2RP_6CuBbLsf7qNiRZm0GbGX8LFSHvML" target="_blank" rel="noopener" title="Google Scholar Citations">
+            <a href="https://scholar.google.com/citations?user=M-lHDdYAAAAJ&amp;hl=vi" target="_blank" rel="noopener" title="Hồ sơ Google Scholar">
               <img src="assets/images/indexing/google-scholar-logo.png" alt="Google Scholar" style="max-width: 75%; max-height: 46px; height: auto; margin: 0 auto; display: block;">
             </a>
           </div>
@@ -283,7 +283,7 @@
           <a href="guidelines.html" style="color: #1da1f2; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
             <span style="color: #1da1f2; font-weight: 700;">&rsaquo;</span> Dành cho Tác giả
           </a>
-          <a href="publishing-policy.html" style="color: #1da1f2; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+          <a href="guidelines.html#review" style="color: #1da1f2; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
             <span style="color: #1da1f2; font-weight: 700;">&rsaquo;</span> Dành cho Người phản biện
           </a>
           <a href="about.html" style="color: #1da1f2; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
@@ -353,6 +353,12 @@
       if (heading) { heading.textContent = message; heading.removeAttribute('href'); }
       const recent = document.getElementById('home-recent-issues-grid');
       if (recent) recent.textContent = message;
+      ['home-issue-cover-link', 'home-issue-theme-link', 'home-issue-viewall-btn'].forEach(id => {
+        const link = document.getElementById(id);
+        if (link) link.removeAttribute('href');
+      });
+      const cover = document.getElementById('home-issue-cover-img');
+      if (cover) cover.closest('div')?.style.setProperty('display', 'none');
     }
 
     if (issues && issues.length > 0) {
@@ -369,8 +375,9 @@
 
       const coverImg = document.getElementById('home-issue-cover-img');
       if (coverImg) {
-        coverImg.src = currentIssue.anhBiaUrl || 'assets/images/cover_huit_vol26_no3e.jpg';
-        coverImg.onerror = function() { this.src = 'assets/images/cover_huit_vol26_no3e.jpg'; };
+        coverImg.style.display = currentIssue.anhBiaUrl ? 'block' : 'none';
+        if (currentIssue.anhBiaUrl) coverImg.src = currentIssue.anhBiaUrl;
+        coverImg.onerror = function() { this.closest('div')?.style.setProperty('display', 'none'); };
         coverImg.alt = `Bìa ${currentIssue.tenSo}`;
       }
 
@@ -389,7 +396,7 @@
 
       const descEl = document.getElementById('home-issue-desc');
       if (descEl) {
-        descEl.innerText = currentIssue.moTa || `Ấn phẩm Tạp chí Khoa học Đại học Công Thương Tập ${currentIssue.tap} Số ${currentIssue.so} Năm ${currentIssue.nam}, phát hành ${currentIssue.tongSoBaiBao || 0} bài báo khoa học đã qua quy trình bình duyệt kín hai chiều.`;
+        descEl.innerText = currentIssue.moTa || 'Thông tin chuyên đề chưa được cập nhật.';
       }
 
       const viewAllBtn = document.getElementById('home-issue-viewall-btn');
@@ -408,14 +415,10 @@
         const recentIssues = issues.slice(0, 8);
         recentGrid.innerHTML = recentIssues.map(s => {
           const title = s.tenSo || `Tập ${s.tap} Số ${s.so} (${s.nam})`;
-          const cover = s.anhBiaUrl || 'assets/images/cover_huit_vol26_no3e.jpg';
+          const cover = s.anhBiaUrl || '';
           return `
             <div class="recent-issue-card">
-              <div class="recent-issue-cover">
-                <a href="issue-detail.html?id=${s.maSoTapChi}" title="Xem chi tiết ${esc(title)}">
-                  <img src="${encodeURI(cover)}" alt="${esc(title)}" onerror="this.src='assets/images/cover_huit_vol26_no3e.jpg'">
-                </a>
-              </div>
+              ${cover ? `<div class="recent-issue-cover"><a href="issue-detail.html?id=${s.maSoTapChi}" title="Xem chi tiết ${esc(title)}"><img src="${encodeURI(cover)}" alt="${esc(title)}" onerror="this.closest('.recent-issue-cover')?.remove()"></a></div>` : ''}
               <div class="recent-issue-title">
                 <a href="issue-detail.html?id=${s.maSoTapChi}">${esc(title)}</a>
               </div>
@@ -448,7 +451,7 @@
       }
 
       // Nếu số hiện tại chưa có danh sách con, nạp các bài báo mới nhất toàn hệ thống
-      if (articles.length === 0 && typeof apiGetLatestArticles === 'function') {
+      if (articles.length === 0 && !currentIssue && typeof apiGetLatestArticles === 'function') {
         articles = await apiGetLatestArticles(3);
       }
 
@@ -456,23 +459,10 @@
         // Rút gọn chỉ lấy 3 bài viết của số mới nhất, phần còn lại đặt trong trang chi tiết số tạp chí
         const displayedArticles = articles.slice(0, 3);
 
-        // Chuẩn hóa vào 2 Chuyên đề xuất bản chính thức của tòa soạn
-        function getPublicationSection(chuyenNganh) {
-          if (!chuyenNganh) return 'CHUYÊN ĐỀ KHOA HỌC - CÔNG NGHỆ';
-          const cn = chuyenNganh.toLowerCase();
-          if (cn.includes('kinh tế') || cn.includes('quản lý') || cn.includes('tài chính') || cn.includes('kinh doanh')) {
-            return 'CHUYÊN ĐỀ QUẢN LÝ KINH TẾ';
-          }
-          if (cn.includes('hội thảo')) {
-            return 'HỘI THẢO KHOA HỌC';
-          }
-          return 'CHUYÊN ĐỀ KHOA HỌC - CÔNG NGHỆ';
-        }
-
-        // Nhóm các bài viết hiển thị theo Chuyên đề chuẩn
+        // Nhóm bài theo đúng chuyên ngành trả về từ API.
         const groupedHomeArts = {};
         displayedArticles.forEach(art => {
-          const sec = getPublicationSection(art.chuyenNganh);
+          const sec = art.chuyenNganh || 'Chuyên ngành chưa cập nhật';
           if (!groupedHomeArts[sec]) groupedHomeArts[sec] = [];
           groupedHomeArts[sec].push(art);
         });
@@ -493,9 +483,8 @@
                 ${specArts.map(art => {
                   const authorsStr = (art.tacGias && art.tacGias.length > 0)
                     ? art.tacGias.map(tg => `${tg.hoTen}${tg.laTacGiaLienHe ? ' (Tác giả liên hệ)' : ''}`).join('; ')
-                    : (art.tacGiaChinh || 'Ban biên tập');
+                    : (art.tacGiaChinh || '—');
                   const titleDisplay = (art.tieuDeTiengAnh || art.tieuDe).toUpperCase();
-                  const pdfLink = art.filePdfUrl ? art.filePdfUrl : `article-detail.html?id=${art.maBaiBao}`;
                   return `
                     <article class="ojs-article-item">
                       <h3 class="ojs-article-title">
@@ -507,9 +496,7 @@
                         ${esc(authorsStr)}
                       </div>
                       <div>
-                        <a href="${encodeURI(pdfLink)}" ${art.filePdfUrl ? 'target="_blank"' : ''} class="ojs-btn-pdf">
-                          📄 PDF (Toàn văn)
-                        </a>
+                        ${art.filePdfUrl ? `<a href="${encodeURI(art.filePdfUrl)}" target="_blank" rel="noopener" class="ojs-btn-pdf">📄 PDF (Toàn văn)</a>` : ''}
                       </div>
                     </article>
                   `;
@@ -535,7 +522,7 @@
       } else {
         container.innerHTML = `
           <div style="padding: 24px; text-align: center; color: #64748B; font-size: 13.5px;">
-            Số tạp chí này đang trong giai đoạn hoàn thiện mục lục bài báo.
+            Chưa có bài báo công khai để hiển thị.
           </div>
         `;
       }

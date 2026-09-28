@@ -78,8 +78,12 @@ public class EditorialArticleController : ControllerBase
     {
         var assignment = await _context.PhanCongPhanBiens.Include(p => p.BaiBao).FirstOrDefaultAsync(p => p.MaPhanCong == id);
         if (assignment == null) return NotFound(new { message = "Không tìm thấy phân công phản biện." });
-        if (assignment.BaiBao.TrangThai == "Đã xuất bản" || dto.HanHoanThanh.Date <= DateTime.Today)
-            return BadRequest(new { message = "Hạn phản biện mới không hợp lệ hoặc bài đã xuất bản." });
+        if (assignment.BaiBao.TrangThai is "Đã xuất bản" or "Từ chối" or "Đã rút" ||
+            assignment.TrangThai is "Đã đánh giá" or "Từ chối phản biện" ||
+            dto.HanHoanThanh.Date <= DateTime.Today ||
+            (assignment.HanPhanHoi.HasValue && dto.HanHoanThanh.Date < assignment.HanPhanHoi.Value.Date.AddDays(3)) ||
+            (assignment.HanHoanThanh.HasValue && dto.HanHoanThanh.Date <= assignment.HanHoanThanh.Value.Date))
+            return BadRequest(new { message = "Chỉ được gia hạn phân công đang xử lý với hạn mới muộn hơn hạn cũ và sau hạn phản hồi ít nhất 3 ngày." });
         assignment.HanHoanThanh = dto.HanHoanThanh.Date;
         await _context.SaveChangesAsync();
         return Ok(new { success = true });
@@ -93,8 +97,9 @@ public class EditorialArticleController : ControllerBase
         if (assignment == null) return NotFound(new { message = "Không tìm thấy phân công phản biện." });
         if (assignment.PhieuDanhGia != null || assignment.BaiBao.TrangThai == "Đã xuất bản")
             return BadRequest(new { message = "Không thể xóa phân công đã có phiếu BM-04 hoặc bài đã xuất bản." });
-        if (assignment.BaiBao.TrangThai == "Đang phản biện" &&
-            await _context.PhanCongPhanBiens.CountAsync(p => p.MaBaiBao == assignment.MaBaiBao && p.SoVong == assignment.SoVong) <= 2)
+        if (assignment.BaiBao.TrangThai == "Đang phản biện" && assignment.TrangThai != "Từ chối phản biện" &&
+            await _context.PhanCongPhanBiens.CountAsync(p => p.MaBaiBao == assignment.MaBaiBao &&
+                p.SoVong == assignment.SoVong && p.TrangThai != "Từ chối phản biện") <= 2)
             return BadRequest(new { message = "Không thể giảm số chuyên gia xuống dưới hai khi vòng phản biện đang mở." });
         _context.PhanCongPhanBiens.Remove(assignment);
         await _context.SaveChangesAsync();

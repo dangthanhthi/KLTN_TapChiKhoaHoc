@@ -56,7 +56,7 @@ namespace QL_TapChi_WinForms.Services
                 LastError ??= $"API trả về lỗi {(int)response.StatusCode}.";
                 return false;
             }
-            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or IOException)
+            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or IOException or InvalidOperationException)
             { LastError = $"Không thể tải tệp lên: {ex.Message}"; return false; }
         }
 
@@ -83,7 +83,7 @@ namespace QL_TapChi_WinForms.Services
                 await source.CopyToAsync(target, timeout.Token);
                 return true;
             }
-            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or IOException)
+            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or IOException or InvalidOperationException)
             { LastError = $"Không thể tải tệp về: {ex.Message}"; return false; }
         }
 
@@ -119,7 +119,9 @@ namespace QL_TapChi_WinForms.Services
             }
             catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or InvalidOperationException)
             {
-                LastError = $"Không kết nối được Backend API tại {AppConfig.ApiBaseUrl}: {ex.Message}";
+                LastError = ex is InvalidOperationException
+                    ? ex.Message
+                    : $"Không kết nối được Backend API: {ex.Message}";
                 return null;
             }
         }

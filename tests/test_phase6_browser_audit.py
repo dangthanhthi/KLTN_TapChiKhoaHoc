@@ -110,6 +110,7 @@ async def run_phase6_browser_audit():
         await page.fill("#regDonVi", "Trường Đại học Công Thương TP.HCM")
         await page.fill("#regPassword", "AuditHuitPass@2026")
         await page.fill("#regConfirmPassword", "MismatchPass@9999")
+        await page.select_option("#regChuyenNganh", index=1)
         await page.check("#regTerms")
 
         await page.click("button[type='submit']")

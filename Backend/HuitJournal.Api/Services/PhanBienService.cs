@@ -38,6 +38,18 @@ public class PhanBienService : IPhanBienService
             {
                 return (false, "Không tìm thấy chuyên gia phản biện.", null);
             }
+            if (!reviewer.TrangThai || !await _context.NguoiDungVaiTros.AnyAsync(r =>
+                    r.MaNguoiDung == reviewer.MaNguoiDung && r.VaiTro.TenVaiTro == "Chuyên gia phản biện"))
+            {
+                return (false, "Tài khoản chưa hoạt động hoặc chưa có vai trò chuyên gia phản biện.", null);
+            }
+
+            var responseDue = (dto.HanPhanHoi ?? DateTime.Today.AddDays(7)).Date;
+            var completionDue = (dto.HanHoanThanh ?? DateTime.Today.AddDays(21)).Date;
+            if (responseDue < DateTime.Today || completionDue < responseDue.AddDays(3))
+            {
+                return (false, "Hạn phản hồi phải từ hôm nay; hạn hoàn thành phải sau hạn phản hồi ít nhất 3 ngày.", null);
+            }
 
             // Xác định số vòng phản biện mục tiêu:
             // Ưu tiên dto.SoVong nếu truyền vào
@@ -74,8 +86,14 @@ public class PhanBienService : IPhanBienService
                 return (false, $"Bài báo #{dto.MaBaiBao} chưa có tệp 'File ẩn danh' cho Vòng {targetRound}. Để đảm bảo tính khách quan và tuân thủ quy chuẩn phản biện kín hai chiều (Double-Blind), Ban biên tập cần tải lên bản thảo ẩn danh Vòng {targetRound} trước khi phân công chuyên gia.", null);
             }
 
+            if (await _context.PhanCongPhanBiens.AnyAsync(p => p.MaBaiBao == dto.MaBaiBao &&
+                    p.MaNguoiDung == dto.MaNguoiDungReviewer && p.SoVong == targetRound))
+            {
+                return (false, "Chuyên gia này đã được phân công cho bài báo ở cùng vòng phản biện.", null);
+            }
+
             var existingRoundAssignments = await _context.PhanCongPhanBiens.CountAsync(p =>
-                p.MaBaiBao == dto.MaBaiBao && p.SoVong == targetRound);
+                p.MaBaiBao == dto.MaBaiBao && p.SoVong == targetRound && p.TrangThai != "Từ chối phản biện");
 
             var phanCong = new PhanCongPhanBien
             {
@@ -83,8 +101,8 @@ public class PhanBienService : IPhanBienService
                 MaNguoiDung = dto.MaNguoiDungReviewer,
                 SoVong = targetRound,
                 NgayPhanCong = DateTime.Now,
-                HanPhanHoi = dto.HanPhanHoi ?? DateTime.Now.AddDays(7),
-                HanHoanThanh = dto.HanHoanThanh ?? DateTime.Now.AddDays(21),
+                HanPhanHoi = responseDue,
+                HanHoanThanh = completionDue,
                 TrangThai = "Chờ phản hồi"
             };
 
@@ -100,27 +118,6 @@ public class PhanBienService : IPhanBienService
                     MaNguoiThucHien = maNguoiThucHien,
                     NgayChuyen = DateTime.Now,
                     GhiChu = $"Ban biên tập mời phản biện bổ sung Vòng {targetRound}. Lý do: {dto.LyDo.Trim()}"
-                });
-            }
-
-            // Chỉ bắt đầu vòng phản biện khi đã phân công ít nhất hai chuyên gia cùng vòng.
-            if (existingRoundAssignments + 1 >= 2 &&
-                (baiBao.TrangThai == "Chờ sơ duyệt" || baiBao.TrangThai == "Chờ quyết định"))
-            {
-                var oldStatus = baiBao.TrangThai;
-                baiBao.TrangThai = "Đang phản biện";
-                baiBao.NgayCapNhat = DateTime.Now;
-
-                _context.LichSuTrangThais.Add(new LichSuTrangThaiBaiBao
-                {
-                    MaBaiBao = baiBao.MaBaiBao,
-                    TrangThaiCu = oldStatus,
-                    TrangThaiMoi = "Đang phản biện",
-                    MaNguoiThucHien = maNguoiThucHien,
-                    NgayChuyen = DateTime.Now,
-                    GhiChu = string.IsNullOrWhiteSpace(dto.LyDo)
-                        ? $"Ban biên tập đã phân công chuyên gia phản biện kín (Vòng {targetRound})."
-                        : $"Ban biên tập đã phân công chuyên gia phản biện kín (Vòng {targetRound}). Lý do: {dto.LyDo.Trim()}"
                 });
             }
 
@@ -168,6 +165,82 @@ public class PhanBienService : IPhanBienService
         return assignments;
     }
 
+    public async Task<(bool Success, string Message)> RespondToAssignmentAsync(int maPhanCong, int maReviewer, bool accept)
+    {
+        var articleId = await _context.PhanCongPhanBiens.AsNoTracking()
+            .Where(p => p.MaPhanCong == maPhanCong && p.MaNguoiDung == maReviewer)
+            .Select(p => (int?)p.MaBaiBao)
+            .FirstOrDefaultAsync();
+        if (articleId == null) return (false, "Không tìm thấy lời mời phản biện của bạn.");
+
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+        // Serialize responses for the same article so two simultaneous acceptances
+        // cannot each see only one accepted reviewer and leave the article waiting.
+        var lockName = $"HuitJournal:ReviewResponse:{articleId.Value}";
+        await _context.Database.ExecuteSqlInterpolatedAsync($"""
+            DECLARE @lockResult int;
+            EXEC @lockResult = sys.sp_getapplock
+                @Resource = {lockName}, @LockMode = 'Exclusive',
+                @LockOwner = 'Transaction', @LockTimeout = 10000;
+            IF @lockResult < 0 THROW 51000, 'Khong the khoa luot phan bien.', 1;
+            """);
+
+        var assignment = await _context.PhanCongPhanBiens
+            .Include(p => p.BaiBao)
+            .FirstOrDefaultAsync(p => p.MaPhanCong == maPhanCong && p.MaNguoiDung == maReviewer);
+        if (assignment == null) return (false, "Không tìm thấy lời mời phản biện của bạn.");
+        if (assignment.TrangThai != "Chờ phản hồi") return (false, "Lời mời này đã được xử lý. Hãy làm mới danh sách.");
+        if (assignment.BaiBao.TrangThai is not ("Chờ sơ duyệt" or "Chờ quyết định" or "Đang phản biện"))
+            return (false, "Bản thảo không còn trong quy trình phản biện.");
+
+        assignment.TrangThai = accept ? "Đồng ý phản biện" : "Từ chối phản biện";
+        await _context.SaveChangesAsync();
+
+        if (accept && assignment.BaiBao.TrangThai is "Chờ sơ duyệt" or "Chờ quyết định")
+        {
+            var acceptedCount = await _context.PhanCongPhanBiens.CountAsync(p =>
+                p.MaBaiBao == articleId.Value && p.SoVong == assignment.SoVong &&
+                (p.TrangThai == "Đồng ý phản biện" || p.TrangThai == "Đang đánh giá" || p.TrangThai == "Đã đánh giá"));
+
+            if (acceptedCount >= 2)
+            {
+                var oldStatus = assignment.BaiBao.TrangThai;
+                assignment.BaiBao.TrangThai = "Đang phản biện";
+                assignment.BaiBao.NgayCapNhat = DateTime.Now;
+                _context.LichSuTrangThais.Add(new LichSuTrangThaiBaiBao
+                {
+                    MaBaiBao = articleId.Value,
+                    TrangThaiCu = oldStatus,
+                    TrangThaiMoi = "Đang phản biện",
+                    MaNguoiThucHien = null,
+                    NgayChuyen = DateTime.Now,
+                    GhiChu = $"Hệ thống ghi nhận đủ {acceptedCount} chuyên gia đã nhận lời phản biện kín Vòng {assignment.SoVong}."
+                });
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        await transaction.CommitAsync();
+        return (true, accept ? "Đã nhận lời phản biện." : "Đã từ chối lời mời phản biện.");
+    }
+
+    public Task<PhieuDanhGiaDetailDto?> GetMyEvaluationAsync(int maPhanCong, int maReviewer) =>
+        _context.PhanCongPhanBiens.AsNoTracking()
+            .Where(p => p.MaPhanCong == maPhanCong && p.MaNguoiDung == maReviewer && p.PhieuDanhGia != null)
+            .Select(p => new PhieuDanhGiaDetailDto
+            {
+                MaPhanCong = p.MaPhanCong,
+                DiemTinhMoi = p.PhieuDanhGia!.DiemTinhMoi,
+                DiemPhuongPhap = p.PhieuDanhGia.DiemPhuongPhap,
+                DiemKetQua = p.PhieuDanhGia.DiemKetQua,
+                DiemTrinhBay = p.PhieuDanhGia.DiemTrinhBay,
+                DiemTongKet = p.PhieuDanhGia.DiemTongKet,
+                NhanXetChoTacGia = p.PhieuDanhGia.NhanXetChoTacGia,
+                NhanXetBaoMat = p.PhieuDanhGia.NhanXetBaoMat,
+                KienNghi = p.PhieuDanhGia.KienNghi,
+                NgayDanhGia = p.PhieuDanhGia.NgayDanhGia
+            }).FirstOrDefaultAsync();
+
     public async Task<(bool Success, string Message)> SubmitEvaluationAsync(int maReviewer, PhieuDanhGiaDto dto)
     {
         try
@@ -187,21 +260,29 @@ public class PhanBienService : IPhanBienService
                 return (false, "Bạn không có quyền đánh giá bài báo này.");
             }
 
+            if (phanCong.BaiBao.TrangThai != "Đang phản biện" ||
+                phanCong.TrangThai is not ("Đồng ý phản biện" or "Đang đánh giá"))
+            {
+                return (false, "Cần nhận lời mời và chờ vòng phản biện bắt đầu trước khi gửi phiếu.");
+            }
+
             if (phanCong.PhieuDanhGia != null)
             {
-                // Cập nhật phiếu đánh giá đã có
-                phanCong.PhieuDanhGia.DiemTinhMoi = dto.DiemTinhMoi;
-                phanCong.PhieuDanhGia.DiemPhuongPhap = dto.DiemPhuongPhap;
-                phanCong.PhieuDanhGia.DiemKetQua = dto.DiemKetQua;
-                phanCong.PhieuDanhGia.DiemTrinhBay = dto.DiemTrinhBay;
-                phanCong.PhieuDanhGia.DiemTongKet = dto.DiemTongKet;
-                phanCong.PhieuDanhGia.NhanXetChoTacGia = dto.NhanXetChoTacGia;
-                phanCong.PhieuDanhGia.NhanXetBaoMat = dto.NhanXetBaoMat;
-                phanCong.PhieuDanhGia.KienNghi = dto.KienNghi;
-                phanCong.PhieuDanhGia.NgayDanhGia = DateTime.Now;
+                return (false, "Phiếu BM-04 đã được gửi. Liên hệ Ban biên tập nếu cần đính chính.");
             }
             else
             {
+                var recommendations = new HashSet<string>(StringComparer.Ordinal)
+                { "Chấp nhận đăng", "Chỉnh sửa nhỏ", "Chỉnh sửa lớn và phản biện lại", "Từ chối đăng" };
+                if (dto.DiemTinhMoi is null or < 0 or > 10 || dto.DiemPhuongPhap is null or < 0 or > 10 ||
+                    dto.DiemKetQua is null or < 0 or > 10 || dto.DiemTrinhBay is null or < 0 or > 10 ||
+                    string.IsNullOrWhiteSpace(dto.NhanXetChoTacGia) || dto.NhanXetChoTacGia.Length > 20000 ||
+                    dto.NhanXetBaoMat?.Length > 20000 || !recommendations.Contains(dto.KienNghi ?? ""))
+                {
+                    return (false, "Phiếu BM-04 thiếu điểm, nhận xét hoặc kiến nghị hợp lệ.");
+                }
+                var total = Math.Round((dto.DiemTinhMoi.Value + dto.DiemPhuongPhap.Value +
+                    dto.DiemKetQua.Value + dto.DiemTrinhBay.Value) / 4m, 1, MidpointRounding.AwayFromZero);
                 // Tạo mới phiếu đánh giá BM-04
                 var phieu = new PhieuDanhGia
                 {
@@ -210,8 +291,8 @@ public class PhanBienService : IPhanBienService
                     DiemPhuongPhap = dto.DiemPhuongPhap,
                     DiemKetQua = dto.DiemKetQua,
                     DiemTrinhBay = dto.DiemTrinhBay,
-                    DiemTongKet = dto.DiemTongKet,
-                    NhanXetChoTacGia = dto.NhanXetChoTacGia,
+                    DiemTongKet = total,
+                    NhanXetChoTacGia = dto.NhanXetChoTacGia.Trim(),
                     NhanXetBaoMat = dto.NhanXetBaoMat,
                     KienNghi = dto.KienNghi,
                     NgayDanhGia = DateTime.Now
@@ -262,6 +343,11 @@ public class PhanBienService : IPhanBienService
                 return (false, $"Trạng thái '{dto.TrangThaiMoi}' không hợp lệ theo quy chế Tòa soạn.");
             }
 
+            if (oldStatus == "Đã xuất bản")
+            {
+                return (false, "Bài đã công bố không thể đổi trạng thái bằng quyết định biên tập thông thường. Cần quy trình đính chính hoặc rút bài công khai.");
+            }
+
             // Bảng chuyển đổi trạng thái hợp lệ (State Machine Transition Matrix)
             var allowedTransitions = new Dictionary<string, HashSet<string>>(StringComparer.OrdinalIgnoreCase)
             {
@@ -273,7 +359,7 @@ public class PhanBienService : IPhanBienService
                 ["Đã chấp nhận"] = new(StringComparer.OrdinalIgnoreCase) { "Đang chế bản", "Sẵn sàng xuất bản", "Đã xuất bản", "Từ chối" },
                 ["Đang chế bản"] = new(StringComparer.OrdinalIgnoreCase) { "Sẵn sàng xuất bản", "Đã xuất bản", "Từ chối" },
                 ["Sẵn sàng xuất bản"] = new(StringComparer.OrdinalIgnoreCase) { "Đã xuất bản", "Từ chối" },
-                ["Đã xuất bản"] = new(StringComparer.OrdinalIgnoreCase) { "Từ chối" },
+                ["Đã xuất bản"] = new(StringComparer.OrdinalIgnoreCase) { },
                 ["Từ chối"] = new(StringComparer.OrdinalIgnoreCase) { }
             };
 
@@ -303,11 +389,12 @@ public class PhanBienService : IPhanBienService
                 }
 
                 var assignments = await _context.PhanCongPhanBiens
-                    .Where(p => p.MaBaiBao == baiBao.MaBaiBao && p.SoVong == currentRound)
+                    .Where(p => p.MaBaiBao == baiBao.MaBaiBao && p.SoVong == currentRound &&
+                        (p.TrangThai == "Đồng ý phản biện" || p.TrangThai == "Đang đánh giá" || p.TrangThai == "Đã đánh giá"))
                     .ToListAsync();
                 if (assignments.Count < 2)
                 {
-                    return (false, $"Bài báo chưa đủ 2 chuyên gia phản biện ({assignments.Count}/2). Quy chế yêu cầu tối thiểu 2 chuyên gia độc lập.");
+                    return (false, $"Bài báo mới có {assignments.Count}/2 chuyên gia nhận lời phản biện. Cần đủ hai người cùng vòng trước khi bắt đầu.");
                 }
             }
 
@@ -322,7 +409,7 @@ public class PhanBienService : IPhanBienService
 
                 var assignments = await _context.PhanCongPhanBiens
                     .Include(p => p.PhieuDanhGia)
-                    .Where(p => p.MaBaiBao == baiBao.MaBaiBao && p.SoVong == currentRound)
+                    .Where(p => p.MaBaiBao == baiBao.MaBaiBao && p.SoVong == currentRound && p.TrangThai != "Từ chối phản biện")
                     .ToListAsync();
 
                 if (assignments.Count < 2)
@@ -414,6 +501,10 @@ public class PhanBienService : IPhanBienService
         if (!isEditorOrAdmin && phanCong.MaNguoiDung != maReviewer)
         {
             return (false, "Bạn không có quyền truy cập bản thảo của nhiệm vụ này.", null, null, null);
+        }
+        if (!isEditorOrAdmin && phanCong.TrangThai is not ("Đồng ý phản biện" or "Đang đánh giá" or "Đã đánh giá"))
+        {
+            return (false, "Chỉ được tải bản thảo sau khi đã nhận lời phản biện.", null, null, null);
         }
 
         // Tiêu chuẩn Phản biện kín hai chiều (Double-Blind Peer Review - COPE):

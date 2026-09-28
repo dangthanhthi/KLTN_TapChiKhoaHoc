@@ -151,7 +151,7 @@
     <span class="sep">/</span>
     <a href="archives.html">Lưu trữ</a>
     <span class="sep">/</span>
-    <span id="breadcrumbIssueTitle" style="color: #374151; font-weight: 600;">Tập 26 Số 3E (2026)</span>
+    <span id="breadcrumbIssueTitle" style="color: #374151; font-weight: 600;">Đang tải số phát hành...</span>
   </div>
 </div>
 
@@ -165,25 +165,25 @@
       <!-- KHỐI ĐẦU ĐỀ SỐ XUẤT BẢN -->
       <section class="issue-header-box">
         <h1 class="issue-main-title" id="issueMainTitle">
-          Tập 26 Số 3E (2026)
+          Đang tải số phát hành...
         </h1>
 
         <div class="issue-meta-split">
           <!-- Bìa số tạp chí -->
           <div class="issue-cover-container">
-            <img id="issueCoverImg" src="assets/images/cover_huit_vol26_no3e.svg" alt="Bìa số tạp chí HUIT">
+            <img id="issueCoverImg" src="" alt="Bìa số tạp chí" style="display:none;">
           </div>
 
           <!-- Chi tiết chuyên đề -->
           <div class="issue-meta-details">
             <h2 class="issue-theme-title" id="issueThemeTitle">
-              Hội thảo Quốc tế về Kinh tế lần thứ 3 – ICE 2026
+              Đang tải thông tin số phát hành...
             </h2>
             <div class="issue-date-tag">
-              Đã Xuất bản: <span id="issueDateVal">2026-08-25</span>
+              Ngày phát hành: <span id="issueDateVal">—</span>
             </div>
             <p class="issue-desc" id="issueDescVal">
-              Số chuyên đề đặc biệt xuất bản các công trình nghiên cứu chọn lọc từ Hội thảo Khoa học Quốc tế lần thứ 3 về Kinh tế (ICE 2026), tập trung vào các vấn đề: Chuyển đổi số, Kinh tế tuần hoàn, Tài chính và Phát triển bền vững.
+              Thông tin mô tả sẽ xuất hiện khi tải được dữ liệu số phát hành.
             </p>
             <div class="issue-actions-bar">
               <a href="#" id="btnDownloadFullIssue" download class="btn-issue-full-pdf" style="display:none;">
@@ -240,12 +240,12 @@
             </a>
           </div>
           <div class="indexing-logo-item" style="background: #ffffff; border: 1px solid #f1f5f9; border-radius: 4px; padding: 10px 12px; display: flex; align-items: center; justify-content: center; transition: all .2s ease;">
-            <a href="https://search.crossref.org/?from_ui=&q=3030-413X&page=2" target="_blank" rel="noopener" title="Crossref DOI Indexing">
+            <a href="https://search.crossref.org/?q=3030-413X" target="_blank" rel="noopener" title="Tìm kiếm trên Crossref">
               <img src="assets/images/indexing/crossref-logo.png" alt="Crossref" style="max-width: 75%; max-height: 44px; height: auto; margin: 0 auto; display: block;">
             </a>
           </div>
           <div class="indexing-logo-item" style="background: #ffffff; border: 1px solid #f1f5f9; border-radius: 4px; padding: 10px 12px; display: flex; align-items: center; justify-content: center; transition: all .2s ease;">
-            <a href="https://scholar.google.com/citations?hl=vi&user=M-lHDdYAAAAJ&view_op=list_works&authuser=2&gmla=AP6z3OZ8DknU5cOu35nUET7P_2pcQDmXYXJDzQuGLhFkfkVFzcGLQnVhd0iEGA3bt5Gq0Eu7ksbt2RP_6CuBbLsf7qNiRZm0GbGX8LFSHvML" target="_blank" rel="noopener" title="Google Scholar Citations">
+            <a href="https://scholar.google.com/citations?user=M-lHDdYAAAAJ&amp;hl=vi" target="_blank" rel="noopener" title="Hồ sơ Google Scholar">
               <img src="assets/images/indexing/google-scholar-logo.png" alt="Google Scholar" style="max-width: 75%; max-height: 46px; height: auto; margin: 0 auto; display: block;">
             </a>
           </div>
@@ -305,6 +305,7 @@
   async function renderIssueDetail() {
     const params = new URLSearchParams(window.location.search);
     let queryId = params.get('id') || params.get('issue');
+    const hasExplicitIssue = queryId !== null && queryId.trim() !== '';
 
     let allIssues = [];
     if (typeof apiGetPublishedIssues === 'function') {
@@ -317,8 +318,9 @@
 
     // Nếu không truyền ID hoặc ID không hợp lệ, lấy số phát hành mới nhất từ CSDL
     let targetIssueId = null;
-    if (queryId && !isNaN(parseInt(queryId, 10))) {
-      targetIssueId = parseInt(queryId, 10);
+    if (hasExplicitIssue) {
+      const parsedId = Number(queryId);
+      if (Number.isInteger(parsedId) && parsedId > 0) targetIssueId = parsedId;
     } else if (allIssues && allIssues.length > 0) {
       targetIssueId = allIssues[0].maSoTapChi;
     }
@@ -332,7 +334,7 @@
       }
     }
 
-    if (!liveIssue && allIssues && allIssues.length > 0) {
+    if (!hasExplicitIssue && !liveIssue && allIssues && allIssues.length > 0) {
       try {
         liveIssue = await apiGetIssueDetail(allIssues[0].maSoTapChi);
       } catch (e) {
@@ -341,6 +343,20 @@
     }
 
     if (!liveIssue) {
+      const unavailableTitle = 'Không tìm thấy số phát hành';
+      document.title = unavailableTitle;
+      const breadcrumb = document.getElementById('breadcrumbIssueTitle');
+      const mainTitle = document.getElementById('issueMainTitle');
+      const themeTitle = document.getElementById('issueThemeTitle');
+      const dateValue = document.getElementById('issueDateVal');
+      const description = document.getElementById('issueDescVal');
+      const cover = document.getElementById('issueCoverImg');
+      if (breadcrumb) breadcrumb.textContent = unavailableTitle;
+      if (mainTitle) mainTitle.textContent = unavailableTitle;
+      if (themeTitle) themeTitle.textContent = 'Chưa có dữ liệu từ máy chủ.';
+      if (dateValue) dateValue.textContent = '—';
+      if (description) description.textContent = 'Không thể tải thông tin số phát hành. Vui lòng quay lại kho lưu trữ để chọn số đã công bố.';
+      if (cover) cover.style.display = 'none';
       const container = document.getElementById('articlesFullListContainer');
       if (container) {
         container.innerHTML = '<div style="padding: 32px; text-align: center; color: var(--ink-500); font-size: 14px;">Không tìm thấy số tạp chí được yêu cầu hoặc dữ liệu đang được đồng bộ.</div>';
@@ -352,10 +368,8 @@
     const issueDateStr = liveIssue.ngayPhatHanh 
       ? new Date(liveIssue.ngayPhatHanh).toLocaleDateString('vi-VN') 
       : (liveIssue.nam + '');
-    const issueCover = (liveIssue.tenSo && liveIssue.tenSo.includes('Yersin') && liveIssue.so >= 1 && liveIssue.so <= 23)
-      ? ('assets/images/cover_yersin_no' + liveIssue.so + '.svg')
-      : (liveIssue.anhBiaUrl || 'assets/images/cover_huit_vol26_no3e.jpg');
-    const issueDesc = liveIssue.moTa || ('Ấn phẩm Tạp chí Khoa học Đại học Công Thương Tập ' + liveIssue.tap + ' Số ' + liveIssue.so + ' Năm ' + liveIssue.nam + ', phát hành chính thức ngày ' + issueDateStr + '.');
+    const issueCover = liveIssue.anhBiaUrl || '';
+    const issueDesc = liveIssue.moTa || 'Thông tin chuyên đề chưa được cập nhật.';
 
     // Cập nhật tiêu đề trang & breadcrumb
     document.title = issueTitle + ' · Tạp chí Khoa học Đại học Công Thương';
@@ -367,7 +381,7 @@
     if (mainTitleEl) mainTitleEl.textContent = issueTitle;
 
     const themeTitleEl = document.getElementById('issueThemeTitle');
-    if (themeTitleEl) themeTitleEl.textContent = liveIssue.tenSo || 'Công trình nghiên cứu khoa học';
+    if (themeTitleEl) themeTitleEl.textContent = liveIssue.tenSo || 'Thông tin số phát hành';
 
     const dateValEl = document.getElementById('issueDateVal');
     if (dateValEl) dateValEl.textContent = issueDateStr;
@@ -377,8 +391,9 @@
 
     const coverImgEl = document.getElementById('issueCoverImg');
     if (coverImgEl) {
-      coverImgEl.src = issueCover;
-      coverImgEl.onerror = function() { this.src = 'assets/images/cover_huit_vol26_no3e.jpg'; };
+      coverImgEl.style.display = issueCover ? 'block' : 'none';
+      if (issueCover) coverImgEl.src = issueCover;
+      coverImgEl.onerror = function() { this.style.display = 'none'; };
       coverImgEl.alt = 'Bìa ' + issueTitle;
     }
 
@@ -394,24 +409,13 @@
     const articlesContainer = document.getElementById('articlesFullListContainer');
     if (articlesContainer) {
       if (articles && articles.length > 0) {
-        // Chuẩn hóa vào 2 Chuyên đề xuất bản chính thức của tòa soạn
+        // Nhóm theo đúng chuyên ngành trả về từ API.
         function getPublicationSection(chuyenNganh) {
-          if (!chuyenNganh) return 'CHUYÊN ĐỀ KHOA HỌC - CÔNG NGHỆ';
-          const cn = chuyenNganh.toLowerCase();
-          if (cn.includes('kinh tế') || cn.includes('quản lý') || cn.includes('tài chính') || cn.includes('kinh doanh')) {
-            return 'CHUYÊN ĐỀ QUẢN LÝ KINH TẾ';
-          }
-          if (cn.includes('hội thảo')) {
-            return 'HỘI THẢO KHOA HỌC';
-          }
-          return 'CHUYÊN ĐỀ KHOA HỌC - CÔNG NGHỆ';
+          return chuyenNganh || 'Chuyên ngành chưa cập nhật';
         }
 
         // Nhóm theo 2 chuyên đề với thứ tự ưu tiên chuẩn
-        const groupedBySection = {
-          'CHUYÊN ĐỀ QUẢN LÝ KINH TẾ': [],
-          'CHUYÊN ĐỀ KHOA HỌC - CÔNG NGHỆ': []
-        };
+        const groupedBySection = {};
 
         articles.forEach(b => {
           const sec = getPublicationSection(b.chuyenNganh);
@@ -439,11 +443,10 @@
                 ${groupArts.map(b => {
                   const authors = (b.tacGias && b.tacGias.length > 0)
                     ? b.tacGias.map(t => t.hoTen + (t.laTacGiaLienHe ? ' (Tác giả liên hệ)' : '')).join('; ')
-                    : (b.tacGiaChinh || 'Ban biên tập');
+                    : (b.tacGiaChinh || '—');
                   const pages = (b.trangBatDau && b.trangKetThuc)
                     ? ('Trang: ' + b.trangBatDau + ' - ' + b.trangKetThuc)
-                    : 'Bài báo toàn văn';
-                  const pdfLink = b.filePdfUrl ? b.filePdfUrl : ('article-detail.html?id=' + b.maBaiBao);
+                    : 'Trang chưa cập nhật';
                   return `
                     <article class="article-row-item">
                       <h3 class="article-row-title">
@@ -453,9 +456,7 @@
                         <div class="article-row-authors">${esc(authors)}</div>
                         <div style="display: flex; align-items: center; gap: 14px;">
                           <span class="article-row-page">${esc(pages)}</span>
-                          <a href="${encodeURI(pdfLink)}" ${b.filePdfUrl ? 'target="_blank"' : ''} class="btn-article-pdf">
-                            📄 ${b.filePdfUrl ? 'PDF (Toàn văn)' : 'Chi tiết bài báo'}
-                          </a>
+                          ${b.filePdfUrl ? `<a href="${encodeURI(b.filePdfUrl)}" target="_blank" rel="noopener" class="btn-article-pdf">📄 PDF (Toàn văn)</a>` : ''}
                         </div>
                       </div>
                     </article>
@@ -466,7 +467,7 @@
           `;
         }).join('');
       } else {
-        articlesContainer.innerHTML = '<div style="padding: 24px; text-align: center; color: var(--ink-500); font-size: 13.5px;">Số tạp chí này đang trong giai đoạn hoàn thiện mục lục bài báo.</div>';
+        articlesContainer.innerHTML = '<div style="padding: 24px; text-align: center; color: var(--ink-500); font-size: 13.5px;">Chưa có bài báo công khai để hiển thị.</div>';
       }
     }
 

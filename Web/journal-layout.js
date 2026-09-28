@@ -128,27 +128,8 @@
                 <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"></polyline></svg>
               </span>
               <div class="nav-fields-menu">
-                <a href="archives.html?major=Kinh%20t%E1%BA%BF" class="field-menu-item">
-                  <span>Kinh tế – Quản trị kinh doanh &amp; Tài chính</span>
-                  <span class="badge-count" data-major-badge="Kinh tế">-</span>
-                </a>
-                <a href="archives.html?major=C%C3%B4ng%20ngh%E1%BB%87%20th%C3%B4ng%20tin" class="field-menu-item">
-                  <span>Công nghệ thông tin &amp; Trí tuệ nhân tạo</span>
-                  <span class="badge-count" data-major-badge="Công nghệ thông tin">-</span>
-                </a>
-                <a href="archives.html?major=H%C3%B3a%20h%E1%BB%8Dc" class="field-menu-item">
-                  <span>Hóa học &amp; Công nghệ thực phẩm</span>
-                  <span class="badge-count" data-major-badge="Hóa học">-</span>
-                </a>
-                <a href="archives.html?major=M%C3%B4i%20tr%C6%B0%E1%BB%9Dng" class="field-menu-item">
-                  <span>Khoa học Môi trường &amp; Nông nghiệp</span>
-                  <span class="badge-count" data-major-badge="Môi trường">-</span>
-                </a>
-                <a href="archives.html?major=C%C1%A1%20kh%C3%AD" class="field-menu-item">
-                  <span>Cơ khí – Chế tạo máy – Tự động hóa</span>
-                  <span class="badge-count" data-major-badge="Cơ khí">-</span>
-                </a>
-                <a href="archives.html?view=articles" class="fields-menu-all">Xem tất cả các chuyên ngành &rarr; (<span data-all-majors-badge>Đang tải...</span>)</a>
+                <div data-major-menu-items class="nav-fields-menu-status">Đang tải lĩnh vực khoa học...</div>
+                <a href="archives.html?view=articles" class="fields-menu-all">Xem tất cả các chuyên ngành &rarr;</a>
               </div>
             </div>
 
@@ -205,68 +186,22 @@
 
   // 5. CẬP NHẬT SỐ LIỆU ĐỘNG TỪ CSDL BACKEND CHO DROPDOWN LĨNH VỰC (REAL-TIME TỪ SQL SERVER)
   async function updateNavFieldBadges() {
+    const menu = document.querySelector('[data-major-menu-items]');
+    if (!menu) return;
     try {
       const isLocalStatic = ['localhost', '127.0.0.1'].includes(location.hostname) && ['8088', '5500', '5501'].includes(location.port);
       const baseUrl = typeof API_BASE !== 'undefined' ? API_BASE : (isLocalStatic ? 'http://localhost:5000/api' : '/api');
-      // 1. Thử lấy trực tiếp từ endpoint chuyên ngành thời gian thực
       const res = await fetch(`${baseUrl}/chuyennganh`);
-      if (res.ok) {
-        const categories = await res.json();
-        if (Array.isArray(categories) && categories.length > 0) {
-          let totalArticles = 0;
-          categories.forEach(c => {
-            totalArticles += (c.tongSoBaiBao || 0);
-            const name = (c.tenChuyenNganh || '').toLowerCase();
-            document.querySelectorAll('[data-major-badge]').forEach(el => {
-              const badgeKey = (el.getAttribute('data-major-badge') || '').toLowerCase();
-              if (badgeKey && name.includes(badgeKey)) {
-                el.textContent = c.tongSoBaiBao;
-              }
-            });
-          });
-          document.querySelectorAll('[data-all-majors-badge]').forEach(el => {
-            el.textContent = `${totalArticles} bài`;
-          });
-          return;
-        }
-      }
-
-      // 2. Dự phòng: Đếm từ danh sách bài báo mới nhất
-      const resArt = await fetch(`${baseUrl}/baibao/public/latest?limit=500`);
-      if (!resArt.ok) return;
-      const data = await resArt.json();
-      const articles = Array.isArray(data) ? data : (data.value || []);
-      if (!articles || articles.length === 0) return;
-
-      const counts = {
-        'Kinh tế': 0,
-        'Công nghệ thông tin': 0,
-        'Hóa học': 0,
-        'Môi trường': 0,
-        'Cơ khí': 0
-      };
-
-      articles.forEach(a => {
-        const cn = (a.chuyenNganh || '').toLowerCase();
-        if (cn.includes('kinh tế') || cn.includes('tài chính') || cn.includes('quản trị')) counts['Kinh tế']++;
-        if (cn.includes('thông tin') || cn.includes('trí tuệ nhân tạo') || cn.includes('cntt')) counts['Công nghệ thông tin']++;
-        if (cn.includes('hóa học') || cn.includes('thực phẩm')) counts['Hóa học']++;
-        if (cn.includes('môi trường') || cn.includes('nông nghiệp')) counts['Môi trường']++;
-        if (cn.includes('cơ khí') || cn.includes('tự động hóa') || cn.includes('chế tạo')) counts['Cơ khí']++;
-      });
-
-      document.querySelectorAll('[data-major-badge]').forEach(el => {
-        const key = el.getAttribute('data-major-badge');
-        if (counts[key] !== undefined) {
-          el.textContent = counts[key];
-        }
-      });
-
-      document.querySelectorAll('[data-all-majors-badge]').forEach(el => {
-        el.textContent = `${articles.length} bài`;
-      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const categories = await res.json();
+      if (!Array.isArray(categories)) throw new Error('Invalid category response');
+      const escape = typeof escapeHtml === 'function' ? escapeHtml : value => String(value ?? '');
+      const available = categories.filter(category => category?.tenChuyenNganh);
+      menu.innerHTML = available.length
+        ? available.map(category => `<a href="archives.html?major=${encodeURIComponent(category.tenChuyenNganh)}" class="field-menu-item"><span>${escape(category.tenChuyenNganh)}</span><span class="badge-count">${Number(category.tongSoBaiBao) || 0} bài</span></a>`).join('')
+        : 'Chưa có lĩnh vực khoa học.';
     } catch (e) {
-      // Giữ nguyên số liệu hiển thị
+      menu.textContent = 'Không tải được danh mục lĩnh vực. Vui lòng thử lại sau.';
     }
   }
 

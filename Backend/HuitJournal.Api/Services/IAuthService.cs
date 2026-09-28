@@ -16,11 +16,6 @@ public interface IAuthService
     Task<UserProfileDto?> UploadAvatarAsync(int maNguoiDung, IFormFile file);
     Task<UserProfileDto?> DeleteAvatarAsync(int maNguoiDung);
     /// <summary>
-    /// Nộp đơn đăng ký tham gia Hội đồng phản biện (Lưu trữ vào CSDL ở trạng thái Chờ duyệt)
-    /// </summary>
-    Task<(bool Success, string Message, UserProfileDto? Profile)> RequestReviewerRoleAsync(int maNguoiDung, string? ghiChu = null);
-
-    /// <summary>
     /// Lấy danh sách các đơn đăng ký phản biện đang chờ Ban biên tập thẩm định
     /// </summary>
     Task<List<DonDangKyPhanBienDto>> GetPendingReviewerRegistrationsAsync();

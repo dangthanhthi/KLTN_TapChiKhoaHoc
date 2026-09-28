@@ -131,11 +131,6 @@ public class DonDangKyPhanBienDto
     public string? LyDoTuChoi { get; set; }
 }
 
-public class RequestReviewerRoleDto
-{
-    public string? GhiChu { get; set; }
-}
-
 public class RejectReviewerRequestDto
 {
     public string? LyDo { get; set; }

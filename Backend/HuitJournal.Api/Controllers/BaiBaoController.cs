@@ -106,7 +106,7 @@ public class BaiBaoController : ControllerBase
     }
 
     /// <summary>
-    /// Lấy danh sách bài báo mới nhất công khai trên trang chủ
+    /// Lấy bài báo công khai; limit=0 trả về đầy đủ bài đã xuất bản để đồng bộ kho lưu trữ.
     /// </summary>
     [HttpGet("public/latest")]
     [AllowAnonymous]

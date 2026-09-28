@@ -297,7 +297,7 @@
             <span style="font-size:12px;color:var(--sky-600);font-weight:600;font-family:var(--sans);">Bước 1 / 5</span>
           </div>
           <div class="section-desc">
-            Tải lên bản thảo Word (.docx) hoặc PDF đã ẩn danh. Hệ thống sẽ tự động quét và bóc tách Tiêu đề, Tóm tắt, Từ khóa vào Bước 2 mà không cần gõ lại thủ công.
+            Tải lên bản thảo Word (.docx) hoặc PDF đã ẩn danh. Hệ thống kiểm tra định dạng và dung lượng tệp; vui lòng nhập siêu dữ liệu bài báo ở bước tiếp theo.
           </div>
 
           <!-- BANNER TẢI BIỂU MẪU CHUẨN BM-01 -->
@@ -324,17 +324,14 @@
                 <line x1="12" y1="3" x2="12" y2="15"></line>
               </svg>
               <div class="prompt" id="upload-main-text">Tải tệp bản thảo PDF hoặc Word (.doc, .docx) vào đây</div>
-              <div class="sub" id="upload-sub-text">Chỉ chấp nhận tệp định dạng PDF hoặc Word · Tối đa 25MB · Tự động bóc tách siêu dữ liệu</div>
-              <div style="margin-top:10px;">
-                <button type="button" class="btn-outline" style="font-size:11.5px;padding:4px 12px;background:#fff;" onclick="loadDemoSampleFile(event)">✦ Tải bản thảo mẫu thử nghiệm nhanh (1-Click Demo)</button>
-              </div>
+            <div class="sub" id="upload-sub-text">Chấp nhận PDF hoặc Word · Tối đa 25MB · Nhập siêu dữ liệu thủ công ở bước tiếp theo</div>
             </div>
 
-            <!-- SCANNING SIMULATION -->
+            <!-- Kiểm tra tệp -->
             <div class="scanning-box" id="scan-progress-box">
               <div class="scan-spinner"></div>
-              <div class="scan-status-text" id="scan-status-label">Đang đọc cấu trúc tài liệu bản thảo...</div>
-              <div class="scan-sub-text" id="scan-detail-label">Đang trích xuất Tiêu đề, Tóm tắt IMRaD và Danh sách từ khóa</div>
+              <div class="scan-status-text" id="scan-status-label">Đang kiểm tra tệp...</div>
+              <div class="scan-sub-text" id="scan-detail-label">Kiểm tra định dạng và dung lượng</div>
             </div>
 
             <!-- FILE SUCCESS CARD -->
@@ -342,8 +339,8 @@
               <div class="file-info">
                 <div class="file-icon" id="file-icon-type">📄</div>
                 <div>
-                  <div class="file-title" id="uploaded-file-name">Bản thảo.docx</div>
-                  <div class="file-meta" id="uploaded-file-size">1.45 MB · Đã tự động bóc tách siêu dữ liệu thành công!</div>
+                  <div class="file-title" id="uploaded-file-name">—</div>
+                  <div class="file-meta" id="uploaded-file-size">—</div>
                 </div>
               </div>
               <button type="button" class="btn-outline" style="padding:4px 10px;font-size:11.5px;color:#ef4444;" onclick="removeUploadedFile()">Đổi tệp khác</button>
@@ -354,12 +351,8 @@
           <div class="grid-2" style="margin-top:24px;">
             <div class="form-group">
               <label>2. Chuyên mục chính (Section) <span class="req">*</span></label>
-              <select class="form-control" id="major-category-select" onchange="updateSubDisciplines()" required>
-                <option value="cntt" selected>Khoa học Máy tính &amp; Công nghệ Thông tin</option>
-                <option value="cokhi">Kỹ thuật Cơ khí – Cơ điện tử – Tự động hóa</option>
-                <option value="thucpham">Công nghệ Thực phẩm &amp; Sinh học Ứng dụng</option>
-                <option value="moitruong">Khoa học Môi trường &amp; Tài nguyên Năng lượng</option>
-                <option value="kinhte">Kinh tế – Quản trị Kinh doanh – Tài chính Ngân hàng</option>
+              <select class="form-control" id="major-category-select" onchange="handleCategoryChange()" required>
+                <option value="" selected>Đang tải danh mục từ máy chủ...</option>
               </select>
             </div>
             <div class="form-group">
@@ -374,17 +367,7 @@
 
           <div class="grid-2">
             <div class="form-group">
-              <label>4. Lĩnh vực nghiên cứu chuyên sâu <span class="req">*</span></label>
-              <select class="form-control" id="sub-discipline-select" onchange="handleSubDisciplineChange()" required>
-                <!-- Rendered dynamically via JS based on Chuyên mục chính -->
-              </select>
-              <div class="hint" id="sub-discipline-desc" style="color:var(--sky-700);font-size:12px;margin-top:6px;line-height:1.45;">
-                <!-- Chi tiết phạm vi nghiên cứu của lĩnh vực được chọn -->
-              </div>
-              <input type="hidden" id="selected-sub-discipline" value="Trí tuệ nhân tạo (AI) &amp; Xử lý ngôn ngữ tự nhiên (NLP)">
-            </div>
-            <div class="form-group">
-              <label>5. Ngôn ngữ toàn văn <span class="req">*</span></label>
+              <label>4. Ngôn ngữ toàn văn <span class="req">*</span></label>
               <select class="form-control" id="paper-lang-select" required>
                 <option value="Tiếng Việt (Kèm Tóm tắt &amp; Tiêu đề Tiếng Anh)" selected>Tiếng Việt (Kèm Tóm tắt Tiếng Anh)</option>
                 <option value="Tiếng Anh (English Full-text)">Tiếng Anh toàn văn (English Full-text)</option>
@@ -528,7 +511,7 @@
             <span style="font-size:12px;color:var(--sky-600);font-weight:600;font-family:var(--sans);">Bước 4 / 5</span>
           </div>
           <div class="section-desc">
-            Lưu trữ và quản lý các tài liệu thuộc bài báo: Bản thảo toàn văn, Bản cam đoan quyền tác giả (BM-02), Tập dữ liệu thực nghiệm và Phụ lục minh chứng. Hệ thống chỉ tiếp nhận tệp định dạng Word (.doc, .docx) hoặc PDF (.pdf).
+            Hiện tại biểu mẫu chỉ gửi bản thảo toàn văn lên máy chủ. Chức năng gửi BM-02, tập dữ liệu và phụ lục chưa được kết nối; các tệp này chưa thể đính kèm cùng hồ sơ.
           </div>
 
           <!-- THƯ MỤC TÀI LIỆU ĐÍNH KÈM (BẢNG THUMUCBAIBAO) -->
@@ -543,9 +526,7 @@
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                   Tải mẫu BM-02 (Bản cam đoan)
                 </a>
-                <button type="button" class="btn-outline" style="padding:6px 14px;font-size:12px;" onclick="document.getElementById('extra-attachment-input').click()">+ Đính kèm thêm tài liệu</button>
               </div>
-              <input type="file" id="extra-attachment-input" accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" style="display:none;" onchange="handleAddExtraAttachment(event)">
             </div>
 
             <table class="custom-table" id="attachments-table">
@@ -556,7 +537,7 @@
                   <th>Mô tả tài liệu</th>
                   <th>Dung lượng</th>
                   <th>Trạng thái</th>
-                  <th style="width:60px;">Thao tác</th>
+                  <th style="width:60px;">Yêu cầu</th>
                 </tr>
               </thead>
               <tbody id="attachments-table-body">
@@ -608,11 +589,7 @@
               </div>
               <div class="review-meta-item">
                 <div class="rm-label">Chuyên mục chính:</div>
-                <div class="rm-value" id="rv-major-cat">Khoa học Máy tính &amp; Công nghệ Thông tin</div>
-              </div>
-              <div class="review-meta-item">
-                <div class="rm-label">Chuyên đề nghiên cứu:</div>
-                <div class="rm-value" id="rv-sub-disc">Trí tuệ nhân tạo (AI) &amp; NLP</div>
+                <div class="rm-value" id="rv-major-cat">—</div>
               </div>
             </div>
 
@@ -646,19 +623,19 @@
             <div class="review-grid" style="margin-bottom:12px;">
               <div class="review-meta-item">
                 <div class="rm-label">Tác giả liên hệ chính:</div>
-                <div class="rm-value" id="rv-author-name"><strong>TS. Vũ Thị F</strong></div>
+                <div class="rm-value" id="rv-author-name"><strong>—</strong></div>
               </div>
               <div class="review-meta-item">
                 <div class="rm-label">Email:</div>
-                <div class="rm-value" id="rv-author-email">vuthif@huit.edu.vn</div>
+                <div class="rm-value" id="rv-author-email">—</div>
               </div>
               <div class="review-meta-item">
                 <div class="rm-label">Đơn vị công tác:</div>
-                <div class="rm-value" id="rv-author-affil">Khoa Công nghệ thông tin</div>
+                <div class="rm-value" id="rv-author-affil">—</div>
               </div>
               <div class="review-meta-item">
                 <div class="rm-label">Mã ORCID:</div>
-                <div class="rm-value" id="rv-author-orcid">0000-0002-1825-0097</div>
+                <div class="rm-value" id="rv-author-orcid">—</div>
               </div>
             </div>
 
@@ -710,7 +687,7 @@
           <div style="background:#f8fafc;border:1px solid var(--line);border-radius:6px;padding:18px 20px;margin-bottom:24px;">
             <div style="font-weight:700;font-size:13.5px;color:var(--ink-900);margin-bottom:10px;">Cam kết của tác giả khi nộp bản thảo:</div>
             <label style="display:flex;gap:10px;font-size:13px;color:var(--ink-700);margin-bottom:8px;align-items:flex-start;cursor:pointer;">
-              <input type="checkbox" id="final-agree-check" checked style="margin-top:3px;">
+              <input type="checkbox" id="final-agree-check" style="margin-top:3px;">
               <span>Tôi cam đoan bản thảo này là công trình nghiên cứu nguyên bản, không sao chép dữ liệu từ các công bố khác mà không có trích dẫn hợp lệ, chưa từng được xuất bản trên bất kỳ tạp chí nào và không đang trong quá trình xét duyệt tại ấn phẩm khác.</span>
             </label>
           </div>
@@ -729,7 +706,6 @@
       <div class="side-widget">
         <div class="widget-head">
           <span>Tiến trình hoàn thiện hồ sơ</span>
-          <span id="completion-rate" style="font-size:12.5px;color:var(--sky-600);font-family:var(--sans);">40%</span>
         </div>
         <div class="checklist-item">
           <span class="check-icon" id="chk-file">○</span>
@@ -739,10 +715,10 @@
           </div>
         </div>
         <div class="checklist-item">
-          <span class="check-icon ok" id="chk-cat">✓</span>
+          <span class="check-icon" id="chk-cat">○</span>
           <div>
             <strong>Chuyên ngành đăng ký</strong>
-            <div style="font-size:11.5px;color:var(--ink-500);" id="sidebar-cat-name">Trí tuệ nhân tạo (AI) &amp; NLP</div>
+            <div style="font-size:11.5px;color:var(--ink-500);" id="sidebar-cat-name">Chưa chọn chuyên ngành</div>
           </div>
         </div>
         <div class="checklist-item">
@@ -753,17 +729,17 @@
           </div>
         </div>
         <div class="checklist-item">
-          <span class="check-icon ok" id="chk-auth">✓</span>
+          <span class="check-icon" id="chk-auth">○</span>
           <div>
             <strong>Tác giả liên hệ &amp; ORCID</strong>
-            <div style="font-size:11.5px;color:var(--ink-500);">TS. Vũ Thị F (JST)</div>
+            <div style="font-size:11.5px;color:var(--ink-500);" id="sidebar-author-status">Đang tải hồ sơ tác giả...</div>
           </div>
         </div>
         <div class="checklist-item">
-          <span class="check-icon ok" id="chk-attach">✓</span>
+          <span class="check-icon" id="chk-attach">○</span>
           <div>
             <strong>Thư mục tài liệu đính kèm</strong>
-            <div style="font-size:11.5px;color:var(--ink-500);" id="sidebar-attach-status">Bản thảo &amp; Phụ lục (PDF/Word)</div>
+            <div style="font-size:11.5px;color:var(--ink-500);" id="sidebar-attach-status">Chưa có tài liệu đính kèm</div>
           </div>
         </div>
       </div>
@@ -835,7 +811,7 @@
       </div>
       <div class="form-group">
         <label>Họ và tên đồng tác giả <span class="req">*</span></label>
-        <input type="text" class="form-control" id="modal-author-name" placeholder="Ví dụ: PGS.TS. Đặng Văn G">
+        <input type="text" class="form-control" id="modal-author-name" placeholder="Nhập họ và tên đồng tác giả">
       </div>
       <div class="form-group">
         <label>Đơn vị công tác (Viện / Khoa / Trường) <span class="req">*</span></label>
@@ -866,175 +842,41 @@
 <script src="journal-layout.js"></script>
 <script src="journal-interactions.js"></script>
 <script>
-  // Dữ liệu danh mục chuyên ngành & lĩnh vực nghiên cứu chuyên sâu (Kèm mã định danh & phạm vi nghiên cứu)
-  const SUB_DISCIPLINES = {
-    cntt: [
-      {
-        id: 'CS-AI-01',
-        title: 'Trí tuệ nhân tạo (AI) & Xử lý ngôn ngữ tự nhiên (NLP)',
-        desc: 'Bao gồm: Học sâu (Deep Learning), Mô hình ngôn ngữ lớn (LLM), Thị giác máy tính, Xử lý tiếng nói và Văn bản tiếng Việt.'
-      },
-      {
-        id: 'CS-DS-02',
-        title: 'Khoa học dữ liệu, Khai phá dữ liệu & Dữ liệu lớn (Big Data)',
-        desc: 'Bao gồm: Thuật toán phân tích dữ liệu, Data Mining, Hệ phân tán Hadoop/Spark, Business Intelligence và Mô hình dự báo.'
-      },
-      {
-        id: 'CS-SEC-03',
-        title: 'Mạng máy tính, An toàn thông tin & Mật mã học',
-        desc: 'Bao gồm: An ninh mạng, Điện toán đám mây (Cloud Computing), Phát hiện xâm nhập (IDS/IPS), Mật mã hóa và Công nghệ Blockchain.'
-      },
-      {
-        id: 'CS-IOT-04',
-        title: 'Hệ thống nhúng, Vạn vật kết nối (IoT) & Điện toán biên',
-        desc: 'Bao gồm: Thiết kế vi điều khiển, Mạng cảm biến không dây (WSN), Edge AI, Thiết bị đeo và Ứng dụng thành phố thông minh.'
-      },
-      {
-        id: 'CS-SE-05',
-        title: 'Kỹ thuật phần mềm, Kiến trúc hệ thống & Công nghệ Web',
-        desc: 'Bao gồm: Phát triển phần mềm hướng dịch vụ (Microservices), DevOps, CI/CD, Kiểm thử tự động và Trải nghiệm người dùng (UX/UI).'
-      }
-    ],
-    cokhi: [
-      {
-        id: 'ME-MFG-01',
-        title: 'Cơ khí chế tạo máy, Gia công chính xác & Vật liệu mới',
-        desc: 'Bao gồm: Công nghệ gia công CNC, CAD/CAM/CAE, Gia công tia lửa điện EDM, Vật liệu composite và Hợp kim tiên tiến.'
-      },
-      {
-        id: 'ME-ROB-02',
-        title: 'Robot công nghiệp, Cơ điện tử & Tự động hóa sản xuất',
-        desc: 'Bao gồm: Thiết kế Robot thông minh, Cánh tay Robot nhiều bậc tự do, Hệ thống SCADA/PLC, Cảm biến công nghiệp và Thị giác Robot.'
-      },
-      {
-        id: 'ME-AUTO-03',
-        title: 'Kỹ thuật Ô tô, Động cơ & Phương tiện giao thông thông minh',
-        desc: 'Bao gồm: Xe điện (EV), Hệ thống quản lý pin (BMS), Động cơ đốt trong thế hệ mới, Động lực học xe và Trợ lái tự hành ADAS.'
-      },
-      {
-        id: 'ME-CTRL-04',
-        title: 'Lý thuyết điều khiển, Thủy lực - Khí nén & Cơ học kỹ thuật',
-        desc: 'Bao gồm: Điều khiển tối ưu, Điều khiển thích nghi và mờ, Hệ truyền động thủy lực servo và Mô phỏng dao động cơ khí.'
-      }
-    ],
-    thucpham: [
-      {
-        id: 'FT-PROC-01',
-        title: 'Công nghệ Chế biến & Bảo quản Nông sản - Thực phẩm',
-        desc: 'Bao gồm: Công nghệ sấy lạnh, Chiếu xạ bảo quản, Đóng gói chân không, Kéo dài hạn sử dụng và Nâng cao chất lượng thực phẩm.'
-      },
-      {
-        id: 'FT-BIO-02',
-        title: 'Công nghệ Sinh học Ứng dụng & Hóa sinh thực phẩm',
-        desc: 'Bao gồm: Lên men vi sinh, Tách chiết hoạt chất sinh học (Flavonoid, Polyphenol), Enzyme công nghiệp và Sinh phẩm sinh thái.'
-      },
-      {
-        id: 'FT-ANL-03',
-        title: 'Kiểm nghiệm, Phân tích độc chất & An toàn vệ sinh thực phẩm',
-        desc: 'Bao gồm: Phương pháp sắc ký HPLC/GC-MS, Phát hiện vi sinh vật gây hại (PCR), Kiểm soát dư lượng kháng sinh và Tiêu chuẩn HACCP/ISO.'
-      },
-      {
-        id: 'FT-DEV-04',
-        title: 'Phát triển thực phẩm chức năng & Dinh dưỡng học',
-        desc: 'Bao gồm: Thực phẩm tăng cường miễn dịch, Đồ uống lên men từ dược liệu tự nhiên và Đánh giá cảm quan thực phẩm.'
-      }
-    ],
-    moitruong: [
-      {
-        id: 'EV-WTR-01',
-        title: 'Xử lý nước cấp, Nước thải công nghiệp & Nước thải sinh hoạt',
-        desc: 'Bao gồm: Công nghệ màng lọc MBR/RO, Xử lý sinh học hiếu khí/kỵ khí, Oxy hóa nâng cao (AOPs) và Thu hồi tài nguyên từ nước thải.'
-      },
-      {
-        id: 'EV-WST-02',
-        title: 'Quản lý chất thải rắn, Bùn thải & Công nghệ tái chế',
-        desc: 'Bao gồm: Sản xuất phân hữu cơ (Composting), Khí sinh học Biogas, Xử lý nhiệt hóa rác thải và Kinh tế tuần hoàn chất thải.'
-      },
-      {
-        id: 'EV-REN-03',
-        title: 'Năng lượng tái tạo, Biến đổi khí hậu & Giảm phát thải Carbon',
-        desc: 'Bao gồm: Năng lượng mặt trời, Điện gió, Tín chỉ Carbon, Đánh giá phát thải khí nhà kính (GHG) và Mô hình thích ứng khí hậu.'
-      },
-      {
-        id: 'EV-ECO-04',
-        title: 'Sinh thái học môi trường, Độc học & Quan trắc tài nguyên',
-        desc: 'Bao gồm: Đánh giá tác động môi trường (ĐTM/EIA), Mô hình hóa phát tán ô nhiễm không khí và Ứng dụng GIS trong quản lý tài nguyên.'
-      }
-    ],
-    kinhte: [
-      {
-        id: 'EC-LOG-01',
-        title: 'Quản trị Chuỗi cung ứng (Supply Chain) & Logistics số',
-        desc: 'Bao gồm: Tối ưu mạng lưới phân phối, Quản trị kho vận thông minh, Logistics xanh, E-Logistics và Ứng dụng RFID/IoT trong chuỗi lạnh.'
-      },
-      {
-        id: 'EC-FIN-02',
-        title: 'Tài chính - Ngân hàng, Công nghệ tài chính (Fintech) & Kế toán',
-        desc: 'Bao gồm: Quản trị rủi ro tài chính, Thanh toán điện tử, Định giá tài sản số, Kinh tế lượng ứng dụng và Chuẩn mực báo cáo IFRS.'
-      },
-      {
-        id: 'EC-MKT-03',
-        title: 'Marketing số (Digital Marketing) & Hành vi người tiêu dùng',
-        desc: 'Bao gồm: Omnichannel Marketing, Trải nghiệm thương hiệu trên nền tảng số, Social Listening và Phân khúc thị trường mục tiêu.'
-      },
-      {
-        id: 'EC-DEV-04',
-        title: 'Kinh tế phát triển, Đổi mới sáng tạo & Thương mại quốc tế',
-        desc: 'Bao gồm: Tác động của các hiệp định thương mại (CPTPP/EVFTA), Khởi nghiệp đổi mới sáng tạo và Kinh tế số nông thôn.'
-      }
-    ]
-  };
-
   let currentStep = 1;
   let authorCount = 1;
   let reviewerCount = 1;
-  let attachmentCount = 2;
 
-  // Khởi tạo và cập nhật Droplist Lĩnh vực nghiên cứu chuyên sâu
-  function updateSubDisciplines() {
-    const major = document.getElementById('major-category-select').value;
-    const select = document.getElementById('sub-discipline-select');
-    const descBox = document.getElementById('sub-discipline-desc');
-    const items = SUB_DISCIPLINES[major] || [];
-
+  async function loadSubmissionCategories() {
+    const select = document.getElementById('major-category-select');
     if (!select) return;
-    select.innerHTML = '';
-
-    items.forEach((item, index) => {
-      const opt = document.createElement('option');
-      opt.value = item.title;
-      opt.dataset.desc = item.desc;
-      opt.dataset.id = item.id;
-      // Hiển thị đầy đủ thông tin: Mã chuyên ngành · Tên lĩnh vực chuyên sâu
-      opt.textContent = `[${item.id}] ${item.title}`;
-      if (index === 0) opt.selected = true;
-      select.appendChild(opt);
+    const categories = await apiGetCategories();
+    select.innerHTML = '<option value="">-- Chọn chuyên ngành --</option>';
+    if (!Array.isArray(categories) || categories.length === 0) {
+      select.innerHTML = '<option value="">Không tải được danh mục chuyên ngành</option>';
+      select.disabled = true;
+      showToast('Không tải được danh mục chuyên ngành từ máy chủ. Vui lòng tải lại trang.', 'error');
+      return;
+    }
+    categories.filter(c => c?.maChuyenNganh && c?.tenChuyenNganh).forEach(category => {
+      const option = document.createElement('option');
+      option.value = String(category.maChuyenNganh);
+      option.textContent = category.tenChuyenNganh;
+      select.appendChild(option);
     });
-
-    handleSubDisciplineChange();
+    select.disabled = false;
+    handleCategoryChange();
   }
 
-  // Xử lý khi người dùng chọn một lĩnh vực từ droplist
-  function handleSubDisciplineChange() {
-    const select = document.getElementById('sub-discipline-select');
-    const descBox = document.getElementById('sub-discipline-desc');
-    const hiddenInput = document.getElementById('selected-sub-discipline');
-    const sidebarCat = document.getElementById('sidebar-cat-name');
-
-    if (!select || !select.selectedOptions || select.selectedOptions.length === 0) return;
-
-    const chosenOption = select.selectedOptions[0];
-    const title = chosenOption.value;
-    const desc = chosenOption.dataset.desc || '';
-    const id = chosenOption.dataset.id || '';
-
-    // Cập nhật giá trị ẩn để Bước 5 và form submit sử dụng
-    if (hiddenInput) hiddenInput.value = title;
-    if (sidebarCat) sidebarCat.innerText = title;
-
-    // Hiển thị khối thông tin chi tiết phạm vi nghiên cứu ngay bên dưới droplist
-    if (descBox) {
-      descBox.innerHTML = `<strong>📌 Phạm vi nghiên cứu mã ${id}:</strong> ${desc}`;
+  function handleCategoryChange() {
+    const select = document.getElementById('major-category-select');
+    const selected = select?.selectedOptions?.[0];
+    const name = select?.value ? selected?.textContent || '—' : 'Chưa chọn chuyên ngành';
+    const sidebar = document.getElementById('sidebar-cat-name');
+    const indicator = document.getElementById('chk-cat');
+    if (sidebar) sidebar.textContent = name;
+    if (indicator) {
+      indicator.className = select?.value ? 'check-icon ok' : 'check-icon';
+      indicator.textContent = select?.value ? '✓' : '○';
     }
   }
 
@@ -1063,53 +905,10 @@
     window.scrollTo({ top: 180, behavior: 'smooth' });
   }
 
-  const MAJOR_TO_DISCIPLINE_ID = {
-    'cntt': 1,
-    'cokhi': 2,
-    'moitruong': 3,
-    'kinhte': 4,
-    'thucpham': 5
-  };
-  const DISCIPLINE_NAMES = {
-    1: 'Công nghệ thông tin & Trí tuệ nhân tạo',
-    2: 'Cơ khí – Chế tạo máy – Tự động hóa',
-    3: 'Khoa học Môi trường & Nông nghiệp',
-    4: 'Kinh tế – Quản trị kinh doanh & Tài chính',
-    5: 'Hóa học & Công nghệ thực phẩm'
-  };
-
   function goToNextStep(step) {
-    // RÀNG BUỘC CƠ SỞ DỮ LIỆU: Bài báo người đó viết phải liên quan đến chuyên môn của họ (TRG_BaiBao_KiemTraChuyenMonTacGia)
-    if (step === 2) {
-      const majorKey = document.getElementById('major-category-select').value;
-      const selectedDisciplineId = MAJOR_TO_DISCIPLINE_ID[majorKey] || 1;
-      const user = getCurrentUser() || {};
-      const userDisciplines = user.chuyenMon || (user.chuyenNganhId ? [user.chuyenNganhId] : [1]);
-
-      if (!userDisciplines.includes(selectedDisciplineId)) {
-        const currentDisciplineName = DISCIPLINE_NAMES[userDisciplines[0]] || 'Chưa đăng ký';
-        const paperDisciplineName = DISCIPLINE_NAMES[selectedDisciplineId];
-        
-        const proceed = confirm(
-          `⚠️ RÀNG BUỘC CSDL (Trigger TRG_BaiBao_KiemTraChuyenMonTacGia):\n\n` +
-          `Theo quy định Tòa soạn, bài báo người gửi viết phải liên quan đến chuyên môn của họ!\n\n` +
-          `Lĩnh vực chuyên môn của bạn: ${currentDisciplineName}\n` +
-          `Chuyên mục bản thảo bạn chọn: ${paperDisciplineName}\n\n` +
-          `Bạn có muốn tự động cập nhật bổ sung chuyên môn "${paperDisciplineName}" vào hồ sơ nghiên cứu để tiếp tục nộp bài không?`
-        );
-        
-        if (proceed) {
-          if (!user.chuyenMon) user.chuyenMon = [...userDisciplines];
-          if (!user.chuyenMon.includes(selectedDisciplineId)) {
-            user.chuyenMon.push(selectedDisciplineId);
-          }
-          setCurrentUser(user);
-          showToast(`Đã bổ sung chuyên môn: ${paperDisciplineName}`);
-        } else {
-          showToast('Vui lòng chọn chuyên mục bản thảo phù hợp với chuyên môn của bạn.');
-          return;
-        }
-      }
+    if (step === 2 && !document.getElementById('major-category-select')?.value) {
+      showToast('Vui lòng chọn chuyên ngành từ danh mục của tòa soạn.', 'warning');
+      return;
     }
 
     switchStep(step);
@@ -1119,8 +918,7 @@
   function renderStep5Review() {
     // 1. Thông tin bài báo
     document.getElementById('rv-paper-type').innerText = document.getElementById('paper-type-select').value;
-    document.getElementById('rv-major-cat').innerText = document.getElementById('major-category-select').selectedOptions[0].text;
-    document.getElementById('rv-sub-disc').innerText = document.getElementById('selected-sub-discipline').value;
+    document.getElementById('rv-major-cat').innerText = document.getElementById('major-category-select').selectedOptions[0]?.text || '—';
     document.getElementById('rv-lang').innerText = document.getElementById('paper-lang-select').value;
     document.getElementById('rv-title-vi').innerText = document.getElementById('title-vi').value || 'Chưa nhập tiêu đề tiếng Việt';
     document.getElementById('rv-title-en').innerText = document.getElementById('title-en').value || 'Chưa nhập tiêu đề tiếng Anh';
@@ -1128,11 +926,11 @@
     document.getElementById('rv-keywords').innerText = document.getElementById('keywords-vi').value || 'Chưa nhập từ khóa';
 
     // 2. Tác giả liên hệ & Bảng nhóm tác giả
-    const user = getCurrentUser() || { hoTen: 'TS. Vũ Thị F', email: 'vuthif@huit.edu.vn', orcid: '0000-0002-1825-0097', donVi: 'Khoa Công nghệ Thông tin, Trường Đại học Công Thương TP.HCM' };
-    document.getElementById('rv-author-name').innerHTML = `<strong>${user.hoTen}</strong>`;
-    document.getElementById('rv-author-email').innerText = user.email;
-    document.getElementById('rv-author-affil').innerText = user.donVi || 'Viện Nghiên cứu Khoa học & Công nghệ';
-    document.getElementById('rv-author-orcid').innerText = user.orcid || '0000-0002-1825-0097';
+    const user = getCurrentUser() || {};
+    document.getElementById('rv-author-name').innerHTML = `<strong>${escapeHtml(user.hoTen || '—')}</strong>`;
+    document.getElementById('rv-author-email').innerText = user.email || '—';
+    document.getElementById('rv-author-affil').innerText = user.donVi || '—';
+    document.getElementById('rv-author-orcid').innerText = user.orcid || '—';
 
     const destAuthors = document.getElementById('rv-authors-table-body');
     destAuthors.innerHTML = '';
@@ -1145,8 +943,8 @@
 
     document.getElementById('rv-author-name').innerHTML = `<strong>${corrNameText}</strong>`;
     document.getElementById('rv-author-email').innerText = corrAuthors.length > 0 ? corrAuthors.map(a => a.email).join(', ') : mainAuthor.email;
-    document.getElementById('rv-author-affil').innerText = mainAuthor.affil || 'Khoa Công nghệ thông tin';
-    document.getElementById('rv-author-orcid').innerText = mainAuthor.orcid || '0000-0002-1825-0097';
+    document.getElementById('rv-author-affil').innerText = mainAuthor.affil || '—';
+    document.getElementById('rv-author-orcid').innerText = mainAuthor.orcid || '—';
 
     paperAuthors.forEach((author, idx) => {
       const newTr = document.createElement('tr');
@@ -1247,7 +1045,7 @@
 
   // Chèn sườn mẫu tóm tắt IMRaD
   function insertIMRaDTemplate() {
-    const template = "Mục tiêu: Nghiên cứu nhằm giải quyết bài toán [nêu mục tiêu chính] trong bối cảnh [nêu vấn đề]. Phương pháp: Chúng tôi đề xuất mô hình/phương pháp [tên giải pháp] kết hợp cùng [kỹ thuật hỗ trợ] trên tập dữ liệu gồm [số lượng mẫu]. Kết quả: Thực nghiệm chỉ ra rằng mô hình đạt độ chính xác [chỉ số %], cải thiện đáng kể so với các nghiên cứu trước đây. Kết luận: Công trình đóng góp giải pháp thiết thực cho việc triển khai [ứng dụng thực tế].";
+    const template = "Mục tiêu: [Nêu mục tiêu và câu hỏi nghiên cứu.]\nPhương pháp: [Mô tả thiết kế nghiên cứu, dữ liệu và phương pháp phân tích.]\nKết quả: [Trình bày kết quả thực tế bằng số liệu đã kiểm chứng.]\nKết luận: [Nêu kết luận phù hợp với kết quả và giới hạn nghiên cứu.]";
     document.getElementById('abstract-vi').value = template;
     calculateWords('abstract-vi', 'vi-word-counter');
     showToast('Đã áp dụng cấu trúc khung sườn IMRaD chuẩn!');
@@ -1255,29 +1053,28 @@
 
 
 
-  // Xóa dòng trong bảng (Tác giả, Phản biện, Đính kèm)
-  function removeRow(btn) {
-    const tr = btn.closest('tr');
-    if (tr) {
-      tr.remove();
-      showToast('Đã xóa dòng khỏi danh sách.');
-    }
-  }
-
   // Quản lý Danh sách Tác giả & Đồng tác giả (Bảng DongTacGia snapshot)
   let paperAuthors = [];
   let currentMatchedUser = null;
 
   function initPaperAuthors() {
     const user = (typeof getCurrentUser === 'function') ? getCurrentUser() : null;
+    const hasProfile = !!(user && user.hoTen && user.email);
+    const authorStatus = document.getElementById('sidebar-author-status');
+    const authorIndicator = document.getElementById('chk-auth');
+    if (authorStatus) authorStatus.textContent = hasProfile ? user.hoTen : 'Chưa tải được hồ sơ tác giả';
+    if (authorIndicator) {
+      authorIndicator.className = hasProfile ? 'check-icon ok' : 'check-icon';
+      authorIndicator.textContent = hasProfile ? '✓' : '○';
+    }
     paperAuthors = [
       {
         order: 1,
-        userId: (user && user.id) ? user.id : 3,
-        name: (user && user.hoTen) ? user.hoTen : 'TS. Vũ Thị F',
-        affil: (user && user.donVi) ? user.donVi : 'Khoa Công nghệ Thông tin, Trường ĐH Công Thương TP.HCM',
-        email: (user && user.email) ? user.email : 'vuthif@huit.edu.vn',
-        orcid: (user && user.orcid) ? user.orcid : '0000-0002-1825-0097',
+        userId: (user && user.id) ? user.id : null,
+        name: (user && user.hoTen) ? user.hoTen : '',
+        affil: (user && user.donVi) ? user.donVi : '',
+        email: (user && user.email) ? user.email : '',
+        orcid: (user && user.orcid) ? user.orcid : '',
         isCorresponding: true,
         isMain: true
       }
@@ -1482,44 +1279,6 @@
     showToast(`Đã thêm đồng tác giả: ${name} (${matchedUserId ? 'Tài khoản #' + matchedUserId : 'Tác giả khách'})`);
   }
 
-  // Thêm phụ lục vào Thư mục bài báo (ThuMucBaiBao)
-  function handleAddExtraAttachment(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    // Ràng buộc định dạng tệp: Chỉ chấp nhận PDF và Word (.doc, .docx)
-    const validExtensions = ['.pdf', '.doc', '.docx'];
-    const fileExt = '.' + file.name.split('.').pop().toLowerCase();
-    if (!validExtensions.includes(fileExt)) {
-      showToast('Định dạng tệp không hợp lệ! Hệ thống chỉ chấp nhận tệp định dạng PDF (.pdf) hoặc Word (.doc, .docx).', 'error');
-      e.target.value = '';
-      return;
-    }
-
-    // Kiểm tra dung lượng (tối đa 25MB)
-    const maxSizeBytes = 25 * 1024 * 1024;
-    if (file.size > maxSizeBytes) {
-      showToast(`Dung lượng tệp (${(file.size / 1024 / 1024).toFixed(2)} MB) vượt quá giới hạn 25MB quy định của Tạp chí!`, 'error');
-      e.target.value = '';
-      return;
-    }
-
-    attachmentCount++;
-    const tbody = document.getElementById('attachments-table-body');
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${attachmentCount}</td>
-      <td><strong>${file.name}</strong></td>
-      <td><span class="badge-tag badge-neutral">Phụ lục đính kèm</span></td>
-      <td>${(file.size / 1024 / 1024).toFixed(2)} MB</td>
-      <td><span class="badge-tag badge-success">✓ Đã tải lên</span></td>
-      <td><button type="button" class="btn-remove-row" onclick="removeRow(this)">Xóa</button></td>
-    `;
-    tbody.appendChild(tr);
-    showToast(`Đã thêm tài liệu vào Thư mục bài báo: ${file.name}`);
-    e.target.value = '';
-  }
-
   // Xử lý tệp bản thảo ở Bước 1 (Kiểm tra định dạng & dung lượng)
   function handleSmartFileSelected(e) {
     const file = e.target.files[0];
@@ -1545,29 +1304,6 @@
     executeExtraction(file.name, (file.size / 1024 / 1024).toFixed(2), fileExt === '.pdf' ? '📕' : '📄');
   }
 
-  function loadDemoSampleFile(e) {
-    if (e) e.stopPropagation();
-    executeExtraction('Transformer_NLP_Vietnamese_Manuscript_Blind.docx', '1.45', '📄');
-    // Điền dữ liệu mẫu khi người dùng chủ động bấm thử nghiệm nhanh
-    const viTitle = document.getElementById('title-vi');
-    if (viTitle) viTitle.value = 'Ứng dụng mô hình Transformer trong phân loại văn bản tiếng Việt quy mô lớn';
-    const enTitle = document.getElementById('title-en');
-    if (enTitle) enTitle.value = 'Application of Transformer Models in Large-Scale Vietnamese Text Classification';
-    const viAbs = document.getElementById('abstract-vi');
-    if (viAbs) viAbs.value = 'Nghiên cứu đề xuất giải pháp cải tiến dựa trên kiến trúc Transformer kết hợp cơ chế tự chú ý đa đầu để phân loại văn bản tiếng Việt quy mô lớn. Thực nghiệm đối sánh trên tập ngữ liệu chuẩn gồm 250.000 bài báo đa lĩnh vực cho thấy mô hình đạt độ chính xác F1-score 94,8%, vượt trội 4,2% so với mô hình Bi-LSTM truyền thống. Kết quả nghiên cứu chứng minh tính khả thi của việc tối ưu hóa kích thước tham số phục vụ triển khai thực tế trên hệ sinh thái xuất bản học thuật số.';
-    const enAbs = document.getElementById('abstract-en');
-    if (enAbs) enAbs.value = 'This paper proposes an enhanced Transformer-based architecture with multi-head self-attention for large-scale Vietnamese text classification. Comparative experiments on a benchmark corpus of 250,000 multi-domain articles demonstrate that the proposed model achieves an F1-score of 94.8%, outperforming the conventional Bi-LSTM baseline by 4.2%. The findings validate the feasibility of parameter-efficient deployment for digital academic publishing workflows.';
-    const viKw = document.getElementById('keywords-vi');
-    if (viKw) viKw.value = 'Transformer, Phân loại văn bản, Xử lý ngôn ngữ tự nhiên, Tiếng Việt';
-    const enKw = document.getElementById('keywords-en');
-    if (enKw) enKw.value = 'Transformer, Text Classification, Natural Language Processing, Vietnamese';
-    calculateWords('abstract-vi', 'vi-word-counter');
-    calculateWords('abstract-en', 'en-word-counter');
-
-    if (typeof saveDraftToStorage === 'function') {
-      saveDraftToStorage();
-    }
-  }
 
   function executeExtraction(fileName, fileSize, icon) {
     const dropZone = document.getElementById('drop-zone');
@@ -1577,20 +1313,14 @@
     dropZone.style.display = 'none';
     scanBox.style.display = 'block';
 
-    setTimeout(() => {
-      document.getElementById('scan-status-label').innerText = 'Đang nhận diện Tiêu đề và Tóm tắt IMRaD...';
-    }, 500);
-
-    setTimeout(() => {
-      document.getElementById('scan-status-label').innerText = 'Đang kiểm tra tính ẩn danh (Double-blind check)...';
-    }, 1000);
+    document.getElementById('scan-status-label').innerText = 'Đang kiểm tra định dạng và dung lượng...';
 
     setTimeout(() => {
       scanBox.style.display = 'none';
       previewBox.style.display = 'flex';
       document.getElementById('file-icon-type').innerText = icon;
       document.getElementById('uploaded-file-name').innerText = fileName;
-      document.getElementById('uploaded-file-size').innerText = `${fileSize} MB · Đã bóc tách tự động Tiêu đề, Tóm tắt & Từ khóa vào Bước 2`;
+      document.getElementById('uploaded-file-size').innerText = `${fileSize} MB · Định dạng và dung lượng hợp lệ`;
       document.getElementById('sidebar-file-status').innerText = `${fileName} (${fileSize} MB)`;
       
       const mainAtt = document.getElementById('att-main-name');
@@ -1608,9 +1338,9 @@
         chkFile.innerText = '✓';
       }
       const eb = document.getElementById('extraction-banner');
-      if (eb) eb.style.display = 'flex';
+      if (eb) eb.style.display = 'none';
 
-      showToast('Đã tải tài liệu & trích xuất siêu dữ liệu thành công!');
+      showToast('Tệp hợp lệ. Hệ thống chưa trích xuất siêu dữ liệu; vui lòng nhập thông tin bài báo ở bước tiếp theo.', 'info', 6000);
     }, 1400);
   }
 
@@ -1648,7 +1378,6 @@
         keywordsVi: document.getElementById('keywords-vi')?.value || '',
         keywordsEn: document.getElementById('keywords-en')?.value || '',
         majorCategory: document.getElementById('major-category-select')?.value || '',
-        subDiscipline: document.getElementById('selected-sub-discipline')?.value || '',
         paperType: document.getElementById('paper-type-select')?.value || '',
         paperLang: document.getElementById('paper-lang-select')?.value || '',
         paperAuthors: (paperAuthors && paperAuthors.length > 0) ? paperAuthors : null,
@@ -1677,12 +1406,7 @@
         const sel = document.getElementById('major-category-select');
         if (sel) {
           sel.value = draft.majorCategory;
-          updateSubDisciplines();
         }
-      }
-      if (draft.subDiscipline) {
-        const sub = document.getElementById('selected-sub-discipline');
-        if (sub) sub.value = draft.subDiscipline;
       }
       if (draft.paperType) {
         const pt = document.getElementById('paper-type-select');
@@ -1719,23 +1443,9 @@
     showToast('Đã lưu bản nháp bản thảo vào bộ nhớ cục bộ (Draft Saved)!');
   }
 
-  // Hỗ trợ tải mẫu & hướng dẫn
-  function downloadSampleDocx(e) {
-    e.preventDefault();
-    showToast('Đang tải xuống biểu mẫu Word chuẩn Tạp chí JST: BM01_Mau_Bai_Bao_Template.docx');
-  }
-  function downloadCitationGuide(e) {
-    e.preventDefault();
-    showToast('HƯỚNG DẪN TRÍCH DẪN TẠP CHÍ JST:\n1. Chuẩn IEEE: Dành cho ngành CNTT, Cơ khí, Kỹ thuật.\n2. Chuẩn APA: Dành cho ngành Kinh tế, Môi trường, Quản trị.\nXem chi tiết tại mục Hướng dẫn Tác giả.', 'info', 6000);
-  }
-  function showBlindReviewGuide(e) {
-    e.preventDefault();
-    showToast('QUY TRÌNH ẨN DANH BẢN THẢO:\n1. Xóa phần thông tin Tác giả, Học hàm, Đơn vị công tác dưới tiêu đề.\n2. Word: File -> Info -> Inspect Document -> Check for Issues -> Remove All.\n3. Lưu tệp và tải lên hệ thống.', 'info', 6000);
-  }
-
   // Tự động điền dữ liệu người dùng đăng nhập & khởi tạo trạng thái
-  document.addEventListener('DOMContentLoaded', function() {
-    updateSubDisciplines();
+  document.addEventListener('DOMContentLoaded', async function() {
+    await loadSubmissionCategories();
     calculateWords('abstract-vi', 'vi-word-counter');
     calculateWords('abstract-en', 'en-word-counter');
 
@@ -1796,10 +1506,15 @@
       }
     });
 
-    const selectInputs = ['major-category-select', 'selected-sub-discipline', 'paper-type-select', 'paper-lang-select'];
+    const selectInputs = ['paper-type-select', 'paper-lang-select'];
     selectInputs.forEach(id => {
       const el = document.getElementById(id);
       if (el) el.addEventListener('change', saveDraftToStorage);
+    });
+    const majorSelect = document.getElementById('major-category-select');
+    if (majorSelect) majorSelect.addEventListener('change', () => {
+      handleCategoryChange();
+      saveDraftToStorage();
     });
   });
 
@@ -1830,8 +1545,12 @@
     const keywordsVi = (document.getElementById('keywords-vi')?.value || '').trim();
     const keywordsEn = (document.getElementById('keywords-en')?.value || '').trim();
     const keywords = keywordsVi || keywordsEn;
-    const majorKey = document.getElementById('major-category-select')?.value || 'cntt';
-    const majorId = MAJOR_TO_DISCIPLINE_ID[majorKey] || 1;
+    const majorId = Number(document.getElementById('major-category-select')?.value || 0);
+    if (!Number.isInteger(majorId) || majorId <= 0) {
+      showToast('Vui lòng chọn chuyên ngành hợp lệ từ danh mục máy chủ.', 'warning');
+      switchStep(1);
+      return;
+    }
 
     if (!titleVi || !abstractVi || !keywords) {
       showToast('Vui lòng điền đầy đủ Tiêu đề, Tóm tắt và Từ khóa ở Bước 2.', 'warning');

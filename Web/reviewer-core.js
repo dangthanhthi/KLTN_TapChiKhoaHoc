@@ -1,4 +1,4 @@
-/* Shared pure rules for the reviewer workspace; no implicit demo fallback. */
+/* Shared pure rules for the reviewer workspace. */
 (function (root) {
   'use strict';
   const roles = ['Chuyên gia phản biện', 'Phản biện viên', 'Người phản biện', 'Phản biện', 'Reviewer'];
@@ -7,6 +7,8 @@
   function hasRole(user) { return !!user && Array.isArray(user.vaiTros) && user.vaiTros.some(r => roles.includes(r)); }
   function completed(a) { return a.daDanhGia === true || a.trangThai === 'Đã đánh giá'; }
   function inactive(a) { return completed(a) || ['Từ chối phản biện', 'Đã hủy', 'Đã huỷ'].includes(a.trangThai); }
+  function canEvaluate(a) { return !inactive(a) && ['Đồng ý phản biện', 'Đang đánh giá'].includes(a.trangThai); }
+  function canDownload(a) { return ['Đồng ý phản biện', 'Đang đánh giá', 'Đã đánh giá'].includes(a.trangThai); }
   function parseDate(value) {
     if (!value) return NaN;
     // SQL datetime has no zone: the journal's wall-clock timezone is Vietnam.
@@ -38,6 +40,6 @@
         sort==='newest' ? (parseDate(b.ngayPhanCong)||0)-(parseDate(a.ngayPhanCong)||0) :
         (Number.isFinite(due(a))?due(a):Infinity)-(Number.isFinite(due(b))?due(b):Infinity) || a.maPhanCong-b.maPhanCong);
   }
-  const api = {hasRole,completed,inactive,parseDate,due,deadline,validate,total,filter,scoreKeys,recommendations};
+  const api = {hasRole,completed,inactive,canEvaluate,canDownload,parseDate,due,deadline,validate,total,filter,scoreKeys,recommendations};
   if (typeof module === 'object' && module.exports) module.exports = api; else root.ReviewerCore = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

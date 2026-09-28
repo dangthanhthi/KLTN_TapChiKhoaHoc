@@ -265,19 +265,6 @@
     color: #1E293B;
   }
 
-  /* Lượt truy cập */
-  .visitor-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 6px 0;
-    font-size: 12.5px;
-    border-bottom: 1px solid #F1F5F9;
-  }
-  .visitor-row:last-child {
-    border-bottom: none;
-  }
-
   @media (max-width: 1080px) {
     .archives-grid {
       grid-template-columns: 1fr;
@@ -710,8 +697,8 @@
     <!-- CỘT PHỤ (RIGHT - SIDEBAR): THEO CHÍNH XÁC HÌNH ẢNH media_1789800570408.png -->
     <aside>
       <!-- 1. Bìa số hiện tại của tạp chí -->
-      <div style="border: 1px solid #E5E7EB; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-radius: 3px; overflow: hidden; background: #fff; margin-bottom: 24px;">
-        <img src="assets/images/cover_huit_vol26_no3e.jpg" alt="Bìa Tạp chí Khoa học Đại học Công Thương" style="width: 100%; height: auto; display: block;">
+      <div id="archive-latest-cover-container" style="display:none;border: 1px solid #E5E7EB; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-radius: 3px; overflow: hidden; background: #fff; margin-bottom: 24px;">
+        <img id="archive-latest-cover" alt="Bìa số tạp chí mới nhất" style="width: 100%; height: auto; display: none;">
       </div>
 
       <!-- 2. ABSTRACTING & INDEXING -->
@@ -729,36 +716,15 @@
             </a>
           </div>
           <div style="background: #ffffff; border: 1px solid #f1f5f9; border-radius: 4px; padding: 10px 12px; display: flex; align-items: center; justify-content: center;">
-            <a href="https://search.crossref.org/?from_ui=&q=3030-413X&page=2" target="_blank" rel="noopener" title="Crossref DOI Indexing">
+            <a href="https://search.crossref.org/?q=3030-413X" target="_blank" rel="noopener" title="Tìm kiếm trên Crossref">
               <img src="assets/images/indexing/crossref-logo.png" alt="Crossref" style="max-width: 75%; max-height: 44px; height: auto; margin: 0 auto; display: block;">
             </a>
           </div>
           <div style="background: #ffffff; border: 1px solid #f1f5f9; border-radius: 4px; padding: 10px 12px; display: flex; align-items: center; justify-content: center;">
-            <a href="https://scholar.google.com/citations?hl=vi&user=M-lHDdYAAAAJ&view_op=list_works&authuser=2&gmla=AP6z3OZ8DknU5cOu35nUET7P_2pcQDmXYXJDzQuGLhFkfkVFzcGLQnVhd0iEGA3bt5Gq0Eu7ksbt2RP_6CuBbLsf7qNiRZm0GbGX8LFSHvML" target="_blank" rel="noopener" title="Google Scholar Citations">
+            <a href="https://scholar.google.com/citations?user=M-lHDdYAAAAJ&amp;hl=vi" target="_blank" rel="noopener" title="Hồ sơ Google Scholar">
               <img src="assets/images/indexing/google-scholar-logo.png" alt="Google Scholar" style="max-width: 75%; max-height: 46px; height: auto; margin: 0 auto; display: block;">
             </a>
           </div>
-        </div>
-      </div>
-
-      <!-- 4. LƯỢT TRUY CẬP (VISITORS) -->
-      <div class="sidebar-box">
-        <h4 class="sidebar-title">LƯỢT TRUY CẬP</h4>
-        <div class="visitor-row">
-          <span>🇻🇳 Việt Nam</span>
-          <span style="font-weight: 700; color: #1E293B;">3,761</span>
-        </div>
-        <div class="visitor-row">
-          <span>🇮🇳 Ấn Độ</span>
-          <span style="font-weight: 700; color: #1E293B;">44</span>
-        </div>
-        <div class="visitor-row">
-          <span>🇺🇸 Hoa Kỳ</span>
-          <span style="font-weight: 700; color: #1E293B;">32</span>
-        </div>
-        <div class="visitor-row">
-          <span>🇯🇵 Nhật Bản</span>
-          <span style="font-weight: 700; color: #1E293B;">18</span>
         </div>
       </div>
 
@@ -796,11 +762,11 @@
     const container = document.getElementById('issuesListContainer');
     container.innerHTML = pageItems.map(item => `
       <div class="archive-issue-item">
-        <div class="archive-issue-cover">
+        ${item.cover ? `<div class="archive-issue-cover">
           <a href="${item.link}">
-            <img src="${item.cover}" alt="${item.title}" onerror="this.src='assets/images/cover_huit_vol26_no3e.jpg'">
+            <img src="${encodeURI(item.cover)}" alt="${item.title}" onerror="this.closest('.archive-issue-cover')?.remove()">
           </a>
-        </div>
+        </div>` : ''}
         <div class="archive-issue-details">
           <h2 class="archive-issue-name">
             <a href="${item.link}">${item.title}</a>
@@ -983,6 +949,8 @@
     const keyword = (document.getElementById('search-keyword').value || '').trim().toLowerCase();
     const major = document.getElementById('filter-major').value;
     const issue = document.getElementById('filter-issue').value;
+    const normalizeMajor = value => String(value || '').trim().normalize('NFC').toLocaleLowerCase('vi-VN');
+    const selectedMajor = normalizeMajor(major);
 
     filteredArticles = allArticles.filter(art => {
       // 1. Lọc theo từ khóa (tiêu đề, tác giả, tóm tắt)
@@ -992,7 +960,7 @@
         (art.tomTat && art.tomTat.toLowerCase().includes(keyword));
 
       // 2. Lọc theo chuyên ngành
-      const matchMajor = !major || (art.chuyenNganh && art.chuyenNganh.includes(major));
+      const matchMajor = !selectedMajor || normalizeMajor(art.chuyenNganh) === selectedMajor;
 
       // 3. Lọc theo số báo (theo ID hoặc chuỗi tên số)
       const matchIssue = !issue || art.issueSlug === issue || art.maSoTapChi === issue || (art.soTapChi && art.soTapChi.includes(issue));
@@ -1051,14 +1019,22 @@
         if (typeof apiGetPublishedIssues === 'function') {
           const liveIssues = await apiGetPublishedIssues();
           if (liveIssues && liveIssues.length > 0) {
+            const latestCover = document.getElementById('archive-latest-cover');
+            if (latestCover && liveIssues[0].anhBiaUrl) {
+              latestCover.src = liveIssues[0].anhBiaUrl;
+              latestCover.alt = `Bìa ${liveIssues[0].tenSo || 'số tạp chí mới nhất'}`;
+              latestCover.style.display = 'block';
+              latestCover.onerror = function() {
+                this.closest('#archive-latest-cover-container')?.style.setProperty('display', 'none');
+              };
+              document.getElementById('archive-latest-cover-container')?.style.setProperty('display', 'block');
+            }
             archiveIssues = liveIssues.map(s => ({
               id: s.maSoTapChi,
               slug: s.maSoTapChi.toString(),
               title: s.tenSo || `Tập ${s.tap} Số ${s.so} (${s.nam})`,
               desc: `Xuất bản định kỳ ${s.ngayPhatHanh ? new Date(s.ngayPhatHanh).toLocaleDateString('vi-VN') : s.nam} · ${s.tongSoBaiBao} bài báo khoa học đã xuất bản`,
-              cover: (s.tenSo && s.tenSo.includes('Yersin') && s.so >= 1 && s.so <= 23)
-                ? `assets/images/cover_yersin_no${s.so}.svg`
-                : (s.anhBiaUrl || 'assets/images/cover_huit_vol26_no3e.jpg'),
+              cover: s.anhBiaUrl || '',
               link: `issue-detail.html?id=${s.maSoTapChi}`
             }));
 
@@ -1095,27 +1071,27 @@
     const pArticles = (async () => {
       try {
         if (typeof apiGetLatestArticles === 'function') {
-          const liveArticles = await apiGetLatestArticles(500);
+          const liveArticles = await apiGetLatestArticles(0);
           if (liveArticles && liveArticles.length > 0) {
             allArticles = liveArticles.map(a => {
               const authorStr = (a.tacGias && a.tacGias.length > 0)
                 ? a.tacGias.map(t => t.hoTen + (t.laTacGiaLienHe ? ' (Tác giả liên hệ)' : '')).join('; ')
-                : (a.tacGiaChinh || 'Ban biên tập');
-              const issueTitle = a.tenSoTapChi || (a.tap ? `Tập ${a.tap} Số ${a.so} (${a.nam})` : '');
-              const pubDate = a.ngayPhatHanh ? new Date(a.ngayPhatHanh).toLocaleDateString('vi-VN') : `${a.nam || 2026}`;
+                : (a.tacGiaChinh || '—');
+              const issueTitle = a.tenSoTapChi || (a.tap ? `Tập ${a.tap} Số ${a.so} (${a.nam})` : '—');
+              const pubDate = a.ngayPhatHanh ? new Date(a.ngayPhatHanh).toLocaleDateString('vi-VN') : (a.nam || '—');
               return {
                 id: a.maBaiBao,
                 maBaiBao: a.maBaiBao,
                 tieuDe: a.tieuDe,
                 tacGia: authorStr,
-                chuyenNganh: a.chuyenNganh || 'Khoa học tổng hợp',
+                chuyenNganh: a.chuyenNganh || '—',
                 maSoTapChi: a.maSoTapChi ? a.maSoTapChi.toString() : '',
                 issueSlug: a.maSoTapChi ? a.maSoTapChi.toString() : '',
                 soTapChi: issueTitle,
                 ngayDang: pubDate,
                 doi: a.maDOI || '',
-                tomTat: a.tomTat || a.tomTatTiengAnh || 'Tóm tắt bài báo khoa học đã xuất bản.',
-                pdfUrl: a.filePdfUrl || `article-detail.html?id=${a.maBaiBao}`
+                tomTat: a.tomTat || a.tomTatTiengAnh || '—',
+                pdfUrl: a.filePdfUrl || ''
               };
             });
             filteredArticles = allArticles;
@@ -1149,17 +1125,10 @@
         if (majorParam) {
           selectMajor.value = majorParam;
           if (!selectMajor.value) {
-            const normParam = majorParam.toLowerCase().trim();
-            for (let opt of selectMajor.options) {
-              if (!opt.value) continue;
-              const normVal = opt.value.toLowerCase().trim();
-              const normText = opt.text.toLowerCase().trim();
-              if (normVal.includes(normParam) || normParam.includes(normVal) ||
-                  normText.includes(normParam) || normParam.includes(normText)) {
-                selectMajor.value = opt.value;
-                break;
-              }
-            }
+            const normParam = majorParam.trim().normalize('NFC').toLocaleLowerCase('vi-VN');
+            const exactMatch = Array.from(selectMajor.options).find(opt => opt.value &&
+              opt.value.trim().normalize('NFC').toLocaleLowerCase('vi-VN') === normParam);
+            if (exactMatch) selectMajor.value = exactMatch.value;
           }
         } else {
           selectMajor.value = '';

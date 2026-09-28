@@ -9,6 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Machine-specific credentials and test settings must never enter a publish artifact. -->
+    <Content Update="appsettings.Local.json;appsettings.Development.json;appsettings.Testing.json"
+             CopyToPublishDirectory="Never" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.14" />

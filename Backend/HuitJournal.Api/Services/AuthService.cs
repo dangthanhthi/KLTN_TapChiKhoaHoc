@@ -6,6 +6,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using HuitJournal.Api.Configuration;
 using HuitJournal.Api.Data;
@@ -22,6 +23,7 @@ public class AuthService : IAuthService
     private readonly IEmailSenderService _emailSenderService;
     private readonly EmailVerificationSettings _emailVerificationSettings;
     private readonly ILogger<AuthService> _logger;
+    private readonly IHostEnvironment _hostEnvironment;
 
     public AuthService(
         QLTapChiKhoaHocContext context,
@@ -29,7 +31,8 @@ public class AuthService : IAuthService
         IEmailVerificationService emailVerificationService,
         IEmailSenderService emailSenderService,
         IOptions<EmailVerificationSettings> emailVerificationSettings,
-        ILogger<AuthService> logger)
+        ILogger<AuthService> logger,
+        IHostEnvironment hostEnvironment)
     {
         _context = context;
         _configuration = configuration;
@@ -37,6 +40,7 @@ public class AuthService : IAuthService
         _emailSenderService = emailSenderService;
         _emailVerificationSettings = emailVerificationSettings.Value ?? new EmailVerificationSettings();
         _logger = logger;
+        _hostEnvironment = hostEnvironment;
     }
 
     public async Task<AuthResponse> LoginAsync(LoginRequest request)
@@ -72,14 +76,13 @@ public class AuthService : IAuthService
             // Bỏ qua lỗi định dạng salt của hash cũ
         }
 
-        if (!passwordValid && user.MatKhau == request.Password)
+        if (!passwordValid && !_hostEnvironment.IsProduction() && user.MatKhau == request.Password)
         {
             passwordValid = true;
-            // Tương thích đa nền tảng: Giữ nguyên chuỗi mật khẩu trong CSDL để phân hệ WinForms Desktop
-            // của nhóm có thể tiếp tục xác thực đồng thời mà không bị khóa tài khoản ngoài ý muốn.
+            // Chỉ cho phép mật khẩu cũ dạng văn bản trong môi trường phát triển cục bộ.
         }
 
-        if (!passwordValid)
+        if (!passwordValid || (_hostEnvironment.IsProduction() && CommonWeakPasswords.Contains(request.Password.Trim())))
         {
             return new AuthResponse
             {
@@ -574,89 +577,91 @@ public class AuthService : IAuthService
         }
 
         // 3. Thực thi Transaction kích hoạt tài khoản chính thức NguoiDung
-        using var transaction = await _context.Database.BeginTransactionAsync();
-        var transactionCommitted = false;
+        int newUserId;
         try
         {
-            // Kiểm tra tương tranh chống race condition
-            if (await _context.NguoiDungs.AnyAsync(u => u.Email.ToLower() == pending.EmailSoSanh))
+            await using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                await transaction.RollbackAsync();
-                return new AuthResponse { Success = false, Message = "Email này đã được sử dụng trong hệ thống." };
-            }
-
-            if (await _context.NguoiDungs.AnyAsync(u => u.TenDangNhap != null && u.TenDangNhap.ToLower() == pending.TenDangNhapSoSanh))
-            {
-                await transaction.RollbackAsync();
-                return new AuthResponse { Success = false, Message = "Tên đăng nhập này đã được sử dụng trong hệ thống." };
-            }
-
-            // Đánh dấu mã đã sử dụng
-            var activeCode = pending.MaXacNhanEmails.FirstOrDefault(c => c.DaDungLucUtc == null && c.HetHanUtc > DateTime.UtcNow);
-            if (activeCode != null)
-            {
-                activeCode.DaDungLucUtc = DateTime.UtcNow;
-            }
-
-            // Cập nhật trạng thái hồ sơ chờ sang Verified
-            pending.TrangThai = "Verified";
-
-            // Tạo tài khoản NguoiDung chính thức
-            var user = new NguoiDung
-            {
-                TenDangNhap = pending.TenDangNhapSoSanh,
-                HoDem = pending.HoDem,
-                Ten = pending.Ten,
-                HoTen = pending.HoTen,
-                Email = pending.EmailGoc,
-                MatKhau = pending.MatKhauHash,
-                DonVi = pending.DonVi,
-                SoDienThoai = pending.SoDienThoai,
-                HocVi = pending.HocVi,
-                HocHam = pending.HocHam,
-                GioiTinh = pending.GioiTinh,
-                QuocGia = pending.QuocGia,
-                NgonNgu = pending.NgonNgu,
-                DiaChi = pending.DiaChi,
-                SoTaiKhoan = pending.SoTaiKhoan,
-                ChuTaiKhoan = pending.ChuTaiKhoan,
-                NganHang = pending.NganHang,
-                MaORCID = pending.MaORCID,
-                TrangThai = true,
-                NgayTao = DateTime.Now
-            };
-
-            _context.NguoiDungs.Add(user);
-            await _context.SaveChangesAsync();
-
-            // Gán 2 vai trò mặc định: Tác giả (3) và Độc giả (5)
-            _context.NguoiDungVaiTros.Add(new NguoiDungVaiTro { MaNguoiDung = user.MaNguoiDung, MaVaiTro = 3 });
-            _context.NguoiDungVaiTros.Add(new NguoiDungVaiTro { MaNguoiDung = user.MaNguoiDung, MaVaiTro = 5 });
-
-            // Gán lĩnh vực chuyên môn nếu có
-            if (pending.ChuyenNganhId.HasValue && pending.ChuyenNganhId > 0)
-            {
-                _context.NguoiDungChuyenMons.Add(new NguoiDungChuyenMon
+                // Kiểm tra tương tranh chống race condition
+                if (await _context.NguoiDungs.AnyAsync(u => u.Email.ToLower() == pending.EmailSoSanh))
                 {
-                    MaNguoiDung = user.MaNguoiDung,
-                    MaChuyenNganh = pending.ChuyenNganhId.Value,
-                    LaChuyenMonChinh = true,
-                    NgayDangKy = DateTime.Now
-                });
+                    await transaction.RollbackAsync();
+                    return new AuthResponse { Success = false, Message = "Email này đã được sử dụng trong hệ thống." };
+                }
+
+                if (await _context.NguoiDungs.AnyAsync(u => u.TenDangNhap != null && u.TenDangNhap.ToLower() == pending.TenDangNhapSoSanh))
+                {
+                    await transaction.RollbackAsync();
+                    return new AuthResponse { Success = false, Message = "Tên đăng nhập này đã được sử dụng trong hệ thống." };
+                }
+
+                // Đánh dấu mã đã sử dụng
+                var activeCode = pending.MaXacNhanEmails.FirstOrDefault(c => c.DaDungLucUtc == null && c.HetHanUtc > DateTime.UtcNow);
+                if (activeCode != null)
+                {
+                    activeCode.DaDungLucUtc = DateTime.UtcNow;
+                }
+
+                // Cập nhật trạng thái hồ sơ chờ sang Verified
+                pending.TrangThai = "Verified";
+
+                // Tạo tài khoản NguoiDung chính thức
+                var user = new NguoiDung
+                {
+                    TenDangNhap = pending.TenDangNhapSoSanh,
+                    HoDem = pending.HoDem,
+                    Ten = pending.Ten,
+                    HoTen = pending.HoTen,
+                    Email = pending.EmailGoc,
+                    MatKhau = pending.MatKhauHash,
+                    DonVi = pending.DonVi,
+                    SoDienThoai = pending.SoDienThoai,
+                    HocVi = pending.HocVi,
+                    HocHam = pending.HocHam,
+                    GioiTinh = pending.GioiTinh,
+                    QuocGia = pending.QuocGia,
+                    NgonNgu = pending.NgonNgu,
+                    DiaChi = pending.DiaChi,
+                    SoTaiKhoan = pending.SoTaiKhoan,
+                    ChuTaiKhoan = pending.ChuTaiKhoan,
+                    NganHang = pending.NganHang,
+                    MaORCID = pending.MaORCID,
+                    TrangThai = true,
+                    NgayTao = DateTime.Now
+                };
+
+                _context.NguoiDungs.Add(user);
+                await _context.SaveChangesAsync();
+
+                // Gán 2 vai trò mặc định: Tác giả (3) và Độc giả (5)
+                _context.NguoiDungVaiTros.Add(new NguoiDungVaiTro { MaNguoiDung = user.MaNguoiDung, MaVaiTro = 3 });
+                _context.NguoiDungVaiTros.Add(new NguoiDungVaiTro { MaNguoiDung = user.MaNguoiDung, MaVaiTro = 5 });
+
+                // Gán lĩnh vực chuyên môn nếu có
+                if (pending.ChuyenNganhId.HasValue && pending.ChuyenNganhId > 0)
+                {
+                    _context.NguoiDungChuyenMons.Add(new NguoiDungChuyenMon
+                    {
+                        MaNguoiDung = user.MaNguoiDung,
+                        MaChuyenNganh = pending.ChuyenNganhId.Value,
+                        LaChuyenMonChinh = true,
+                        NgayDangKy = DateTime.Now
+                    });
+                }
+
+                // [REMOVED] Tự động tạo đơn đăng ký phản biện khi xác thực email
+                // Vai trò Phản biện viên: chỉ do Tổng biên tập phân công qua WinForms
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+                newUserId = user.MaNguoiDung;
             }
 
-            // [REMOVED] Tự động tạo đơn đăng ký phản biện khi xác thực email
-            // Vai trò Phản biện viên: chỉ do Tổng biên tập phân công qua WinForms
-
-            await _context.SaveChangesAsync();
-            await transaction.CommitAsync();
-            transactionCommitted = true;
-
-            // 4. Đồng bộ các bài báo đồng tác giả trùng khớp email (chỉ thực hiện SAU KHI commit an toàn)
+            // 4. Đồng bộ các bài báo đồng tác giả trùng khớp email (chỉ thực hiện SAU KHI transaction commit & dispose hoàn tất)
             int soBaiDaLienKet = 0;
             try
             {
-                var pMaNguoiDung = new SqlParameter("@MaNguoiDung", user.MaNguoiDung);
+                var pMaNguoiDung = new SqlParameter("@MaNguoiDung", newUserId);
                 var pSoBaiDaLienKet = new SqlParameter("@SoBaiDaLienKet", System.Data.SqlDbType.Int)
                 {
                     Direction = System.Data.ParameterDirection.Output
@@ -674,18 +679,18 @@ public class AuthService : IAuthService
             catch (Exception syncEx)
             {
                 _logger.LogWarning(syncEx, "sp_DongBoDongTacGia_TheoEmail có cảnh báo cho người dùng {UserId}: {Msg}",
-                    user.MaNguoiDung, syncEx.Message);
+                    newUserId, syncEx.Message);
             }
 
             // Tải lại đối tượng người dùng hoàn chỉnh kèm các quan hệ
             var createdUser = await _context.NguoiDungs
+                .AsNoTracking()
                 .Include(u => u.NguoiDungVaiTros).ThenInclude(nv => nv.VaiTro)
                 .Include(u => u.NguoiDungChuyenMons).ThenInclude(nc => nc.ChuyenNganh)
-                .FirstAsync(u => u.MaNguoiDung == user.MaNguoiDung);
+                .FirstAsync(u => u.MaNguoiDung == newUserId);
 
             var profileDto = MapToProfileDto(createdUser);
             var token = GenerateJwtToken(createdUser, profileDto.VaiTros);
-
 
             return new AuthResponse
             {
@@ -700,15 +705,11 @@ public class AuthService : IAuthService
         }
         catch (Exception ex)
         {
-            if (!transactionCommitted)
-                await transaction.RollbackAsync();
             _logger.LogError(ex, "Lỗi khi kích hoạt tài khoản từ hồ sơ {RegId}: {Error}", request.RegistrationId, ex.Message);
             return new AuthResponse
             {
                 Success = false,
-                Message = transactionCommitted
-                    ? "Tài khoản đã được kích hoạt. Vui lòng đăng nhập để tiếp tục."
-                    : "Chưa thể kích hoạt tài khoản. Vui lòng thử lại sau."
+                Message = "Chưa thể kích hoạt tài khoản. Vui lòng thử lại sau."
             };
         }
     }
@@ -859,7 +860,7 @@ public class AuthService : IAuthService
         }
         catch
         {
-            isCurrentValid = (user.MatKhau == request.CurrentPassword);
+            isCurrentValid = !_hostEnvironment.IsProduction() && user.MatKhau == request.CurrentPassword;
         }
 
         if (!isCurrentValid) return false;
@@ -1030,74 +1031,6 @@ public class AuthService : IAuthService
             ChuyenMonIds = user.NguoiDungChuyenMons.Select(nc => nc.MaChuyenNganh).ToList(),
             ChuyenMonNames = user.NguoiDungChuyenMons.Select(nc => nc.ChuyenNganh.TenChuyenNganh).ToList()
         };
-    }
-
-    // =========================================================================
-    // ĐĂNG KÝ TỰ PHỤC VỤ VAI TRÒ PHẢN BIỆN VIÊN
-    // Điều kiện: Học vị ≥ Thạc sĩ, chưa có role Phản biện / Ban biên tập trở lên
-    // =========================================================================
-    public async Task<(bool Success, string Message, UserProfileDto? Profile)> RequestReviewerRoleAsync(int maNguoiDung, string? ghiChu = null)
-    {
-        // Load đầy đủ thông tin người dùng + các vai trò hiện có
-        var user = await _context.NguoiDungs
-            .Include(u => u.NguoiDungVaiTros)
-                .ThenInclude(nv => nv.VaiTro)
-            .Include(u => u.NguoiDungChuyenMons)
-                .ThenInclude(nc => nc.ChuyenNganh)
-            .FirstOrDefaultAsync(u => u.MaNguoiDung == maNguoiDung);
-
-        if (user == null)
-            return (false, "Không tìm thấy tài khoản người dùng.", null);
-
-        // Kiểm tra điều kiện học vị tối thiểu
-        var eligibleDegrees = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-            { "Thạc sĩ", "Tiến sĩ", "TSKH" };
-        var eligibleTitles = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-            { "Phó giáo sư", "Giáo sư" };
-
-        bool hasEligibleDegree = eligibleDegrees.Contains(user.HocVi ?? "")
-                              || eligibleTitles.Contains(user.HocHam ?? "");
-
-        if (!hasEligibleDegree)
-        {
-            return (false,
-                "Học vị hiện tại chưa đủ điều kiện. Vai trò Phản biện viên yêu cầu tối thiểu Thạc sĩ theo quy chế của Tạp chí.",
-                null);
-        }
-
-        var currentRoleIds = user.NguoiDungVaiTros.Select(nv => nv.MaVaiTro).ToHashSet();
-        if (currentRoleIds.Contains(4))
-        {
-            return (false,
-                "Tài khoản đã có vai trò Chuyên gia phản biện trong hệ thống.",
-                null);
-        }
-
-        // Kiểm tra đơn đăng ký đang chờ duyệt trong CSDL
-        var existingPending = await _context.DonDangKyPhanBiens
-            .FirstOrDefaultAsync(d => d.MaNguoiDung == maNguoiDung && d.TrangThai == "Chờ duyệt");
-
-        if (existingPending != null)
-        {
-            return (true,
-                "Bạn đã có đơn đăng ký tham gia Hội đồng phản biện đang chờ Ban biên tập phê duyệt.",
-                MapToProfileDto(user));
-        }
-
-        // Lưu đơn đăng ký mới vào bảng DonDangKyPhanBien
-        var don = new DonDangKyPhanBien
-        {
-            MaNguoiDung = maNguoiDung,
-            NgayDangKy = DateTime.Now,
-            GhiChu = ghiChu,
-            TrangThai = "Chờ duyệt"
-        };
-        _context.DonDangKyPhanBiens.Add(don);
-        await _context.SaveChangesAsync();
-
-        return (true,
-            "Đơn đăng ký tham gia Hội đồng phản biện của bạn đã được tiếp nhận và lưu trữ thành công (Trạng thái: Chờ Ban biên tập duyệt). Ban biên tập sẽ đối soát học vị, cơ quan công tác và chỉ số ORCID trước khi phê duyệt chính thức.",
-            MapToProfileDto(user));
     }
 
     /// <summary>
