@@ -412,7 +412,12 @@
     try { state.user = userJson ? JSON.parse(userJson) : null; } catch { state.user = null; }
 
     if (!state.token || !C.hasRole(state.user)) {
-      location.href = 'login.html?next=reviewer.html';
+      const params = new URLSearchParams(location.search);
+      const requestedId = Number(params.get('id') || params.get('maPhanCong'));
+      const next = Number.isSafeInteger(requestedId) && requestedId > 0
+        ? `reviewer-evaluation.html?id=${requestedId}`
+        : 'reviewer.html';
+      location.href = `login.html?next=${encodeURIComponent(next)}`;
       return;
     }
 

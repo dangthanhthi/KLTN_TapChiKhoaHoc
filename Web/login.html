@@ -287,6 +287,13 @@
 <script src="journal-layout.js"></script>
 <script src="journal-interactions.js"></script>
 <script>
+  function getSafeLoginDestination() {
+    const next = new URLSearchParams(window.location.search).get('next') || '';
+    if (next === 'reviewer.html') return next;
+    const evaluation = /^reviewer-evaluation\.html\?id=(\d+)$/.exec(next);
+    return evaluation ? `reviewer-evaluation.html?id=${evaluation[1]}` : 'profile.html';
+  }
+
   async function handleLoginPageSubmit(e) {
     e.preventDefault();
     const loginInput = document.getElementById('username').value.trim();
@@ -308,7 +315,7 @@
         setCurrentUser(userObj);
         showToast(`Đăng nhập thành công! Xin chào ${res.user.hoTen}.`, 'success');
         setTimeout(() => {
-          window.location.href = new URLSearchParams(window.location.search).get('next') === 'reviewer.html' ? 'reviewer.html' : 'profile.html';
+          window.location.href = getSafeLoginDestination();
         }, 600);
       } else {
         showToast(res.message || 'Tài khoản hoặc mật khẩu không chính xác.', 'error');
