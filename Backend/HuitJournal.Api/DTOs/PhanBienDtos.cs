@@ -53,6 +53,24 @@ public class PhieuDanhGiaDto
     public string KienNghi { get; set; } = null!; // 'Chấp nhận đăng', 'Chỉnh sửa nhỏ', 'Chỉnh sửa lớn và phản biện lại', 'Từ chối đăng'
 }
 
+public class PhieuDanhGiaBanNhapDto
+{
+    [Range(0, 10)] public decimal? DiemTinhMoi { get; set; }
+    [Range(0, 10)] public decimal? DiemPhuongPhap { get; set; }
+    [Range(0, 10)] public decimal? DiemKetQua { get; set; }
+    [Range(0, 10)] public decimal? DiemTrinhBay { get; set; }
+    [MaxLength(20000)] public string? NhanXetChoTacGia { get; set; }
+    [MaxLength(20000)] public string? NhanXetBaoMat { get; set; }
+    [MaxLength(255)] public string? KienNghi { get; set; }
+    public DateTimeOffset NgayCapNhatUtc { get; set; }
+}
+
+public class PhieuDanhGiaBanNhapIndexDto
+{
+    public int MaPhanCong { get; set; }
+    public DateTimeOffset NgayCapNhatUtc { get; set; }
+}
+
 public class PhanBienResponseDto
 {
     [Required]
@@ -81,6 +99,7 @@ public class QuyetDinhBienTapDto
     [Required]
     public string TrangThaiMoi { get; set; } = null!; // 'Chấp nhận', 'Chờ chỉnh sửa', 'Từ chối', etc.
 
+    [MaxLength(500)]
     public string? GhiChu { get; set; }
 
     [MaxLength(2000)]
@@ -101,4 +120,9 @@ public class PhanCongListItemDto
     public bool DaDanhGia { get; set; }
     public decimal? DiemTongKet { get; set; }
     public string? KienNghi { get; set; }
+    public string? TomTat { get; set; }
+    public string? TomTatTiengAnh { get; set; }
+    public string? TuKhoa { get; set; }
+    public string? TenFileAnDanh { get; set; }
+    public long? KichThuocFile { get; set; }
 }

@@ -316,7 +316,7 @@ public class AuthController : ControllerBase
     /// Ban biên tập / Quản trị viên lấy danh sách đơn đăng ký phản biện đang chờ thẩm định
     /// </summary>
     [HttpGet("pending-reviewers")]
-    [Authorize(Roles = "Quản trị hệ thống,Ban biên tập")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập")]
     public async Task<IActionResult> GetPendingReviewers()
     {
         var list = await _authService.GetPendingReviewerRegistrationsAsync();
@@ -330,7 +330,7 @@ public class AuthController : ControllerBase
     /// Ban biên tập / Quản trị viên thẩm định và chính thức phê duyệt vai trò Chuyên gia phản biện theo mã đơn
     /// </summary>
     [HttpPost("approve-reviewer/{maDon}")]
-    [Authorize(Roles = "Quản trị hệ thống")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập")]
     public async Task<IActionResult> ApproveReviewerRole(int maDon)
     {
         var editorIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)
@@ -351,7 +351,7 @@ public class AuthController : ControllerBase
     /// Quản trị viên xử lý các hồ sơ phản biện cũ còn chờ duyệt.
     /// </summary>
     [HttpPost("reject-reviewer/{maDon}")]
-    [Authorize(Roles = "Quản trị hệ thống")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập")]
     public async Task<IActionResult> RejectReviewerRole(int maDon, [FromBody] RejectReviewerRequestDto? dto = null)
     {
         var editorIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier)

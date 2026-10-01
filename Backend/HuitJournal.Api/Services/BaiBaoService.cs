@@ -1,12 +1,13 @@
-using System.Text.Json;
+﻿using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using HuitJournal.Api.Data;
 using HuitJournal.Api.DTOs;
 using HuitJournal.Api.Models;
+using HuitJournal.Api.Infrastructure;
 
 namespace HuitJournal.Api.Services;
 
-public class BaiBaoService : IBaiBaoService
+public partial class BaiBaoService : IBaiBaoService
 {
     private readonly QLTapChiKhoaHocContext _context;
     private readonly IWebHostEnvironment _env;
@@ -17,264 +18,48 @@ public class BaiBaoService : IBaiBaoService
         _env = env;
     }
 
-    public async Task<(bool Success, string Message, int? MaBaiBao, string? MaDinhDanh)> SubmitPaperAsync(int maNguoiDung, BaiBaoSubmitDto dto)
-    {
-        try
-        {
-            // 1. Kiểm tra người dùng nộp bài
-            var author = await _context.NguoiDungs
-                .Include(u => u.NguoiDungChuyenMons)
-                .FirstOrDefaultAsync(u => u.MaNguoiDung == maNguoiDung);
-
-            if (author == null)
-            {
-                return (false, "Không tìm thấy thông tin tác giả nộp bài.", null, null);
-            }
-
-            // 2. Kiểm tra tính hợp lệ và an toàn bảo mật của tệp tải lên (OWASP Validation) trước khi ghi CSDL
-            if (dto.TapTinBanThao != null && dto.TapTinBanThao.Length > 0)
-            {
-                var (isValidFile, fileErr) = await ValidateUploadedFileAsync(dto.TapTinBanThao, new[] { ".pdf", ".docx", ".doc" }, 30 * 1024 * 1024);
-                if (!isValidFile)
-                {
-                    return (false, fileErr, null, null);
-                }
-            }
-
-            // 3. Đảm bảo ràng buộc chuyên môn (TRG_BaiBao_KiemTraChuyenMonTacGia)
-            // Nếu tác giả chưa khai báo chuyên ngành này, tự động thêm vào danh mục chuyên môn của tác giả
-            var hasDiscipline = author.NguoiDungChuyenMons.Any(cm => cm.MaChuyenNganh == dto.MaChuyenNganh);
-            if (!hasDiscipline)
-            {
-                var chuyenNganhExists = await _context.ChuyenNganhs.AnyAsync(c => c.MaChuyenNganh == dto.MaChuyenNganh);
-                if (!chuyenNganhExists)
-                {
-                    return (false, "Chuyên ngành được chọn không tồn tại trong hệ thống.", null, null);
-                }
-
-                _context.NguoiDungChuyenMons.Add(new NguoiDungChuyenMon
-                {
-                    MaNguoiDung = maNguoiDung,
-                    MaChuyenNganh = dto.MaChuyenNganh,
-                    LaChuyenMonChinh = false,
-                    GhiChu = "Tự động bổ sung khi nộp bài bản thảo",
-                    NgayDangKy = DateTime.Now
-                });
-                await _context.SaveChangesAsync();
-            }
-
-            // 4. Khởi tạo đối tượng BaiBao
-            var baiBao = new BaiBao
-            {
-                TieuDe = dto.TieuDe.Trim(),
-                TieuDeTiengAnh = string.IsNullOrWhiteSpace(dto.TieuDeTiengAnh) ? null : dto.TieuDeTiengAnh.Trim(),
-                TomTat = dto.TomTat.Trim(),
-                TomTatTiengAnh = string.IsNullOrWhiteSpace(dto.TomTatTiengAnh) ? null : dto.TomTatTiengAnh.Trim(),
-                TuKhoa = dto.TuKhoa.Trim(),
-                TrangThai = "Chờ sơ duyệt",
-                MaNguoiDung = maNguoiDung,
-                MaChuyenNganh = dto.MaChuyenNganh,
-                NgayGui = DateTime.Now,
-                NgayCapNhat = DateTime.Now
-            };
-
-            _context.BaiBaos.Add(baiBao);
-            await _context.SaveChangesAsync();
-
-            // 5. Lưu tệp đính kèm vào thư mục Uploads/
-            if (dto.TapTinBanThao != null && dto.TapTinBanThao.Length > 0)
-            {
-
-                var now = DateTime.Now;
-                var uploadSubFolder = Path.Combine("Uploads", "Submissions", now.Year.ToString(), now.Month.ToString("D2"));
-                var uploadPhysicalPath = Path.Combine(_env.ContentRootPath, uploadSubFolder);
-
-                if (!Directory.Exists(uploadPhysicalPath))
-                {
-                    Directory.CreateDirectory(uploadPhysicalPath);
-                }
-
-                var ext = Path.GetExtension(dto.TapTinBanThao.FileName).ToLowerInvariant();
-                var safeFileName = $"Submission_{baiBao.MaBaiBao}_{Guid.NewGuid():N}{ext}";
-                var filePath = Path.Combine(uploadPhysicalPath, safeFileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await dto.TapTinBanThao.CopyToAsync(stream);
-                }
-
-                var relativeUrl = $"/{uploadSubFolder.Replace("\\", "/")}/{safeFileName}";
-
-                var thuMuc = new ThuMucBaiBao
-                {
-                    MaBaiBao = baiBao.MaBaiBao,
-                    TenThuMuc = $"BanThaoGoc_{baiBao.MaBaiBao}{ext}",
-                    DuongDan = relativeUrl,
-                    LoaiThuMuc = "Bản thảo gốc",
-                    KichThuoc = dto.TapTinBanThao.Length,
-                    SoVong = 1,
-                    NgayTaiLen = DateTime.Now
-                };
-
-                _context.ThuMucBaiBaos.Add(thuMuc);
-            }
-
-            // 5. Thêm nhóm đồng tác giả (nếu có)
-            if (!string.IsNullOrWhiteSpace(dto.DongTacGiaJson))
-            {
-                try
-                {
-                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                    var coAuthors = JsonSerializer.Deserialize<List<DongTacGiaSubmitDto>>(dto.DongTacGiaJson, options);
-
-                    if (coAuthors != null && coAuthors.Count > 0)
-                    {
-                        var seenEmails = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                        int order = 1;
-
-                        foreach (var ca in coAuthors)
-                        {
-                            var cleanEmail = ca.Email.Trim().ToLower();
-
-                            // Bỏ qua nếu trùng email với tác giả chính hoặc trùng email giữa các đồng tác giả
-                            if (string.Equals(cleanEmail, author.Email, StringComparison.OrdinalIgnoreCase) || seenEmails.Contains(cleanEmail))
-                            {
-                                continue;
-                            }
-                            seenEmails.Add(cleanEmail);
-
-                            // Tự động kiểm tra xem đồng tác giả này đã có tài khoản trong hệ thống hay chưa
-                            var matchedUser = await _context.NguoiDungs
-                                .AsNoTracking()
-                                .FirstOrDefaultAsync(u => u.Email.ToLower() == cleanEmail);
-
-                            var dongTacGia = new DongTacGia
-                            {
-                                MaBaiBao = baiBao.MaBaiBao,
-                                HoTen = ca.HoTen.Trim(),
-                                Email = cleanEmail,
-                                DonVi = string.IsNullOrWhiteSpace(ca.DonVi) ? null : ca.DonVi.Trim(),
-                                MaORCID = string.IsNullOrWhiteSpace(ca.MaORCID) ? null : ca.MaORCID.Trim(),
-                                LaTacGiaLienHe = ca.LaTacGiaLienHe,
-                                ThuTu = order++,
-                                MaNguoiDung = matchedUser?.MaNguoiDung
-                            };
-
-                            _context.DongTacGias.Add(dongTacGia);
-                        }
-                    }
-                }
-                catch
-                {
-                    // Nếu parse JSON lỗi thì vẫn tiếp tục tạo bài báo
-                }
-            }
-
-            // 5.1. Thêm danh sách chuyên gia phản biện do tác giả đề xuất (nếu có)
-            if (!string.IsNullOrWhiteSpace(dto.PhanBienDeXuatJson))
-            {
-                try
-                {
-                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                    var proposedReviewers = JsonSerializer.Deserialize<List<PhanBienDeXuatSubmitDto>>(dto.PhanBienDeXuatJson, options);
-
-                    if (proposedReviewers != null && proposedReviewers.Count > 0)
-                    {
-                        var seenRevEmails = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-                        foreach (var pr in proposedReviewers)
-                        {
-                            var cleanRevEmail = pr.Email.Trim().ToLower();
-                            if (seenRevEmails.Contains(cleanRevEmail)) continue;
-                            seenRevEmails.Add(cleanRevEmail);
-
-                            // Kiểm tra xem chuyên gia này đã có tài khoản trong hệ thống hay chưa
-                            int? matchedUserId = pr.MaNguoiDung;
-                            if (!matchedUserId.HasValue)
-                            {
-                                var existingUser = await _context.NguoiDungs
-                                    .AsNoTracking()
-                                    .FirstOrDefaultAsync(u => u.Email.ToLower() == cleanRevEmail);
-                                matchedUserId = existingUser?.MaNguoiDung;
-                            }
-
-                            var deXuat = new PhanBienDeXuat
-                            {
-                                MaBaiBao = baiBao.MaBaiBao,
-                                HoTen = pr.HoTen.Trim(),
-                                Email = cleanRevEmail,
-                                DonVi = string.IsNullOrWhiteSpace(pr.DonVi) ? null : pr.DonVi.Trim(),
-                                LinhVuc = string.IsNullOrWhiteSpace(pr.LinhVuc) ? null : pr.LinhVuc.Trim(),
-                                LaChuyenGiaHeThong = pr.LaChuyenGiaHeThong || matchedUserId.HasValue,
-                                MaNguoiDung = matchedUserId,
-                                NgayTao = DateTime.Now
-                            };
-
-                            _context.PhanBienDeXuats.Add(deXuat);
-                        }
-                    }
-                }
-                catch
-                {
-                    // Nếu parse JSON lỗi thì vẫn tiếp tục
-                }
-            }
-
-            // 6. Ghi vết lịch sử trạng thái ban đầu (Audit Trail)
-            var lichSu = new LichSuTrangThaiBaiBao
-            {
-                MaBaiBao = baiBao.MaBaiBao,
-                TrangThaiCu = null,
-                TrangThaiMoi = "Chờ sơ duyệt",
-                MaNguoiThucHien = maNguoiDung,
-                NgayChuyen = DateTime.Now,
-                GhiChu = "Tác giả nộp bản thảo mới qua Cổng thông tin Tạp chí."
-            };
-            _context.LichSuTrangThais.Add(lichSu);
-
-            await _context.SaveChangesAsync();
-
-            var maDinhDanh = $"JST-{DateTime.Now.Year}-SUB{baiBao.MaBaiBao:D4}";
-            return (true, "Nộp bản thảo thành công!", baiBao.MaBaiBao, maDinhDanh);
-        }
-        catch (DbUpdateException ex)
-        {
-            var msg = ex.InnerException?.Message ?? ex.Message;
-            return (false, $"Lỗi cơ sở dữ liệu khi nộp bài: {msg}", null, null);
-        }
-        catch (Exception ex)
-        {
-            return (false, $"Lỗi hệ thống: {ex.Message}", null, null);
-        }
-    }
+    public Task<(bool Success, string Message, int? MaBaiBao, string? MaDinhDanh)> SubmitPaperAsync(int maNguoiDung, BaiBaoSubmitDto dto) =>
+        SubmitValidatedAsync(maNguoiDung, dto);
 
     public async Task<List<BaiBaoListItemDto>> GetMySubmissionsAsync(int maNguoiDung)
     {
         var user = await _context.NguoiDungs.FindAsync(maNguoiDung);
         if (user == null) return new List<BaiBaoListItemDto>();
 
-        var userEmail = user.Email.ToLower();
+        await CoauthorAccountLinker.LinkAsync(_context, maNguoiDung);
 
-        var query = _context.BaiBaos
-            .AsNoTracking()
-            .Where(b => b.MaNguoiDung == maNguoiDung || b.DongTacGias.Any(d => d.MaNguoiDung == maNguoiDung || d.Email.ToLower() == userEmail))
-            .OrderByDescending(b => b.NgayGui)
-            .Select(b => new BaiBaoListItemDto
-            {
-                MaBaiBao = b.MaBaiBao,
-                MaDinhDanh = $"JST-{b.NgayGui.Year}-SUB{b.MaBaiBao:D4}",
-                TieuDe = b.TieuDe,
-                TieuDeTiengAnh = b.TieuDeTiengAnh,
-                ChuyenNganh = b.ChuyenNganh.TenChuyenNganh,
-                MaChuyenNganh = b.MaChuyenNganh,
-                TrangThai = b.TrangThai,
-                NgayGui = b.NgayGui,
-                NgayCapNhat = b.NgayCapNhat,
-                SoDongTacGia = b.DongTacGias.Count,
-                TapTinGoc = b.ThuMucBaiBaos.Where(f => f.LoaiThuMuc == "Bản thảo gốc").Select(f => f.TenThuMuc).FirstOrDefault()
-            });
-
-        return await query.ToListAsync();
+        var articles = await _context.BaiBaos.AsNoTracking()
+            .Where(b => b.MaNguoiDung == maNguoiDung || b.DongTacGias.Any(d => d.MaNguoiDung == maNguoiDung))
+            .Include(b => b.ChuyenNganh).Include(b => b.SoTapChi).Include(b => b.DongTacGias)
+            .Include(b => b.ThuMucBaiBaos).Include(b => b.LichSuTrangThais)
+            .Include(b => b.PhanCongPhanBiens).ThenInclude(p => p.PhieuDanhGia)
+            .OrderByDescending(b => b.NgayGui).AsSplitQuery().ToListAsync();
+        var items = articles.Select(b => new BaiBaoListItemDto
+        {
+            MaBaiBao = b.MaBaiBao,
+            MaDinhDanh = $"JST-{b.NgayGui.Year}-SUB{b.MaBaiBao:D4}",
+            TieuDe = b.TieuDe, TieuDeTiengAnh = b.TieuDeTiengAnh,
+            ChuyenNganh = b.ChuyenNganh.TenChuyenNganh, MaChuyenNganh = b.MaChuyenNganh,
+            TrangThai = b.TrangThai, NgayGui = b.NgayGui, NgayCapNhat = b.NgayCapNhat,
+            SoDongTacGia = b.DongTacGias.Count,
+            TapTinGoc = b.ThuMucBaiBaos.Where(f => f.LoaiThuMuc == "Bản thảo gốc").OrderByDescending(f => f.NgayTaiLen).Select(f => f.TenThuMuc).FirstOrDefault(),
+            NhanXetPhanBien = b.LichSuTrangThais.Where(h => !string.IsNullOrWhiteSpace(h.ThongBaoChoTacGia)).OrderByDescending(h => h.NgayChuyen).ThenByDescending(h => h.MaLichSu).Select(h => h.ThongBaoChoTacGia).FirstOrDefault(),
+            LaDongTacGia = b.MaNguoiDung != maNguoiDung,
+            NgayPhatHanh = b.TrangThai == "Đã xuất bản" ? b.SoTapChi?.NgayPhatHanh : null,
+            CoTheNopLai = b.MaNguoiDung == maNguoiDung && (b.TrangThai == "Chờ sửa hình thức" || b.TrangThai == "Chờ chỉnh sửa"),
+            SoVong = b.ThuMucBaiBaos.Select(f => f.SoVong).DefaultIfEmpty(1).Max()
+        }).ToList();
+        foreach (var item in items)
+        {
+            var article = articles.Single(b => b.MaBaiBao == item.MaBaiBao);
+            var releasedDecision = article.LichSuTrangThais.Where(h => h.TrangThaiCu == "Đang phản biện" &&
+                (h.TrangThaiMoi == "Chờ chỉnh sửa" || h.TrangThaiMoi == "Đã chấp nhận" || h.TrangThaiMoi == "Từ chối"))
+                .OrderByDescending(h => h.NgayChuyen).ThenByDescending(h => h.MaLichSu).FirstOrDefault();
+            if (releasedDecision != null)
+                item.NhanXetPhanBien = string.Join("\n\n", new[] { item.NhanXetPhanBien, AuthorReviewFeedback.ForDecision(article, releasedDecision) }
+                    .Where(s => !string.IsNullOrWhiteSpace(s)));
+        }
+        return items;
     }
 
     public async Task<BaiBaoDetailDto?> GetSubmissionDetailAsync(int maBaiBao, int maNguoiDung, bool isEditorOrAdmin)
@@ -288,6 +73,7 @@ public class BaiBaoService : IBaiBaoService
             .Include(x => x.PhanBienDeXuats)
             .Include(x => x.ThuMucBaiBaos)
             .Include(x => x.LichSuTrangThais).ThenInclude(ls => ls.NguoiThucHien)
+            .Include(x => x.PhanCongPhanBiens).ThenInclude(p => p.PhieuDanhGia)
             .FirstOrDefaultAsync(x => x.MaBaiBao == maBaiBao);
 
         if (b == null) return null;
@@ -323,6 +109,8 @@ public class BaiBaoService : IBaiBaoService
             TenChuyenNganh = b.ChuyenNganh.TenChuyenNganh,
             MaSoTapChi = b.MaSoTapChi,
             TenSoTapChi = b.SoTapChi?.TenSo,
+            LaDongTacGia = b.MaNguoiDung != maNguoiDung && b.DongTacGias.Any(d => d.MaNguoiDung == maNguoiDung),
+            NgayPhatHanh = b.TrangThai == "Đã xuất bản" ? b.SoTapChi?.NgayPhatHanh : null,
             TrangBatDau = b.TrangBatDau,
             TrangKetThuc = b.TrangKetThuc,
             DongTacGias = b.DongTacGias.OrderBy(d => d.ThuTu).Select(d => new DongTacGiaDetailDto
@@ -373,7 +161,8 @@ public class BaiBaoService : IBaiBaoService
                         : (ls.MaNguoiThucHien == b.MaNguoiDung ? b.TacGia.HoTen : "Ban biên tập"),
                 GhiChu = isEditorOrAdmin 
                     ? ls.GhiChu 
-                    : GetAuthorSafeHistoryNote(ls)
+                    : string.Join("\n\n", new[] { GetAuthorSafeHistoryNote(ls), AuthorReviewFeedback.ForDecision(b, ls) }
+                        .Where(s => !string.IsNullOrWhiteSpace(s)))
             }).ToList()
         };
     }
@@ -397,7 +186,7 @@ public class BaiBaoService : IBaiBaoService
             "Đã chấp nhận" => "Bài báo đã được Ban biên tập chính thức chấp nhận đăng.",
             "Đang chế bản" => "Bài báo đang trong quá trình biên tập kỹ thuật, định dạng và chế bản xuất bản.",
             "Sẵn sàng xuất bản" => "Bài báo đã hoàn tất duyệt bản bông và sẵn sàng đưa vào số phát hành.",
-            "Đã xuất bản" => "Bài báo đã được xuất bản chính thức trên Cổng thông tin Tạp chí.",
+            "Đã xuất bản" => !string.IsNullOrWhiteSpace(ls.ThongBaoChoTacGia) ? ls.ThongBaoChoTacGia : "Bài báo đã được xuất bản chính thức trên Cổng thông tin Tạp chí.",
             "Từ chối" => !string.IsNullOrWhiteSpace(ls.ThongBaoChoTacGia) ? ls.ThongBaoChoTacGia : "Bản thảo chưa đáp ứng tiêu chí xuất bản của Tòa soạn.",
             _ => $"Trạng thái bài báo: {ls.TrangThaiMoi}."
         };
@@ -471,12 +260,25 @@ public class BaiBaoService : IBaiBaoService
             TrangBatDau = b.TrangBatDau,
             TrangKetThuc = b.TrangKetThuc,
             FilePdfUrl = publicPdfUrl,
+            AnhBiaUrl = b.SoTapChi != null
+                ? (b.SoTapChi.TenSo.Contains("Yersin")
+                    ? $"assets/images/cover_yersin_no{b.SoTapChi.So}.svg"
+                    : $"assets/images/cover_huit_vol{b.SoTapChi.Tap}_no{b.SoTapChi.So}e.jpg")
+                : null,
             TacGias = authors
         };
     }
 
     public async Task<(bool Success, string Message)> ResubmitPaperAsync(int maBaiBao, int maNguoiDung, BaiBaoResubmitDto dto)
     {
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+        var lockName = $"HuitJournal:Resubmit:{maBaiBao}";
+        await _context.Database.ExecuteSqlInterpolatedAsync($"""
+            DECLARE @lockResult int;
+            EXEC @lockResult = sys.sp_getapplock @Resource = {lockName}, @LockMode = 'Exclusive',
+                @LockOwner = 'Transaction', @LockTimeout = 10000;
+            IF @lockResult < 0 THROW 51000, 'Khong the khoa lan nop ban sua.', 1;
+            """);
         var baiBao = await _context.BaiBaos
             .Include(b => b.ThuMucBaiBaos)
             .Include(b => b.LichSuTrangThais)
@@ -493,15 +295,18 @@ public class BaiBaoService : IBaiBaoService
         }
 
         // Ràng buộc máy trạng thái (State Machine): Thống nhất theo ràng buộc CHECK SQL (CHK_BaiBao_TrangThai)
-        // Chỉ cho phép tác giả nộp lại bản thảo chỉnh sửa & giải trình BM-03 khi bài ở trạng thái: 'Chờ chỉnh sửa'
-        if (baiBao.TrangThai != "Chờ chỉnh sửa")
+        // Format corrections return to screening; peer-review revisions return to editorial decision.
+        var isFormatRevision = baiBao.TrangThai == "Chờ sửa hình thức";
+        if (!isFormatRevision && baiBao.TrangThai != "Chờ chỉnh sửa")
         {
             return (false, $"Bài báo đang ở trạng thái '{baiBao.TrangThai}', chỉ được phép nộp bản chỉnh sửa và giải trình BM-03 khi bài ở trạng thái 'Chờ chỉnh sửa'.");
         }
 
         if (string.IsNullOrWhiteSpace(dto.GiaiTrinh))
             return (false, "Vui lòng nhập nội dung giải trình tiếp thu ý kiến phản biện.");
-        if (dto.FileBm03 == null || dto.FileBm03.Length == 0)
+        if (dto.GiaiTrinh.Trim().Length > 400)
+            return (false, "Giải trình tóm tắt tối đa 400 ký tự. Nội dung chi tiết đặt trong BM-03.");
+        if (!isFormatRevision && (dto.FileBm03 == null || dto.FileBm03.Length == 0))
             return (false, "Vui lòng tải lên bản giải trình BM-03.");
         if (dto.FileClean == null || dto.FileClean.Length == 0)
             return (false, "Vui lòng tải lên bản thảo đã chỉnh sửa.");
@@ -511,7 +316,8 @@ public class BaiBaoService : IBaiBaoService
             .Where(p => p.MaBaiBao == maBaiBao)
             .Select(p => (int?)p.SoVong)
             .MaxAsync() ?? 1;
-        var revisionRound = currentAssignmentRound + 1;
+        var revisionRound = isFormatRevision ? 1 : Math.Max(currentAssignmentRound,
+            baiBao.ThuMucBaiBaos.Select(f => f.SoVong).DefaultIfEmpty(1).Max()) + 1;
 
         if (dto.FileClean != null && dto.FileClean.Length > 0)
         {
@@ -530,10 +336,11 @@ public class BaiBaoService : IBaiBaoService
         }
 
         var trangThaiCu = baiBao.TrangThai;
-        baiBao.TrangThai = "Chờ quyết định";
+        var nextStatus = isFormatRevision ? "Chờ sơ duyệt" : "Chờ quyết định";
+        baiBao.TrangThai = nextStatus;
         baiBao.NgayCapNhat = DateTime.Now;
 
-        var uploadDir = Path.Combine(_env.ContentRootPath, "Uploads", "revisions", $"paper_{maBaiBao}");
+        var uploadDir = Path.Combine(UploadStoragePaths.GetRoot(_env.ContentRootPath), "revisions", $"paper_{maBaiBao}");
         Directory.CreateDirectory(uploadDir);
 
         if (dto.FileClean != null && dto.FileClean.Length > 0)
@@ -548,9 +355,9 @@ public class BaiBaoService : IBaiBaoService
 
             baiBao.ThuMucBaiBaos.Add(new ThuMucBaiBao
             {
-                TenThuMuc = $"BanChinhSua_Vong{revisionRound}{ext}",
+                TenThuMuc = isFormatRevision ? $"BanSuaHinhThuc_{Guid.NewGuid():N}{ext}" : $"BanChinhSua_Vong{revisionRound}{ext}",
                 DuongDan = $"/Uploads/revisions/paper_{maBaiBao}/{fileName}",
-                LoaiThuMuc = "Bản chỉnh sửa",
+                LoaiThuMuc = isFormatRevision ? "Bản thảo gốc" : "Bản chỉnh sửa",
                 KichThuoc = dto.FileClean.Length,
                 SoVong = revisionRound,
                 NgayTaiLen = DateTime.Now
@@ -602,18 +409,21 @@ public class BaiBaoService : IBaiBaoService
         baiBao.LichSuTrangThais.Add(new LichSuTrangThaiBaiBao
         {
             TrangThaiCu = trangThaiCu,
-            TrangThaiMoi = "Chờ quyết định",
+            TrangThaiMoi = nextStatus,
             NgayChuyen = DateTime.Now,
             MaNguoiThucHien = maNguoiDung,
-            GhiChu = $"Tác giả nộp bản thảo chỉnh sửa và giải trình BM-03: {dto.GiaiTrinh.Trim()}"
+            GhiChu = $"Tác giả nộp bản sửa ({nextStatus}): {dto.GiaiTrinh.Trim()}"
         });
 
         await _context.SaveChangesAsync();
 
-        return (true, "Đã nộp bản thảo chỉnh sửa và giải trình BM-03 thành công tới Ban biên tập.");
+        await transaction.CommitAsync();
+        return (true, isFormatRevision
+            ? "Đã nộp bản sửa hình thức. Hồ sơ được chuyển về sơ duyệt."
+            : "Đã nộp bản sửa và BM-03. Ban biên tập sẽ xem xét hoặc tổ chức vòng phản biện tiếp theo.");
     }
 
-    public async Task<(bool Success, string Message, string? PhysicalPath, string? FileName, string? ContentType)> GetManuscriptForAuthorAsync(int maBaiBao, int maNguoiDung, bool isEditorOrAdmin)
+    public async Task<(bool Success, string Message, string? PhysicalPath, string? FileName, string? ContentType)> GetManuscriptForAuthorAsync(int maBaiBao, int maNguoiDung, bool isEditorOrAdmin, int? fileId = null)
     {
         var baiBao = await _context.BaiBaos
             .Include(b => b.DongTacGias)
@@ -632,6 +442,8 @@ public class BaiBaoService : IBaiBaoService
         }
 
         var fileRecord = baiBao.ThuMucBaiBaos
+            .Where(f => isEditorOrAdmin || (f.LoaiThuMuc != "File ẩn danh" && f.LoaiThuMuc != "Bản thảo ẩn danh"))
+            .Where(f => fileId.HasValue ? f.MaThuMuc == fileId.Value : f.LoaiThuMuc == "Bản thảo gốc" || f.LoaiThuMuc == "Bản chỉnh sửa")
             .OrderByDescending(f => f.SoVong)
             .ThenByDescending(f => f.NgayTaiLen)
             .FirstOrDefault();
@@ -641,11 +453,7 @@ public class BaiBaoService : IBaiBaoService
             return (false, "Hồ sơ bài báo này chưa có tệp đính kèm.", null, null, null);
         }
 
-        var cleanPath = fileRecord.DuongDan.TrimStart('/', '\\');
-        var basePath = _env.ContentRootPath;
-        var candidate1 = Path.Combine(basePath, cleanPath.Replace('/', Path.DirectorySeparatorChar));
-        var candidate2 = Path.Combine(basePath, "wwwroot", cleanPath.Replace('/', Path.DirectorySeparatorChar));
-        var physicalPath = File.Exists(candidate1) ? candidate1 : (File.Exists(candidate2) ? candidate2 : null);
+        var physicalPath = UploadStoragePaths.ResolveExistingFile(_env.ContentRootPath, fileRecord.DuongDan);
 
         if (physicalPath == null)
         {
@@ -700,12 +508,7 @@ public class BaiBaoService : IBaiBaoService
             return (false, "Tệp PDF thành phẩm của bài báo chưa được phát hành trên hệ thống.", null, null, null);
         }
 
-        var cleanPath = fileRecord.DuongDan.TrimStart('/', '\\');
-        var basePath = _env.ContentRootPath;
-        var candidate1 = Path.Combine(basePath, cleanPath.Replace('/', Path.DirectorySeparatorChar));
-        var candidate2 = Path.Combine(basePath, "wwwroot", cleanPath.Replace('/', Path.DirectorySeparatorChar));
-        var candidate3 = Path.Combine(basePath, "Uploads", Path.GetFileName(cleanPath));
-        var physicalPath = File.Exists(candidate1) ? candidate1 : (File.Exists(candidate2) ? candidate2 : (File.Exists(candidate3) ? candidate3 : null));
+        var physicalPath = UploadStoragePaths.ResolveExistingFile(_env.ContentRootPath, fileRecord.DuongDan);
 
         if (physicalPath == null)
         {
@@ -834,8 +637,8 @@ public class BaiBaoService : IBaiBaoService
             return (false, "Vòng phản biện hoặc trạng thái bài báo không hợp lệ.", null);
 
         var now = DateTime.Now;
-        var uploadSubFolder = Path.Combine("Uploads", "Submissions", now.Year.ToString(), now.Month.ToString("D2"));
-        var uploadPhysicalPath = Path.Combine(_env.ContentRootPath, uploadSubFolder);
+                var uploadSubFolder = Path.Combine("Submissions", now.Year.ToString(), now.Month.ToString("D2"));
+                var uploadPhysicalPath = Path.Combine(UploadStoragePaths.GetRoot(_env.ContentRootPath), uploadSubFolder);
         if (!Directory.Exists(uploadPhysicalPath))
         {
             Directory.CreateDirectory(uploadPhysicalPath);
@@ -852,7 +655,7 @@ public class BaiBaoService : IBaiBaoService
         }
         catch { File.Delete(filePath); throw; }
 
-        var relativeUrl = $"/{uploadSubFolder.Replace("\\", "/")}/{safeFileName}";
+                var relativeUrl = $"/Uploads/{uploadSubFolder.Replace("\\", "/")}/{safeFileName}";
         var displayTitle = $"BanThaoAnDanh_Vong{targetRound}{ext}";
 
         var thuMuc = new ThuMucBaiBao
@@ -901,8 +704,8 @@ public class BaiBaoService : IBaiBaoService
         }
 
         var now = DateTime.Now;
-        var uploadSubFolder = Path.Combine("Uploads", "Published", now.Year.ToString(), now.Month.ToString("D2"));
-        var uploadPhysicalPath = Path.Combine(_env.ContentRootPath, uploadSubFolder);
+                var uploadSubFolder = Path.Combine("Published", now.Year.ToString(), now.Month.ToString("D2"));
+                var uploadPhysicalPath = Path.Combine(UploadStoragePaths.GetRoot(_env.ContentRootPath), uploadSubFolder);
         if (!Directory.Exists(uploadPhysicalPath))
         {
             Directory.CreateDirectory(uploadPhysicalPath);
@@ -919,7 +722,7 @@ public class BaiBaoService : IBaiBaoService
         }
         catch { File.Delete(filePath); throw; }
 
-        var relativeUrl = $"/{uploadSubFolder.Replace("\\", "/")}/{safeFileName}";
+                var relativeUrl = $"/Uploads/{uploadSubFolder.Replace("\\", "/")}/{safeFileName}";
         var displayTitle = $"XuatBan_BaiBao_{maBaiBao}.pdf";
 
         var thuMuc = new ThuMucBaiBao

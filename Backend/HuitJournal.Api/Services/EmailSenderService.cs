@@ -139,7 +139,7 @@ public class EmailSenderService : IEmailSenderService
 
         foreach (var item in pendingItems)
         {
-            if (DateTime.UtcNow - item.TaoLucUtc > TimeSpan.FromMinutes(Math.Max(1, _settings.OtpExpiryMinutes)))
+            if ((item.LoaiThu == "XacNhanDangKy" || item.LoaiThu == "KhoiPhucMatKhau") && DateTime.UtcNow - item.TaoLucUtc > TimeSpan.FromMinutes(Math.Max(1, _settings.OtpExpiryMinutes)))
             {
                 item.TrangThai = "Failed";
                 item.SoLanThuLai = maxAttempts;
@@ -235,7 +235,7 @@ public class EmailSenderService : IEmailSenderService
         // 3. Khử nhạy cảm: Xóa mã OTP khỏi các thư Sent đã gửi quá 1 giờ
         var oneHourAgo = now.AddHours(-1);
         var sentNeedsMasking = await _context.EmailOutboxes
-            .Where(o => o.TrangThai == "Sent" && o.GuiLucUtc != null && o.GuiLucUtc < oneHourAgo && o.NoiDungText != null)
+            .Where(o => (o.LoaiThu == "XacNhanDangKy" || o.LoaiThu == "KhoiPhucMatKhau") && o.TrangThai == "Sent" && o.GuiLucUtc != null && o.GuiLucUtc < oneHourAgo && o.NoiDungText != null)
             .Take(50)
             .ToListAsync(cancellationToken);
 

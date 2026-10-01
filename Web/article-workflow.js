@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function load() {
     if (!Number.isInteger(id) || id < 1) throw new Error('Mã bản thảo không hợp lệ.');
     const data = await journalWorkflow.request(`article/${id}`);
-    document.getElementById('summary').textContent = `Bài #${id} · ${data.trangThai}${data.readOnly ? ' · Đồng tác giả: chỉ xem hồ sơ này.' : ''}`;
+    document.getElementById('summary').textContent = `Bài #${id} · ${data.trangThai}${data.readOnly ? ' · Chỉ xem hồ sơ này.' : ''}`;
     const records = data.records || [];
     proof = records.find(r => r.kind === 'Proof' && r.state === 'Pending');
     document.getElementById('proof').hidden = !proof;

@@ -45,6 +45,9 @@ public class EmailOutboxDispatcherService : BackgroundService
                 {
                     using (var scope = _serviceProvider.CreateScope())
                     {
+                        var workflows = scope.ServiceProvider.GetRequiredService<WorkflowMaintenanceService>();
+                        await workflows.RunAsync();
+                        await workflows.PublishScheduledAsync(scope.ServiceProvider.GetRequiredService<IssuePublicationService>());
                         var emailSender = scope.ServiceProvider.GetRequiredService<IEmailSenderService>();
 
                         // 1. Quét và gửi các email trong hàng đợi Outbox

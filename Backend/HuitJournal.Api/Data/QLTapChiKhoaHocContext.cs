@@ -20,6 +20,7 @@ public class QLTapChiKhoaHocContext : DbContext
     public virtual DbSet<ThuMucBaiBao> ThuMucBaiBaos { get; set; } = null!;
     public virtual DbSet<PhanCongPhanBien> PhanCongPhanBiens { get; set; } = null!;
     public virtual DbSet<PhieuDanhGia> PhieuDanhGias { get; set; } = null!;
+    public virtual DbSet<PhieuDanhGiaBanNhap> PhieuDanhGiaBanNhaps { get; set; } = null!;
     public virtual DbSet<PhanBienDeXuat> PhanBienDeXuats { get; set; } = null!;
     public virtual DbSet<LichSuTrangThaiBaiBao> LichSuTrangThais { get; set; } = null!;
     public virtual DbSet<DonDangKyPhanBien> DonDangKyPhanBiens { get; set; } = null!;
@@ -27,9 +28,15 @@ public class QLTapChiKhoaHocContext : DbContext
     public virtual DbSet<MaXacNhanEmail> MaXacNhanEmails { get; set; } = null!;
     public virtual DbSet<EmailOutbox> EmailOutboxes { get; set; } = null!;
 
+    public DbSet<WorkflowRecord> WorkflowRecords { get; set; } = null!;
+    public DbSet<WorkflowFile> WorkflowFiles { get; set; } = null!;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<WorkflowRecord>().HasIndex(r => new { r.Kind, r.UserId, r.State });
+        modelBuilder.Entity<WorkflowRecord>().HasIndex(r => new { r.ArticleId, r.Kind });
+        modelBuilder.Entity<WorkflowFile>().HasOne(f => f.Record).WithMany().HasForeignKey(f => f.RecordId).OnDelete(DeleteBehavior.Cascade);
 
         // Khóa chính phức hợp NguoiDung_VaiTro
         modelBuilder.Entity<NguoiDungVaiTro>(entity =>
@@ -87,6 +94,16 @@ public class QLTapChiKhoaHocContext : DbContext
         modelBuilder.Entity<PhanCongPhanBien>()
             .HasIndex(p => new { p.MaBaiBao, p.MaNguoiDung, p.SoVong })
             .IsUnique();
+
+        modelBuilder.Entity<PhieuDanhGiaBanNhap>(entity =>
+        {
+            entity.HasKey(e => e.MaPhanCong);
+            entity.Property(e => e.RowVersion).IsRowVersion();
+            entity.HasOne(e => e.PhanCongPhanBien)
+                .WithOne(p => p.PhieuDanhGiaBanNhap)
+                .HasForeignKey<PhieuDanhGiaBanNhap>(e => e.MaPhanCong)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
 
         // Báo cho EF Core biết các bảng có Database Trigger để tránh xung đột OUTPUT clause (Lỗi SQL 334)
         modelBuilder.Entity<BaiBao>(entity =>

@@ -8,12 +8,11 @@ using Microsoft.Data.SqlClient;
 using HuitJournal.Api.Configuration;
 using HuitJournal.Api.Data;
 using HuitJournal.Api.Services;
+using HuitJournal.Api.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Development credentials stay on this machine; production uses environment variables / secret store.
-if (builder.Environment.IsDevelopment())
-    builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: false);
+// Development credentials are loaded through .NET User Secrets; production uses environment variables / secret store.
 
 if (!builder.Environment.IsProduction())
 {
@@ -72,6 +71,11 @@ builder.Services.AddScoped<IEmailVerificationService, EmailVerificationService>(
 builder.Services.AddScoped<IEmailSenderService, EmailSenderService>();
 builder.Services.AddHostedService<EmailOutboxDispatcherService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<JournalWorkflowService>();
+builder.Services.AddScoped<WorkflowMaintenanceService>();
+builder.Services.AddScoped<IssuePublicationService>();
+builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(o => o.MultipartBodyLengthLimit = 125L * 1024 * 1024);
+builder.WebHost.ConfigureKestrel(o => o.Limits.MaxRequestBodySize = 125L * 1024 * 1024);
 builder.Services.AddScoped<IBaiBaoService, BaiBaoService>();
 builder.Services.AddScoped<ISoTapChiService, SoTapChiService>();
 builder.Services.AddScoped<IPhanBienService, PhanBienService>();
@@ -93,6 +97,19 @@ builder.Services.AddAuthentication(options =>
 {
     options.RequireHttpsMetadata = false;
     options.SaveToken = true;
+    options.Events = new JwtBearerEvents
+    {
+        OnTokenValidated = async ctx =>
+        {
+            var db = ctx.HttpContext.RequestServices.GetRequiredService<QLTapChiKhoaHocContext>();
+            if (!int.TryParse(ctx.Principal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var id) ||
+                !await db.NguoiDungs.AnyAsync(u => u.MaNguoiDung == id && u.TrangThai)) { ctx.Fail("Tài khoản không còn hoạt động."); return; }
+            var version = await db.WorkflowRecords.AsNoTracking().Where(r => r.UserId == id && r.Kind == "AuthVersion" && r.State == "Active")
+                .OrderByDescending(r => r.UpdatedUtc).Select(r => r.Id.ToString()).FirstOrDefaultAsync();
+            if ((ctx.Principal?.FindFirst("session_version")?.Value ?? "") != (version ?? "")) ctx.Fail("Phiên đăng nhập đã hết hiệu lực.");
+        }
+    };
+
     options.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
@@ -181,7 +198,7 @@ if (Directory.Exists(webFolder))
 // 8. Bảo vệ tài liệu bản thảo: Tuyệt đối không phục vụ static route mở cho thư mục Uploads/
 // Bản thảo khoa học bắt buộc tải qua các API endpoint có xác thực JWT (PhanBienController/BaiBaoController).
 // Chỉ mở static route cho thư mục ảnh đại diện công khai /uploads/avatars.
-var avatarsFolder = Path.Combine(app.Environment.ContentRootPath, "Uploads", "avatars");
+var avatarsFolder = Path.Combine(UploadStoragePaths.GetRoot(app.Environment.ContentRootPath), "avatars");
 if (!Directory.Exists(avatarsFolder))
 {
     Directory.CreateDirectory(avatarsFolder);

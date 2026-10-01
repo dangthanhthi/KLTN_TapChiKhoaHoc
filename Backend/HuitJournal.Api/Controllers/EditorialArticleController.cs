@@ -9,7 +9,7 @@ namespace HuitJournal.Api.Controllers;
 
 [ApiController]
 [Route("api/editorial-articles")]
-[Authorize(Roles = "Quản trị hệ thống,Ban biên tập")]
+[Authorize(Roles = "Quản trị hệ thống,Tổng biên tập,Ban biên tập")]
 public class EditorialArticleController : ControllerBase
 {
     public sealed class ExtendAssignmentRequest
@@ -90,6 +90,7 @@ public class EditorialArticleController : ControllerBase
     }
 
     [HttpPost("assignments/{id}/remove")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập")]
     public async Task<IActionResult> RemoveAssignment(int id)
     {
         var assignment = await _context.PhanCongPhanBiens.Include(p => p.BaiBao).Include(p => p.PhieuDanhGia)

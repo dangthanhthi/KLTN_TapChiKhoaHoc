@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -6,12 +6,12 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <CetCompat>false</CetCompat>
+    <UserSecretsId>72785733-3b82-4be2-9cd6-d2d674153a06</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- Machine-specific credentials and test settings must never enter a publish artifact. -->
-    <Content Update="appsettings.Local.json;appsettings.Development.json;appsettings.Testing.json"
-             CopyToPublishDirectory="Never" />
+    <!-- Machine-specific test settings must never enter a publish artifact. -->
+    <Content Update="appsettings.Development.json;appsettings.Testing.json" CopyToPublishDirectory="Never" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.14" />

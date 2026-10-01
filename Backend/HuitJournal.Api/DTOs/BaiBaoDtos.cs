@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
 namespace HuitJournal.Api.DTOs;
@@ -49,6 +49,15 @@ public class PhanBienDeXuatSubmitDto
 
 public class BaiBaoSubmitDto
 {
+    public Guid SubmissionId { get; set; }
+    public Guid? DraftId { get; set; }
+    public bool Consent { get; set; }
+    [MaxLength(40)] public string ConsentVersion { get; set; } = "HUIT-2026-01";
+    [MaxLength(100)] public string LoaiBai { get; set; } = "Bài báo khoa học (Original Research)";
+    [MaxLength(100)] public string NgonNgu { get; set; } = "Tiếng Việt (Kèm Tóm tắt Tiếng Anh)";
+    [MaxLength(255)] public string? TuKhoaTiengAnh { get; set; }
+    public IFormFile? FileBm02 { get; set; }
+    public List<IFormFile> Supplements { get; set; } = new();
     [Required(ErrorMessage = "Tiêu đề tiếng Việt là bắt buộc.")]
     [MaxLength(500)]
     public string TieuDe { get; set; } = null!;
@@ -97,6 +106,11 @@ public class BaiBaoListItemDto
     public DateTime NgayCapNhat { get; set; }
     public int SoDongTacGia { get; set; }
     public string? TapTinGoc { get; set; }
+    public string? NhanXetPhanBien { get; set; }
+    public bool CoTheNopLai { get; set; }
+    public bool LaDongTacGia { get; set; }
+    public DateTime? NgayPhatHanh { get; set; }
+    public int SoVong { get; set; }
 }
 
 public class BaiBaoDetailDto
@@ -122,6 +136,8 @@ public class BaiBaoDetailDto
 
     public int? MaSoTapChi { get; set; }
     public string? TenSoTapChi { get; set; }
+    public bool LaDongTacGia { get; set; }
+    public DateTime? NgayPhatHanh { get; set; }
     public int? TrangBatDau { get; set; }
     public int? TrangKetThuc { get; set; }
 
@@ -197,6 +213,7 @@ public class BaiBaoPublicDto
     public int? TrangBatDau { get; set; }
     public int? TrangKetThuc { get; set; }
     public string? FilePdfUrl { get; set; }
+    public string? AnhBiaUrl { get; set; }
 
     public List<DongTacGiaDetailDto> TacGias { get; set; } = new();
 }
@@ -204,9 +221,9 @@ public class BaiBaoPublicDto
 public class BaiBaoResubmitDto
 {
     [Required(ErrorMessage = "Vui lòng nhập nội dung giải trình tiếp thu ý kiến phản biện.")]
+    [MaxLength(400, ErrorMessage = "Phần giải trình tóm tắt tối đa 400 ký tự. Nội dung đầy đủ đặt trong BM-03.")]
     public string GiaiTrinh { get; set; } = null!;
 
-    [Required(ErrorMessage = "Vui lòng tải lên bản giải trình BM-03.")]
     public IFormFile? FileBm03 { get; set; }
     [Required(ErrorMessage = "Vui lòng tải lên bản thảo đã chỉnh sửa.")]
     public IFormFile? FileClean { get; set; }

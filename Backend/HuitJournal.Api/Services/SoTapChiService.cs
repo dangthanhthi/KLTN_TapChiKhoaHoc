@@ -266,6 +266,11 @@ public class SoTapChiService : ISoTapChiService
                 TrangBatDau = b.TrangBatDau,
                 TrangKetThuc = b.TrangKetThuc,
                 FilePdfUrl = $"/api/baibao/public/{b.MaBaiBao}/pdf",
+                AnhBiaUrl = b.TenSoTapChi != null
+                    ? (b.TenSoTapChi.Contains("Yersin")
+                        ? $"assets/images/cover_yersin_no{b.So}.svg"
+                        : $"assets/images/cover_huit_vol{b.Tap}_no{b.So}e.jpg")
+                    : null,
                 TacGias = authors
             };
         }).ToList();

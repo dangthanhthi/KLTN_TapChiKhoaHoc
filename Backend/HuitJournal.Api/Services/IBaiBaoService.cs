@@ -9,7 +9,7 @@ public interface IBaiBaoService
     Task<BaiBaoDetailDto?> GetSubmissionDetailAsync(int maBaiBao, int maNguoiDung, bool isEditorOrAdmin);
     Task<BaiBaoPublicDto?> GetPublicArticleAsync(int maBaiBao);
     Task<(bool Success, string Message)> ResubmitPaperAsync(int maBaiBao, int maNguoiDung, BaiBaoResubmitDto dto);
-    Task<(bool Success, string Message, string? PhysicalPath, string? FileName, string? ContentType)> GetManuscriptForAuthorAsync(int maBaiBao, int maNguoiDung, bool isEditorOrAdmin);
+    Task<(bool Success, string Message, string? PhysicalPath, string? FileName, string? ContentType)> GetManuscriptForAuthorAsync(int maBaiBao, int maNguoiDung, bool isEditorOrAdmin, int? fileId = null);
     Task<(bool Success, string Message, string? PhysicalPath, string? FileName, string? ContentType)> GetPublicArticlePdfAsync(int maBaiBao);
     Task<(bool Success, string Message, string? DuongDan)> UploadAnonymousManuscriptAsync(int maBaiBao, IFormFile file, int? soVong, int maNguoiThucHien);
     Task<(bool Success, string Message, string? DuongDan)> UploadPublishedPdfAsync(int maBaiBao, IFormFile file, int maNguoiThucHien);

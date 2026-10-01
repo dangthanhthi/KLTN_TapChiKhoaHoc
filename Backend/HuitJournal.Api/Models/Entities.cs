@@ -296,6 +296,24 @@ public class PhanCongPhanBien
     public virtual NguoiDung ChuyenGia { get; set; } = null!;
 
     public virtual PhieuDanhGia? PhieuDanhGia { get; set; }
+    public virtual PhieuDanhGiaBanNhap? PhieuDanhGiaBanNhap { get; set; }
+}
+
+[Table("PhieuDanhGiaBanNhap")]
+public class PhieuDanhGiaBanNhap
+{
+    [Key, ForeignKey(nameof(PhanCongPhanBien))]
+    public int MaPhanCong { get; set; }
+    [Column(TypeName = "decimal(3,1)")] public decimal? DiemTinhMoi { get; set; }
+    [Column(TypeName = "decimal(3,1)")] public decimal? DiemPhuongPhap { get; set; }
+    [Column(TypeName = "decimal(3,1)")] public decimal? DiemKetQua { get; set; }
+    [Column(TypeName = "decimal(3,1)")] public decimal? DiemTrinhBay { get; set; }
+    [Column(TypeName = "nvarchar(max)")] public string? NhanXetChoTacGia { get; set; }
+    [Column(TypeName = "nvarchar(max)")] public string? NhanXetBaoMat { get; set; }
+    [MaxLength(255)] public string? KienNghi { get; set; }
+    public DateTimeOffset NgayCapNhatUtc { get; set; }
+    [Timestamp] public byte[] RowVersion { get; set; } = null!;
+    public virtual PhanCongPhanBien PhanCongPhanBien { get; set; } = null!;
 }
 
 [Table("PhieuDanhGia")]

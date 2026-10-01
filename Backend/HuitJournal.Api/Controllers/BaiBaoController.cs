@@ -23,6 +23,8 @@ public class BaiBaoController : ControllerBase
     /// Nộp bài báo trực tuyến 5 bước (Bao gồm upload tệp Word/PDF và khai báo nhóm đồng tác giả)
     /// </summary>
     [HttpPost("submit")]
+    [RequestSizeLimit(125*1024*1024)]
+    [RequestFormLimits(MultipartBodyLengthLimit = 125*1024*1024)]
     [Authorize]
     [Consumes("multipart/form-data")]
     public async Task<IActionResult> SubmitPaper([FromForm] BaiBaoSubmitDto dto)
@@ -78,7 +80,7 @@ public class BaiBaoController : ControllerBase
             return Unauthorized(new { message = "Phiên đăng nhập không hợp lệ." });
         }
 
-        var isEditorOrAdmin = User.IsInRole("Quản trị hệ thống") || User.IsInRole("Ban biên tập");
+        var isEditorOrAdmin = User.IsInRole("Quản trị hệ thống") || User.IsInRole("Tổng biên tập") || User.IsInRole("Ban biên tập");
         var detail = await _baiBaoService.GetSubmissionDetailAsync(id, userId, isEditorOrAdmin);
 
         if (detail == null)
@@ -144,7 +146,7 @@ public class BaiBaoController : ControllerBase
     /// </summary>
     [HttpGet("{id}/manuscript")]
     [Authorize]
-    public async Task<IActionResult> DownloadManuscript(int id)
+    public async Task<IActionResult> DownloadManuscript(int id, [FromQuery] int? fileId = null)
     {
         var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
@@ -152,9 +154,9 @@ public class BaiBaoController : ControllerBase
             return Unauthorized(new { message = "Phiên đăng nhập không hợp lệ hoặc đã hết hạn." });
         }
 
-        var isEditorOrAdmin = User.IsInRole("Quản trị hệ thống") || User.IsInRole("Ban biên tập");
+        var isEditorOrAdmin = User.IsInRole("Quản trị hệ thống") || User.IsInRole("Tổng biên tập") || User.IsInRole("Ban biên tập");
         var (success, message, physicalPath, fileName, contentType) =
-            await _baiBaoService.GetManuscriptForAuthorAsync(id, userId, isEditorOrAdmin);
+            await _baiBaoService.GetManuscriptForAuthorAsync(id, userId, isEditorOrAdmin, fileId);
 
         if (!success || physicalPath == null || fileName == null || contentType == null)
         {
@@ -187,7 +189,7 @@ public class BaiBaoController : ControllerBase
     /// Ban biên tập tải lên bản thảo ẩn danh theo vòng phản biện
     /// </summary>
     [HttpPost("{id}/upload-anonymous-manuscript")]
-    [Authorize(Roles = "Quản trị hệ thống,Ban biên tập")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập,Ban biên tập")]
     public async Task<IActionResult> UploadAnonymousManuscript(int id, IFormFile file, [FromQuery] int? soVong = null)
     {
         var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -210,7 +212,7 @@ public class BaiBaoController : ControllerBase
     /// Ban biên tập tải lên tệp PDF xuất bản thành phẩm
     /// </summary>
     [HttpPost("{id}/upload-published-pdf")]
-    [Authorize(Roles = "Quản trị hệ thống,Ban biên tập")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập,Ban biên tập")]
     public async Task<IActionResult> UploadPublishedPdf(int id, IFormFile file)
     {
         var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -233,7 +235,7 @@ public class BaiBaoController : ControllerBase
     /// Ban biên tập xếp bài báo vào số tạp chí
     /// </summary>
     [HttpPost("{id}/assign-issue")]
-    [Authorize(Roles = "Quản trị hệ thống,Ban biên tập")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập,Ban biên tập")]
     public async Task<IActionResult> AssignToIssue(int id, [FromBody] AssignIssueDto dto)
     {
         var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);

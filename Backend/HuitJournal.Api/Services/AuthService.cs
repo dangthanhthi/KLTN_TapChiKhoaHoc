@@ -2,7 +2,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -12,6 +11,7 @@ using HuitJournal.Api.Configuration;
 using HuitJournal.Api.Data;
 using HuitJournal.Api.DTOs;
 using HuitJournal.Api.Models;
+using HuitJournal.Api.Infrastructure;
 
 namespace HuitJournal.Api.Services;
 
@@ -92,7 +92,7 @@ public class AuthService : IAuthService
         }
 
         var profileDto = MapToProfileDto(user);
-        var token = GenerateJwtToken(user, profileDto.VaiTros);
+        var token = await GenerateJwtToken(user, profileDto.VaiTros);
 
         return new AuthResponse
         {
@@ -578,6 +578,7 @@ public class AuthService : IAuthService
 
         // 3. Thực thi Transaction kích hoạt tài khoản chính thức NguoiDung
         int newUserId;
+        int soBaiDaLienKet = 0;
         try
         {
             await using (var transaction = await _context.Database.BeginTransactionAsync())
@@ -653,33 +654,9 @@ public class AuthService : IAuthService
                 // Vai trò Phản biện viên: chỉ do Tổng biên tập phân công qua WinForms
 
                 await _context.SaveChangesAsync();
+                soBaiDaLienKet = await CoauthorAccountLinker.LinkAsync(_context, user.MaNguoiDung);
                 await transaction.CommitAsync();
                 newUserId = user.MaNguoiDung;
-            }
-
-            // 4. Đồng bộ các bài báo đồng tác giả trùng khớp email (chỉ thực hiện SAU KHI transaction commit & dispose hoàn tất)
-            int soBaiDaLienKet = 0;
-            try
-            {
-                var pMaNguoiDung = new SqlParameter("@MaNguoiDung", newUserId);
-                var pSoBaiDaLienKet = new SqlParameter("@SoBaiDaLienKet", System.Data.SqlDbType.Int)
-                {
-                    Direction = System.Data.ParameterDirection.Output
-                };
-
-                await _context.Database.ExecuteSqlRawAsync(
-                    "EXEC sp_DongBoDongTacGia_TheoEmail @MaNguoiDung, @SoBaiDaLienKet OUTPUT",
-                    pMaNguoiDung, pSoBaiDaLienKet);
-
-                if (pSoBaiDaLienKet.Value != DBNull.Value && pSoBaiDaLienKet.Value != null)
-                {
-                    soBaiDaLienKet = (int)pSoBaiDaLienKet.Value;
-                }
-            }
-            catch (Exception syncEx)
-            {
-                _logger.LogWarning(syncEx, "sp_DongBoDongTacGia_TheoEmail có cảnh báo cho người dùng {UserId}: {Msg}",
-                    newUserId, syncEx.Message);
             }
 
             // Tải lại đối tượng người dùng hoàn chỉnh kèm các quan hệ
@@ -690,7 +667,7 @@ public class AuthService : IAuthService
                 .FirstAsync(u => u.MaNguoiDung == newUserId);
 
             var profileDto = MapToProfileDto(createdUser);
-            var token = GenerateJwtToken(createdUser, profileDto.VaiTros);
+            var token = await GenerateJwtToken(createdUser, profileDto.VaiTros);
 
             return new AuthResponse
             {
@@ -796,7 +773,9 @@ public class AuthService : IAuthService
             .Include(u => u.NguoiDungChuyenMons).ThenInclude(nc => nc.ChuyenNganh)
             .FirstOrDefaultAsync(u => u.MaNguoiDung == maNguoiDung);
 
-        return user == null ? null : MapToProfileDto(user);
+        if (user == null) return null;
+        await CoauthorAccountLinker.LinkAsync(_context, maNguoiDung);
+        return MapToProfileDto(user);
     }
 
     public async Task<UserProfileDto?> UpdateProfileAsync(int maNguoiDung, UpdateProfileRequest request)
@@ -910,7 +889,7 @@ public class AuthService : IAuthService
 
         // Tạo thư mục Uploads/avatars
         var currentDir = Directory.GetCurrentDirectory();
-        var avatarsFolder = Path.Combine(currentDir, "Uploads", "avatars");
+        var avatarsFolder = Path.Combine(UploadStoragePaths.GetRoot(currentDir), "avatars");
         if (!Directory.Exists(avatarsFolder))
         {
             Directory.CreateDirectory(avatarsFolder);
@@ -968,7 +947,7 @@ public class AuthService : IAuthService
         return MapToProfileDto(user);
     }
 
-    private string GenerateJwtToken(NguoiDung user, List<string> roles)
+    private async Task<string> GenerateJwtToken(NguoiDung user, List<string> roles)
     {
         var jwtKey = _configuration["Jwt:Key"];
         if (string.IsNullOrWhiteSpace(jwtKey))
@@ -984,6 +963,9 @@ public class AuthService : IAuthService
             new(ClaimTypes.Email, user.Email),
             new(ClaimTypes.GivenName, user.HoTen)
         };
+
+        var version = await _context.WorkflowRecords.AsNoTracking().Where(r => r.UserId == user.MaNguoiDung && r.Kind == "AuthVersion" && r.State == "Active").OrderByDescending(r => r.UpdatedUtc).Select(r => r.Id.ToString()).FirstOrDefaultAsync();
+        claims.Add(new Claim("session_version", version ?? ""));
 
         foreach (var role in roles)
         {

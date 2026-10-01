@@ -5,6 +5,7 @@ using System.Security.Claims;
 using HuitJournal.Api.Data;
 using HuitJournal.Api.Models;
 using HuitJournal.Api.Services;
+using HuitJournal.Api.Infrastructure;
 
 namespace HuitJournal.Api.Controllers;
 
@@ -25,12 +26,14 @@ public class SoTapChiController : ControllerBase
     private readonly ISoTapChiService _soTapChiService;
     private readonly QLTapChiKhoaHocContext _context;
     private readonly IWebHostEnvironment _env;
+    private readonly string _publicWebBaseUrl;
 
-    public SoTapChiController(ISoTapChiService soTapChiService, QLTapChiKhoaHocContext context, IWebHostEnvironment env)
+    public SoTapChiController(ISoTapChiService soTapChiService, QLTapChiKhoaHocContext context, IWebHostEnvironment env, IConfiguration? configuration = null)
     {
         _soTapChiService = soTapChiService;
         _context = context;
         _env = env;
+        _publicWebBaseUrl = configuration?["EmailVerification:PublicWebBaseUrl"] ?? "https://kltn-tap-chi-khoa-hoc.vercel.app";
     }
 
     /// <summary>
@@ -61,7 +64,7 @@ public class SoTapChiController : ControllerBase
     }
 
     [HttpPost("draft/save")]
-    [Authorize(Roles = "Quản trị hệ thống,Ban biên tập")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập,Ban biên tập")]
     public async Task<IActionResult> SaveDraft([FromBody] SaveDraftIssueRequest dto)
     {
         if (string.IsNullOrWhiteSpace(dto.TenSo) || dto.TenSo.Length > 255 ||
@@ -89,7 +92,7 @@ public class SoTapChiController : ControllerBase
     }
 
     [HttpPost("{id}/draft/delete")]
-    [Authorize(Roles = "Quản trị hệ thống,Ban biên tập")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập,Ban biên tập")]
     public async Task<IActionResult> DeleteDraft(int id)
     {
         var issue = await _context.SoTapChis.FindAsync(id);
@@ -104,66 +107,15 @@ public class SoTapChiController : ControllerBase
     }
 
     [HttpPost("{id}/publish")]
-    [Authorize(Roles = "Quản trị hệ thống,Ban biên tập")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập")]
     public async Task<IActionResult> PublishIssue(int id)
     {
         if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var editorId))
             return Unauthorized(new { message = "Phiên đăng nhập không hợp lệ." });
 
-        await using var transaction = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable);
-        var issue = await _context.SoTapChis.FirstOrDefaultAsync(s => s.MaSoTapChi == id);
-        if (issue == null) return NotFound(new { message = "Không tìm thấy số tạp chí." });
-        if (issue.TrangThai == "Đã xuất bản" || issue.TrangThai == "Đã phát hành")
-            return Ok(new { success = true, message = "Số tạp chí đã được phát hành trước đó." });
-
-        var articles = await _context.BaiBaos.Include(b => b.ThuMucBaiBaos)
-            .Where(b => b.MaSoTapChi == id).ToListAsync();
-        if (articles.Count == 0)
-            return BadRequest(new { message = "Không thể phát hành số tạp chí chưa có bài báo." });
-
-        foreach (var article in articles)
-        {
-            if (article.TrangThai != "Sẵn sàng xuất bản")
-                return BadRequest(new { message = $"Bài #{article.MaBaiBao} chưa được duyệt ở trạng thái Sẵn sàng xuất bản." });
-            if (!article.TrangBatDau.HasValue || !article.TrangKetThuc.HasValue || article.TrangBatDau < 1 || article.TrangKetThuc < article.TrangBatDau)
-                return BadRequest(new { message = $"Bài #{article.MaBaiBao} chưa có khoảng trang hợp lệ." });
-            if (!article.ThuMucBaiBaos.Any(f => HasPhysicalPdf(f)))
-                return BadRequest(new { message = $"Bài #{article.MaBaiBao} chưa có PDF thành phẩm thực tế trên máy chủ." });
-        }
-
-        var now = DateTime.Now;
-        issue.TrangThai = "Đã xuất bản";
-        issue.NgayPhatHanh ??= now;
-        foreach (var article in articles)
-        {
-            var oldStatus = article.TrangThai;
-            article.TrangThai = "Đã xuất bản";
-            article.NgayCapNhat = now;
-            _context.LichSuTrangThais.Add(new LichSuTrangThaiBaiBao
-            {
-                MaBaiBao = article.MaBaiBao,
-                TrangThaiCu = oldStatus,
-                TrangThaiMoi = "Đã xuất bản",
-                NgayChuyen = now,
-                MaNguoiThucHien = editorId,
-                GhiChu = $"Phát hành số tạp chí {issue.TenSo}."
-            });
-        }
-        await _context.SaveChangesAsync();
-        await transaction.CommitAsync();
-        return Ok(new { success = true, message = $"Đã phát hành {issue.TenSo} với {articles.Count} bài báo." });
+        var result = await new IssuePublicationService(_context, _env,
+            new ConfigurationBuilder().AddInMemoryCollection(new Dictionary<string, string?> { ["EmailVerification:PublicWebBaseUrl"] = _publicWebBaseUrl }).Build()).Publish(id, editorId);
+        return StatusCode(result.Status, result.Result);
     }
 
-    private bool HasPhysicalPdf(ThuMucBaiBao file)
-    {
-        if ((file.LoaiThuMuc != "PDF thành phẩm" && file.LoaiThuMuc != "PDF Xuất bản") ||
-            !file.TenThuMuc.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase)) return false;
-        var relative = file.DuongDan.TrimStart('/', '\\').Replace('/', Path.DirectorySeparatorChar);
-        if (Path.IsPathRooted(relative) || relative.Split(Path.DirectorySeparatorChar).Any(part => part == "..")) return false;
-        var root = Path.GetFullPath(_env.ContentRootPath);
-        return new[] { Path.Combine(root, relative), Path.Combine(root, "wwwroot", relative) }
-            .Select(Path.GetFullPath)
-            .Any(path => path.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase) &&
-                System.IO.File.Exists(path));
-    }
 }

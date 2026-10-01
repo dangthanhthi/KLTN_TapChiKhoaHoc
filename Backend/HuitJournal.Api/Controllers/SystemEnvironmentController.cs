@@ -8,7 +8,7 @@ namespace HuitJournal.Api.Controllers;
 
 [ApiController]
 [Route("api/system")]
-[Authorize(Roles = "Quản trị hệ thống,Ban biên tập")]
+[Authorize(Roles = "Quản trị hệ thống")]
 public class SystemEnvironmentController : ControllerBase
 {
     private readonly QLTapChiKhoaHocContext _context;

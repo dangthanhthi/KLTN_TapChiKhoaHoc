@@ -52,7 +52,7 @@ const check = (condition,name) => { assert.ok(condition,name); passed++; console
   await page.locator('#repeat').fill('NewTest#123'); await page.locator('#reset-confirm button:not([type])').click(); await page.waitForFunction(()=>document.querySelector('#reset-confirm').hidden);
   check(await page.evaluate(()=>!localStorage.getItem('journal_token')),'Reset clears old login session on success');
   await page.evaluate(()=>localStorage.setItem('journal_token','test-token'));
-  await page.goto(base+'/article-workflow.html?id=7'); await page.waitForFunction(()=>document.querySelector('#summary').textContent.includes('Đồng tác giả'));
+  await page.goto(base+'/article-workflow.html?id=7'); await page.waitForFunction(()=>document.querySelector('#summary').textContent.includes('Chỉ xem hồ sơ này'));
   check(await page.locator('#proof-form').isHidden() && await page.locator('#withdrawal').isHidden(),'Coauthor has read-only proof and withdrawal access');
   check(await page.evaluate(()=>!window.injected),'Workflow notes render as text and cannot inject HTML');
   readonly=false; await page.reload(); await page.locator('#proof-form').waitFor(); await page.locator('#proof-note').fill('Cần sửa lỗi căn lề.'); await page.locator('button[value="correct"]').click(); await page.waitForFunction(()=>document.querySelector('#proof').hidden);

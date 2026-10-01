@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using HuitJournal.Api.Data;
 using HuitJournal.Api.Models;
+using HuitJournal.Api.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -24,9 +25,14 @@ public sealed class EditorialCategoryRequest
     public string? MoTa { get; set; }
 }
 
+public sealed class ReviewerRoleRequest
+{
+    public int MaNguoiDung { get; set; }
+}
+
 [ApiController]
 [Route("api/desktop-editorial")]
-[Authorize(Roles = "Quản trị hệ thống,Ban biên tập")]
+[Authorize(Roles = "Quản trị hệ thống,Tổng biên tập,Ban biên tập")]
 public sealed class DesktopEditorialDataController : ControllerBase
 {
     private readonly QLTapChiKhoaHocContext _db;
@@ -35,6 +41,7 @@ public sealed class DesktopEditorialDataController : ControllerBase
     { _db = db; _env = env; }
 
     [HttpGet("articles")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập,Ban biên tập")]
     public async Task<IActionResult> Articles([FromQuery] string? keyword, [FromQuery] string? trangThai,
         [FromQuery] int? maChuyenNganh, [FromQuery] bool chuaGanSo = false)
     {
@@ -63,6 +70,7 @@ public sealed class DesktopEditorialDataController : ControllerBase
     }
 
     [HttpGet("articles/{id:int}")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập,Ban biên tập")]
     public async Task<IActionResult> Article(int id)
     {
         var article = await _db.BaiBaos.AsNoTracking().Where(b => b.MaBaiBao == id && b.TrangThai != "Đã rút")
@@ -79,29 +87,28 @@ public sealed class DesktopEditorialDataController : ControllerBase
     }
 
     [HttpGet("articles/{id:int}/coauthors")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập,Ban biên tập")]
     public async Task<IActionResult> Coauthors(int id) => Ok(await _db.DongTacGias.AsNoTracking()
         .Where(c => c.MaBaiBao == id).OrderBy(c => c.ThuTu)
         .Select(c => new { c.MaDongTacGia, c.HoTen, c.Email, c.DonVi, c.ThuTu, c.MaBaiBao }).ToListAsync());
 
     [HttpGet("articles/{id:int}/files")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập,Ban biên tập")]
     public async Task<IActionResult> Files(int id) => Ok(await _db.ThuMucBaiBaos.AsNoTracking()
         .Where(f => f.MaBaiBao == id).OrderByDescending(f => f.SoVong).ThenByDescending(f => f.NgayTaiLen)
         .Select(f => new { MaTapTin = f.MaThuMuc, TenTapTin = f.TenThuMuc, f.DuongDan,
             LoaiTapTin = f.LoaiThuMuc, f.KichThuoc, f.SoVong, f.NgayTaiLen, f.MaBaiBao }).ToListAsync());
 
     [HttpGet("files/{id:int}/download")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập,Ban biên tập")]
     public async Task<IActionResult> DownloadFile(int id)
     {
         var record = await _db.ThuMucBaiBaos.AsNoTracking().FirstOrDefaultAsync(f => f.MaThuMuc == id);
         if (record == null) return NotFound(new { message = "Không tìm thấy tệp." });
-        var relative = record.DuongDan.TrimStart('/', '\\').Replace('/', Path.DirectorySeparatorChar);
-        if (Path.IsPathRooted(relative) || relative.Split(Path.DirectorySeparatorChar).Any(part => part == ".."))
+        var normalized = record.DuongDan.TrimStart('/', '\\').Replace('/', Path.DirectorySeparatorChar);
+        if (Path.IsPathRooted(normalized) || normalized.Split(Path.DirectorySeparatorChar).Any(part => part == ".."))
             return BadRequest(new { message = "Đường dẫn tệp không hợp lệ." });
-        var basePath = Path.GetFullPath(_env.ContentRootPath);
-        var candidates = new[] { Path.Combine(basePath, relative), Path.Combine(basePath, "wwwroot", relative) };
-        var path = candidates.Select(Path.GetFullPath).FirstOrDefault(candidate =>
-            candidate.StartsWith(basePath + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase) &&
-            System.IO.File.Exists(candidate));
+        var path = UploadStoragePaths.ResolveExistingFile(_env.ContentRootPath, record.DuongDan);
         if (path == null) return NotFound(new { message = "Tệp không tồn tại trên máy chủ." });
         var ext = Path.GetExtension(path).ToLowerInvariant();
         var contentType = ext switch { ".pdf" => "application/pdf",
@@ -111,6 +118,7 @@ public sealed class DesktopEditorialDataController : ControllerBase
     }
 
     [HttpGet("articles/{id:int}/history")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập,Ban biên tập")]
     public async Task<IActionResult> History(int id) => Ok(await _db.LichSuTrangThais.AsNoTracking()
         .Where(h => h.MaBaiBao == id).OrderByDescending(h => h.NgayChuyen).ThenByDescending(h => h.MaLichSu)
         .Select(h => new { h.MaLichSu, h.MaBaiBao, h.TrangThaiCu, h.TrangThaiMoi, h.NgayChuyen,
@@ -118,6 +126,7 @@ public sealed class DesktopEditorialDataController : ControllerBase
             h.GhiChu }).ToListAsync());
 
     [HttpPost("articles")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập,Ban biên tập")]
     public async Task<IActionResult> CreateArticle([FromBody] EditorialArticleRequest dto)
     {
         var invalid = await ValidateArticle(dto, true);
@@ -139,6 +148,7 @@ public sealed class DesktopEditorialDataController : ControllerBase
     }
 
     [HttpPost("articles/{id:int}/edit")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập,Ban biên tập")]
     public async Task<IActionResult> EditArticle(int id, [FromBody] EditorialArticleRequest dto)
     {
         var article = await _db.BaiBaos.FindAsync(id);
@@ -157,6 +167,7 @@ public sealed class DesktopEditorialDataController : ControllerBase
     }
 
     [HttpPost("articles/{id:int}/withdraw")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập,Ban biên tập")]
     public async Task<IActionResult> WithdrawArticle(int id)
     {
         if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var actorId)) return Unauthorized();
@@ -193,6 +204,7 @@ public sealed class DesktopEditorialDataController : ControllerBase
             c.MoTa, SoBaiBao = c.BaiBaos.Count }).ToListAsync());
 
     [HttpPost("categories/save")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập,Ban biên tập")]
     public async Task<IActionResult> SaveCategory([FromBody] EditorialCategoryRequest dto)
     {
         if (string.IsNullOrWhiteSpace(dto.TenChuyenNganh) || dto.TenChuyenNganh.Length > 255 || dto.MoTa?.Length > 500)
@@ -208,6 +220,7 @@ public sealed class DesktopEditorialDataController : ControllerBase
     }
 
     [HttpPost("categories/{id:int}/delete")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập,Ban biên tập")]
     public async Task<IActionResult> DeleteCategory(int id)
     {
         var category = await _db.ChuyenNganhs.FindAsync(id);
@@ -254,11 +267,51 @@ public sealed class DesktopEditorialDataController : ControllerBase
         .ToDictionaryAsync(x => x.TenChuyenNganh, x => x.Count));
 
     [HttpGet("reviewers")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập,Ban biên tập")]
     public async Task<IActionResult> Reviewers() => Ok(await _db.NguoiDungs.AsNoTracking()
         .Where(u => u.TrangThai && u.NguoiDungVaiTros.Any(r => r.VaiTro.TenVaiTro == "Chuyên gia phản biện"))
         .OrderBy(u => u.HoTen).Select(u => new { u.MaNguoiDung, u.HoTen, u.Email, u.HocVi, u.DonVi }).ToListAsync());
 
+    [HttpGet("reviewer-candidates")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập")]
+    public async Task<IActionResult> ReviewerCandidates([FromQuery] string? keyword)
+    {
+        var query = _db.NguoiDungs.AsNoTracking().Where(u => u.TrangThai &&
+            !u.NguoiDungVaiTros.Any(r => r.VaiTro.TenVaiTro == "Chuyên gia phản biện") &&
+            (u.HocVi == "Thạc sĩ" || u.HocVi == "Tiến sĩ" || u.HocVi == "TSKH" ||
+             u.HocHam == "Phó giáo sư" || u.HocHam == "Giáo sư"));
+        if (!string.IsNullOrWhiteSpace(keyword))
+        {
+            var term = keyword.Trim();
+            query = query.Where(u => u.HoTen.Contains(term) || u.Email.Contains(term));
+        }
+        return Ok(await query.OrderBy(u => u.HoTen).Take(100)
+            .Select(u => new { u.MaNguoiDung, u.HoTen, u.Email, u.HocVi, u.HocHam, u.DonVi })
+            .ToListAsync());
+    }
+
+    [HttpPost("reviewers/grant")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập")]
+    public async Task<IActionResult> GrantReviewer([FromBody] ReviewerRoleRequest dto)
+    {
+        if (dto.MaNguoiDung <= 0) return BadRequest(new { message = "Mã người dùng không hợp lệ." });
+        var user = await _db.NguoiDungs.Include(u => u.NguoiDungVaiTros)
+            .FirstOrDefaultAsync(u => u.MaNguoiDung == dto.MaNguoiDung && u.TrangThai);
+        if (user == null) return NotFound(new { message = "Không tìm thấy tài khoản đang hoạt động." });
+        if (user.HocVi is not ("Thạc sĩ" or "Tiến sĩ" or "TSKH") &&
+            user.HocHam is not ("Phó giáo sư" or "Giáo sư"))
+            return BadRequest(new { message = "Ứng viên cần có học vị tối thiểu Thạc sĩ hoặc học hàm tương đương." });
+        var role = await _db.VaiTros.FirstOrDefaultAsync(r => r.TenVaiTro == "Chuyên gia phản biện");
+        if (role == null) return StatusCode(503, new { message = "CSDL chưa có vai trò Chuyên gia phản biện." });
+        if (user.NguoiDungVaiTros.Any(r => r.MaVaiTro == role.MaVaiTro))
+            return Ok(new { success = true, message = "Tài khoản đã có quyền phản biện." });
+        _db.NguoiDungVaiTros.Add(new NguoiDungVaiTro { MaNguoiDung = user.MaNguoiDung, MaVaiTro = role.MaVaiTro });
+        await _db.SaveChangesAsync();
+        return Ok(new { success = true, message = $"Đã cấp quyền phản biện cho {user.HoTen}." });
+    }
+
     [HttpGet("assignments")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập,Ban biên tập")]
     public async Task<IActionResult> Assignments([FromQuery] int? maBaiBao, [FromQuery] string? trangThai)
     {
         var query = _db.PhanCongPhanBiens.AsNoTracking().AsQueryable();
@@ -276,6 +329,7 @@ public sealed class DesktopEditorialDataController : ControllerBase
     }
 
     [HttpGet("assignments/{id:int}/evaluation")]
+    [Authorize(Roles = "Quản trị hệ thống,Tổng biên tập,Ban biên tập")]
     public async Task<IActionResult> Evaluation(int id)
     {
         var evaluation = await _db.PhieuDanhGias.AsNoTracking().Where(p => p.MaPhanCong == id)
