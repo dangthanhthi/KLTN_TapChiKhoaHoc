@@ -205,7 +205,16 @@ try
         "Saving again updates the same draft row");
     var wrongOwnerReview = await service.SubmitEvaluationAsync(reviewers[1], firstReview);
     Check(!wrongOwnerReview.Success, "Unassigned reviewer cannot submit BM-04");
-    var savedFirstReview = await service.SubmitEvaluationAsync(reviewers[0], firstReview);
+    async Task<(bool Success, string Message)> ConcurrentEvaluation()
+    {
+        await using var reviewDb = new QLTapChiKhoaHocContext(options);
+        return await new PhanBienService(reviewDb, new TestHostEnvironment(qaRoot)).SubmitEvaluationAsync(reviewers[0], firstReview);
+    }
+    var simultaneousReviews = await Task.WhenAll(ConcurrentEvaluation(), ConcurrentEvaluation());
+    Check(simultaneousReviews.Count(r => r.Success) == 1 && await db.PhieuDanhGias.CountAsync(p => p.MaPhanCong == first) == 1,
+        "Concurrent BM-04 submissions keep exactly one result and one completed assignment");
+    db.ChangeTracker.Clear();
+    var savedFirstReview = simultaneousReviews.Single(r => r.Success);
     Check(savedFirstReview.Success && await db.PhieuDanhGias.AsNoTracking()
         .AnyAsync(p => p.MaPhanCong == first && p.DiemTongKet == 8) &&
         !await db.PhieuDanhGiaBanNhaps.AsNoTracking().AnyAsync(p => p.MaPhanCong == first),
@@ -580,6 +589,12 @@ try
     Check(releasedList.NgayPhatHanh == fixtureIssue.NgayPhatHanh && releasedDetail?.NgayPhatHanh == fixtureIssue.NgayPhatHanh &&
         releasedDetail.LichSuTrangThais.Any(h => h.GhiChu?.Contains("01/10/2026") == true),
         "Coauthor dashboard and timeline show actual issue release date");
+    var tiedPdf = new ThuMucBaiBao { MaBaiBao = articleId.Value, TenThuMuc = "LatestSameTimestamp.pdf", DuongDan = currentPdf.DuongDan,
+        LoaiThuMuc = "PDF thành phẩm", SoVong = 1, NgayTaiLen = currentPdf.NgayTaiLen, KichThuoc = 1 };
+    db.ThuMucBaiBaos.Add(tiedPdf); await db.SaveChangesAsync(); db.ChangeTracker.Clear();
+    var publicPdf = await new BaiBaoService(db, new TestHostEnvironment(qaRoot)).GetPublicArticlePdfAsync(articleId.Value);
+    Check(publicPdf.Success && publicPdf.FileName == tiedPdf.TenThuMuc,
+        "Public PDF uses the newest file id when upload timestamps are equal");
 }
 finally
 {

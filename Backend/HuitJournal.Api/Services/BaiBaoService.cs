@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using HuitJournal.Api.Data;
 using HuitJournal.Api.DTOs;
@@ -272,7 +272,7 @@ public partial class BaiBaoService : IBaiBaoService
     public async Task<(bool Success, string Message)> ResubmitPaperAsync(int maBaiBao, int maNguoiDung, BaiBaoResubmitDto dto)
     {
         await using var transaction = await _context.Database.BeginTransactionAsync();
-        var lockName = $"HuitJournal:Resubmit:{maBaiBao}";
+        var lockName = $"Journal:Article:{maBaiBao}";
         await _context.Database.ExecuteSqlInterpolatedAsync($"""
             DECLARE @lockResult int;
             EXEC @lockResult = sys.sp_getapplock @Resource = {lockName}, @LockMode = 'Exclusive',
@@ -338,7 +338,7 @@ public partial class BaiBaoService : IBaiBaoService
         var trangThaiCu = baiBao.TrangThai;
         var nextStatus = isFormatRevision ? "Chờ sơ duyệt" : "Chờ quyết định";
         baiBao.TrangThai = nextStatus;
-        baiBao.NgayCapNhat = DateTime.Now;
+        baiBao.NgayCapNhat = WorkflowTools.VietnamNow;
 
         var uploadDir = Path.Combine(UploadStoragePaths.GetRoot(_env.ContentRootPath), "revisions", $"paper_{maBaiBao}");
         Directory.CreateDirectory(uploadDir);
@@ -360,7 +360,7 @@ public partial class BaiBaoService : IBaiBaoService
                 LoaiThuMuc = isFormatRevision ? "Bản thảo gốc" : "Bản chỉnh sửa",
                 KichThuoc = dto.FileClean.Length,
                 SoVong = revisionRound,
-                NgayTaiLen = DateTime.Now
+                NgayTaiLen = WorkflowTools.VietnamNow
             });
         }
 
@@ -381,7 +381,7 @@ public partial class BaiBaoService : IBaiBaoService
                 LoaiThuMuc = "Bản giải trình BM-03",
                 KichThuoc = dto.FileBm03.Length,
                 SoVong = revisionRound,
-                NgayTaiLen = DateTime.Now
+                NgayTaiLen = WorkflowTools.VietnamNow
             });
         }
 
@@ -402,7 +402,7 @@ public partial class BaiBaoService : IBaiBaoService
                 LoaiThuMuc = "Bản đánh dấu sửa đổi",
                 KichThuoc = dto.FileTracked.Length,
                 SoVong = revisionRound,
-                NgayTaiLen = DateTime.Now
+                NgayTaiLen = WorkflowTools.VietnamNow
             });
         }
 
@@ -410,7 +410,7 @@ public partial class BaiBaoService : IBaiBaoService
         {
             TrangThaiCu = trangThaiCu,
             TrangThaiMoi = nextStatus,
-            NgayChuyen = DateTime.Now,
+            NgayChuyen = WorkflowTools.VietnamNow,
             MaNguoiThucHien = maNguoiDung,
             GhiChu = $"Tác giả nộp bản sửa ({nextStatus}): {dto.GiaiTrinh.Trim()}"
         });
@@ -446,6 +446,7 @@ public partial class BaiBaoService : IBaiBaoService
             .Where(f => fileId.HasValue ? f.MaThuMuc == fileId.Value : f.LoaiThuMuc == "Bản thảo gốc" || f.LoaiThuMuc == "Bản chỉnh sửa")
             .OrderByDescending(f => f.SoVong)
             .ThenByDescending(f => f.NgayTaiLen)
+            .ThenByDescending(f => f.MaThuMuc)
             .FirstOrDefault();
 
         if (fileRecord == null)
@@ -501,6 +502,7 @@ public partial class BaiBaoService : IBaiBaoService
             .Where(f => (f.LoaiThuMuc == "PDF thành phẩm" || f.LoaiThuMuc == "PDF Xuất bản")
                      && f.TenThuMuc.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
             .OrderByDescending(f => f.NgayTaiLen)
+            .ThenByDescending(f => f.MaThuMuc)
             .FirstOrDefault();
 
         if (fileRecord == null)
@@ -636,7 +638,7 @@ public partial class BaiBaoService : IBaiBaoService
         if (targetRound < 1 || baiBao.TrangThai == "Đã xuất bản" || baiBao.TrangThai == "Đã rút")
             return (false, "Vòng phản biện hoặc trạng thái bài báo không hợp lệ.", null);
 
-        var now = DateTime.Now;
+        var now = WorkflowTools.VietnamNow;
                 var uploadSubFolder = Path.Combine("Submissions", now.Year.ToString(), now.Month.ToString("D2"));
                 var uploadPhysicalPath = Path.Combine(UploadStoragePaths.GetRoot(_env.ContentRootPath), uploadSubFolder);
         if (!Directory.Exists(uploadPhysicalPath))
@@ -666,7 +668,7 @@ public partial class BaiBaoService : IBaiBaoService
             LoaiThuMuc = "File ẩn danh",
             KichThuoc = file.Length,
             SoVong = targetRound,
-            NgayTaiLen = DateTime.Now
+            NgayTaiLen = WorkflowTools.VietnamNow
         };
 
         _context.ThuMucBaiBaos.Add(thuMuc);
@@ -676,7 +678,7 @@ public partial class BaiBaoService : IBaiBaoService
             MaBaiBao = maBaiBao,
             TrangThaiCu = baiBao.TrangThai,
             TrangThaiMoi = baiBao.TrangThai,
-            NgayChuyen = DateTime.Now,
+            NgayChuyen = WorkflowTools.VietnamNow,
             MaNguoiThucHien = maNguoiThucHien,
             GhiChu = $"Ban biên tập đã tải lên tệp bản thảo ẩn danh Vòng {targetRound}."
         });
@@ -703,7 +705,7 @@ public partial class BaiBaoService : IBaiBaoService
             return (false, errorMsg, null);
         }
 
-        var now = DateTime.Now;
+        var now = WorkflowTools.VietnamNow;
                 var uploadSubFolder = Path.Combine("Published", now.Year.ToString(), now.Month.ToString("D2"));
                 var uploadPhysicalPath = Path.Combine(UploadStoragePaths.GetRoot(_env.ContentRootPath), uploadSubFolder);
         if (!Directory.Exists(uploadPhysicalPath))
@@ -733,7 +735,7 @@ public partial class BaiBaoService : IBaiBaoService
             LoaiThuMuc = "PDF thành phẩm",
             KichThuoc = file.Length,
             SoVong = 1,
-            NgayTaiLen = DateTime.Now
+            NgayTaiLen = WorkflowTools.VietnamNow
         };
 
         _context.ThuMucBaiBaos.Add(thuMuc);
@@ -743,7 +745,7 @@ public partial class BaiBaoService : IBaiBaoService
             MaBaiBao = maBaiBao,
             TrangThaiCu = baiBao.TrangThai,
             TrangThaiMoi = baiBao.TrangThai,
-            NgayChuyen = DateTime.Now,
+            NgayChuyen = WorkflowTools.VietnamNow,
             MaNguoiThucHien = maNguoiThucHien,
             GhiChu = $"Ban biên tập đã tải lên tệp PDF xuất bản thành phẩm."
         });
@@ -779,14 +781,14 @@ public partial class BaiBaoService : IBaiBaoService
         {
             baiBao.MaDOI = dto.MaDOI;
         }
-        baiBao.NgayCapNhat = DateTime.Now;
+        baiBao.NgayCapNhat = WorkflowTools.VietnamNow;
 
         _context.LichSuTrangThais.Add(new LichSuTrangThaiBaiBao
         {
             MaBaiBao = maBaiBao,
             TrangThaiCu = baiBao.TrangThai,
             TrangThaiMoi = baiBao.TrangThai,
-            NgayChuyen = DateTime.Now,
+            NgayChuyen = WorkflowTools.VietnamNow,
             MaNguoiThucHien = maNguoiThucHien,
             GhiChu = $"Ban biên tập đã xếp bài báo vào {soTapChi.TenSo}."
         });

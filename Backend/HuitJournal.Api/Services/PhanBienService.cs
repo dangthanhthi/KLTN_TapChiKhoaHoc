@@ -23,6 +23,8 @@ public class PhanBienService : IPhanBienService
     {
         try
         {
+            await using var transaction = _context.Database.CurrentTransaction == null ? await _context.Database.BeginTransactionAsync() : null;
+            await WorkflowTools.LockAsync(_context, "Journal:Article:" + dto.MaBaiBao);
             var baiBao = await _context.BaiBaos.FindAsync(dto.MaBaiBao);
             if (baiBao == null)
             {
@@ -58,9 +60,10 @@ public class PhanBienService : IPhanBienService
                 return (false, "Tài khoản chưa hoạt động hoặc chưa có vai trò chuyên gia phản biện.", null);
             }
 
-            var responseDue = (dto.HanPhanHoi ?? DateTime.Today.AddDays(7)).Date;
-            var completionDue = (dto.HanHoanThanh ?? DateTime.Today.AddDays(21)).Date;
-            if (responseDue < DateTime.Today || completionDue < responseDue.AddDays(3))
+            var today = WorkflowTools.VietnamNow.Date;
+            var responseDue = (dto.HanPhanHoi ?? today.AddDays(7)).Date;
+            var completionDue = (dto.HanHoanThanh ?? today.AddDays(21)).Date;
+            if (responseDue < today || completionDue < responseDue.AddDays(3))
             {
                 return (false, "Hạn phản hồi phải từ hôm nay; hạn hoàn thành phải sau hạn phản hồi ít nhất 3 ngày.", null);
             }
@@ -117,7 +120,7 @@ public class PhanBienService : IPhanBienService
                 MaBaiBao = dto.MaBaiBao,
                 MaNguoiDung = dto.MaNguoiDungReviewer,
                 SoVong = targetRound,
-                NgayPhanCong = DateTime.Now,
+                NgayPhanCong = WorkflowTools.VietnamNow,
                 HanPhanHoi = responseDue,
                 HanHoanThanh = completionDue,
                 TrangThai = "Chờ phản hồi"
@@ -137,7 +140,7 @@ public class PhanBienService : IPhanBienService
                     TrangThaiCu = baiBao.TrangThai,
                     TrangThaiMoi = baiBao.TrangThai,
                     MaNguoiThucHien = maNguoiThucHien,
-                    NgayChuyen = DateTime.Now,
+                    NgayChuyen = WorkflowTools.VietnamNow,
                     GhiChu = $"Ban biên tập mời phản biện bổ sung Vòng {targetRound}. Lý do: {dto.LyDo.Trim()}"
                 });
             }
@@ -146,6 +149,8 @@ public class PhanBienService : IPhanBienService
             // 1. Chuyên ngành chuyên gia có khớp chuyên ngành bài báo không.
             // 2. Chuyên gia có trùng với tác giả chính hoặc bất kỳ đồng tác giả nào (theo Id hoặc Email) không.
             await _context.SaveChangesAsync();
+
+            if (transaction != null) await transaction.CommitAsync();
 
             return (true, $"Đã phân công chuyên gia {reviewer.HoTen} phản biện bài báo thành công!", phanCong.MaPhanCong);
         }
@@ -210,7 +215,7 @@ public class PhanBienService : IPhanBienService
         await using var transaction = await _context.Database.BeginTransactionAsync();
         // Serialize responses for the same article so two simultaneous acceptances
         // cannot each see only one accepted reviewer and leave the article waiting.
-        var lockName = $"HuitJournal:ReviewResponse:{articleId.Value}";
+        var lockName = $"Journal:Article:{articleId.Value}";
         await _context.Database.ExecuteSqlInterpolatedAsync($"""
             DECLARE @lockResult int;
             EXEC @lockResult = sys.sp_getapplock
@@ -243,14 +248,14 @@ public class PhanBienService : IPhanBienService
             {
                 var oldStatus = assignment.BaiBao.TrangThai;
                 assignment.BaiBao.TrangThai = "Đang phản biện";
-                assignment.BaiBao.NgayCapNhat = DateTime.Now;
+                assignment.BaiBao.NgayCapNhat = WorkflowTools.VietnamNow;
                 _context.LichSuTrangThais.Add(new LichSuTrangThaiBaiBao
                 {
                     MaBaiBao = articleId.Value,
                     TrangThaiCu = oldStatus,
                     TrangThaiMoi = "Đang phản biện",
                     MaNguoiThucHien = null,
-                    NgayChuyen = DateTime.Now,
+                    NgayChuyen = WorkflowTools.VietnamNow,
                     GhiChu = $"Hệ thống ghi nhận đủ {acceptedCount} chuyên gia đã nhận lời phản biện kín Vòng {assignment.SoVong}."
                 });
                 await _context.SaveChangesAsync();
@@ -367,6 +372,12 @@ public class PhanBienService : IPhanBienService
     {
         try
         {
+            var articleId = await _context.PhanCongPhanBiens.AsNoTracking()
+                .Where(p => p.MaPhanCong == dto.MaPhanCong && p.MaNguoiDung == maReviewer)
+                .Select(p => (int?)p.MaBaiBao).FirstOrDefaultAsync();
+            if (articleId == null) return (false, "Không tìm thấy phân công phản biện của bạn.");
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            await WorkflowTools.LockAsync(_context, "Journal:Article:" + articleId.Value);
             var phanCong = await _context.PhanCongPhanBiens
                 .Include(p => p.PhieuDanhGia)
                 .Include(p => p.PhieuDanhGiaBanNhap)
@@ -420,7 +431,7 @@ public class PhanBienService : IPhanBienService
                     NhanXetChoTacGia = dto.NhanXetChoTacGia.Trim(),
                     NhanXetBaoMat = dto.NhanXetBaoMat,
                     KienNghi = dto.KienNghi,
-                    NgayDanhGia = DateTime.Now
+                    NgayDanhGia = WorkflowTools.VietnamNow
                 };
                 _context.PhieuDanhGias.Add(phieu);
                 if (phanCong.PhieuDanhGiaBanNhap != null)
@@ -428,10 +439,11 @@ public class PhanBienService : IPhanBienService
             }
 
             phanCong.TrangThai = "Đã đánh giá";
-            phanCong.BaiBao.NgayCapNhat = DateTime.Now;
+            phanCong.BaiBao.NgayCapNhat = WorkflowTools.VietnamNow;
 
             await _context.SaveChangesAsync();
 
+            await transaction.CommitAsync();
             return (true, "Nộp phiếu nhận xét và đánh giá phản biện (BM-04) thành công!");
         }
         catch (Exception ex)
@@ -445,6 +457,8 @@ public class PhanBienService : IPhanBienService
     {
         try
         {
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            await WorkflowTools.LockAsync(_context, "Journal:Article:" + dto.MaBaiBao);
             var baiBao = await _context.BaiBaos.FindAsync(dto.MaBaiBao);
             if (baiBao == null)
             {
@@ -611,7 +625,7 @@ public class PhanBienService : IPhanBienService
                 return (false, "Vui lòng nhập nội dung yêu cầu chỉnh sửa gửi tác giả. Ghi chú nội bộ không được dùng thay cho thông báo này.");
 
             baiBao.TrangThai = targetStatus;
-            baiBao.NgayCapNhat = DateTime.Now;
+            baiBao.NgayCapNhat = WorkflowTools.VietnamNow;
 
             var editor = await _context.NguoiDungs.FindAsync(maEditor);
 
@@ -621,7 +635,7 @@ public class PhanBienService : IPhanBienService
                 TrangThaiCu = oldStatus,
                 TrangThaiMoi = targetStatus,
                 MaNguoiThucHien = maEditor,
-                NgayChuyen = DateTime.Now,
+                NgayChuyen = WorkflowTools.VietnamNow,
                 GhiChu = dto.GhiChu ?? $"Ban biên tập ({editor?.HoTen}) ra quyết định: {targetStatus}.",
                 ThongBaoChoTacGia = authorNotice
             });
@@ -637,6 +651,7 @@ public class PhanBienService : IPhanBienService
 
             await _context.SaveChangesAsync();
 
+            await transaction.CommitAsync();
             return (true, $"Đã cập nhật trạng thái bài báo thành: '{targetStatus}'.");
         }
         catch (Exception ex)

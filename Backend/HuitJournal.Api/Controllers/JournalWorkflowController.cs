@@ -26,7 +26,7 @@ public partial class JournalWorkflowController(JournalWorkflowService service, Q
         catch (JsonException) { return BadRequest(new { message = "Dữ liệu hồ sơ không hợp lệ." }); }
     }
     [HttpGet("status"), AllowAnonymous]
-    public object Status() => new { version = "2026.10.01.workflows.1" };
+    public object Status() => new { version = "2026.10.01.workflows.2" };
     [HttpGet("article/{id:int}")]
     public Task<IActionResult> Article(int id) => Run(() => service.Article(id, UserId, Staff)!);
     [HttpGet("submission-draft")]

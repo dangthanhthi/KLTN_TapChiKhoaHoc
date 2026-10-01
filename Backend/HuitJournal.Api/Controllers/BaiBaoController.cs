@@ -163,7 +163,7 @@ public class BaiBaoController : ControllerBase
             return BadRequest(new { message });
         }
 
-        return PhysicalFile(physicalPath, contentType, fileName);
+        return PhysicalFile(physicalPath, contentType, fileName, enableRangeProcessing: true);
     }
 
     /// <summary>
@@ -181,7 +181,7 @@ public class BaiBaoController : ControllerBase
             return NotFound(new { message });
         }
 
-        return PhysicalFile(physicalPath, contentType, fileName);
+        return PhysicalFile(physicalPath, contentType, fileName, enableRangeProcessing: true);
     }
 
     /// <summary>
