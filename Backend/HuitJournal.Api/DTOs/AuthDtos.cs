@@ -42,6 +42,7 @@ public class RegisterRequest
     public string? ChuTaiKhoan { get; set; }
     public string? NganHang { get; set; }
     public string? MaORCID { get; set; }
+    public Guid? OrcidOAuthState { get; set; }
     public int? ChuyenNganhId { get; set; }
     public bool DangKyPhanBien { get; set; } = false;
 }
@@ -76,6 +77,7 @@ public class UserProfileDto
     public string? ChuTaiKhoan { get; set; }
     public string? NganHang { get; set; }
     public string? MaORCID { get; set; }
+    public bool MaORCIDDaXacThuc { get; set; }
     public string? AnhDaiDien { get; set; }
     public List<string> VaiTros { get; set; } = new();
     public List<int> ChuyenMonIds { get; set; } = new();

@@ -711,10 +711,8 @@ def run_tests():
     print("=" * 80 + "\n")
 
 if __name__ == "__main__":
-    try:
-        run_tests()
-    except Exception as e:
-        print(f"\n[LỖI THỰC THI]: {e}")
-        import traceback
-        traceback.print_exc()
-        sys.exit(1)
+    raise SystemExit(
+        "Legacy E2E disabled: registration now requires email OTP and reviewers must "
+        "accept invitations before BM-04. Its cleanup assumes an obsolete 10/10 seed "
+        "database. See HoTro/KE_HOACH_KIEM_THU_LUONG_NGHIEP_VU_20260927.md."
+    )

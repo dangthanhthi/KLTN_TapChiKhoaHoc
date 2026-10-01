@@ -27,7 +27,7 @@ if (!builder.Environment.IsProduction())
 if (builder.Environment.IsProduction())
 {
     var otpKey = builder.Configuration["EmailVerification:HmacSecretKey"];
-    if (string.IsNullOrWhiteSpace(otpKey) || Encoding.UTF8.GetByteCount(otpKey) < 32)
+        if (string.IsNullOrWhiteSpace(otpKey) || Encoding.UTF8.GetByteCount(otpKey) < 32)
         throw new InvalidOperationException("Production yêu cầu EmailVerification:HmacSecretKey riêng (ít nhất 32 byte).");
     if (builder.Configuration.GetValue<bool>("EmailVerification:SimulateDeliveryInDev"))
         throw new InvalidOperationException("Production không được phép giả lập gửi thư xác nhận.");
@@ -67,6 +67,9 @@ builder.Services.AddDbContext<QLTapChiKhoaHocContext>(options =>
 
 // 2. Đăng ký Services & Cấu hình Email Verification
 builder.Services.Configure<EmailVerificationSettings>(builder.Configuration.GetSection("EmailVerification"));
+builder.Services.Configure<OrcidSettings>(builder.Configuration.GetSection("Orcid"));
+builder.Services.AddHttpClient("OrcidOAuth", client => client.Timeout = TimeSpan.FromSeconds(20));
+builder.Services.AddScoped<OrcidOAuthService>();
 builder.Services.AddScoped<IEmailVerificationService, EmailVerificationService>();
 builder.Services.AddScoped<IEmailSenderService, EmailSenderService>();
 builder.Services.AddHostedService<EmailOutboxDispatcherService>();

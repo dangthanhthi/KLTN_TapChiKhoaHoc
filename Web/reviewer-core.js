@@ -23,8 +23,11 @@
   }
   function validate(data) {
     if (!Number.isInteger(data.maPhanCong) || data.maPhanCong < 1) return 'Mã phân công không hợp lệ.';
-    if (scoreKeys.some(k => data[k] === '' || data[k] == null || !Number.isFinite(Number(data[k])) || Number(data[k]) < 0 || Number(data[k]) > 10)) return 'Nhập đầy đủ 4 điểm từ 0 đến 10.';
-    if (!data.nhanXetChoTacGia?.trim()) return 'Vui lòng nhập nhận xét gửi tác giả.';
+    if (scoreKeys.some(k => {
+      const value = Number(data[k]);
+      return data[k] === '' || data[k] == null || !Number.isFinite(value) || value < 0 || value > 10 || Math.abs(value * 10 - Math.round(value * 10)) > 1e-8;
+    })) return 'Mỗi tiêu chí cần từ 0 đến 10, tối đa một chữ số thập phân.';
+    if (!data.nhanXetChoTacGia?.trim() || data.nhanXetChoTacGia.trim().length < 10) return 'Vui lòng nhập nhận xét gửi tác giả (tối thiểu 10 ký tự).';
     if ((data.nhanXetChoTacGia || '').length > 20000 || (data.nhanXetBaoMat || '').length > 20000) return 'Nhận xét tối đa 20.000 ký tự.';
     if (!recommendations.includes(data.kienNghi)) return 'Vui lòng chọn kiến nghị hợp lệ.';
     return '';

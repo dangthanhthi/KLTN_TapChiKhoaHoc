@@ -1,2 +1,415 @@
 <!doctype html>
-<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Xử lý hồ sơ tòa soạn · HUIT Journal</title><link rel="stylesheet" href="journal-interactions.css"><link rel="stylesheet" href="workflow.css"><script src="journal-layout.js" defer></script><script src="journal-interactions.js" defer></script><script src="workflow-client.js" defer></script><script src="editorial-workflow.js" defer></script></head><body><div id="huit-header"></div><main class="workflow-page"><h1>Xử lý hồ sơ tòa soạn</h1><p>Tiếp nhận yêu cầu, gửi bản bông và quản lý các thông báo xuất bản. Quyết định phản biện vẫn thực hiện qua công cụ tòa soạn hiện có.</p><div id="status" class="workflow-status" role="status" aria-live="polite"></div><div id="staff-work" hidden><section class="workflow-panel"><h2>Hồ sơ cần xử lý</h2><button id="refresh">Làm mới</button><div id="inbox"></div></section><section class="workflow-panel"><h2>Kiểm tra trùng lặp và gửi bản bông</h2><form id="screening"><label for="article">Mã bài báo</label><input id="article" type="number" min="1" required><label for="similarity">Tỷ lệ trùng lặp trong báo cáo (%)</label><input id="similarity" type="number" min="0" max="100" step=".01" required><label for="report">Báo cáo trùng lặp PDF/Word</label><input id="report" type="file" accept=".pdf,.doc,.docx" required><label for="screen-note">Kết luận kiểm tra</label><textarea id="screen-note" minlength="10" maxlength="2000" rows="4" required></textarea><label for="screen-result">Kết quả</label><select id="screen-result"><option value="true">Đủ điều kiện chuyển phản biện</option><option value="false">Cần chỉnh sửa</option></select><div class="workflow-actions"><button>Lưu kết quả sơ duyệt</button><button id="send-proof" type="button">Gửi PDF bản bông mới nhất</button></div></form><form id="upload-document"><label for="upload-article">Mã bài báo</label><input id="upload-article" type="number" min="1" required><label for="upload-kind">Loại tài liệu</label><select id="upload-kind"><option value="published-pdf">PDF thành phẩm / bản bông</option><option value="anonymous-manuscript">Bản thảo ẩn danh cho phản biện</option></select><label for="upload-round">Vòng phản biện (chỉ dùng cho bản ẩn danh)</label><input id="upload-round" type="number" min="1" value="1"><label for="upload-file">Tệp tài liệu</label><input id="upload-file" type="file" accept=".pdf,.doc,.docx" required><div class="workflow-actions"><button>Tải tài liệu lên hệ thống</button></div></form><p>PDF mới sẽ cần tác giả xác nhận bản bông lại trước khi phát hành.</p></section><section class="workflow-panel" id="final-work" hidden><h2>Thay người phản biện</h2><form id="replace-reviewer"><label for="replace-assignment">Mã phân công cần thay</label><input id="replace-assignment" type="number" min="1" required><label for="replace-user">Mã tài khoản phản biện mới</label><input id="replace-user" type="number" min="1" required><label for="replace-response">Hạn phản hồi</label><input id="replace-response" type="date" required><label for="replace-completion">Hạn hoàn thành</label><input id="replace-completion" type="date" required><label for="replace-reason">Lý do thay phản biện</label><textarea id="replace-reason" minlength="10" maxlength="2000" rows="3" required></textarea><div class="workflow-actions"><button>Thay phân công và gửi lời mời mới</button></div></form><p>Phân công cũ được giữ trong lịch sử. Hệ thống kiểm tra chuyên môn và xung đột đồng tác giả trước khi mời người mới.</p><h2>Phát hành số tạp chí</h2><form id="publication"><label for="issue">Mã số tạp chí</label><input id="issue" type="number" min="1" required><label for="publish-at">Thời điểm phát hành (giờ Việt Nam)</label><input id="publish-at" type="datetime-local"><div class="workflow-actions"><button type="submit" value="schedule">Đặt lịch phát hành</button><button type="submit" value="now">Phát hành ngay</button></div></form><p>Hệ thống kiểm tra trạng thái, PDF, xác nhận bản bông và khoảng trang trước khi phát hành. Lịch có thể chậm khi máy chủ miễn phí đang ngủ.</p><h2>Đính chính hoặc thu hồi bài đã xuất bản</h2><form id="notice"><label for="notice-article">Mã bài đã xuất bản</label><input id="notice-article" type="number" min="1" required><label for="notice-kind">Loại thông báo</label><select id="notice-kind"><option value="Correction">Đính chính</option><option value="Retraction">Thu hồi bài</option></select><label for="notice-text">Nội dung thông báo công khai</label><textarea id="notice-text" minlength="20" maxlength="5000" rows="5" required></textarea><div class="workflow-actions"><button>Công bố thông báo</button></div></form></section></div></main><div id="huit-footer"></div></body></html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Bàn làm việc: Xử lý hồ sơ tòa soạn · HUIT Journal of Science</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="journal-interactions.css">
+  <link rel="stylesheet" href="workflow.css">
+  <script src="journal-layout.js" defer></script>
+  <script src="journal-interactions.js" defer></script>
+  <script src="workflow-client.js" defer></script>
+  <script src="editorial-workflow.js" defer></script>
+</head>
+<body>
+  <!-- HEADER CHUNG CỦA HỆ THỐNG -->
+  <div id="huit-header" data-active="profile"></div>
+
+  <!-- BREADCRUMB BAR CHUẨN CỦA HỆ THỐNG -->
+  <div class="breadcrumb-bar">
+    <div class="wrap">
+      <a href="index.html">Trang chủ</a>
+      <span class="sep">/</span>
+      <a href="profile.html">Bàn làm việc Tòa soạn</a>
+      <span class="sep">/</span>
+      <span style="color:var(--ink-700);font-weight:600;">Xử lý hồ sơ tòa soạn</span>
+    </div>
+  </div>
+
+  <!-- WORKBENCH HEADER (CHUẨN BÀN LÀM VIỆC CỦA HỆ THỐNG) -->
+  <section class="workbench-header wrap">
+    <div class="workbench-title-row">
+      <div style="display:flex;align-items:center;gap:18px;">
+        <div class="header-avatar-badge">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+        </div>
+        <div>
+          <span class="workbench-tag">PHÂN HỆ QUẢN TRỊ · BAN BIÊN TẬP TÒA SOẠN</span>
+          <h1 id="editor-heading-title">Bàn làm việc: Xử lý hồ sơ tòa soạn</h1>
+          <div class="author-meta-sub">
+            Cơ quan chủ quản: <strong>Trường Đại học Công Thương TP.HCM</strong>
+            &nbsp;·&nbsp;
+            Bộ phận: <strong>Ban Thư ký &amp; Hội đồng Biên tập</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-action-group">
+        <a href="profile.html" class="btn-profile-back">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Về Trang cá nhân &amp; Thống kê
+        </a>
+      </div>
+    </div>
+
+    <!-- METRICS SPEC-STRIP (CHUẨN SPEC-SHEET CỦA HỆ THỐNG) -->
+    <div class="metrics-spec-strip">
+      <div class="metric-spec-cell">
+        <span class="lbl">Hồ sơ chờ tiếp nhận</span>
+        <div class="val" id="metric-inbox-count">—</div>
+        <div class="desc">Yêu cầu rút bài &amp; xác nhận bản bông</div>
+      </div>
+      <div class="metric-spec-cell">
+        <span class="lbl">Kiểm tra trùng lặp</span>
+        <div class="val" style="color:var(--sky-600);">20%</div>
+        <div class="desc">Ngưỡng tương đồng tối đa cho phép</div>
+      </div>
+      <div class="metric-spec-cell">
+        <span class="lbl">Quy trình thẩm định</span>
+        <div class="val" style="color:#b45309;">Kín 2 chiều</div>
+        <div class="desc">Độc lập &amp; bảo mật danh tính</div>
+      </div>
+      <div class="metric-spec-cell">
+        <span class="lbl">Ấn phẩm xuất bản</span>
+        <div class="val" style="color:#0e7039;">Open Access</div>
+        <div class="desc">Chỉ số định danh DOI &amp; ISSN chuẩn</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BỐ CỤC CHÍNH WORKBENCH (LƯỚI 2 CỘT: CỘT TÁC NGHIỆP + CỘT THÔNG TIN TÒA SOẠN) -->
+  <div class="wrap workbench-grid">
+
+    <!-- CỘT TRÁI (MAIN EDITORIAL WORKSPACE) -->
+    <main class="workflow-main-area">
+
+      <!-- SYSTEM NOTIFICATION / STATUS ALERT -->
+      <div id="status" class="workflow-status" role="status" aria-live="polite"></div>
+
+      <!-- STAFF WORK AREA (Visible to Quản trị hệ thống, Tổng biên tập, Ban biên tập) -->
+      <div id="staff-work" hidden>
+
+        <!-- KHỐI 1: HỒ SƠ & YÊU CẦU CẦN XỬ LÝ -->
+        <div class="workflow-section-block">
+          <div class="sec-heading">
+            <span>Hồ sơ &amp; Yêu cầu cần xử lý</span>
+            <button id="refresh" type="button" class="btn-refresh-pill">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+              Làm mới hộp thư
+            </button>
+          </div>
+          <div class="sec-desc">Tiếp nhận và phản hồi thư từ liên lạc, đơn đề nghị rút bài từ tác giả và kết quả kiểm duyệt bản bông trước in.</div>
+          <div id="inbox" class="inbox-container"></div>
+        </div>
+
+        <!-- KHỐI 2: KIỂM TRA TRÙNG LẶP & GỬI BẢN BÔNG -->
+        <div class="workflow-section-block">
+          <div class="sec-heading">
+            <span>Sơ duyệt thể thức &amp; Đạo văn (Turnitin)</span>
+          </div>
+          <div class="sec-desc">Ghi nhận tỷ lệ tương đồng văn bản học thuật và gửi tệp PDF bản bông mới nhất cho tác giả liên hệ.</div>
+
+          <div class="workbench-card">
+            <form id="screening" class="workflow-form">
+              <div class="form-row-2">
+                <div class="form-field">
+                  <label for="article">Mã bài báo <span class="req">*</span></label>
+                  <input id="article" type="number" min="1" placeholder="Nhập mã bài báo (ví dụ: 19)" required>
+                </div>
+                <div class="form-field">
+                  <label for="similarity">Tỷ lệ trùng lặp (%) <span class="req">*</span></label>
+                  <input id="similarity" type="number" min="0" max="100" step=".01" placeholder="Nhập tỷ lệ % (ví dụ: 12.5)" required>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label for="report">Báo cáo kiểm tra trùng lặp (PDF hoặc Word) <span class="req">*</span></label>
+                <div class="styled-file-zone">
+                  <input id="report" type="file" accept=".pdf,.doc,.docx" required>
+                </div>
+                <span class="field-hint">Đính kèm bản báo cáo chi tiết kết quả quét từ Turnitin hoặc hệ thống kiểm tra tương đồng.</span>
+              </div>
+
+              <div class="form-field">
+                <label for="screen-note">Kết luận kiểm tra &amp; Ghi chú sơ duyệt <span class="req">*</span></label>
+                <textarea id="screen-note" minlength="10" maxlength="2000" rows="3" placeholder="Nhập tóm tắt đánh giá tính nguyên bản của công trình, các vị trí cần lưu ý..." required></textarea>
+              </div>
+
+              <div class="form-field">
+                <label for="screen-result">Kết quả sơ duyệt <span class="req">*</span></label>
+                <select id="screen-result">
+                  <option value="true">Đủ điều kiện chuyển sang giai đoạn phản biện chuyên môn</option>
+                  <option value="false">Không đạt thể thức / Tỷ lệ trùng lặp vượt ngưỡng cho phép</option>
+                </select>
+              </div>
+
+              <div class="workflow-actions">
+                <button type="submit" class="btn-primary">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  Lưu kết quả sơ duyệt
+                </button>
+                <button id="send-proof" type="button" class="btn-outline">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                  Gửi PDF bản bông mới nhất
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- KHỐI 3: TẢI LÊN TÀI LIỆU BIÊN TẬP & CHẾ BẢN -->
+        <div class="workflow-section-block">
+          <div class="sec-heading">
+            <span>Tải lên tài liệu biên tập &amp; Chế bản</span>
+          </div>
+          <div class="sec-desc">Đăng tải tệp PDF thành phẩm dàn trang hoàn thiện, hoặc bản thảo ẩn danh phân phối cho các vòng thẩm định kín.</div>
+
+          <div class="workbench-card">
+            <form id="upload-document" class="workflow-form">
+              <div class="form-row-2">
+                <div class="form-field">
+                  <label for="upload-article">Mã bài báo <span class="req">*</span></label>
+                  <input id="upload-article" type="number" min="1" placeholder="Nhập mã bài báo" required>
+                </div>
+                <div class="form-field">
+                  <label for="upload-kind">Loại tài liệu hồ sơ <span class="req">*</span></label>
+                  <select id="upload-kind">
+                    <option value="published-pdf">PDF thành phẩm / Bản bông dàn trang hoàn chỉnh</option>
+                    <option value="anonymous-manuscript">Bản thảo ẩn danh phục vụ phản biện kín</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-field" id="wrap-upload-round">
+                <label for="upload-round">Vòng phản biện <span class="field-hint">(chỉ áp dụng đối với bản thảo ẩn danh)</span></label>
+                <input id="upload-round" type="number" min="1" value="1">
+              </div>
+
+              <div class="form-field">
+                <label for="upload-file">Tệp tài liệu đính kèm (.pdf, .doc, .docx) <span class="req">*</span></label>
+                <div class="styled-file-zone">
+                  <input id="upload-file" type="file" accept=".pdf,.doc,.docx" required>
+                </div>
+                <span class="field-hint">Dung lượng tệp tối đa 30MB.</span>
+              </div>
+
+              <div class="workflow-actions">
+                <button type="submit" class="btn-primary">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                  Tải tài liệu lên hệ thống
+                </button>
+              </div>
+            </form>
+            <div class="card-footer-alert">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--sky-600)" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              <span>Lưu ý: Sau khi tải tệp PDF thành phẩm mới, tác giả liên hệ cần vào hệ thống xác nhận bản bông trước khi số tạp chí được phát hành.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- KHỐI 4: QUYỀN HẠN TỔNG BIÊN TẬP & QUẢN TRỊ VIÊN -->
+        <div id="final-work" hidden>
+          <div class="sec-heading" style="margin-top:36px;">
+            <span>Quyền hạn Tổng biên tập &amp; Quản trị hệ thống</span>
+          </div>
+          <div class="sec-desc">Các chức năng phê duyệt cao cấp: Phân công lại chuyên gia, xuất bản chính thức và ban hành thông báo đính chính.</div>
+
+          <!-- THAY ĐỔI NGƯỜI PHẢN BIỆN -->
+          <div class="workbench-card" style="margin-bottom:24px;">
+            <div class="card-sub-header">
+              <span class="card-sub-title">1. Thay đổi chuyên gia phản biện</span>
+              <span class="badge-tag badge-neutral">Điều phối phản biện</span>
+            </div>
+            <form id="replace-reviewer" class="workflow-form">
+              <div class="form-row-2">
+                <div class="form-field">
+                  <label for="replace-assignment">Mã phân công cần thay <span class="req">*</span></label>
+                  <input id="replace-assignment" type="number" min="1" placeholder="ID phân công hiện tại" required>
+                </div>
+                <div class="form-field">
+                  <label for="replace-user">Mã tài khoản chuyên gia mới (User ID) <span class="req">*</span></label>
+                  <input id="replace-user" type="number" min="1" placeholder="ID tài khoản phản biện mới" required>
+                </div>
+              </div>
+
+              <div class="form-row-2">
+                <div class="form-field">
+                  <label for="replace-response">Hạn phản hồi lời mời <span class="req">*</span></label>
+                  <input id="replace-response" type="date" required>
+                </div>
+                <div class="form-field">
+                  <label for="replace-completion">Hạn nộp kết quả đánh giá <span class="req">*</span></label>
+                  <input id="replace-completion" type="date" required>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label for="replace-reason">Lý do thay đổi chuyên gia <span class="req">*</span></label>
+                <textarea id="replace-reason" minlength="10" maxlength="2000" rows="3" placeholder="Nêu lý do điều chuyển (ví dụ: Chuyên gia quá hạn phản hồi, trùng chuyên môn hoặc có xung đột lợi ích)..." required></textarea>
+              </div>
+
+              <div class="workflow-actions">
+                <button type="submit" class="btn-primary">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                  Thay phân công &amp; Gửi lời mời mới
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- PHÁT HÀNH SỐ TẠP CHÍ -->
+          <div class="workbench-card" style="margin-bottom:24px;">
+            <div class="card-sub-header">
+              <span class="card-sub-title">2. Phát hành số tạp chí chính thức</span>
+              <span class="badge-tag badge-success">Xuất bản công khai</span>
+            </div>
+            <form id="publication" class="workflow-form">
+              <div class="form-row-2">
+                <div class="form-field">
+                  <label for="issue">Mã số tạp chí <span class="req">*</span></label>
+                  <input id="issue" type="number" min="1" placeholder="Nhập mã số tạp chí (ví dụ: 1)" required>
+                </div>
+                <div class="form-field">
+                  <label for="publish-at">Thời điểm phát hành (Giờ Việt Nam)</label>
+                  <input id="publish-at" type="datetime-local">
+                  <span class="field-hint">Để trống nếu muốn xuất bản ngay lập tức mà không cần hẹn giờ.</span>
+                </div>
+              </div>
+
+              <div class="workflow-actions">
+                <button type="submit" value="schedule" class="btn-outline">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  Đặt lịch phát hành
+                </button>
+                <button type="submit" value="now" class="btn-primary" style="background:#059669;">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                  Phát hành số ngay
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- ĐÍNH CHÍNH HOẶC THU HỒI BÀI BÁO -->
+          <div class="workbench-card">
+            <div class="card-sub-header">
+              <span class="card-sub-title">3. Đính chính hoặc thu hồi bài đã xuất bản</span>
+              <span class="badge-tag" style="background:var(--error-bg);color:var(--error);border:1px solid #fecaca;">Liêm chính học thuật</span>
+            </div>
+            <form id="notice" class="workflow-form">
+              <div class="form-row-2">
+                <div class="form-field">
+                  <label for="notice-article">Mã bài báo đã xuất bản <span class="req">*</span></label>
+                  <input id="notice-article" type="number" min="1" placeholder="Nhập mã bài báo cần xử lý" required>
+                </div>
+                <div class="form-field">
+                  <label for="notice-kind">Loại thông báo xuất bản <span class="req">*</span></label>
+                  <select id="notice-kind">
+                    <option value="Correction">Đính chính bài báo (Correction Notice)</option>
+                    <option value="Retraction">Thu hồi bài báo (Retraction Notice)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label for="notice-text">Nội dung thông báo công khai <span class="req">*</span></label>
+                <textarea id="notice-text" minlength="20" maxlength="5000" rows="4" placeholder="Nhập chi tiết nội dung giải trình đính chính hoặc căn cứ thu hồi bài báo theo quy chuẩn COPE..." required></textarea>
+              </div>
+
+              <div class="workflow-actions">
+                <button type="submit" class="btn-danger">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                  Công bố thông báo công khai
+                </button>
+              </div>
+            </form>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- CỘT PHẢI (SIDEBAR SPEC-SHEET BOXES CHUẨN PROFILE) -->
+    <aside class="workflow-sidebar">
+
+      <!-- CARD 1: THÔNG TIN TÁC NGHIỆP -->
+      <div class="side-spec-card">
+        <h4>Phiên làm việc Biên tập</h4>
+        <div class="spec-entry">
+          <div class="lbl">Hội đồng tòa soạn</div>
+          <div class="val">HUIT Journal of Science</div>
+        </div>
+        <div class="spec-entry">
+          <div class="lbl">Cổng tác nghiệp</div>
+          <div class="val">Ban Thư ký &amp; Ban Biên tập</div>
+        </div>
+        <div class="spec-entry">
+          <div class="lbl">Quy trình xuất bản</div>
+          <div class="val">Quy trình khép kín 6 giai đoạn</div>
+        </div>
+        <div class="spec-entry">
+          <div class="lbl">Bảo mật phản biện</div>
+          <div class="val">Double-blind peer review</div>
+        </div>
+      </div>
+
+      <!-- CARD 2: QUY CHUẨN HỌC THUẬT -->
+      <div class="side-spec-card">
+        <h4>Tiêu chuẩn Liêm chính &amp; Đạo văn</h4>
+        <div class="spec-entry">
+          <div class="lbl">Ngưỡng tương đồng Turnitin</div>
+          <div class="val" style="color:var(--sky-600);">≤ 20% (Tổng thể)</div>
+        </div>
+        <div class="spec-entry">
+          <div class="lbl">Trùng lặp 1 nguồn đơn</div>
+          <div class="val" style="color:#b45309;">≤ 5% (Từng nguồn)</div>
+        </div>
+        <div class="spec-entry">
+          <div class="lbl">Định dạng toàn văn</div>
+          <div class="val">PDF chuẩn trang A4, 2 cột</div>
+        </div>
+        <div class="spec-entry">
+          <div class="lbl">Chuẩn trích dẫn</div>
+          <div class="val">IEEE (Kỹ thuật) / APA (Kinh tế)</div>
+        </div>
+      </div>
+
+      <!-- CARD 3: BIỂU MẪU & HƯỚNG DẪN -->
+      <div class="side-spec-card">
+        <h4>Biểu mẫu &amp; Tài nguyên</h4>
+        <div class="sidebar-guide-row">
+          <div>
+            <strong>Mẫu bản thảo BM-01</strong>
+            <div style="font-size:11px;color:var(--ink-500);">IMRaD Paper Template (.docx)</div>
+          </div>
+          <a href="templates/BM01_Mau_Bai_Bao_Template.docx" download class="side-link-download">Tải &darr;</a>
+        </div>
+        <div class="sidebar-guide-row">
+          <div>
+            <strong>Mẫu cam đoan BM-02</strong>
+            <div style="font-size:11px;color:var(--ink-500);">Bản cam đoan quyền tác giả</div>
+          </div>
+          <a href="templates/BM02_Ban_Cam_Doan_Quyen_Tac_Gia.docx" download class="side-link-download">Tải &darr;</a>
+        </div>
+        <div class="sidebar-guide-row">
+          <div>
+            <strong>Hướng dẫn xuất bản</strong>
+            <div style="font-size:11px;color:var(--ink-500);">Quy định thể thức &amp; phản biện</div>
+          </div>
+          <a href="guidelines.html" class="side-link-download">Xem &rarr;</a>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- FOOTER CHUNG CỦA HỆ THỐNG -->
+  <div id="huit-footer"></div>
+</body>
+</html>

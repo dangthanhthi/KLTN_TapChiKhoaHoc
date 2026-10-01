@@ -9,9 +9,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="journal-interactions.css">
-  <link rel="stylesheet" href="reviewer.css">
-  <script src="reviewer-core.js" defer></script>
-  <script src="reviewer.js" defer></script>
+  <link rel="stylesheet" href="reviewer.css?v=20261001_2245">
+  <script src="reviewer-core.js?v=20261001_2245" defer></script>
+  <script src="reviewer.js?v=20261001_2245" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Đến nội dung chính</a>
@@ -29,7 +29,7 @@
         <section class="queue" aria-labelledby="queue-heading">
           <div class="section-title"><h2 id="queue-heading">Công việc của tôi</h2><button id="refresh" class="quiet" type="button">Làm mới</button></div>
           <div class="tabs" role="group" aria-label="Loại công việc"><button type="button" data-view="active" aria-pressed="true">Cần xử lý</button><button type="button" data-view="history" aria-pressed="false">Lịch sử đánh giá</button><button type="button" data-view="all" aria-pressed="false">Tất cả</button></div>
-          <div class="filters"><label class="search">Tìm bài báo<input id="search" type="search" placeholder="Tiêu đề, mã bài hoặc chuyên ngành…" maxlength="200"></label><label>Trạng thái<select id="status-filter"><option value="all">Mọi trạng thái</option><option value="pending">Chờ phản hồi</option><option value="overdue">Quá hạn</option><option value="due">Sắp đến hạn</option><option value="draft">Có bản nháp</option></select></label><label>Sắp xếp<select id="sort"><option value="deadline">Hạn gần nhất</option><option value="newest">Phân công mới nhất</option><option value="title">Tên bài A–Z</option></select></label></div>
+          <div class="filters"><label class="search">Tìm bài báo<input id="search" type="search" placeholder="Tiêu đề, mã bài hoặc chuyên ngành…" maxlength="200"></label><label>Trạng thái<select id="status-filter"><option value="all">Mọi trạng thái</option><option value="pending">Chờ phản hồi</option><option value="overdue">Quá hạn</option><option value="due">Sắp đến hạn</option><option value="draft">Có bản nháp</option></select></label><label>Sắp xếp<select id="sort"><option value="newest">Phân công mới nhất</option><option value="deadline">Hạn gần nhất</option><option value="title">Tên bài A–Z</option></select></label></div>
           <p id="list-status" class="muted" role="status"></p>
           <div id="assignment-list" aria-busy="false"></div>
           <div class="pagination"><button id="prev-page" type="button">Trang trước</button><span id="page-number"></span><button id="next-page" type="button">Trang sau</button></div>

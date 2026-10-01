@@ -355,8 +355,235 @@
     width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 3px; font-size: 13px;
   }
   .modal-btn-row { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-  .btn-modal-cancel { background: #f1f5f9; border: none; padding: 8px 16px; border-radius: 3px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--ink-700); }
-  .btn-modal-save { background: #1da1f2; border: none; padding: 8px 18px; border-radius: 3px; cursor: pointer; font-size: 13px; font-weight: 700; color: #fff; }
+  .btn-modal-cancel { background: #f1f5f9; border: 1px solid #e2e8f0; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--ink-700); transition: all .15s; }
+  .btn-modal-cancel:hover { background: #e2e8f0; color: var(--ink-900); }
+  .btn-modal-save { background: #1da1f2; border: 1px solid #0d8ddc; padding: 8px 18px; border-radius: 4px; cursor: pointer; font-size: 13px; font-weight: 700; color: #fff; transition: all .15s; box-shadow: 0 2px 6px rgba(29, 161, 242, 0.25); }
+  .btn-modal-save:hover { background: #0d8ddc; box-shadow: 0 4px 10px rgba(29, 161, 242, 0.35); }
+  .btn-modal-save:disabled { opacity: 0.65; cursor: not-allowed; }
+
+  /* REVISION MODAL CHUYÊN NGHIỆP (THEO TIÊU CHUẨN HALLMARK & BỐ CỤC 2 CỘT TÒA SOẠN) */
+  .modal-box-revision {
+    max-width: 1060px !important;
+    width: 100% !important;
+    max-height: 92vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 0 !important;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.22) !important;
+    border: 1px solid var(--line) !important;
+  }
+  .rev-modal-head {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--line);
+    background: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+  .rev-modal-icon-badge {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #d97706, #b45309);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(217, 119, 6, 0.25);
+    flex-shrink: 0;
+  }
+  .rev-modal-subtag {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #d97706;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .rev-modal-meta-line {
+    font-size: 12px;
+    color: var(--ink-500);
+    margin-top: 3px;
+  }
+  .rev-btn-close {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    line-height: 1;
+    color: var(--ink-400);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all .15s;
+  }
+  .rev-btn-close:hover {
+    background: #f1f5f9;
+    color: var(--ink-900);
+  }
+  .rev-modal-scroll-body {
+    padding: 22px 24px;
+    overflow-y: auto;
+    flex: 1;
+    max-height: calc(92vh - 82px);
+  }
+  .rev-grid-columns {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 24px;
+    align-items: start;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .rev-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink-500);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--line);
+  }
+  .rev-feedback-card {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-left: 4px solid #d97706;
+    border-radius: 4px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+  .rev-feedback-card-header {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .rev-feedback-status-pill {
+    font-size: 11px;
+    font-weight: 700;
+    color: #92400e;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .rev-feedback-scroll-inner {
+    max-height: 380px;
+    overflow-y: auto;
+    padding-right: 6px;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #78350f;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+  }
+  .rev-feedback-scroll-inner::-webkit-scrollbar {
+    width: 5px;
+  }
+  .rev-feedback-scroll-inner::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+  }
+  #rev-modal-feedback {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+  .rev-template-callout {
+    background: var(--sky-050);
+    border: 1px solid var(--sky-200);
+    border-radius: 4px;
+    padding: 14px 16px;
+  }
+  .rev-download-bm03-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ffffff;
+    border: 1px solid var(--sky-200);
+    color: var(--sky-600);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 3px;
+    text-decoration: none;
+    transition: all .15s;
+  }
+  .rev-download-bm03-link:hover {
+    background: var(--sky-100);
+    border-color: var(--sky-600);
+  }
+  .rev-col-form {
+    width: 100%;
+    min-width: 0;
+  }
+  .rev-form-inner {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+  .rev-file-field-wrap {
+    margin-top: 4px;
+  }
+  .rev-file-control {
+    width: 100%;
+    padding: 7px 10px;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 3px;
+    font-size: 12.5px;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: border-color .15s, background .15s;
+  }
+  .rev-file-control:hover, .rev-file-control:focus {
+    border-color: #1da1f2;
+    background: #ffffff;
+  }
+  .rev-file-note {
+    display: block;
+    font-size: 11px;
+    color: var(--ink-500);
+    margin-top: 4px;
+  }
+  .rev-btn-row {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+  @media (max-width: 860px) {
+    .rev-grid-columns {
+      grid-template-columns: 1fr;
+      gap: 18px;
+    }
+    .rev-feedback-scroll-inner {
+      max-height: 240px;
+    }
+    .modal-box-revision {
+      max-width: 100% !important;
+      margin: 8px;
+    }
+    .rev-modal-head, .rev-modal-scroll-body {
+      padding: 14px 16px;
+    }
+  }
+  @media (max-width: 480px) {
+    .modal-overlay {
+      padding: 6px !important;
+    }
+    .rev-modal-head {
+      padding: 12px 14px;
+    }
+    .rev-modal-scroll-body {
+      padding: 14px;
+    }
+  }
 
   /* TABLE & BADGES FOR DOSSIER */
   .custom-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 12.5px; }
@@ -537,6 +764,12 @@
       <div class="spec-entry">
         <div class="lbl">Mã định danh ORCID</div>
         <div class="val" id="spec-orcid">—</div>
+        <div id="spec-orcid-status" style="font-size:11px;color:var(--ink-500);margin-top:3px;">Chưa liên kết</div>
+        <div style="display:flex;gap:8px;margin-top:7px;">
+          <button type="button" id="btn-orcid-link" onclick="startProfileOrcidLink()" style="background:#a6ce39;border:0;color:#fff;padding:6px 10px;border-radius:3px;font-size:11.5px;font-weight:700;cursor:pointer;">Liên kết ORCID</button>
+          <button type="button" id="btn-orcid-unlink" onclick="unlinkProfileOrcid()" style="display:none;background:#fff;border:1px solid #cbd5e1;color:var(--ink-700);padding:6px 10px;border-radius:3px;font-size:11.5px;cursor:pointer;">Gỡ liên kết</button>
+        </div>
+        <div style="font-size:11px;color:var(--ink-500);margin-top:6px;">Chưa có ORCID iD? <a href="https://orcid.org/register" target="_blank" rel="noopener noreferrer">Tạo tài khoản miễn phí</a>, rồi quay lại đây để liên kết.</div>
       </div>
       <div class="spec-entry">
         <div class="lbl">Vai trò trong hệ thống</div>
@@ -585,58 +818,118 @@
 </div>
 
 <!-- DIALOG NỘP BẢN GIẢI TRÌNH CHỈNH SỬA (REVISION MODAL CHUYÊN NGHIỆP) -->
-<div class="modal-overlay" id="modal-revision">
-  <div class="modal-box-edit" style="max-width:620px;">
-    <h3 style="display:flex;align-items:center;gap:8px;">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-      <span id="rev-modal-heading">Nộp bản thảo chỉnh sửa &amp; Bản giải trình phản biện</span>
-    </h3>
-    <p style="font-size:12.5px;color:var(--ink-500);margin-bottom:14px;">
-      Mã bản thảo: <strong id="rev-modal-code">Chưa chọn bản thảo</strong> · Chuyên san: <span id="rev-modal-major">—</span>
-    </p>
-
-    <div style="background:#fffbeb;border:1px solid #fde68a;border-left:4px solid #d97706;border-radius:4px;padding:12px 14px;font-size:12.5px;color:#78350f;margin-bottom:16px;line-height:1.55;">
-      <div style="font-weight:700;color:#92400e;margin-bottom:4px;">Thông báo từ Ban biên tập:</div>
-      <div id="rev-modal-feedback" style="white-space:pre-wrap;overflow-wrap:anywhere;">Yêu cầu chỉnh sửa sẽ hiển thị theo thông tin bản thảo.</div>
+<div class="modal-overlay" id="modal-revision" onclick="if(event.target===this)closeRevisionDialog()">
+  <div class="modal-box-edit modal-box-revision">
+    <!-- Header -->
+    <div class="rev-modal-head">
+      <div style="display:flex;align-items:flex-start;gap:14px;">
+        <div class="rev-modal-icon-badge">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+        </div>
+        <div>
+          <span class="rev-modal-subtag">TIẾP NHẬN HỒ SƠ CHỈNH SỬA · BÀN LÀM VIỆC TÒA SOẠN</span>
+          <h3 id="rev-modal-heading" style="margin:2px 0 4px;font-family:var(--serif);font-size:20px;font-weight:600;color:var(--ink-900);line-height:1.3;font-style:normal;">Nộp bản chỉnh sửa và giải trình BM-03</h3>
+          <div class="rev-modal-meta-line">
+            Mã bản thảo: <strong id="rev-modal-code" style="color:var(--sky-600);font-family:ui-monospace,SFMono-Regular,monospace;font-weight:700;">Chưa chọn bản thảo</strong>
+            &nbsp;·&nbsp;
+            Chuyên san: <span id="rev-modal-major" style="font-weight:600;color:var(--ink-700);">—</span>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="rev-btn-close" onclick="closeRevisionDialog()" aria-label="Đóng">&times;</button>
     </div>
 
-    <form onsubmit="handleSendRevision(event)" id="form-revision-submit">
-      <input type="hidden" id="rev-paper-id">
-      <input type="hidden" id="rev-paper-code">
+    <!-- Scrollable Body with 2-Column Grid -->
+    <div class="rev-modal-scroll-body">
+      <div class="rev-grid-columns">
+        <!-- CỘT TRÁI: Ý KIẾN PHẢN BIỆN & YÊU CẦU TỪ BAN BIÊN TẬP -->
+        <div class="rev-col-feedback">
+          <div class="rev-section-label">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            Ý KIẾN PHẢN BIỆN &amp; YÊU CẦU TỪ TÒA SOẠN
+          </div>
 
-      <!-- 1. Nội dung giải trình tóm tắt -->
-      <div class="form-group-modal">
-        <label>Nội dung giải trình tiếp thu ý kiến (Response to Reviewers) <span style="color:#e02424;">*</span></label>
-        <textarea id="rev-explanation" class="form-control-modal" rows="3" maxlength="400" placeholder="Tóm tắt các điểm đã chỉnh sửa, bổ sung theo yêu cầu của Chuyên gia phản biện 1 và 2..." required></textarea>
-        <p id="rev-explanation-help" style="font-size:12px;color:var(--ink-500);margin-top:6px;">Tóm tắt tối đa 400 ký tự. Nội dung giải trình đầy đủ đặt trong BM-03.</p>
-      </div>
+          <div class="rev-feedback-card">
+            <div class="rev-feedback-card-header">
+              <span class="rev-feedback-status-pill">THÔNG BÁO TỪ BAN BIÊN TẬP &amp; PHẢN BIỆN VIÊN:</span>
+            </div>
+            <div class="rev-feedback-scroll-inner">
+              <div id="rev-modal-feedback">Yêu cầu chỉnh sửa sẽ hiển thị theo thông tin bản thảo.</div>
+            </div>
+          </div>
 
-      <!-- 2. Biểu mẫu giải trình BM-03 -->
-      <div class="form-group-modal">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-          <label style="margin-bottom:0;">Bản giải trình chi tiết theo Biểu mẫu BM-03 (.docx / .pdf) <span style="color:#e02424;">*</span></label>
-          <a href="guidelines.html#templates" target="_blank" style="font-size:11.5px;color:#1da1f2;text-decoration:underline;">Tải mẫu BM-03</a>
+          <!-- Callout quy chuẩn BM-03 -->
+          <div class="rev-template-callout" id="rev-bm03-callout">
+            <div style="font-weight:700;font-size:12.5px;color:var(--ink-900);margin-bottom:4px;display:flex;align-items:center;gap:6px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--sky-600)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+              Quy chuẩn nộp hồ sơ chỉnh sửa (BM-03)
+            </div>
+            <p style="font-size:12px;color:var(--ink-700);line-height:1.5;margin-bottom:10px;">
+              Tác giả cần giải trình chi tiết từng ý kiến của chuyên gia phản biện và ghi rõ vị trí thay đổi (trang, dòng) trên bản thảo nộp lại.
+            </p>
+            <a href="guidelines.html#templates" target="_blank" class="rev-download-bm03-link">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Tải biểu mẫu BM-03 (.docx) &rarr;
+            </a>
+          </div>
         </div>
-        <input type="file" id="rev-file-bm03" class="form-control-modal" accept=".doc,.docx,.pdf" required>
-      </div>
 
-      <!-- 3. Bản thảo chỉnh sửa hoàn thiện (Clean Manuscript) -->
-      <div class="form-group-modal">
-        <label>Tệp bản thảo đã chỉnh sửa hoàn thiện (Clean Manuscript .docx / .pdf) <span style="color:#e02424;">*</span></label>
-        <input type="file" id="rev-file-clean" class="form-control-modal" accept=".doc,.docx,.pdf" required>
-      </div>
+        <!-- CỘT PHẢI: FORM NỘP BẢN THẢO HOÀN THIỆN & GIẢI TRÌNH -->
+        <div class="rev-col-form">
+          <div class="rev-section-label">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            HỒ SƠ BẢN THẢO HOÀN THIỆN CỦA TÁC GIẢ
+          </div>
 
-      <!-- 4. Bản thảo có đánh dấu sửa đổi (Track Changes) -->
-      <div class="form-group-modal">
-        <label>Tệp bản thảo có đánh dấu sửa đổi (Track Changes Manuscript .docx / .pdf) <span style="color:var(--ink-500);font-weight:normal;">(Tùy chọn)</span></label>
-        <input type="file" id="rev-file-tracked" class="form-control-modal" accept=".doc,.docx,.pdf">
-      </div>
+          <form onsubmit="handleSendRevision(event)" id="form-revision-submit" class="rev-form-inner">
+            <input type="hidden" id="rev-paper-id">
+            <input type="hidden" id="rev-paper-code">
 
-      <div class="modal-btn-row">
-        <button type="button" class="btn-modal-cancel" onclick="closeRevisionDialog()">Hủy bỏ</button>
-        <button type="submit" class="btn-modal-save" id="btn-submit-revision">Gửi bản sửa đổi cho Tòa soạn &rarr;</button>
+            <!-- 1. Nội dung giải trình tóm tắt -->
+            <div class="form-group-modal">
+              <label>Tóm tắt giải trình tiếp thu ý kiến <span style="color:#e02424;">*</span></label>
+              <textarea id="rev-explanation" class="form-control-modal" rows="3" maxlength="400" placeholder="Tóm tắt các nội dung chỉnh sửa chính; giải trình từng ý trong BM-03" required></textarea>
+              <p id="rev-explanation-help" style="font-size:11.5px;color:var(--ink-500);margin-top:4px;">Tóm tắt tối đa 400 ký tự. Nội dung giải trình đầy đủ đặt trong BM-03.</p>
+            </div>
+
+            <!-- 2. Biểu mẫu giải trình BM-03 -->
+            <div class="form-group-modal">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+                <label style="margin-bottom:0;">Bản giải trình chi tiết theo Biểu mẫu BM-03 (Word .doc, .docx hoặc PDF .pdf) <span style="color:#e02424;">*</span></label>
+                <a href="guidelines.html#templates" target="_blank" style="font-size:11.5px;color:#1da1f2;text-decoration:none;font-weight:600;">Tải mẫu BM-03 &rarr;</a>
+              </div>
+              <div class="rev-file-field-wrap">
+                <input type="file" id="rev-file-bm03" class="form-control-modal rev-file-control" accept=".doc,.docx,.pdf" required>
+                <span class="rev-file-note">Word (.doc, .docx) hoặc PDF (.pdf) · Dung lượng tối đa 30 MB</span>
+              </div>
+            </div>
+
+            <!-- 3. Bản thảo chỉnh sửa hoàn thiện (Clean Manuscript) -->
+            <div class="form-group-modal">
+              <label>Tệp bản thảo đã chỉnh sửa hoàn thiện (Clean Manuscript - Word .doc, .docx hoặc PDF .pdf) <span style="color:#e02424;">*</span></label>
+              <div class="rev-file-field-wrap">
+                <input type="file" id="rev-file-clean" class="form-control-modal rev-file-control" accept=".doc,.docx,.pdf" required>
+                <span class="rev-file-note">Word (.doc, .docx) hoặc PDF (.pdf) · Bản thảo sạch không lưu vết sửa · Tối đa 30 MB</span>
+              </div>
+            </div>
+
+            <!-- 4. Bản thảo có đánh dấu sửa đổi (Track Changes) -->
+            <div class="form-group-modal">
+              <label>Tệp bản thảo có đánh dấu sửa đổi (Track Changes Manuscript - Word .doc, .docx hoặc PDF .pdf) <span style="color:var(--ink-500);font-weight:normal;">(Khuyến khích)</span></label>
+              <div class="rev-file-field-wrap">
+                <input type="file" id="rev-file-tracked" class="form-control-modal rev-file-control" accept=".doc,.docx,.pdf">
+                <span class="rev-file-note">Word (.doc, .docx) hoặc PDF (.pdf) · Bản thảo lưu vết sửa để Tòa soạn đối chiếu · Tối đa 30 MB</span>
+              </div>
+            </div>
+
+            <div class="modal-btn-row rev-btn-row">
+              <button type="button" class="btn-modal-cancel" onclick="closeRevisionDialog()">Hủy bỏ</button>
+              <button type="submit" class="btn-modal-save" id="btn-submit-revision">Gửi bản sửa đổi cho Tòa soạn &rarr;</button>
+            </div>
+          </form>
+        </div>
       </div>
-    </form>
+    </div>
   </div>
 </div>
 
@@ -716,7 +1009,8 @@
         </div>
         <div class="form-group-modal">
           <label>Mã định danh tác giả quốc tế ORCID (iD)</label>
-          <input type="text" id="modal-input-orcid" class="form-control-modal">
+          <input type="text" id="modal-input-orcid" class="form-control-modal" readonly aria-describedby="modal-orcid-note">
+          <div id="modal-orcid-note" style="font-size:11px;color:var(--ink-500);margin-top:4px;">Mã ORCID được xác minh qua nút Liên kết ORCID trong hồ sơ.</div>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
@@ -842,16 +1136,7 @@
         <div id="dt-authors-container"></div>
       </div>
 
-      <!-- Khối 3: Cán bộ thẩm định do tác giả đề xuất (PhanBienDeXuat) -->
-      <div style="margin-bottom:18px;">
-        <div style="font-size:13px;font-weight:700;color:var(--ink-900);margin-bottom:8px;display:flex;align-items:center;gap:6px;">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><polyline points="16 11 18 13 22 9"/></svg>
-          Chuyên gia phản biện do tác giả đề xuất (Bảng PhanBienDeXuat)
-        </div>
-        <div id="dt-reviewers-container"></div>
-      </div>
-
-      <!-- Khối 4: Thư mục tài liệu bản thảo (ThuMucBaiBao) -->
+      <!-- Khối 3: Thư mục tài liệu bản thảo (ThuMucBaiBao) -->
       <div style="margin-bottom:18px;">
         <div style="font-size:13px;font-weight:700;color:var(--ink-900);margin-bottom:8px;display:flex;align-items:center;gap:6px;">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
@@ -893,6 +1178,7 @@
   // Khởi tạo thông tin từ phiên người dùng
   document.addEventListener('DOMContentLoaded', async () => {
     await syncUserData();
+    await finishProfileOrcidCallback();
     await loadMySubmissions();
     await loadMyReviewAssignments();
     setInterval(() => {
@@ -900,6 +1186,44 @@
     }, 60000);
     checkHashForPasswordModal();
   });
+
+  async function startProfileOrcidLink() {
+    try {
+      const result = await apiStartOrcidLink();
+      sessionStorage.setItem('huit_orcid_profile_state', result.state);
+      window.location.assign(result.authorizationUrl);
+    } catch (error) { showToast(error.message || 'Không thể kết nối ORCID.', 'error'); }
+  }
+
+  async function finishProfileOrcidCallback() {
+    const params = new URLSearchParams((location.hash || '').slice(1));
+    const state = params.get('orcid-state');
+    const error = params.get('orcid-error');
+    if (!state && !error) return;
+    history.replaceState(null, '', location.pathname + location.search);
+    if (error) {
+      sessionStorage.removeItem('huit_orcid_profile_state');
+      showToast('Liên kết ORCID chưa hoàn tất. Bạn có thể thử lại sau.', 'warning');
+      return;
+    }
+    const expected = sessionStorage.getItem('huit_orcid_profile_state');
+    sessionStorage.removeItem('huit_orcid_profile_state');
+    if (!expected || state !== expected) {
+      showToast('Phiên liên kết ORCID không khớp. Hãy bắt đầu lại từ hồ sơ của bạn.', 'error');
+      return;
+    }
+    await syncUserData();
+    showToast('ORCID đã được xác minh và liên kết với tài khoản.', 'success');
+  }
+
+  async function unlinkProfileOrcid() {
+    if (!confirm('Gỡ ORCID khỏi tài khoản? Lịch sử tác giả của các bài đã nộp sẽ được giữ nguyên.')) return;
+    try {
+      await apiUnlinkOrcid();
+      await syncUserData();
+      showToast('Đã gỡ ORCID khỏi tài khoản.', 'success');
+    } catch (error) { showToast(error.message || 'Không thể gỡ ORCID.', 'error'); }
+  }
 
   window.addEventListener('hashchange', checkHashForPasswordModal);
   function checkHashForPasswordModal() {
@@ -963,6 +1287,13 @@
     }
 
     document.getElementById('spec-orcid').innerText = user.maORCID || user.orcid || '—';
+    const orcidStatus = document.getElementById('spec-orcid-status');
+    const linkOrcidButton = document.getElementById('btn-orcid-link');
+    const unlinkOrcidButton = document.getElementById('btn-orcid-unlink');
+    const hasOrcid = !!(user.maORCID || user.orcid);
+    if (orcidStatus) orcidStatus.innerText = user.maORCIDDaXacThuc ? 'Đã xác minh qua ORCID' : (hasOrcid ? 'Mã cũ · chưa xác minh quyền sở hữu' : 'ORCID không bắt buộc · chưa liên kết');
+    if (linkOrcidButton) linkOrcidButton.innerText = hasOrcid ? 'Xác minh / đổi ORCID' : 'Liên kết ORCID';
+    if (unlinkOrcidButton) unlinkOrcidButton.style.display = user.maORCIDDaXacThuc ? 'inline-block' : 'none';
 
     // Cập nhật Avatar ảnh đại diện Tác giả (Workbench Header + Side Spec Card)
     const initial = user.hoTen ? user.hoTen.split(' ').pop().charAt(0).toUpperCase() : 'U';
@@ -1254,7 +1585,7 @@
                   </button>
                 ` : ''}
                 <button type="button" class="btn-action-view" style="cursor:pointer;border:1px solid var(--sky-200);background:#fff;color:#1da1f2;padding:6px 14px;border-radius:3px;font-weight:600;font-size:12px;display:inline-flex;align-items:center;gap:4px;" onclick="openSubmissionDetailModal(${sub.maBaiBao})">
-                  Xem hồ sơ &amp; Chuyên gia đề xuất &rarr;
+                  Xem chi tiết hồ sơ bản thảo &rarr;
                 </button>
                 ${sub.trangThai === 'Đã xuất bản' 
                   ? `<a href="article-detail.html?id=${sub.maBaiBao}" class="btn-action-view">Xem trên tạp chí &rarr;</a>`
@@ -1353,41 +1684,6 @@
       }
       authorsHtml += `</tbody></table>`;
       authorsContainer.innerHTML = authorsHtml;
-
-      // Cán bộ thẩm định do tác giả đề xuất (PhanBienDeXuat)
-      const reviewersContainer = document.getElementById('dt-reviewers-container');
-      if (data.phanBienDeXuats && data.phanBienDeXuats.length > 0) {
-        let revHtml = `
-          <table class="custom-table">
-            <thead>
-              <tr>
-                <th style="width:36px;">STT</th>
-                <th>Họ và tên chuyên gia</th>
-                <th>Cơ quan / Đơn vị công tác</th>
-                <th>Email</th>
-                <th>Lĩnh vực chuyên môn</th>
-                <th>Trạng thái đối soát</th>
-              </tr>
-            </thead>
-            <tbody>
-        `;
-        data.phanBienDeXuats.forEach((pr, idx) => {
-          revHtml += `
-            <tr>
-              <td>${idx + 1}</td>
-              <td><strong>${pr.hoTen}</strong></td>
-              <td>${pr.donVi || '—'}</td>
-              <td><span style="font-family:monospace;">${pr.email}</span></td>
-              <td>${pr.linhVuc || '—'}</td>
-              <td>${pr.laChuyenGiaHeThong ? '<span class="badge-tag badge-primary">✓ Khớp CSDL hệ thống</span>' : '<span class="badge-tag badge-neutral">Mời ngoài hệ thống</span>'}</td>
-            </tr>
-          `;
-        });
-        revHtml += `</tbody></table>`;
-        reviewersContainer.innerHTML = revHtml;
-      } else {
-        reviewersContainer.innerHTML = '<div style="font-size:12px;color:var(--ink-500);font-style:italic;padding:8px 12px;background:#f8fafc;border:1px dashed var(--line);border-radius:4px;">Tác giả không gửi danh sách đề xuất cán bộ thẩm định cho bài báo này.</div>';
-      }
 
       // Thư mục tài liệu đính kèm (ThuMucBaiBao)
       const filesContainer = document.getElementById('dt-files-container');
@@ -1782,7 +2078,7 @@
     document.getElementById('rev-modal-heading').textContent = formatOnly ? 'Nộp bản sửa hình thức' : 'Nộp bản chỉnh sửa và giải trình BM-03';
     document.getElementById('rev-explanation').closest('.form-group-modal').querySelector('label').innerHTML = (formatOnly ? 'Mô tả các lỗi thể thức đã sửa' : 'Tóm tắt giải trình tiếp thu ý kiến') + ' <span style="color:#e02424;">*</span>';
     document.getElementById('rev-explanation-help').textContent = formatOnly ? 'Mô tả tóm tắt tối đa 400 ký tự.' : 'Tóm tắt tối đa 400 ký tự. Nội dung giải trình đầy đủ đặt trong BM-03.';
-    document.getElementById('rev-explanation').placeholder = formatOnly ? 'Mô tả các lỗi thể thức đã sửa theo yêu cầu của Ban biên tập...' : 'Giải trình từng góp ý của chuyên gia phản biện...';
+    document.getElementById('rev-explanation').placeholder = formatOnly ? 'Mô tả các lỗi thể thức đã sửa theo yêu cầu của Ban biên tập...' : 'Tóm tắt các nội dung chỉnh sửa chính; giải trình từng ý trong BM-03';
     document.getElementById('rev-paper-id').value = id || '';
     document.getElementById('rev-paper-code').value = code || '';
     document.getElementById('rev-modal-code').innerText = code || 'Chưa chọn bản thảo';
@@ -1801,6 +2097,8 @@
     if (feedback) {
       document.getElementById('rev-modal-feedback').innerText = feedback;
     }
+    const bm03Callout = document.getElementById('rev-bm03-callout');
+    if (bm03Callout) bm03Callout.style.display = formatOnly ? 'none' : 'block';
     document.getElementById('modal-revision').classList.add('open');
   }
 

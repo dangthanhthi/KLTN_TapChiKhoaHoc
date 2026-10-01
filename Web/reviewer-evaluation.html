@@ -9,9 +9,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="journal-interactions.css">
-  <link rel="stylesheet" href="reviewer-evaluation.css">
-  <script src="reviewer-core.js" defer></script>
-  <script src="reviewer-evaluation.js" defer></script>
+  <link rel="stylesheet" href="reviewer-evaluation.css?v=20261001_2245">
+  <script src="reviewer-core.js?v=20261001_2245" defer></script>
+  <script src="reviewer-evaluation.js?v=20261001_2245" defer></script>
 </head>
 <body class="evaluation-workspace-body">
   <header class="eval-topbar">
@@ -104,39 +104,43 @@
         <div class="deadline-pill" id="deadline-pill">Hạn: —</div>
       </div>
 
-      <form id="evaluation-form" class="evaluation-form">
+      <form id="evaluation-form" class="evaluation-form" novalidate>
         <fieldset class="score-fieldset">
           <legend>Đánh giá theo tiêu chuẩn học thuật (Thang 0 – 10)</legend>
           <div class="score-grid">
             <div class="score-field">
               <label for="score-newness">1. Tính mới &amp; Sáng tạo</label>
-              <input id="score-newness" name="diemTinhMoi" type="number" min="0" max="10" step="0.1" required placeholder="0 - 10">
+              <input id="score-newness" name="diemTinhMoi" type="number" min="0" max="10" step="0.1" inputmode="decimal" required placeholder="0 - 10">
             </div>
             <div class="score-field">
               <label for="score-method">2. Phương pháp nghiên cứu</label>
-              <input id="score-method" name="diemPhuongPhap" type="number" min="0" max="10" step="0.1" required placeholder="0 - 10">
+              <input id="score-method" name="diemPhuongPhap" type="number" min="0" max="10" step="0.1" inputmode="decimal" required placeholder="0 - 10">
             </div>
             <div class="score-field">
               <label for="score-result">3. Kết quả &amp; Thảo luận</label>
-              <input id="score-result" name="diemKetQua" type="number" min="0" max="10" step="0.1" required placeholder="0 - 10">
+              <input id="score-result" name="diemKetQua" type="number" min="0" max="10" step="0.1" inputmode="decimal" required placeholder="0 - 10">
             </div>
             <div class="score-field">
               <label for="score-presentation">4. Quy chuẩn trình bày</label>
-              <input id="score-presentation" name="diemTrinhBay" type="number" min="0" max="10" step="0.1" required placeholder="0 - 10">
+              <input id="score-presentation" name="diemTrinhBay" type="number" min="0" max="10" step="0.1" inputmode="decimal" required placeholder="0 - 10">
             </div>
           </div>
+          <p class="score-hint" id="score-hint">Mỗi tiêu chí từ 0 đến 10; cho phép điểm thập phân đến một chữ số, ví dụ 7,5.</p>
           <div class="total-score-row">
             <span>Điểm tổng kết (Trung bình 4 tiêu chí):</span>
             <strong id="total-score">— / 10</strong>
           </div>
         </fieldset>
 
-        <div class="form-group">
+          <div class="form-group">
           <label for="comment-author">
             <strong>Nhận xét gửi tác giả</strong>
             <span class="hint">Nêu rõ các ưu điểm, các thiếu sót cụ thể về số liệu, phương pháp và hướng dẫn chỉnh sửa chi tiết.</span>
           </label>
           <textarea id="comment-author" name="nhanXetChoTacGia" rows="8" maxlength="20000" required placeholder="Ghi nhận xét chi tiết gửi tác giả (tối đa 20.000 ký tự)..."></textarea>
+          <div class="field-meta">
+            <span id="author-comment-counter" class="char-counter">0 / 20.000 ký tự (tối thiểu 10 ký tự)</span>
+          </div>
         </div>
 
         <div class="form-group">
@@ -145,6 +149,9 @@
             <span class="hint">Đánh giá tính liêm chính, các nghi vấn trùng lặp hoặc lưu ý kín gửi Trưởng Ban biên tập.</span>
           </label>
           <textarea id="comment-editor" name="nhanXetBaoMat" rows="4" maxlength="20000" placeholder="Thông tin chỉ dành riêng cho Ban biên tập..."></textarea>
+          <div class="field-meta">
+            <span id="editor-comment-counter" class="char-counter">0 / 20.000 ký tự</span>
+          </div>
         </div>
 
         <div class="form-group">
@@ -156,6 +163,10 @@
             <option value="Chỉnh sửa lớn và phản biện lại">Chỉnh sửa lớn và phản biện lại (Cần vòng 2)</option>
             <option value="Từ chối đăng">Từ chối đăng (Không đạt chuẩn xuất bản)</option>
           </select>
+          <div id="academic-consistency-warning" class="consistency-warning" hidden>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+            <span id="consistency-warning-text"></span>
+          </div>
         </div>
 
         <div class="form-group check-group">
@@ -180,6 +191,11 @@
     <p>Phiếu sẽ được chuyển đến tòa soạn để xử lý chính thức.</p>
     <div class="confirmation-summary"><span>Điểm tổng kết</span><strong id="confirm-score">—</strong></div>
     <div class="confirmation-summary"><span>Kiến nghị</span><strong id="confirm-recommendation">—</strong></div>
+    <div class="confirmation-summary"><span>Độ dài nhận xét</span><strong id="confirm-comment-length">—</strong></div>
+    <div id="confirm-warning-row" class="confirmation-summary warning-row" hidden>
+      <span style="color:var(--warning)">Lưu ý học thuật</span>
+      <strong id="confirm-warning-text" style="color:var(--warning);font-size:12px;text-align:right;">—</strong>
+    </div>
     <p class="confirmation-privacy">Nhận xét riêng cho Ban biên tập chỉ hiển thị với tòa soạn, không gửi cho tác giả.</p>
     <div class="confirmation-actions">
       <button id="cancel-send" type="button" class="secondary-btn">Xem lại phiếu</button>

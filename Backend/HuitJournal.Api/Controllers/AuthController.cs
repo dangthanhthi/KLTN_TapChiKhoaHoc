@@ -301,7 +301,20 @@ public class AuthController : ControllerBase
             return NotFound(new { message = "Không tìm thấy người dùng trong CSDL." });
         }
 
-        return Ok(user);
+        var verifiedPayloads = await _context.WorkflowRecords.AsNoTracking()
+            .Where(r => r.Kind == "OrcidLink" && r.UserId == user.MaNguoiDung && r.State == "Active")
+            .Select(r => r.Payload).ToListAsync();
+        var orcidVerified = !string.IsNullOrWhiteSpace(user.MaORCID) && verifiedPayloads.Any(payload =>
+        {
+            try
+            {
+                using var document = System.Text.Json.JsonDocument.Parse(payload);
+                return document.RootElement.TryGetProperty("orcid", out var id) && id.GetString() == user.MaORCID;
+            }
+            catch (System.Text.Json.JsonException) { return false; }
+        });
+
+        return Ok(new { user.MaNguoiDung, user.HoTen, user.Email, user.DonVi, user.MaORCID, MaORCIDDaXacThuc = orcidVerified });
     }
 
     [HttpPost("logout")]

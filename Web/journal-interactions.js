@@ -148,6 +148,38 @@ async function apiRegister(data) {
   }
 }
 
+async function startOrcidAuthorization(path) {
+  const headers = { 'Content-Type': 'application/json' };
+  const token = localStorage.getItem('journal_token');
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const response = await fetchWithTimeout(`${API_BASE}/orcid/${path}/start`, {
+    method: 'POST', headers, body: '{}', timeout: 20000
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok || !result.authorizationUrl || !result.state) throw new Error(result.message || 'Không thể bắt đầu liên kết ORCID.');
+  return result;
+}
+
+async function apiStartOrcidRegistration() { return startOrcidAuthorization('registration'); }
+async function apiStartOrcidLink() { return startOrcidAuthorization('link'); }
+
+async function apiGetRegistrationOrcid(state) {
+  const response = await fetchWithTimeout(`${API_BASE}/orcid/registration/${encodeURIComponent(state)}`, { cache: 'no-store' });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.message || 'Không lấy được ORCID đã xác minh.');
+  return result;
+}
+
+async function apiUnlinkOrcid() {
+  const token = localStorage.getItem('journal_token');
+  const response = await fetchWithTimeout(`${API_BASE}/orcid/link`, {
+    method: 'DELETE', headers: { Authorization: `Bearer ${token}` }
+  });
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.message || 'Không thể gỡ liên kết ORCID.');
+  return result;
+}
+
 async function apiVerifyEmail(registrationId, verificationCode) {
   try {
     const res = await fetchWithTimeout(`${API_BASE}/auth/verify-email`, {
@@ -576,7 +608,8 @@ async function findAccountByEmail(email) {
           hoTen: liveUser.hoTen,
           email: liveUser.email,
           donVi: liveUser.donVi || 'Chưa cập nhật đơn vị',
-          orcid: liveUser.maORCID || '',
+          orcid: liveUser.maORCIDDaXacThuc === true ? (liveUser.maORCID || '') : '',
+          orcidVerified: liveUser.maORCIDDaXacThuc === true,
           vaiTro: 'Thành viên hệ thống'
         };
       }
@@ -641,7 +674,11 @@ function renderAuthNavbar() {
                 <div class="dropdown-header-email" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">${user.email}</div>
               </div>
             </div>
-${user.vaiTros?.some(r => ['Quản trị hệ thống', 'Tổng biên tập', 'Ban biên tập'].includes(r)) ? '<a href="editorial-workflow.html" class="dropdown-item">Xử lý hồ sơ tòa soạn</a>' : ''}
+            ${user.vaiTros?.some(r => ['Quản trị hệ thống', 'Tổng biên tập', 'Ban biên tập'].includes(r)) ? `
+            <a href="editorial-workflow.html" class="dropdown-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path><path d="m9 14 2 2 4-4"></path></svg>
+              Xử lý hồ sơ tòa soạn
+            </a>` : ''}
             <a href="profile.html" class="dropdown-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
               Trang cá nhân &amp; Thống kê

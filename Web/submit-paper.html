@@ -163,6 +163,35 @@
   .file-title { font-size: 13.5px; font-weight: 700; color: var(--ink-900); }
   .file-meta { font-size: 11.5px; color: var(--emerald); margin-top: 2px; }
 
+  /* Step 4 Attachment Redesign (Hallmark Academic Style) */
+  .attachment-upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px; margin-bottom: 24px; }
+  @media (max-width: 900px) { .attachment-upload-grid { grid-template-columns: 1fr; } }
+  .attach-card { background: #ffffff; border: 1px solid var(--line); border-radius: 6px; padding: 18px 20px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: border-color .15s ease; }
+  .attach-card:hover { border-color: var(--sky-400); }
+  .attach-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
+  .attach-card-title { font-family: var(--serif); font-size: 15px; font-weight: 600; color: var(--ink-900); display: flex; align-items: center; gap: 8px; }
+  .attach-card-desc { font-size: 12.5px; color: var(--ink-500); line-height: 1.5; margin-bottom: 14px; }
+  .attach-dropzone { border: 2px dashed var(--sky-200); background: var(--sky-050); border-radius: 6px; padding: 22px 16px; text-align: center; cursor: pointer; transition: all .2s; user-select: none; }
+  .attach-dropzone:hover, .attach-dropzone.dragover { border-color: var(--sky-600); background: #eef6fc; }
+  .attach-dropzone svg { width: 32px; height: 32px; stroke: var(--sky-600); stroke-width: 1.8; fill: none; margin-bottom: 8px; display: inline-block; }
+  .attach-dropzone-prompt { font-size: 13.5px; font-weight: 600; color: var(--ink-900); }
+  .attach-dropzone-sub { font-size: 11.5px; color: var(--ink-500); margin-top: 4px; }
+  .attach-file-card { display: flex; align-items: center; justify-content: space-between; background: var(--emerald-bg); border: 1px solid #a7f3d0; border-radius: 6px; padding: 12px 14px; }
+  .attach-file-info { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .attach-file-icon { font-size: 24px; line-height: 1; flex-shrink: 0; }
+  .attach-file-text { min-width: 0; }
+  .attach-file-name { font-size: 13px; font-weight: 700; color: var(--ink-900); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px; }
+  .attach-file-size { font-size: 11px; color: var(--emerald); margin-top: 2px; }
+  .attach-btn-group { display: flex; gap: 6px; flex-shrink: 0; }
+  .attach-action-btn { background: #ffffff; border: 1px solid var(--line); padding: 4px 10px; font-size: 11.5px; font-weight: 600; border-radius: 4px; cursor: pointer; transition: all .15s; }
+  .attach-action-btn:hover { background: #f1f5f9; }
+  .attach-action-btn.danger { color: #ef4444; border-color: #fecaca; }
+  .attach-action-btn.danger:hover { background: #fef2f2; }
+  .supplement-list-wrap { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+  .supplement-item-card { display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid var(--line); border-radius: 5px; padding: 8px 12px; transition: border-color .15s; }
+  .supplement-item-card:hover { border-color: var(--sky-200); }
+  .supplement-summary-bar { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--ink-700); background: #f1f5f9; border-radius: 4px; padding: 8px 12px; margin-top: 10px; }
+
   /* STEP 5: REVIEW SHEET SECTION CARDS (INSPIRED BY HAUI BUT CLEAN & PROFESSIONAL) */
   .review-section { background: #fff; border: 1px solid var(--line); border-radius: 6px; padding: 20px 22px; margin-bottom: 22px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
   .review-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
@@ -520,38 +549,117 @@
             <span style="font-size:12px;color:var(--sky-600);font-weight:600;font-family:var(--sans);">Bước 4 / 5</span>
           </div>
           <div class="section-desc">
-            Đính kèm BM-02 nếu có, cùng tập dữ liệu và phụ lục. Cam đoan điện tử ở bước cuối được lưu với hồ sơ.
+            Đính kèm bản cam đoan quyền tác giả (BM-02) và các tệp dữ liệu, phụ lục nghiên cứu minh chứng. Mọi tài liệu tải lên được đồng bộ tự động vào danh mục hồ sơ bài nộp.
           </div>
 
-          <!-- THƯ MỤC TÀI LIỆU ĐÍNH KÈM (BẢNG THUMUCBAIBAO) -->
-          <div style="margin-top:12px;">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px;">
+          <!-- KHUNG TẢI TÀI LIỆU ĐÍNH KÈM: 2 CỘT CHUẨN TÒA SOẠN HUIT -->
+          <div class="attachment-upload-grid">
+
+            <!-- CỘT 1: BM-02 BẢN CAM ĐOAN QUYỀN TÁC GIẢ -->
+            <div class="attach-card" id="bm02-card">
               <div>
-                <label style="font-size:14px;font-weight:700;color:var(--ink-900);margin:0;">Danh mục tệp tài liệu đính kèm</label>
-                <div class="hint">Chỉ chấp nhận tệp định dạng PDF (.pdf) hoặc Word (.doc, .docx) · Tối đa 25MB/tệp.</div>
+                <div class="attach-card-head">
+                  <div class="attach-card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    1. Bản cam đoan quyền tác giả (BM-02)
+                  </div>
+                  <span class="badge-tag badge-neutral">Tùy chọn</span>
+                </div>
+                <div class="attach-card-desc">
+                  Bản cam đoan về quyền tác giả và liêm chính học thuật có chữ ký của nhóm nghiên cứu. Định dạng .pdf, .docx, .doc · Tối đa 25MB.
+                </div>
               </div>
-              <div style="display:flex;gap:8px;">
-                <a href="templates/BM02_Ban_Cam_Doan_Quyen_Tac_Gia.docx" download class="btn-outline" style="padding:6px 12px;font-size:12px;display:inline-flex;align-items:center;gap:4px;">
+
+              <!-- Input files ẩn -->
+              <input type="file" id="bm02-input" accept=".pdf,.doc,.docx" style="display:none;" onchange="handleBm02Selected(event)">
+              <input type="file" id="extra-attachment-input" accept=".pdf,.doc,.docx" style="display:none;" onchange="handleExtraAttachmentSelected(event)">
+
+              <!-- BM-02 Dropzone (hiển thị khi chưa có tệp) -->
+              <div class="attach-dropzone" id="bm02-dropzone" onclick="document.getElementById('bm02-input').click()">
+                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <div class="attach-dropzone-prompt">Tải lên tệp BM-02 đã ký</div>
+                <div class="attach-dropzone-sub">Kéo thả tệp vào đây hoặc nhấp để duyệt từ máy tính</div>
+              </div>
+
+              <!-- BM-02 File Preview (hiển thị khi đã chọn tệp) -->
+              <div class="attach-file-card" id="bm02-preview-box" style="display:none;">
+                <div class="attach-file-info">
+                  <div class="attach-file-icon" id="bm02-file-icon">📕</div>
+                  <div class="attach-file-text">
+                    <div class="attach-file-name" id="bm02-file-name">—</div>
+                    <div class="attach-file-size" id="bm02-file-size">—</div>
+                  </div>
+                </div>
+                <div class="attach-btn-group">
+                  <button type="button" class="attach-action-btn" onclick="document.getElementById('bm02-input').click()">Đổi tệp</button>
+                  <button type="button" class="attach-action-btn danger" onclick="removeBm02File()">Gỡ bỏ</button>
+                </div>
+              </div>
+
+              <div style="margin-top:14px;display:flex;justify-content:flex-end;">
+                <a href="templates/BM02_Ban_Cam_Doan_Quyen_Tac_Gia.docx" download class="btn-download" style="background:#ffffff;border:1px solid #cbd5e1;color:var(--sky-600);padding:5px 12px;border-radius:4px;font-size:12px;font-weight:600;display:inline-flex;align-items:center;gap:6px;">
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                  Tải mẫu BM-02 (Bản cam đoan)
+                  Tải mẫu BM-02 (.docx)
                 </a>
               </div>
             </div>
 
-            <label for="bm02-input">BM-02 · Bản cam đoan (PDF hoặc Word, không bắt buộc)</label>
-            <input type="file" id="bm02-input" accept=".pdf,.doc,.docx">
-            <label for="supplement-input">Dữ liệu và phụ lục (tối đa 5 tệp)</label>
-            <input type="file" id="supplement-input" accept=".pdf,.doc,.docx,.csv,.xlsx" multiple>
-            <p class="hint">Tối đa 30 MB mỗi tệp, tổng hồ sơ tối đa 120 MB.</p>
+            <!-- CỘT 2: DỮ LIỆU & PHỤ LỤC NGHIÊN CỨU -->
+            <div class="attach-card" id="supplement-card">
+              <div>
+                <div class="attach-card-head">
+                  <div class="attach-card-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                    2. Dữ liệu &amp; Phụ lục nghiên cứu
+                  </div>
+                  <span class="badge-tag badge-neutral" id="supplement-counter-badge">0 / 5 tệp</span>
+                </div>
+                <div class="attach-card-desc">
+                  Bảng số liệu gốc, tập tin phân tích (.xlsx, .csv), tệp nén minh chứng (.zip, .rar) hoặc tài liệu phụ trợ (.pdf, .doc, .docx). Tối đa 30MB/tệp · Tổng tối đa 120MB.
+                </div>
+              </div>
+
+              <!-- Input files ẩn -->
+              <input type="file" id="supplement-input" accept=".pdf,.doc,.docx,.xlsx,.csv,.zip,.rar" multiple style="display:none;" onchange="handleSupplementSelected(event)">
+
+              <!-- Supplement Dropzone -->
+              <div class="attach-dropzone" id="supplement-dropzone" onclick="document.getElementById('supplement-input').click()">
+                <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                <div class="attach-dropzone-prompt">Chọn tệp dữ liệu hoặc phụ lục bổ sung</div>
+                <div class="attach-dropzone-sub">Kéo thả tệp vào đây hoặc nhấp để chọn tối đa 5 tệp</div>
+              </div>
+
+              <!-- Supplement Files List -->
+              <div class="supplement-list-wrap" id="supplement-files-container" style="display:none;">
+                <div id="supplement-files-list"></div>
+                <div class="supplement-summary-bar">
+                  <span id="supplement-summary-text">Đã chọn: 0 tệp (0 MB)</span>
+                  <button type="button" class="attach-action-btn" id="btn-add-more-supplements" onclick="document.getElementById('supplement-input').click()">+ Thêm tệp khác</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- BẢNG TỔNG HỢP DANH MỤC THƯ MỤC TÀI LIỆU ĐÍNH KÈM (THUMUCBAIBAO) -->
+          <div style="margin-top:20px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+              <label style="font-size:14px;font-weight:700;color:var(--ink-900);margin:0;">
+                Danh mục hồ sơ đính kèm bài nộp (ThuMucBaiBao)
+              </label>
+              <span style="font-size:12px;color:var(--ink-500);" id="att-summary-counts">Tổng cộng: 1 tài liệu</span>
+            </div>
+
             <table class="custom-table" id="attachments-table">
               <thead>
                 <tr>
                   <th style="width:40px;">STT</th>
                   <th>Tên tài liệu</th>
-                  <th>Mô tả tài liệu</th>
+                  <th>Mô tả / Phân loại hồ sơ</th>
                   <th>Dung lượng</th>
                   <th>Trạng thái</th>
-                  <th style="width:60px;">Yêu cầu</th>
+                  <th style="width:80px;">Yêu cầu</th>
+                  <th style="width:80px;text-align:center;">Thao tác</th>
                 </tr>
               </thead>
               <tbody id="attachments-table-body">
@@ -561,7 +669,8 @@
                   <td><span class="badge-tag badge-primary">Toàn văn bài báo (Bản thảo ẩn danh)</span></td>
                   <td id="att-main-size">--</td>
                   <td><span class="badge-tag badge-neutral" id="att-main-status">Chờ tải lên ở Bước 1</span></td>
-                  <td style="color:var(--ink-400);font-size:11px;">Bắt buộc</td>
+                  <td style="color:var(--ink-500);font-size:11px;font-weight:600;">Bắt buộc</td>
+                  <td style="text-align:center;"><button type="button" class="btn-outline" style="padding:2px 8px;font-size:11px;" onclick="switchStep(1)">Tải tệp</button></td>
                 </tr>
               </tbody>
             </table>
@@ -710,7 +819,7 @@
 
           <div class="form-actions">
             <button type="button" class="btn-outline" onclick="goToNextStep(4)">&larr; Quay lại bước 4</button>
-            <button type="button" class="btn-primary" style="padding:12px 28px;font-size:14.5px;" onclick="handleFinalSubmit(event)">🚀 Xác Nhận Nộp Bản Thảo Chính Thức</button>
+            <button type="button" class="btn-primary" style="padding:12px 28px;font-size:14.5px;" onclick="handleFinalSubmit(event)">Xác Nhận Nộp Bản Thảo Chính Thức</button>
           </div>
         </div>
 
@@ -834,8 +943,9 @@
         <input type="text" class="form-control" id="modal-author-affil" placeholder="Ví dụ: Viện Công nghệ Tiên tiến, ĐHQG-HCM">
       </div>
       <div class="form-group">
-        <label>Mã định danh ORCID (Nếu có)</label>
-        <input type="text" class="form-control" id="modal-author-orcid" placeholder="0000-0002-4512-8890">
+        <label>Mã định danh ORCID (nếu có)</label>
+        <input type="text" class="form-control" id="modal-author-orcid" placeholder="0000-0002-1825-0097">
+        <div class="hint">Nhập mã do đồng tác giả cung cấp. Hệ thống kiểm tra định dạng và checksum; mã khai báo ở đây chưa xác minh quyền sở hữu.</div>
       </div>
       <div class="form-group" style="background:#f8fafc;border:1px solid var(--line);border-radius:4px;padding:12px 14px;margin-top:14px;">
         <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin:0;font-weight:600;font-size:13px;color:var(--ink-900);">
@@ -1090,7 +1200,7 @@
         name: (user && user.hoTen) ? user.hoTen : '',
         affil: (user && user.donVi) ? user.donVi : '',
         email: (user && user.email) ? user.email : '',
-        orcid: (user && user.orcid) ? user.orcid : '',
+        orcid: (user && user.maORCIDDaXacThuc === true) ? (user.maORCID || user.orcid || '') : '',
         isCorresponding: true,
         isMain: true
       }
@@ -1238,6 +1348,17 @@
     }
   }
 
+  function isValidOrcidIdentifier(value) {
+    let id = String(value || '').trim();
+    id = id.replace(/^https?:\/\/orcid\.org\//i, '').replaceAll('-', '');
+    if (!/^\d{15}[\dX]$/i.test(id)) return false;
+    let total = 0;
+    for (let i = 0; i < 15; i++) total = (total + Number(id[i])) * 2;
+    const checkValue = (12 - (total % 11)) % 11;
+    const checkDigit = checkValue === 10 ? 'X' : String(checkValue);
+    return id[15].toUpperCase() === checkDigit;
+  }
+
   function confirmAddAuthor() {
     const email = document.getElementById('modal-author-email').value.trim();
     const name = document.getElementById('modal-author-name').value.trim();
@@ -1247,6 +1368,11 @@
 
     if (!email || !name || !affil) {
       showToast('Vui lòng điền đầy đủ Email liên lạc, Họ tên và Đơn vị công tác của đồng tác giả.', 'error');
+      return;
+    }
+
+    if (orcid && !isValidOrcidIdentifier(orcid)) {
+      showToast('Mã ORCID không hợp lệ. Hãy nhập mã 16 ký tự đúng checksum hoặc để trống.', 'error');
       return;
     }
 
@@ -1346,6 +1472,9 @@
       const eb = document.getElementById('extraction-banner');
       if (eb) eb.style.display = 'none';
 
+      mainPaperFileInfo = { name: fileName, size: `${fileSize} MB`, ready: true };
+      if (typeof renderAttachmentsTable === 'function') renderAttachmentsTable();
+
       showToast('Tệp hợp lệ. Hệ thống chưa trích xuất siêu dữ liệu; vui lòng nhập thông tin bài báo ở bước tiếp theo.', 'info', 6000);
     }, 1400);
   }
@@ -1371,6 +1500,391 @@
     }
     const eb = document.getElementById('extraction-banner');
     if (eb) eb.style.display = 'none';
+
+    mainPaperFileInfo = null;
+    if (typeof renderAttachmentsTable === 'function') renderAttachmentsTable();
+  }
+
+  // ==========================================
+  // QUẢN LÝ TÀI LIỆU ĐÍNH KÈM (BƯỚC 4: THUMUCBAIBAO)
+  // ==========================================
+  let bm02File = null;
+  let supplementFiles = [];
+  let mainPaperFileInfo = null;
+
+  function formatFileSize(bytes) {
+    if (!bytes || isNaN(bytes)) return '0 MB';
+    const mb = bytes / (1024 * 1024);
+    if (mb < 0.01) return '< 0.01 MB';
+    return mb.toFixed(2) + ' MB';
+  }
+
+  function getFileIcon(filename) {
+    const ext = (filename || '').split('.').pop().toLowerCase();
+    if (ext === 'pdf') return '📕';
+    if (['doc', 'docx'].includes(ext)) return '📄';
+    if (['xls', 'xlsx', 'csv'].includes(ext)) return '📊';
+    if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) return '📦';
+    return '📎';
+  }
+
+  // Xử lý tệp BM-02 (Bản cam đoan quyền tác giả)
+  function handleBm02Selected(e) {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    const fileExt = '.' + file.name.split('.').pop().toLowerCase();
+    const allowed = ['.pdf', '.doc', '.docx'];
+
+    if (!allowed.includes(fileExt)) {
+      showToast('Định dạng tệp không hợp lệ! Bản cam đoan BM-02 chỉ chấp nhận tệp định dạng PDF (.pdf) hoặc Word (.doc, .docx).', 'error');
+      e.target.value = '';
+      return;
+    }
+
+    const maxSizeBytes = 25 * 1024 * 1024;
+    if (file.size > maxSizeBytes) {
+      showToast(`Dung lượng tệp "${file.name}" (${formatFileSize(file.size)}) vượt quá giới hạn 25MB cho phép!`, 'error');
+      e.target.value = '';
+      return;
+    }
+
+    bm02File = file;
+    syncBm02InputFiles();
+    renderBm02UI();
+    renderAttachmentsTable();
+    if (typeof saveDraftToStorage === 'function') saveDraftToStorage();
+    showToast(`Đã đính kèm bản cam đoan BM-02: ${file.name}`, 'info');
+  }
+
+  // Tương thích ngược với test và input cũ (#extra-attachment-input)
+  function handleExtraAttachmentSelected(e) {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    const fileExt = '.' + file.name.split('.').pop().toLowerCase();
+    const allowed = ['.pdf', '.doc', '.docx'];
+
+    if (!allowed.includes(fileExt)) {
+      showToast('Định dạng tệp không hợp lệ! Hệ thống chỉ chấp nhận tệp định dạng PDF (.pdf) hoặc Word (.doc, .docx).', 'error');
+      e.target.value = '';
+      return;
+    }
+
+    const maxSizeBytes = 25 * 1024 * 1024;
+    if (file.size > maxSizeBytes) {
+      showToast(`Dung lượng tệp (${formatFileSize(file.size)}) vượt quá giới hạn 25MB!`, 'error');
+      e.target.value = '';
+      return;
+    }
+
+    bm02File = file;
+    syncBm02InputFiles();
+    renderBm02UI();
+    renderAttachmentsTable();
+    if (typeof saveDraftToStorage === 'function') saveDraftToStorage();
+    showToast(`Đã tiếp nhận tệp đính kèm: ${file.name}`, 'info');
+  }
+
+  function removeBm02File() {
+    bm02File = null;
+    const bm02Input = document.getElementById('bm02-input');
+    if (bm02Input) bm02Input.value = '';
+    const extraInput = document.getElementById('extra-attachment-input');
+    if (extraInput) extraInput.value = '';
+    syncBm02InputFiles();
+    renderBm02UI();
+    renderAttachmentsTable();
+    if (typeof saveDraftToStorage === 'function') saveDraftToStorage();
+  }
+
+  function syncBm02InputFiles() {
+    const input = document.getElementById('bm02-input');
+    if (!input) return;
+    try {
+      const dt = new DataTransfer();
+      if (bm02File) {
+        dt.items.add(bm02File);
+      }
+      input.files = dt.files;
+    } catch (err) {
+      console.warn('DataTransfer sync error for bm02:', err);
+    }
+  }
+
+  function renderBm02UI() {
+    const dropzone = document.getElementById('bm02-dropzone');
+    const preview = document.getElementById('bm02-preview-box');
+    if (bm02File) {
+      if (dropzone) dropzone.style.display = 'none';
+      if (preview) {
+        preview.style.display = 'flex';
+        const icon = document.getElementById('bm02-file-icon');
+        if (icon) icon.innerText = getFileIcon(bm02File.name);
+        const nameEl = document.getElementById('bm02-file-name');
+        if (nameEl) {
+          nameEl.innerText = bm02File.name;
+          nameEl.title = bm02File.name;
+        }
+        const sizeEl = document.getElementById('bm02-file-size');
+        if (sizeEl) sizeEl.innerText = `${formatFileSize(bm02File.size)} · Đã sẵn sàng`;
+      }
+    } else {
+      if (dropzone) dropzone.style.display = 'block';
+      if (preview) preview.style.display = 'none';
+    }
+  }
+
+  // Xử lý tệp phụ lục & dữ liệu nghiên cứu (Supplements)
+  function handleSupplementSelected(e) {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    const allowedExts = ['.pdf', '.doc', '.docx', '.xlsx', '.csv', '.zip', '.rar'];
+    const maxSingle = 30 * 1024 * 1024;
+    const maxTotal = 120 * 1024 * 1024;
+
+    for (const file of files) {
+      if (supplementFiles.length >= 5) {
+        showToast('Đã đạt giới hạn tối đa 5 tệp dữ liệu & phụ lục nghiên cứu!', 'warning');
+        break;
+      }
+      const fileExt = '.' + file.name.split('.').pop().toLowerCase();
+      if (!allowedExts.includes(fileExt)) {
+        showToast(`Tệp "${file.name}" không hợp lệ. Chỉ chấp nhận các định dạng .pdf, .doc, .docx, .xlsx, .csv, .zip, .rar!`, 'error');
+        continue;
+      }
+      if (file.size > maxSingle) {
+        showToast(`Tệp "${file.name}" (${formatFileSize(file.size)}) vượt quá dung lượng tối đa 30MB/tệp!`, 'error');
+        continue;
+      }
+      const currentTotal = supplementFiles.reduce((s, f) => s + f.size, 0) + file.size;
+      if (currentTotal > maxTotal) {
+        showToast(`Tổng dung lượng phụ lục (${formatFileSize(currentTotal)}) vượt quá giới hạn 120MB!`, 'error');
+        break;
+      }
+      if (supplementFiles.some(f => f.name === file.name && f.size === file.size)) {
+        continue;
+      }
+      supplementFiles.push(file);
+    }
+
+    syncSupplementInputFiles();
+    renderSupplementUI();
+    renderAttachmentsTable();
+    if (typeof saveDraftToStorage === 'function') saveDraftToStorage();
+  }
+
+  function removeSupplementFile(index) {
+    if (index >= 0 && index < supplementFiles.length) {
+      supplementFiles.splice(index, 1);
+      syncSupplementInputFiles();
+      renderSupplementUI();
+      renderAttachmentsTable();
+      if (typeof saveDraftToStorage === 'function') saveDraftToStorage();
+    }
+  }
+
+  function syncSupplementInputFiles() {
+    const input = document.getElementById('supplement-input');
+    if (!input) return;
+    try {
+      const dt = new DataTransfer();
+      supplementFiles.forEach(f => dt.items.add(f));
+      input.files = dt.files;
+    } catch (err) {
+      console.warn('DataTransfer sync error for supplement:', err);
+    }
+  }
+
+  function renderSupplementUI() {
+    const dropzone = document.getElementById('supplement-dropzone');
+    const container = document.getElementById('supplement-files-container');
+    const listEl = document.getElementById('supplement-files-list');
+    const badge = document.getElementById('supplement-counter-badge');
+    const summaryText = document.getElementById('supplement-summary-text');
+    const addMoreBtn = document.getElementById('btn-add-more-supplements');
+
+    if (badge) badge.innerText = `${supplementFiles.length} / 5 tệp`;
+
+    if (supplementFiles.length === 0) {
+      if (dropzone) dropzone.style.display = 'block';
+      if (container) container.style.display = 'none';
+      if (listEl) listEl.innerHTML = '';
+    } else {
+      if (dropzone) dropzone.style.display = 'none';
+      if (container) container.style.display = 'flex';
+      if (addMoreBtn) addMoreBtn.style.display = (supplementFiles.length < 5) ? 'inline-block' : 'none';
+
+      const totalBytes = supplementFiles.reduce((s, f) => s + f.size, 0);
+      if (summaryText) {
+        summaryText.innerText = `Đã chọn: ${supplementFiles.length} / 5 tệp (Tổng: ${formatFileSize(totalBytes)})`;
+      }
+
+      if (listEl) {
+        listEl.innerHTML = supplementFiles.map((file, idx) => `
+          <div class="supplement-item-card">
+            <div class="attach-file-info">
+              <span class="attach-file-icon">${getFileIcon(file.name)}</span>
+              <div class="attach-file-text">
+                <div class="attach-file-name" title="${file.name}">${file.name}</div>
+                <div class="attach-file-size" style="color:var(--ink-500);">${formatFileSize(file.size)} · Phụ lục ${idx + 1}</div>
+              </div>
+            </div>
+            <button type="button" class="attach-action-btn danger" onclick="removeSupplementFile(${idx})">Gỡ bỏ</button>
+          </div>
+        `).join('');
+      }
+    }
+  }
+
+  // Render toàn bộ bảng Thư Mục Tài Liệu Đính Kèm (ThuMucBaiBao)
+  function renderAttachmentsTable() {
+    const tbody = document.getElementById('attachments-table-body');
+    if (!tbody) return;
+
+    // Xác định thông tin bản thảo chính từ Step 1
+    const fileInput = document.getElementById('paper-file-input');
+    const hasMainFile = mainPaperFileInfo || (fileInput && fileInput.files && fileInput.files[0]);
+    const mainName = mainPaperFileInfo ? mainPaperFileInfo.name : (fileInput && fileInput.files && fileInput.files[0] ? fileInput.files[0].name : 'Chưa tải tệp bản thảo chính');
+    const mainSize = mainPaperFileInfo ? mainPaperFileInfo.size : (fileInput && fileInput.files && fileInput.files[0] ? formatFileSize(fileInput.files[0].size) : '--');
+    const isMainReady = !!(mainPaperFileInfo || (fileInput && fileInput.files && fileInput.files[0]));
+
+    let rowsHtml = '';
+    let stt = 1;
+
+    // Hàng 1: Bản thảo chính
+    rowsHtml += `
+      <tr>
+        <td>${stt++}</td>
+        <td><strong id="att-main-name">${mainName}</strong></td>
+        <td><span class="badge-tag badge-primary">Toàn văn bài báo (Bản thảo ẩn danh)</span></td>
+        <td id="att-main-size">${mainSize}</td>
+        <td>
+          <span class="badge-tag ${isMainReady ? 'badge-success' : 'badge-neutral'}" id="att-main-status">
+            ${isMainReady ? '✓ Sẵn sàng' : 'Chờ tải lên ở Bước 1'}
+          </span>
+        </td>
+        <td style="color:var(--ink-500);font-size:11px;font-weight:600;">Bắt buộc</td>
+        <td style="text-align:center;">
+          ${isMainReady ? '<span style="font-size:11.5px;color:var(--ink-400);">Bước 1</span>' : '<button type="button" class="btn-outline" style="padding:2px 8px;font-size:11px;" onclick="switchStep(1)">Tải tệp</button>'}
+        </td>
+      </tr>
+    `;
+
+    // Hàng 2: BM-02 (nếu có)
+    if (bm02File) {
+      rowsHtml += `
+        <tr>
+          <td>${stt++}</td>
+          <td><strong>${bm02File.name}</strong></td>
+          <td><span class="badge-tag badge-neutral">Bản cam đoan quyền tác giả (BM-02)</span></td>
+          <td>${formatFileSize(bm02File.size)}</td>
+          <td><span class="badge-tag badge-success">✓ Sẵn sàng</span></td>
+          <td style="color:var(--ink-400);font-size:11px;">Tùy chọn</td>
+          <td style="text-align:center;">
+            <button type="button" class="btn-remove-row" onclick="removeBm02File()">Gỡ bỏ</button>
+          </td>
+        </tr>
+      `;
+    }
+
+    // Các hàng phụ lục (nếu có)
+    supplementFiles.forEach((file, idx) => {
+      rowsHtml += `
+        <tr>
+          <td>${stt++}</td>
+          <td><strong>${file.name}</strong></td>
+          <td><span class="badge-tag badge-neutral">Phụ lục / Dữ liệu ${idx + 1}</span></td>
+          <td>${formatFileSize(file.size)}</td>
+          <td><span class="badge-tag badge-success">✓ Sẵn sàng</span></td>
+          <td style="color:var(--ink-400);font-size:11px;">Tùy chọn</td>
+          <td style="text-align:center;">
+            <button type="button" class="btn-remove-row" onclick="removeSupplementFile(${idx})">Gỡ bỏ</button>
+          </td>
+        </tr>
+      `;
+    });
+
+    tbody.innerHTML = rowsHtml;
+
+    // Cập nhật số lượng tài liệu
+    const countEl = document.getElementById('att-summary-counts');
+    const extraCount = (bm02File ? 1 : 0) + supplementFiles.length;
+    if (countEl) {
+      countEl.innerText = isMainReady
+        ? `Tổng cộng: ${1 + extraCount} tài liệu (1 bản thảo + ${extraCount} tệp đính kèm)`
+        : `Tổng cộng: ${extraCount} tệp đính kèm (Chưa có bản thảo chính)`;
+    }
+
+    // Đồng bộ sang sidebar
+    const chkAttach = document.getElementById('chk-attach');
+    const sideAttachStatus = document.getElementById('sidebar-attach-status');
+    if (extraCount > 0) {
+      if (chkAttach) {
+        chkAttach.className = 'check-icon ok';
+        chkAttach.innerText = '✓';
+      }
+      if (sideAttachStatus) {
+        sideAttachStatus.innerText = `Đã đính kèm ${extraCount} tài liệu`;
+      }
+    } else {
+      if (chkAttach) {
+        chkAttach.className = 'check-icon';
+        chkAttach.innerText = '○';
+      }
+      if (sideAttachStatus) {
+        sideAttachStatus.innerText = '0 tệp bổ sung (Tùy chọn)';
+      }
+    }
+
+    // Đồng bộ sang bảng Bước 5 (rv-attachments-table-body)
+    const rvTbody = document.getElementById('rv-attachments-table-body');
+    if (rvTbody) {
+      rvTbody.innerHTML = '';
+      Array.from(tbody.children).forEach((tr, idx) => {
+        const tds = tr.children;
+        const newTr = document.createElement('tr');
+        newTr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td>${tds[1].innerHTML}</td>
+          <td>${tds[2].innerHTML}</td>
+          <td>${tds[3].innerText}</td>
+          <td>${tds[4].innerHTML}</td>
+        `;
+        rvTbody.appendChild(newTr);
+      });
+    }
+  }
+
+  // Khởi tạo kéo-thả (Drag & Drop) cho dropzone
+  function initAttachmentDragDrop() {
+    const setupZone = (zoneId, inputId, handleFn) => {
+      const el = document.getElementById(zoneId);
+      if (!el) return;
+      el.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        el.classList.add('dragover');
+      });
+      el.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        el.classList.remove('dragover');
+      });
+      el.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        el.classList.remove('dragover');
+        const dt = e.dataTransfer;
+        if (dt && dt.files && dt.files.length > 0) {
+          handleFn({ target: { files: dt.files } });
+        }
+      });
+    };
+
+    setupZone('bm02-dropzone', 'bm02-input', handleBm02Selected);
+    setupZone('supplement-dropzone', 'supplement-input', handleSupplementSelected);
   }
 
   // Quản lý Lưu nháp & Tự động ghi nhớ lần điền (Draft Persistence)
@@ -1496,6 +2010,10 @@
 
     // Khởi tạo danh sách tác giả nộp bài (chuẩn snapshot và liên kết tài khoản)
     initPaperAuthors();
+
+    // Khởi tạo kéo thả và bảng danh mục tài liệu đính kèm
+    initAttachmentDragDrop();
+    renderAttachmentsTable();
 
     // Khôi phục bản nháp nếu có từ phiên trước
     try { await submissionDraft.init(); restoreDraftFromStorage(); } catch (error) { showToast(error.message, "error"); }

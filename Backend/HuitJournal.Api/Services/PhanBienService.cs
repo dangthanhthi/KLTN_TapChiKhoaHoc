@@ -322,6 +322,11 @@ public class PhanBienService : IPhanBienService
         if (assignment == null)
             return (false, "Không tìm thấy phân công đang phản biện hoặc phiếu đã được gửi.", null);
 
+        var draftScores = new[] { dto.DiemTinhMoi, dto.DiemPhuongPhap, dto.DiemKetQua, dto.DiemTrinhBay };
+        if (draftScores.Any(score => score.HasValue &&
+            (score.Value < 0m || score.Value > 10m || score.Value != decimal.Round(score.Value, 1))))
+            return (false, "Mỗi điểm trong bản nháp phải từ 0 đến 10, tối đa một chữ số thập phân.", null);
+
         var recommendations = new HashSet<string>(StringComparer.Ordinal)
             { "Chấp nhận đăng", "Chỉnh sửa nhỏ", "Chỉnh sửa lớn và phản biện lại", "Từ chối đăng" };
         if (dto.KienNghi != null && !recommendations.Contains(dto.KienNghi))
@@ -412,10 +417,14 @@ public class PhanBienService : IPhanBienService
                 { "Chấp nhận đăng", "Chỉnh sửa nhỏ", "Chỉnh sửa lớn và phản biện lại", "Từ chối đăng" };
                 if (dto.DiemTinhMoi is null or < 0 or > 10 || dto.DiemPhuongPhap is null or < 0 or > 10 ||
                     dto.DiemKetQua is null or < 0 or > 10 || dto.DiemTrinhBay is null or < 0 or > 10 ||
+                    dto.DiemTinhMoi.Value != decimal.Round(dto.DiemTinhMoi.Value, 1) ||
+                    dto.DiemPhuongPhap.Value != decimal.Round(dto.DiemPhuongPhap.Value, 1) ||
+                    dto.DiemKetQua.Value != decimal.Round(dto.DiemKetQua.Value, 1) ||
+                    dto.DiemTrinhBay.Value != decimal.Round(dto.DiemTrinhBay.Value, 1) ||
                     string.IsNullOrWhiteSpace(dto.NhanXetChoTacGia) || dto.NhanXetChoTacGia.Length > 20000 ||
                     dto.NhanXetBaoMat?.Length > 20000 || !recommendations.Contains(dto.KienNghi ?? ""))
                 {
-                    return (false, "Phiếu BM-04 thiếu điểm, nhận xét hoặc kiến nghị hợp lệ.");
+                    return (false, "Phiếu BM-04 cần điểm từ 0 đến 10 với tối đa một chữ số thập phân, nhận xét và kiến nghị hợp lệ.");
                 }
                 var total = Math.Round((dto.DiemTinhMoi.Value + dto.DiemPhuongPhap.Value +
                     dto.DiemKetQua.Value + dto.DiemTrinhBay.Value) / 4m, 1, MidpointRounding.AwayFromZero);

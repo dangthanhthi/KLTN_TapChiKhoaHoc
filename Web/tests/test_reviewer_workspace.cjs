@@ -178,6 +178,25 @@ async function pageFor(options={}){
     }
     assert.deepEqual(errors,[]);await ctx.close();
   });
+  await test('Dedicated BM-04 rejects out-of-range and over-precision scores while allowing tenths',async()=>{
+    const {p,ctx,errors}=await pageFor();
+    await p.goto(base+'/reviewer-evaluation.html?id=1');
+    await p.getByText('Chưa có bản nháp nào được lưu').waitFor();
+    const score=p.locator('#score-newness');
+    for(const k of C.scoreKeys)await p.locator(`#evaluation-form [name=${k}]`).fill('4');
+    await score.fill('9999999999');
+    assert.equal(await p.locator('#total-score').innerText(),'Kiểm tra điểm / 10');
+    assert.equal(await score.evaluate(el=>el.validity.rangeOverflow),true);
+    await score.fill('-0.1');
+    assert.equal(await score.evaluate(el=>el.validity.rangeUnderflow),true);
+    await score.fill('7.55');
+    assert.equal(await score.evaluate(el=>el.validity.stepMismatch),true);
+    assert.equal(await p.locator('#total-score').innerText(),'Kiểm tra điểm / 10');
+    await score.fill('7.5');
+    assert.equal(await score.evaluate(el=>el.validity.valid),true);
+    assert.equal(await p.locator('#total-score').innerText(),'4.9 / 10');
+    assert.deepEqual(errors,[]);await ctx.close();
+  });
   await test('Dedicated BM-04 saves edits before returning to the task list',async()=>{
     const {p,ctx,settings,errors}=await pageFor({list:[items[0]]});
     await p.goto(base+'/reviewer-evaluation.html?id=1');

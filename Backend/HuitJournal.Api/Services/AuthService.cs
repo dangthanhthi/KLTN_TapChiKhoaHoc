@@ -374,31 +374,6 @@ public class AuthService : IAuthService
             }
         }
 
-        // 8. Ràng buộc và chuẩn hóa mã định danh tác giả ORCID
-        string? cleanOrcid = null;
-        if (!string.IsNullOrWhiteSpace(request.MaORCID))
-        {
-            cleanOrcid = request.MaORCID.Trim();
-            if (cleanOrcid.StartsWith("https://orcid.org/", StringComparison.OrdinalIgnoreCase))
-            {
-                cleanOrcid = cleanOrcid.Substring("https://orcid.org/".Length).Trim();
-            }
-            else if (cleanOrcid.StartsWith("http://orcid.org/", StringComparison.OrdinalIgnoreCase))
-            {
-                cleanOrcid = cleanOrcid.Substring("http://orcid.org/".Length).Trim();
-            }
-
-            if (!System.Text.RegularExpressions.Regex.IsMatch(cleanOrcid, @"^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$"))
-            {
-                return (false, "Mã ORCID không hợp lệ. Định dạng chuẩn gồm 16 ký tự phân tách bằng dấu gạch ngang (ví dụ: 0000-0002-1825-0097).", null);
-            }
-
-            if (await _context.NguoiDungs.AnyAsync(u => u.MaORCID == cleanOrcid))
-            {
-                return (false, "Mã định danh tác giả ORCID này đã được liên kết với một tài khoản khác trong hệ thống.", null);
-            }
-        }
-
         // Tự động phân tách Họ đệm và Tên nếu chưa điền riêng
         var hoTen = request.HoTen.Trim();
         string? hoDem = string.IsNullOrWhiteSpace(request.HoDem) ? null : request.HoDem.Trim();
@@ -435,8 +410,7 @@ public class AuthService : IAuthService
             DiaChi = string.IsNullOrWhiteSpace(request.DiaChi) ? null : request.DiaChi.Trim(),
             SoTaiKhoan = stk,
             ChuTaiKhoan = ctk,
-            NganHang = nh,
-            MaORCID = cleanOrcid
+            NganHang = nh
         };
 
         return (true, null, data);
@@ -445,6 +419,9 @@ public class AuthService : IAuthService
     /// <inheritdoc />
     public async Task<RegisterPendingResponse> RegisterPendingAsync(RegisterRequest request)
     {
+        if (!string.IsNullOrWhiteSpace(request.MaORCID))
+            return new RegisterPendingResponse { Success = false, RequiresVerification = false, Message = "ORCID cần được xác minh bằng nút Liên kết ORCID; không nhập mã thủ công." };
+
         var validation = await ValidateAndNormalizeRegistrationAsync(request);
         if (!validation.IsValid || validation.Data == null)
         {
@@ -457,6 +434,30 @@ public class AuthService : IAuthService
         }
 
         var data = validation.Data;
+        await using var orcidTransaction = request.OrcidOAuthState.HasValue
+            ? await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable)
+            : null;
+        WorkflowRecord? registrationOrcidFlow = null;
+
+        if (request.OrcidOAuthState is Guid orcidState)
+        {
+            try
+            {
+                var flowRecord = await _context.WorkflowRecords.SingleOrDefaultAsync(r => r.Id == orcidState && r.Kind == "OrcidOAuth" && r.State == "Completed" && r.UserId == null);
+                if (flowRecord == null || DateTime.UtcNow - flowRecord.CreatedUtc > TimeSpan.FromMinutes(10))
+                    return new RegisterPendingResponse { Success = false, RequiresVerification = false, Message = "Phiên ORCID đã hết hạn. Hãy liên kết lại hoặc tiếp tục đăng ký không có ORCID." };
+                using var payload = System.Text.Json.JsonDocument.Parse(flowRecord.Payload);
+                data.MaORCID = payload.RootElement.GetProperty("orcid").GetString();
+                if (string.IsNullOrWhiteSpace(data.MaORCID) || await _context.NguoiDungs.AnyAsync(u => u.MaORCID == data.MaORCID) ||
+                    await _context.DangKyChoXacNhans.AnyAsync(p => p.MaORCID == data.MaORCID && p.TrangThai == "Pending" && p.HetHanHoSoUtc > DateTime.UtcNow))
+                    return new RegisterPendingResponse { Success = false, RequiresVerification = false, Message = "ORCID này đã được sử dụng trong hệ thống." };
+                registrationOrcidFlow = flowRecord;
+            }
+            catch (Exception ex) when (ex is System.Text.Json.JsonException or InvalidOperationException)
+            {
+                return new RegisterPendingResponse { Success = false, RequiresVerification = false, Message = "Không đọc được kết quả xác minh ORCID. Hãy liên kết lại hoặc tiếp tục đăng ký không có ORCID." };
+            }
+        }
 
         // Vô hiệu hóa bất kỳ hồ sơ chờ nào trước đó cùng email này (chưa xác nhận)
         var existingPending = await _context.DangKyChoXacNhans
@@ -519,7 +520,19 @@ public class AuthService : IAuthService
         };
 
         _context.MaXacNhanEmails.Add(codeRecord);
+        if (registrationOrcidFlow != null)
+        {
+            registrationOrcidFlow.Payload = System.Text.Json.JsonSerializer.Serialize(new
+            {
+                orcid = data.MaORCID,
+                registrationId = regId,
+                expiresAtUtc = registrationOrcidFlow.CreatedUtc.AddMinutes(10)
+            });
+            registrationOrcidFlow.State = "Consumed";
+            registrationOrcidFlow.UpdatedUtc = nowUtc;
+        }
         await _context.SaveChangesAsync();
+        if (orcidTransaction != null) await orcidTransaction.CommitAsync();
 
         // Gửi email xác nhận kèm mẫu thư tòa soạn chuẩn Hallmark
         var delivery = await _emailSenderService.SendVerificationEmailAsync(
@@ -638,6 +651,30 @@ public class AuthService : IAuthService
                 _context.NguoiDungVaiTros.Add(new NguoiDungVaiTro { MaNguoiDung = user.MaNguoiDung, MaVaiTro = 3 });
                 _context.NguoiDungVaiTros.Add(new NguoiDungVaiTro { MaNguoiDung = user.MaNguoiDung, MaVaiTro = 5 });
 
+                if (!string.IsNullOrWhiteSpace(pending.MaORCID))
+                {
+                    var consumedFlows = await _context.WorkflowRecords
+                        .Where(r => r.Kind == "OrcidOAuth" && r.State == "Consumed" && r.UserId == null)
+                        .ToListAsync();
+                    var verifiedFlow = consumedFlows.FirstOrDefault(flow =>
+                    {
+                        try
+                        {
+                            using var payload = System.Text.Json.JsonDocument.Parse(flow.Payload);
+                            return payload.RootElement.TryGetProperty("registrationId", out var registrationId) &&
+                                registrationId.GetGuid() == pending.MaDangKy;
+                        }
+                        catch (Exception ex) when (ex is System.Text.Json.JsonException or InvalidOperationException or FormatException) { return false; }
+                    });
+                    if (verifiedFlow != null)
+                    {
+                        verifiedFlow.UserId = user.MaNguoiDung;
+                        verifiedFlow.Kind = "OrcidLink";
+                        verifiedFlow.State = "Active";
+                        verifiedFlow.UpdatedUtc = DateTime.UtcNow;
+                    }
+                }
+
                 // Gán lĩnh vực chuyên môn nếu có
                 if (pending.ChuyenNganhId.HasValue && pending.ChuyenNganhId > 0)
                 {
@@ -667,6 +704,7 @@ public class AuthService : IAuthService
                 .FirstAsync(u => u.MaNguoiDung == newUserId);
 
             var profileDto = MapToProfileDto(createdUser);
+            profileDto.MaORCIDDaXacThuc = await IsOrcidVerifiedAsync(createdUser.MaNguoiDung, createdUser.MaORCID);
             var token = await GenerateJwtToken(createdUser, profileDto.VaiTros);
 
             return new AuthResponse
@@ -775,7 +813,9 @@ public class AuthService : IAuthService
 
         if (user == null) return null;
         await CoauthorAccountLinker.LinkAsync(_context, maNguoiDung);
-        return MapToProfileDto(user);
+        var profile = MapToProfileDto(user);
+        profile.MaORCIDDaXacThuc = await IsOrcidVerifiedAsync(user.MaNguoiDung, user.MaORCID);
+        return profile;
     }
 
     public async Task<UserProfileDto?> UpdateProfileAsync(int maNguoiDung, UpdateProfileRequest request)
@@ -787,6 +827,9 @@ public class AuthService : IAuthService
 
         if (user == null) return null;
 
+        if (!string.Equals(request.MaORCID?.Trim(), user.MaORCID?.Trim(), StringComparison.Ordinal))
+            throw new ArgumentException("Mã ORCID chỉ được thay đổi sau khi xác minh qua chức năng Liên kết ORCID.");
+
         user.HoTen = request.HoTen.Trim();
         user.DonVi = request.DonVi;
         user.DiaChi = request.DiaChi;
@@ -797,7 +840,6 @@ public class AuthService : IAuthService
         user.SoTaiKhoan = request.SoTaiKhoan;
         user.ChuTaiKhoan = request.ChuTaiKhoan;
         user.NganHang = request.NganHang;
-        user.MaORCID = request.MaORCID;
         if (request.AnhDaiDien != null)
         {
             user.AnhDaiDien = request.AnhDaiDien;
@@ -824,7 +866,22 @@ public class AuthService : IAuthService
         }
 
         await _context.SaveChangesAsync();
-        return MapToProfileDto(user);
+        var profile = MapToProfileDto(user);
+        profile.MaORCIDDaXacThuc = await IsOrcidVerifiedAsync(user.MaNguoiDung, user.MaORCID);
+        return profile;
+    }
+
+    private async Task<bool> IsOrcidVerifiedAsync(int userId, string? orcid)
+    {
+        if (string.IsNullOrWhiteSpace(orcid)) return false;
+        var payloads = await _context.WorkflowRecords.AsNoTracking()
+            .Where(r => r.Kind == "OrcidLink" && r.UserId == userId && r.State == "Active")
+            .Select(r => r.Payload).ToListAsync();
+        return payloads.Any(payload =>
+        {
+            try { using var json = System.Text.Json.JsonDocument.Parse(payload); return json.RootElement.TryGetProperty("orcid", out var id) && id.GetString() == orcid; }
+            catch (System.Text.Json.JsonException) { return false; }
+        });
     }
 
     public async Task<bool> ChangePasswordAsync(int maNguoiDung, ChangePasswordRequest request)

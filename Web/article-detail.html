@@ -304,6 +304,16 @@ async function showPublicPdfPreview(pdfUrl) {
   }
 }
 
+function normalizePublicOrcid(value) {
+  const id = String(value || '').trim().replace(/^https?:\/\/orcid\.org\//i, '');
+  if (!/^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/i.test(id)) return '';
+  const digits = id.replaceAll('-', '').toUpperCase();
+  let total = 0;
+  for (let i = 0; i < 15; i++) total = (total + Number(digits[i])) * 2;
+  const check = (12 - (total % 11)) % 11;
+  return digits[15] === (check === 10 ? 'X' : String(check)) ? id : '';
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
   const params = new URLSearchParams(window.location.search);
   let articleId = params.get('id');
@@ -413,19 +423,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         const authorList = document.querySelector('.author-list');
         const esc = typeof escapeHtml === 'function' ? escapeHtml : (t) => t || '';
         if (authorList && art.tacGias && art.tacGias.length > 0) {
-          authorList.innerHTML = art.tacGias.map((tg, idx) => `
+          authorList.innerHTML = art.tacGias.map((tg, idx) => {
+            const orcid = normalizePublicOrcid(tg.maORCID);
+            return `
             <div class="author-item" style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;">
               <span class="author-name" style="font-size:14.5px;">${esc(tg.hoTen)}</span>
               <span class="author-affiliation">${esc(tg.donVi || '—')}</span>
-              ${tg.maORCID ? `
-                <a href="https://orcid.org/${encodeURIComponent(tg.maORCID)}" target="_blank" rel="noopener" class="author-orcid" title="Hồ sơ ORCID: ${esc(tg.maORCID)}">
+              ${tg.maORCID ? (orcid ? `
+                <a href="https://orcid.org/${encodeURIComponent(orcid)}" target="_blank" rel="noopener noreferrer" class="author-orcid" title="Mã ORCID do tác giả cung cấp: ${esc(orcid)}">
                   <span style="background:#a6ce39;color:#fff;border-radius:50%;width:14px;height:14px;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;margin-right:2px;">iD</span>
-                  ${esc(tg.maORCID)}
-                </a>` : ''}
+                  ${esc(orcid)}
+                </a>` : `<span title="Mã ORCID lưu trong hồ sơ không vượt qua kiểm tra định dạng/checksum">${esc(tg.maORCID)}</span>`) : ''}
               ${tg.laTacGiaLienHe ? `<span style="background:#1da1f2;color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px;">✉ Tác giả liên hệ</span>` : `<span style="background:#f1f5f9;color:#475569;font-size:11px;font-weight:600;padding:2px 8px;border-radius:3px;">Đồng tác giả (${idx + 1})</span>`}
               ${tg.daLienKetTaiKhoan ? `<span style="background:#ecfdf5;color:#059669;font-size:11px;font-weight:600;padding:1px 6px;border-radius:3px;border:1px solid #a7f3d0;">✓ Tài khoản hệ thống</span>` : ''}
             </div>
-          `).join('');
+          `;
+          }).join('');
         }
 
         // 8. Siêu dữ liệu xuất bản

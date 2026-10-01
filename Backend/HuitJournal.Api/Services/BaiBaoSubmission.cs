@@ -47,6 +47,11 @@ public partial class BaiBaoService
                 return (false, "Vui lòng chọn loại bài và ngôn ngữ.", null, null);
             var authors = ParseValidated<DongTacGiaSubmitDto>(dto.DongTacGiaJson);
             var reviewers = ParseValidated<PhanBienDeXuatSubmitDto>(dto.PhanBienDeXuatJson);
+            foreach (var author in authors.Where(a => !string.IsNullOrWhiteSpace(a.MaORCID)))
+            {
+                try { author.MaORCID = OrcidOAuthService.NormalizeAndValidate(author.MaORCID); }
+                catch (InvalidOperationException ex) { return (false, ex.Message, null, null); }
+            }
             var user = await _context.NguoiDungs.Include(u => u.NguoiDungChuyenMons).SingleOrDefaultAsync(u => u.MaNguoiDung == owner && u.TrangThai);
             if (user == null) return (false, "Tài khoản không hoạt động.", null, null);
             if (!await _context.ChuyenNganhs.AnyAsync(c => c.MaChuyenNganh == dto.MaChuyenNganh))
@@ -111,7 +116,7 @@ public partial class BaiBaoService
                 var email = author.Email.Trim().ToLowerInvariant();
                 var linkedId = await _context.NguoiDungs.Where(u => u.Email.ToLower() == email && u.TrangThai).Select(u => (int?)u.MaNguoiDung).FirstOrDefaultAsync();
                 _context.DongTacGias.Add(new DongTacGia { MaBaiBao = article.MaBaiBao, HoTen = author.HoTen.Trim(), Email = email,
-                    DonVi = author.DonVi?.Trim(), MaORCID = author.MaORCID?.Trim(), LaTacGiaLienHe = author.LaTacGiaLienHe, ThuTu = order++, MaNguoiDung = linkedId });
+                    DonVi = author.DonVi?.Trim(), MaORCID = author.MaORCID, LaTacGiaLienHe = author.LaTacGiaLienHe, ThuTu = order++, MaNguoiDung = linkedId });
             }
             foreach (var reviewer in reviewers)
             {

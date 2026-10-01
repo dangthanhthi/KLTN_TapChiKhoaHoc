@@ -174,7 +174,14 @@
     if (saved) {
       for (const [k, v] of Object.entries(saved)) {
         const input = $('evaluation-form').elements.namedItem(k);
-        if (input) input.value = v;
+        if (!input || v == null) continue;
+        if (C.scoreKeys.includes(k)) {
+          const num = Number(v);
+          if (isNaN(num) || num < 0 || num > 10) input.value = '0';
+          else input.value = String(Math.round(num * 10) / 10);
+        } else {
+          input.value = v;
+        }
       }
     }
     $('draft-status').textContent = saved
@@ -401,6 +408,15 @@
     clearTimeout(draftTimer);
     try {
       assertSession(); const a=state.selected; const version=++state.draftVersion; const data=formData();
+      const invalidScore = C.scoreKeys.some(k => {
+        const input = $('evaluation-form').elements.namedItem(k);
+        const val = input.value.trim().replace(',', '.');
+        return val !== '' && (isNaN(Number(val)) || Number(val) < 0 || Number(val) > 10 || !input.validity.valid);
+      });
+      if (invalidScore) {
+        $('draft-status').textContent = 'Điểm chưa hợp lệ (0–10, tối đa 1 chữ số thập phân). Chưa lưu lên hệ thống.';
+        return;
+      }
       const normalized={};
       C.scoreKeys.forEach(k=>normalized[k]=data[k]===''?null:Number(data[k]));
       normalized.nhanXetChoTacGia=data.nhanXetChoTacGia?.trim()||null;
@@ -475,5 +491,139 @@
   $('evaluation-dialog').addEventListener('cancel',e=>{if($('submit-review').disabled)e.preventDefault();else {saveDraft(true);select(state.selected,false);}});
   $('close-manuscript')?.addEventListener('click', closeManuscriptReader);
   $('manuscript-dialog')?.addEventListener('cancel', closeManuscriptReader);
+  function setupScoreInputs() {
+    C.scoreKeys.forEach(k => {
+      const input = $('evaluation-form').elements.namedItem(k);
+      if (!input) return;
+
+      input.dataset.rawVal = input.value || '';
+
+      input.addEventListener('select', () => {
+        input.dataset.allSelected = 'true';
+      });
+      input.addEventListener('click', () => {
+        input.dataset.allSelected = 'false';
+      });
+
+      input.addEventListener('keydown', e => {
+        if (e.ctrlKey || e.altKey || e.metaKey) return;
+        const allowed = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Tab', 'Home', 'End', 'Escape'];
+        if (allowed.includes(e.key)) {
+          input.dataset.allSelected = 'false';
+          if (e.key === 'Backspace' && input.dataset.rawVal) {
+            input.dataset.rawVal = input.dataset.rawVal.slice(0, -1);
+          }
+          return;
+        }
+        if (e.key === 'Enter') { e.preventDefault(); input.blur(); return; }
+        if (['e', 'E', '+', '-'].includes(e.key)) { e.preventDefault(); return; }
+
+        if (input.dataset.allSelected === 'true') {
+          input.dataset.allSelected = 'false';
+          if (/^[0-9]$/.test(e.key)) {
+            e.preventDefault();
+            input.value = e.key;
+            input.dataset.rawVal = e.key;
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            return;
+          }
+          if (e.key === '.' || e.key === ',') {
+            e.preventDefault();
+            input.value = '0.';
+            input.dataset.rawVal = '0.';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            return;
+          }
+        }
+
+        if (e.key === ',') {
+          e.preventDefault();
+          let cur = input.value || '';
+          if (cur === '' && input.validity.badInput && input.dataset.rawVal) {
+            cur = input.dataset.rawVal;
+          }
+          if (cur === '') {
+            input.value = '0.';
+            input.dataset.rawVal = '0.';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            return;
+          }
+          if (!cur.includes('.')) {
+            input.dataset.rawVal = cur + '.';
+            document.execCommand('insertText', false, '.');
+          }
+          return;
+        }
+
+        let char = e.key;
+        if (!/^[0-9.]$/.test(char)) { e.preventDefault(); return; }
+
+        let cur = input.value || '';
+        if (cur === '' && input.validity.badInput && input.dataset.rawVal) {
+          cur = input.dataset.rawVal;
+        }
+
+        if (cur === '0' && /^[1-9]$/.test(char)) {
+          e.preventDefault(); input.value = char; input.dataset.rawVal = char; input.dispatchEvent(new Event('input', { bubbles: true })); return;
+        }
+        if (cur === '' && char === '.') {
+          e.preventDefault(); input.value = '0.'; input.dataset.rawVal = '0.'; input.dispatchEvent(new Event('input', { bubbles: true })); return;
+        }
+        if (char === '.' && cur.includes('.')) { e.preventDefault(); return; }
+        if (/\.[0-9]$/.test(cur)) { e.preventDefault(); return; }
+        if (cur === '10') {
+          if (char === '.') { input.dataset.rawVal = '10.'; return; }
+          e.preventDefault(); return;
+        }
+        if (cur === '10.') {
+          if (char === '0') { input.dataset.rawVal = '10.0'; return; }
+          e.preventDefault(); return;
+        }
+        if (cur === '10.0') { e.preventDefault(); return; }
+        if (/^[1-9]$/.test(cur) && char !== '.') {
+          if (cur === '1' && char === '0') { input.dataset.rawVal = '10'; return; }
+          e.preventDefault(); return;
+        }
+
+        input.dataset.rawVal = cur + char;
+      });
+
+      input.addEventListener('paste', e => {
+        const text = (e.clipboardData || window.clipboardData)?.getData('text') || '';
+        const clean = text.trim().replace(',', '.');
+        const num = Number(clean);
+        if (!/^(?:10(?:\.0)?|[0-9](?:\.[0-9])?)$/.test(clean) || isNaN(num) || num < 0 || num > 10) {
+          e.preventDefault();
+        } else {
+          input.dataset.rawVal = clean;
+        }
+      });
+
+      input.addEventListener('blur', () => {
+        input.dataset.allSelected = 'false';
+        let raw = input.value.trim().replace(',', '.');
+        if (raw === '' && input.validity.badInput && input.dataset.rawVal) {
+          raw = input.dataset.rawVal;
+        }
+        if (raw.endsWith('.')) raw = raw.slice(0, -1);
+        if (raw === '' || isNaN(Number(raw))) {
+          input.value = '0';
+        } else {
+          let num = Number(raw);
+          if (num < 0 || num > 10) input.value = '0';
+          else input.value = String(Math.round(num * 10) / 10);
+        }
+        input.dataset.rawVal = input.value;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        updateTotal();
+      });
+
+      input.addEventListener('input', () => {
+        if (input.value !== '') input.dataset.rawVal = input.value;
+      });
+    });
+  }
+
+  setupScoreInputs();
   boot();
 })();

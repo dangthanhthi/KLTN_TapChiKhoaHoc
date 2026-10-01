@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const labels = { Contact: 'Liên hệ', Withdrawal: 'Yêu cầu rút', Proof: 'Bản bông' };
   async function load() {
     const rows = await journalWorkflow.request('inbox'), inbox = document.getElementById('inbox'); inbox.replaceChildren();
+    const countEl = document.getElementById('metric-inbox-count');
+    if (countEl) countEl.innerText = `${rows.length} hồ sơ`;
     for (const r of rows) {
       const data = JSON.parse(r.payload), row = document.createElement('div'); row.className = 'workflow-record';
       const title = document.createElement('strong'); title.textContent = `${labels[r.kind]} · ${r.articleId ? 'Bài #' + r.articleId : data.Email || ''} · ${r.state}`;
@@ -17,7 +19,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
       inbox.append(row);
     }
-    if (!rows.length) inbox.textContent = 'Chưa có hồ sơ.';
+    if (!rows.length) {
+      const emptyDiv = document.createElement('div');
+      emptyDiv.style.cssText = 'background:#ffffff;border:1px dashed var(--line);border-radius:4px;padding:32px 20px;text-align:center;color:var(--ink-500);';
+      emptyDiv.innerHTML = `
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--sky-400)" stroke-width="1.8" style="margin-bottom:8px;"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+        <div style="font-size:14px;font-weight:600;color:var(--ink-700);">Hiện tại chưa có hồ sơ hoặc yêu cầu nào đang chờ xử lý</div>
+        <div style="font-size:12px;margin-top:4px;">Khi độc giả gửi liên hệ, tác giả gửi yêu cầu rút bài hoặc phản hồi duyệt bản bông, hồ sơ sẽ tự động xuất hiện tại đây.</div>
+      `;
+      inbox.append(emptyDiv);
+    }
   }
   async function send(form, route, body) {
     const buttons = [...form.querySelectorAll('button')]; buttons.forEach(b => b.disabled = true);
@@ -64,6 +75,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     const user = await apiGetProfile();
     if (!user?.vaiTros?.some(r => ['Quản trị hệ thống', 'Tổng biên tập', 'Ban biên tập'].includes(r))) throw new Error('Trang này dành cho tài khoản tòa soạn.');
     document.getElementById('staff-work').hidden = false;
-    document.getElementById('final-work').hidden = !user.vaiTros.some(r => ['Quản trị hệ thống', 'Tổng biên tập'].includes(r)); await load();
+    document.getElementById('final-work').hidden = !user.vaiTros.some(r => ['Quản trị hệ thống', 'Tổng biên tập'].includes(r));
+    const titleEl = document.getElementById('editor-heading-title');
+    if (titleEl && user.hoTen) {
+      titleEl.innerText = `Bàn làm việc: ${user.hoTen}`;
+    }
+    await load();
   } catch(e) { report(e.message, true); }
 });

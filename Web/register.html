@@ -863,9 +863,12 @@
             </div>
 
             <div class="form-group" style="margin-top:24px;">
-              <label for="regOrcid">Mã định danh tác giả ORCID (iD)</label>
-              <input type="text" id="regOrcid" class="form-control" placeholder="0000-0002-1825-0097" onblur="normalizeOrcidInput(this)">
-              <div style="font-size:11.5px;color:var(--ink-500);margin-top:3px;">Không bắt buộc. Nhập mã 16 số hoặc dán URL https://orcid.org/...</div>
+              <label>Mã định danh tác giả ORCID (iD)</label>
+              <input type="hidden" id="regOrcid">
+              <div id="registration-orcid-status" role="status" aria-live="polite" style="font-size:12px;color:var(--ink-500);margin:4px 0 10px;">Không bắt buộc. Bạn có thể liên kết ORCID đã có hoặc bỏ qua và liên kết sau trong hồ sơ.</div>
+              <button type="button" id="registration-orcid-button" onclick="startRegistrationOrcidLink()" style="background:#a6ce39;border:0;color:#fff;padding:9px 13px;border-radius:4px;font-weight:700;cursor:pointer;">Liên kết ORCID</button>
+              <button type="button" id="registration-orcid-clear" onclick="clearRegistrationOrcid()" style="display:none;background:transparent;border:0;color:var(--ink-500);padding:8px 10px;cursor:pointer;">Bỏ liên kết</button>
+              <div style="font-size:11px;color:var(--ink-500);margin-top:7px;">Nếu chưa có ORCID iD, hãy tạo miễn phí tại <a href="https://orcid.org/register" target="_blank" rel="noopener noreferrer">orcid.org/register</a>, sau đó quay lại để liên kết.</div>
               <div id="regOrcidError" class="field-error-msg"></div>
             </div>
 
@@ -985,6 +988,75 @@
   // =========================================================================
   // XÁC THỰC RÀNG BUỘC HỌC THUẬT & TRẢI NGHIỆM FORM ĐĂNG KÝ
   // =========================================================================
+  let registrationOrcidState = sessionStorage.getItem('huit_orcid_registration_state');
+
+  async function startRegistrationOrcidLink() {
+    const button = document.getElementById('registration-orcid-button');
+    const status = document.getElementById('registration-orcid-status');
+    if (button) { button.disabled = true; button.textContent = 'Đang chuyển tới ORCID…'; }
+    try {
+      const result = await apiStartOrcidRegistration();
+      registrationOrcidState = result.state;
+      sessionStorage.setItem('huit_orcid_registration_state', result.state);
+      saveRegistrationDraft();
+      window.location.assign(result.authorizationUrl);
+    } catch (error) {
+      if (status) status.textContent = error.message || 'Chưa thể kết nối ORCID. Bạn vẫn có thể đăng ký mà chưa liên kết.';
+      if (button) { button.disabled = false; button.textContent = 'Thử liên kết ORCID lại'; }
+    }
+  }
+
+  function clearRegistrationOrcid() {
+    registrationOrcidState = null;
+    sessionStorage.removeItem('huit_orcid_registration_state');
+    const value = document.getElementById('regOrcid');
+    if (value) value.value = '';
+    const status = document.getElementById('registration-orcid-status');
+    if (status) status.textContent = 'Đã bỏ liên kết ORCID. Bạn có thể tiếp tục đăng ký và liên kết sau trong hồ sơ.';
+    const clearButton = document.getElementById('registration-orcid-clear');
+    if (clearButton) clearButton.style.display = 'none';
+    const button = document.getElementById('registration-orcid-button');
+    if (button) button.textContent = 'Liên kết ORCID';
+  }
+
+  async function finishRegistrationOrcidCallback() {
+    const params = new URLSearchParams((location.hash || '').slice(1));
+    const callbackState = params.get('orcid-state');
+    const error = params.get('orcid-error');
+    const hasCallback = !!(callbackState || error);
+    const state = callbackState || sessionStorage.getItem('huit_orcid_registration_state');
+    if (!state && !error) return;
+    if (hasCallback) history.replaceState(null, '', location.pathname + location.search);
+    const status = document.getElementById('registration-orcid-status');
+    const button = document.getElementById('registration-orcid-button');
+    if (error) {
+      sessionStorage.removeItem('huit_orcid_registration_state');
+      registrationOrcidState = null;
+      if (status) status.textContent = 'Bạn chưa hoàn tất xác thực ORCID. Có thể thử lại hoặc tiếp tục đăng ký không có ORCID.';
+      if (button) { button.disabled = false; button.textContent = 'Liên kết ORCID'; }
+      return;
+    }
+    const expected = sessionStorage.getItem('huit_orcid_registration_state');
+    if (!expected || state !== expected) {
+      if (status) status.textContent = 'Phiên ORCID không khớp. Hãy bắt đầu liên kết lại hoặc tiếp tục không có ORCID.';
+      if (button) { button.disabled = false; button.textContent = 'Liên kết ORCID'; }
+      return;
+    }
+    try {
+      const result = await apiGetRegistrationOrcid(state);
+      registrationOrcidState = state;
+      document.getElementById('regOrcid').value = result.orcid || '';
+      if (status) status.textContent = `Đã xác minh ORCID ${result.orcid}${result.name ? ` · ${result.name}` : ''}. Mã sẽ được gắn với tài khoản sau khi bạn xác nhận email.`;
+      if (button) { button.disabled = false; button.textContent = 'Đổi ORCID đã liên kết'; }
+      const clearButton = document.getElementById('registration-orcid-clear');
+      if (clearButton) clearButton.style.display = 'inline-block';
+    } catch (callbackError) {
+      sessionStorage.removeItem('huit_orcid_registration_state');
+      registrationOrcidState = null;
+      if (status) status.textContent = callbackError.message || 'Không lấy được kết quả xác minh. Hãy liên kết lại hoặc tiếp tục không có ORCID.';
+      if (button) { button.disabled = false; button.textContent = 'Liên kết ORCID'; }
+    }
+  }
 
   // [REMOVED] checkReviewerAcademicEligibility — Vai trò Phản biện viên do Tổng biên tập phân công qua WinForms
   function checkReviewerAcademicEligibility() { /* no-op: reviewer registration removed */ }
@@ -1494,9 +1566,6 @@
     const pass = document.getElementById('regPassword')?.value || '';
     const confirm = document.getElementById('regConfirmPassword')?.value || '';
     const cleanPass = pass.trim();
-    const orcidInput = document.getElementById('regOrcid');
-    normalizeOrcidInput(orcidInput);
-    const orcid = orcidInput ? orcidInput.value.trim() : '';
     const terms = document.getElementById('regTerms')?.checked;
 
     // 1. Họ tên
@@ -1583,15 +1652,7 @@
       clientErrors['regConfirmPassword'] = 'Xác nhận mật khẩu: Mật khẩu xác nhận không khớp.';
     }
 
-    // 10. ORCID
-    if (orcid) {
-      const orcidRegex = /^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$/;
-      if (!orcidRegex.test(orcid)) {
-        clientErrors['regOrcid'] = 'Mã ORCID: Định dạng không đúng chuẩn quốc tế 16 số (ví dụ: 0000-0002-1825-0097).';
-      }
-    }
-
-    // 11. Cam kết bảo mật
+    // 10. Cam kết bảo mật
     if (!terms) {
       clientErrors['regTerms'] = 'Cam kết bảo mật: Vui lòng tích chọn đồng ý với Cam kết bảo mật của Tạp chí.';
     }
@@ -1633,11 +1694,13 @@
         chuTaiKhoan,
         nganHang,
         chuyenNganhId,
-        maORCID: orcid,
+        orcidOAuthState: registrationOrcidState || null,
         dangKyPhanBien: false  // Vai trò Phản biện: chỉ do Tổng biên tập phân công qua WinForms
       });
 
       if (res && res.success && res.requiresVerification) {
+        sessionStorage.removeItem('huit_orcid_registration_state');
+        registrationOrcidState = null;
         // Chuyển sang Bước 2: Nhập mã xác thực email 6 chữ số
         const pendingSession = {
           registrationId: res.registrationId,
@@ -1775,16 +1838,13 @@
       chuyenNganh: document.getElementById('regChuyenNganh')?.value || '',
       email: document.getElementById('regEmail')?.value || '',
       tenDangNhap: document.getElementById('regTenDangNhap')?.value || '',
-      password: document.getElementById('regPassword')?.value || '',
-      confirmPassword: document.getElementById('regConfirmPassword')?.value || '',
-      orcid: document.getElementById('regOrcid')?.value || '',
       terms: document.getElementById('regTerms')?.checked ?? false,
       timestamp: Date.now()
     };
 
     const hasContent = draft.hoDem || draft.ten || draft.email || draft.soDienThoai ||
                        draft.tenDangNhap || draft.donVi || draft.diaChi || draft.soTaiKhoan ||
-                       draft.chuTaiKhoan || draft.nganHang || draft.orcid || draft.password;
+                       draft.chuTaiKhoan || draft.nganHang;
     if (hasContent) {
       const serialized = JSON.stringify(draft);
       sessionStorage.setItem(DRAFT_KEY, serialized);
@@ -1798,6 +1858,12 @@
 
     try {
       const draft = JSON.parse(raw);
+      delete draft.password;
+      delete draft.confirmPassword;
+      delete draft.orcid;
+      const safeDraft = JSON.stringify(draft);
+      sessionStorage.setItem(DRAFT_KEY, safeDraft);
+      localStorage.setItem(DRAFT_KEY, safeDraft);
       let count = 0;
 
       const fill = (id, val) => {
@@ -1824,9 +1890,6 @@
       fill('regChuyenNganh', draft.chuyenNganh);
       fill('regEmail', draft.email);
       fill('regTenDangNhap', draft.tenDangNhap);
-      fill('regPassword', draft.password);
-      fill('regConfirmPassword', draft.confirmPassword);
-      fill('regOrcid', draft.orcid);
 
       if (draft.terms !== undefined) {
         const tm = document.getElementById('regTerms');
@@ -1847,8 +1910,6 @@
 
       // Cập nhật trạng thái hiển thị sau khôi phục
       checkReviewerAcademicEligibility();
-      if (draft.password) evaluatePasswordStrength(draft.password);
-      if (draft.confirmPassword) checkPasswordMatch();
       if (draft.tenDangNhap) validateUsernameRealtime(document.getElementById('regTenDangNhap'));
       handleCountryChange();
 
@@ -2348,12 +2409,13 @@
     }
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('DOMContentLoaded', async () => {
     initOtpInputs();
     restoreRegistrationDraft();
     loadRegistrationCategories();
     restorePendingRegistrationOnLoad();
     checkUrlAutoVerification();
+    await finishRegistrationOrcidCallback();
 
     const form = document.getElementById('register-page-form');
     if (form) {
@@ -2366,7 +2428,7 @@
       'regHoDem', 'regTen', 'regHocVi', 'regHocHam', 'regGioiTinh', 'regNgonNgu',
       'regQuocGia', 'regSoDienThoai', 'regDonVi', 'regDiaChi', 'regSoTaiKhoan',
       'regChuTaiKhoan', 'regNganHang', 'regChuyenNganh', 'regEmail', 'regTenDangNhap',
-      'regPassword', 'regConfirmPassword', 'regOrcid', 'regTerms'
+      'regPassword', 'regConfirmPassword', 'regTerms'
     ];
     trackedErrorFields.forEach(id => {
       const el = document.getElementById(id);
