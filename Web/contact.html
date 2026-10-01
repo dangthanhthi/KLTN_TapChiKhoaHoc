@@ -250,7 +250,7 @@
     <!-- CONTACT FORM -->
     <div class="contact-form-box">
       <h3>Gửi yêu cầu hoặc thắc mắc đến Tòa soạn</h3>
-      <p>Điền thông tin vào mẫu dưới đây. Ban Thư ký sẽ phản hồi qua email trong vòng 24 giờ làm việc.</p>
+      <p>Điền thông tin vào mẫu dưới đây. Yêu cầu được lưu trên hệ thống và chuyển tới tòa soạn để phản hồi qua email.</p>
       
       <form onsubmit="handleContactSubmit(event)">
         <div class="form-row-2">
@@ -297,13 +297,24 @@
 
 <script src="journal-layout.js"></script>
 <script src="journal-interactions.js"></script>
+<script src="workflow-client.js"></script>
 <script>
-  function handleContactSubmit(e) {
+  async function handleContactSubmit(e) {
     e.preventDefault();
-    const name = document.getElementById('contact-name').value.trim();
-    const email = document.getElementById('contact-email').value.trim();
-    showToast(`Đã gửi thư liên hệ từ ${name} thành công! Ban Thư ký sẽ phản hồi tới ${email}.`);
-    e.target.reset();
+    const button = e.target.querySelector('button[type="submit"]');
+    button.disabled = true;
+    try {
+      const result = await journalWorkflow.request('contact', { method: 'POST', body: JSON.stringify({
+        name: document.getElementById('contact-name').value.trim(),
+        email: document.getElementById('contact-email').value.trim(),
+        articleCode: document.getElementById('contact-code').value.trim(),
+        subject: document.getElementById('contact-subject').value,
+        message: document.getElementById('contact-message').value.trim()
+      }) });
+      showToast('Đã tiếp nhận yêu cầu. Mã theo dõi: ' + result.id, 'success');
+      e.target.reset();
+    } catch (error) { showToast(error.message, 'error'); }
+    finally { button.disabled = false; }
   }
 </script>
 </body>

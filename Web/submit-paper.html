@@ -294,6 +294,7 @@
 
     <!-- LEFT COLUMN: MAIN STEP FORMS -->
     <main>
+      <p id="draft-status" class="hint" role="status" aria-live="polite"></p>
       <form id="submission-form" class="form-card">
 
         <!-- ================= BƯỚC 1: BẢN THẢO & CHUYÊN NGÀNH ================= -->
@@ -519,7 +520,7 @@
             <span style="font-size:12px;color:var(--sky-600);font-weight:600;font-family:var(--sans);">Bước 4 / 5</span>
           </div>
           <div class="section-desc">
-            Hiện tại biểu mẫu chỉ gửi bản thảo toàn văn lên máy chủ. Chức năng gửi BM-02, tập dữ liệu và phụ lục chưa được kết nối; các tệp này chưa thể đính kèm cùng hồ sơ.
+            Đính kèm BM-02 nếu có, cùng tập dữ liệu và phụ lục. Cam đoan điện tử ở bước cuối được lưu với hồ sơ.
           </div>
 
           <!-- THƯ MỤC TÀI LIỆU ĐÍNH KÈM (BẢNG THUMUCBAIBAO) -->
@@ -537,6 +538,11 @@
               </div>
             </div>
 
+            <label for="bm02-input">BM-02 · Bản cam đoan (PDF hoặc Word, không bắt buộc)</label>
+            <input type="file" id="bm02-input" accept=".pdf,.doc,.docx">
+            <label for="supplement-input">Dữ liệu và phụ lục (tối đa 5 tệp)</label>
+            <input type="file" id="supplement-input" accept=".pdf,.doc,.docx,.csv,.xlsx" multiple>
+            <p class="hint">Tối đa 30 MB mỗi tệp, tổng hồ sơ tối đa 120 MB.</p>
             <table class="custom-table" id="attachments-table">
               <thead>
                 <tr>
@@ -851,6 +857,8 @@
 
 <script src="journal-layout.js"></script>
 <script src="journal-interactions.js"></script>
+<script src="workflow-client.js"></script>
+<script src="submission-draft.js"></script>
 <script>
   let currentStep = 1;
   let authorCount = 1;
@@ -1381,7 +1389,7 @@
         paperAuthors: (paperAuthors && paperAuthors.length > 0) ? paperAuthors : null,
         savedAt: new Date().toISOString()
       };
-      localStorage.setItem('jst_submission_draft', JSON.stringify(draft));
+      submissionDraft.save(draft).catch(() => {});
     } catch (e) {
       console.warn('Không thể lưu bản nháp:', e);
     }
@@ -1389,7 +1397,7 @@
 
   function restoreDraftFromStorage() {
     try {
-      const raw = localStorage.getItem('jst_submission_draft');
+      const raw = submissionDraft.read();
       if (!raw) return;
       const draft = JSON.parse(raw);
       if (!draft) return;
@@ -1432,13 +1440,13 @@
   }
 
   function clearDraftStorage() {
-    localStorage.removeItem('jst_submission_draft');
+    submissionDraft.clear();
   }
 
   // Lưu bản nháp thủ công
   function saveDraft() {
     saveDraftToStorage();
-    showToast('Đã lưu bản nháp bản thảo vào bộ nhớ cục bộ (Draft Saved)!');
+    showToast('Đang lưu bản nháp. Xem trạng thái lưu bên dưới biểu mẫu.', 'info');
   }
 
   // Tự động điền dữ liệu người dùng đăng nhập & khởi tạo trạng thái
@@ -1490,7 +1498,7 @@
     initPaperAuthors();
 
     // Khôi phục bản nháp nếu có từ phiên trước
-    restoreDraftFromStorage();
+    try { await submissionDraft.init(); restoreDraftFromStorage(); } catch (error) { showToast(error.message, "error"); }
 
     // Lắng nghe thay đổi form để tự động lưu nháp
     const textInputs = ['title-vi', 'title-en', 'abstract-vi', 'abstract-en', 'keywords-vi', 'keywords-en'];
@@ -1504,7 +1512,7 @@
       }
     });
 
-    const selectInputs = ['paper-type-select', 'paper-lang-select'];
+    const selectInputs = ['paper-type-select', 'paper-lang-select', 'bm02-input', 'supplement-input', 'paper-file-input'];
     selectInputs.forEach(id => {
       const el = document.getElementById(id);
       if (el) el.addEventListener('change', saveDraftToStorage);
@@ -1564,7 +1572,22 @@
 
     showToast('Đang truyền tải bản thảo và siêu dữ liệu lên hệ thống...', 'info');
 
+    if (!submissionDraft.id || !document.getElementById('paper-file-input')?.files[0]) {
+      showToast('Vui lòng tải bản thảo và đăng nhập trước khi nộp.', 'warning');
+      if (submitBtn) { submitBtn.disabled = false; submitBtn.innerText = 'Gửi bản thảo chính thức'; }
+      return;
+    }
+    await submissionDraft.pause();
     const formData = new FormData();
+    formData.append('SubmissionId', submissionDraft.id);
+    formData.append('DraftId', submissionDraft.draftId);
+    formData.append('Consent', 'true');
+    formData.append('ConsentVersion', 'HUIT-2026-01');
+    formData.append('LoaiBai', document.getElementById('paper-type-select').value);
+    formData.append('NgonNgu', document.getElementById('paper-lang-select').value);
+    formData.append('TuKhoaTiengAnh', keywordsEn);
+    if (document.getElementById('bm02-input').files[0]) formData.append('FileBm02', document.getElementById('bm02-input').files[0]);
+    for (const f of document.getElementById('supplement-input').files) formData.append('Supplements', f);
     formData.append('TieuDe', titleVi);
     if (titleEn) formData.append('TieuDeTiengAnh', titleEn);
     formData.append('TomTat', abstractVi);
@@ -1602,6 +1625,7 @@
           window.location.href = 'profile.html';
         }, 1200);
       } else {
+        submissionDraft.resume();
         showToast('Lỗi nộp bài: ' + (res?.message || 'Không thể kết nối đến máy chủ.'), 'error');
         if (submitBtn) {
           submitBtn.disabled = false;
@@ -1609,6 +1633,7 @@
         }
       }
     } catch (err) {
+      submissionDraft.resume();
       showToast('Đã xảy ra lỗi khi gửi yêu cầu: ' + err.message, 'error');
       if (submitBtn) {
         submitBtn.disabled = false;

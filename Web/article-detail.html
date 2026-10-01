@@ -445,6 +445,22 @@ document.addEventListener('DOMContentLoaded', async () => {
           `;
         }
 
+        try {
+          const response = await fetchWithTimeout(API_BASE + '/workflows/article/' + parsedArticleId + '/publication-notices');
+          if (response.ok) {
+            const notices = await response.json();
+            if (notices.length && pubMeta) {
+              const section = document.createElement('section'); section.className = 'article-pub-meta'; section.setAttribute('role', 'status');
+              for (const notice of notices) {
+                const heading = document.createElement('strong'); heading.textContent = notice.data.Kind === 'Retraction' ? 'THÔNG BÁO THU HỒI BÀI' : 'ĐÍNH CHÍNH';
+                const content = document.createElement('p'); content.textContent = notice.data.Text;
+                section.append(heading, content);
+              }
+              pubMeta.after(section);
+            }
+          }
+        } catch (error) { console.warn('Chưa tải được thông báo xuất bản.'); }
+
         // 9. Nút Tải PDF
         const btnPdf = document.querySelector('.btn-download-pdf');
         const publicPdfUrl = resolvePublicPdfUrl(art.filePdfUrl);

@@ -589,15 +589,15 @@
   <div class="modal-box-edit" style="max-width:620px;">
     <h3 style="display:flex;align-items:center;gap:8px;">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-      Nộp bản thảo chỉnh sửa &amp; Bản giải trình phản biện
+      <span id="rev-modal-heading">Nộp bản thảo chỉnh sửa &amp; Bản giải trình phản biện</span>
     </h3>
     <p style="font-size:12.5px;color:var(--ink-500);margin-bottom:14px;">
       Mã bản thảo: <strong id="rev-modal-code">Chưa chọn bản thảo</strong> · Chuyên san: <span id="rev-modal-major">—</span>
     </p>
 
     <div style="background:#fffbeb;border:1px solid #fde68a;border-left:4px solid #d97706;border-radius:4px;padding:12px 14px;font-size:12.5px;color:#78350f;margin-bottom:16px;line-height:1.55;">
-      <div style="font-weight:700;color:#92400e;margin-bottom:4px;">Nhận xét từ Hội đồng &amp; Chuyên gia phản biện:</div>
-      <div id="rev-modal-feedback">Yêu cầu chỉnh sửa sẽ hiển thị theo thông tin bản thảo.</div>
+      <div style="font-weight:700;color:#92400e;margin-bottom:4px;">Thông báo từ Ban biên tập:</div>
+      <div id="rev-modal-feedback" style="white-space:pre-wrap;overflow-wrap:anywhere;">Yêu cầu chỉnh sửa sẽ hiển thị theo thông tin bản thảo.</div>
     </div>
 
     <form onsubmit="handleSendRevision(event)" id="form-revision-submit">
@@ -607,7 +607,8 @@
       <!-- 1. Nội dung giải trình tóm tắt -->
       <div class="form-group-modal">
         <label>Nội dung giải trình tiếp thu ý kiến (Response to Reviewers) <span style="color:#e02424;">*</span></label>
-        <textarea id="rev-explanation" class="form-control-modal" rows="3" placeholder="Tóm tắt các điểm đã chỉnh sửa, bổ sung theo yêu cầu của Chuyên gia phản biện 1 và 2..." required></textarea>
+        <textarea id="rev-explanation" class="form-control-modal" rows="3" maxlength="400" placeholder="Tóm tắt các điểm đã chỉnh sửa, bổ sung theo yêu cầu của Chuyên gia phản biện 1 và 2..." required></textarea>
+        <p id="rev-explanation-help" style="font-size:12px;color:var(--ink-500);margin-top:6px;">Tóm tắt tối đa 400 ký tự. Nội dung giải trình đầy đủ đặt trong BM-03.</p>
       </div>
 
       <!-- 2. Biểu mẫu giải trình BM-03 -->
@@ -894,6 +895,9 @@
     await syncUserData();
     await loadMySubmissions();
     await loadMyReviewAssignments();
+    setInterval(() => {
+      if (!document.hidden && !document.querySelector('.modal-overlay.open')) loadMySubmissions();
+    }, 60000);
     checkHashForPasswordModal();
   });
 
@@ -1113,12 +1117,21 @@
   }
 
   // Tải danh sách bản thảo thời gian thực từ CSDL SQL Server
+  const authorSubmissions = new Map();
+  const authorFileNames = new Map();
+  let authorListLoading = false;
   async function loadMySubmissions() {
     const container = document.getElementById('my-submissions-container');
-    if (!container) return;
+    if (!container || authorListLoading) return;
+    authorListLoading = true;
 
     try {
       const submissions = await apiGetMySubmissions();
+      const changed = submissions.filter(s => authorSubmissions.has(s.maBaiBao) &&
+        authorSubmissions.get(s.maBaiBao).ngayCapNhat !== s.ngayCapNhat);
+      authorSubmissions.clear();
+      submissions.forEach(s => authorSubmissions.set(s.maBaiBao, s));
+      if (changed.length) showToast(`Có cập nhật mới cho ${changed.length} bản thảo. Vui lòng xem thông báo và hồ sơ.`, 'info');
       if (!submissions || submissions.length === 0) {
         container.innerHTML = `
           <div style="background:#f8fafc;border:1px dashed var(--line);border-radius:6px;padding:36px;text-align:center;">
@@ -1193,16 +1206,17 @@
         }).join('');
 
         const dateStr = sub.ngayGui ? new Date(sub.ngayGui).toLocaleDateString('vi-VN') : '—';
-        const isRevising = sub.trangThai && sub.trangThai.includes('sửa');
+        const isRevising = ['Chờ sửa hình thức', 'Chờ chỉnh sửa'].includes(sub.trangThai);
+        const canResubmit = sub.coTheNopLai === true;
         const feedbackText = sub.nhanXetPhanBien || 'Tòa soạn chưa cập nhật nội dung yêu cầu chỉnh sửa.';
 
-        const revisionFeedbackHtml = isRevising ? `
+        const revisionFeedbackHtml = (isRevising || sub.nhanXetPhanBien) ? `
           <div style="background:#fffbeb;border:1px solid #fde68a;border-left:4px solid #d97706;border-radius:4px;padding:12px 14px;margin-bottom:14px;font-size:12.5px;line-height:1.55;">
             <div style="font-weight:700;color:#92400e;margin-bottom:4px;display:flex;align-items:center;gap:6px;">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              Ý KIẾN PHẢN BIỆN &amp; YÊU CẦU CHỈNH SỬA TỪ HỘI ĐỒNG:
+              THÔNG BÁO TỪ BAN BIÊN TẬP:
             </div>
-            <p style="color:#78350f;margin-bottom:6px;">${feedbackText}</p>
+            <p style="color:#78350f;margin-bottom:6px;white-space:pre-wrap;overflow-wrap:anywhere;">${escapeHtml(feedbackText)}</p>
           </div>
         ` : '';
 
@@ -1212,15 +1226,20 @@
               <span class="sub-code-badge">MÃ BẢN THẢO: ${sub.maDinhDanh}</span>
               <span class="sub-stage-badge ${stageClass}">${stageText}</span>
             </div>
+            <a class="btn-action-view" href="article-workflow.html?id=${Number(sub.maBaiBao)}">Theo dõi hồ sơ &amp; bản bông</a>
             <h3><a href="javascript:void(0)" onclick="openSubmissionDetailModal(${sub.maBaiBao})">${escapeHtml(sub.tieuDe)}</a></h3>
             <div class="sub-meta-specs">
               <span>Chuyên ngành: <b>${escapeHtml(sub.chuyenNganh)}</b></span>
               <span>Ngày nộp: <b>${dateStr}</b></span>
+              <span>Quyền trong bài: <b>${sub.laDongTacGia ? 'Đồng tác giả · Chỉ xem' : 'Tài khoản gửi bài'}</b></span>
+              ${sub.ngayPhatHanh ? `<span>Ngày phát hành: <b>${new Date(sub.ngayPhatHanh).toLocaleDateString('vi-VN')}</b></span>` : ''}
               <span>Đồng tác giả: <b>${sub.soDongTacGia} tác giả</b></span>
               ${sub.tapTinGoc ? `<span>Tệp gốc: <b>${escapeHtml(sub.tapTinGoc)}</b></span>` : ''}
             </div>
 
+            ${sub.laDongTacGia ? '<p class="note" style="margin-bottom:14px;">Bạn có thể theo dõi tiến trình, nhận xét đã được tòa soạn gửi cho tác giả và ngày phát hành. Việc nộp bản sửa thuộc tài khoản gửi bài. Bạn vẫn có thể nộp bài mới của mình.</p>' : ''}
             ${revisionFeedbackHtml}
+            ${sub.trangThai === 'Chờ quyết định' ? '<p style="margin-bottom:14px;">Tòa soạn đã nhận bản sửa. Ban biên tập sẽ xem xét quyết định hoặc chuẩn bị bản ẩn danh và mời chuyên gia cho vòng phản biện tiếp theo. Bạn chưa cần nộp thêm tệp.</p>' : ''}
 
             <div class="workflow-progress-tracker">
               ${stepsHtml}
@@ -1229,9 +1248,9 @@
             <div class="sub-action-bar">
               <span class="note">Trạng thái: <strong>${escapeHtml(sub.trangThai)}</strong> · Dữ liệu CSDL SQL Server</span>
               <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
-                ${isRevising ? `
-                  <button type="button" class="btn-action-revise" style="cursor:pointer;border:none;background:#b91c1c;color:#fff;padding:6px 14px;border-radius:3px;font-weight:700;font-size:12px;display:inline-flex;align-items:center;gap:4px;" onclick="openRevisionDialog('${sub.maBaiBao}', '${sub.maDinhDanh}', '${escapeJs(sub.tieuDe)}', '${sub.chuyenNganh}', '${escapeJs(feedbackText)}')">
-                    Nộp bản chỉnh sửa &amp; Giải trình (BM-03) &rarr;
+                ${canResubmit ? `
+                  <button type="button" class="btn-action-revise" style="cursor:pointer;border:none;background:var(--sky-500,#1da1f2);color:#fff;padding:6px 14px;border-radius:3px;font-weight:700;font-size:12px;display:inline-flex;align-items:center;gap:4px;" onclick="openAuthorRevisionFromList(${Number(sub.maBaiBao)})">
+                    ${sub.trangThai === 'Chờ sửa hình thức' ? 'Nộp bản sửa hình thức' : 'Nộp bản chỉnh sửa &amp; Giải trình (BM-03)'} &rarr;
                   </button>
                 ` : ''}
                 <button type="button" class="btn-action-view" style="cursor:pointer;border:1px solid var(--sky-200);background:#fff;color:#1da1f2;padding:6px 14px;border-radius:3px;font-weight:600;font-size:12px;display:inline-flex;align-items:center;gap:4px;" onclick="openSubmissionDetailModal(${sub.maBaiBao})">
@@ -1262,7 +1281,7 @@
     } catch (e) {
       console.error('Lỗi khi nạp bản thảo:', e);
       container.innerHTML = '<p role="alert" style="color:#b91c1c;padding:24px 0;">Không thể tải bản thảo từ máy chủ tòa soạn. Vui lòng kiểm tra kết nối và thử lại; không có dữ liệu nào được thay bằng bản thảo mẫu.</p>';
-    }
+    } finally { authorListLoading = false; }
   }
 
   // Mở modal xem chi tiết toàn diện hồ sơ bản thảo nộp
@@ -1391,16 +1410,17 @@
           fileHtml += `
             <tr>
               <td>${idx + 1}</td>
-              <td><strong>${f.tenTapTinGoc || f.duongDanTapTin}</strong></td>
-              <td><span class="badge-tag badge-neutral">${f.loaiTapTin}</span></td>
-              <td>${f.dungLuongMb ? f.dungLuongMb.toFixed(2) + ' MB' : '—'}</td>
+              <td><button type="button" class="btn-action-view" onclick="downloadSubmissionFile(${Number(maBaiBao)}, ${Number(f.maThuMuc)})">${escapeHtml(f.tenThuMuc)}</button></td>
+              <td><span class="badge-tag badge-neutral">${escapeHtml(f.loaiThuMuc)}</span></td>
+              <td>${f.kichThuoc ? (f.kichThuoc / 1024 / 1024).toFixed(2) + ' MB' : '—'}</td>
               <td>Vòng ${f.soVong}</td>
-              <td>${new Date(f.ngayTao).toLocaleDateString('vi-VN')}</td>
+              <td>${new Date(f.ngayTaiLen).toLocaleDateString('vi-VN')}</td>
             </tr>
           `;
         });
         fileHtml += `</tbody></table>`;
         filesContainer.innerHTML = fileHtml;
+        data.tapTins.forEach(f => authorFileNames.set(`${maBaiBao}:${f.maThuMuc}`, f.tenThuMuc));
       } else {
         filesContainer.innerHTML = '<div style="font-size:12px;color:var(--ink-500);font-style:italic;padding:8px 12px;background:#f8fafc;border:1px dashed var(--line);border-radius:4px;">Chưa có tài liệu trong thư mục bài báo.</div>';
       }
@@ -1733,7 +1753,36 @@
       .replace(/'/g, '&#39;');
   }
 
-  function openRevisionDialog(id, code, title, major, feedback) {
+  function openAuthorRevisionFromList(id) {
+    const sub = authorSubmissions.get(id);
+    if (!sub || !sub.coTheNopLai) return;
+    openRevisionDialog(id, sub.maDinhDanh, sub.tieuDe, sub.chuyenNganh, sub.nhanXetPhanBien, sub.trangThai);
+  }
+
+  async function downloadSubmissionFile(id, fileId) {
+    try {
+      const token = localStorage.getItem('journal_token');
+      if (!token) throw new Error('Phiên đăng nhập đã hết hạn.');
+      const res = await fetchWithTimeout(`${API_BASE}/baibao/${id}/manuscript?fileId=${fileId}`, { headers: { Authorization: `Bearer ${token}` } });
+      if (!res.ok) throw new Error((await apiError(res, 'Không thể tải tệp hồ sơ')).message);
+      const url = URL.createObjectURL(await res.blob());
+      const link = document.createElement('a');
+      link.href = url; link.download = authorFileNames.get(`${id}:${fileId}`) || 'BanThao';
+      document.body.appendChild(link); link.click(); link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
+    } catch (e) { showToast(e.message, 'error'); }
+  }
+
+  function openRevisionDialog(id, code, title, major, feedback, status = 'Chờ chỉnh sửa') {
+    document.getElementById('form-revision-submit').reset();
+    const formatOnly = status === 'Chờ sửa hình thức';
+    const bm03 = document.getElementById('rev-file-bm03');
+    bm03.required = !formatOnly;
+    bm03.closest('.form-group-modal').hidden = formatOnly;
+    document.getElementById('rev-modal-heading').textContent = formatOnly ? 'Nộp bản sửa hình thức' : 'Nộp bản chỉnh sửa và giải trình BM-03';
+    document.getElementById('rev-explanation').closest('.form-group-modal').querySelector('label').innerHTML = (formatOnly ? 'Mô tả các lỗi thể thức đã sửa' : 'Tóm tắt giải trình tiếp thu ý kiến') + ' <span style="color:#e02424;">*</span>';
+    document.getElementById('rev-explanation-help').textContent = formatOnly ? 'Mô tả tóm tắt tối đa 400 ký tự.' : 'Tóm tắt tối đa 400 ký tự. Nội dung giải trình đầy đủ đặt trong BM-03.';
+    document.getElementById('rev-explanation').placeholder = formatOnly ? 'Mô tả các lỗi thể thức đã sửa theo yêu cầu của Ban biên tập...' : 'Giải trình từng góp ý của chuyên gia phản biện...';
     document.getElementById('rev-paper-id').value = id || '';
     document.getElementById('rev-paper-code').value = code || '';
     document.getElementById('rev-modal-code').innerText = code || 'Chưa chọn bản thảo';
@@ -1783,6 +1832,7 @@
         showToast(`Tệp "${f.name}" (${label}) không hợp lệ! Hệ thống chỉ chấp nhận tệp định dạng PDF (.pdf) hoặc Word (.doc, .docx).`, 'error');
         return false;
       }
+      if (f.size > 30 * 1024 * 1024) { showToast(`Tệp "${f.name}" vượt giới hạn 30 MB.`, 'error'); return false; }
       return true;
     };
 
@@ -1806,7 +1856,8 @@
           btn.disabled = false;
           btn.innerText = oldText;
           closeRevisionDialog();
-          showToast(`Đã lưu CSDL: Nộp bản thảo chỉnh sửa & Giải trình BM-03 cho ${code} thành công!`, 'success');
+          document.getElementById('form-revision-submit').reset();
+          showToast(res.message || `Đã nộp bản sửa cho ${code}.`, 'success');
           setTimeout(() => { loadMySubmissions(); }, 600);
           return;
         } else {

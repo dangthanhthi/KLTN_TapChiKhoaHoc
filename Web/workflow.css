@@ -1,0 +1,22 @@
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V4 */
+:root { --wf-blue: #1da1f2; --wf-ink: #152b42; --wf-muted: #62758c; --wf-line: #d5e4f3; --wf-bg: #f6f9fc; --wf-paper: #fff; --wf-error: #b42318; --wf-body: Inter, Arial, sans-serif; --wf-heading: 'Source Serif 4', Georgia, serif; }
+html, body { overflow-x: clip; }
+.workflow-page { max-width: 1100px; margin: 40px auto; padding: 0 20px; color: var(--wf-ink); font-family: var(--wf-body); min-height: 60vh; }
+.workflow-page h1, .workflow-page h2 { font-family: var(--wf-heading); font-style: normal; overflow-wrap: anywhere; }
+.workflow-page h1 { font-size: 30px; }
+.workflow-page h2 { font-size: 22px; }
+.workflow-page p { line-height: 1.65; }
+.workflow-panel { border: 1px solid var(--wf-line); background: var(--wf-paper); padding: 24px; margin: 20px 0; min-width: 0; }
+.workflow-page label { display: block; margin: 14px 0 6px; font-weight: 600; font-size: 13px; }
+.workflow-page input, .workflow-page textarea, .workflow-page select { box-sizing: border-box; width: 100%; padding: 11px; border: 1px solid var(--wf-line); border-radius: 3px; font: inherit; background: var(--wf-paper); color: var(--wf-ink); }
+.workflow-page button, .workflow-link { display: inline-flex; padding: 11px 15px; color: var(--wf-paper); background: var(--wf-blue); border: 0; border-radius: 3px; font: inherit; cursor: pointer; white-space: nowrap; text-decoration: none; }
+.workflow-page button:hover, .workflow-link:hover { filter: brightness(.94); }
+.workflow-page button:focus-visible, .workflow-link:focus-visible { outline: 2px solid var(--wf-ink); outline-offset: 3px; }
+.workflow-page button:active { transform: translateY(1px); }
+.workflow-page button:disabled { opacity: .55; cursor: wait; }
+.workflow-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+.workflow-status { padding: 12px 0; color: var(--wf-muted); overflow-wrap: anywhere; }
+.workflow-status[data-error='true'] { color: var(--wf-error); }
+.workflow-record { border-top: 1px solid var(--wf-line); padding: 18px 0; overflow-wrap: anywhere; }
+.workflow-pdf { width: 100%; height: 70vh; border: 1px solid var(--wf-line); }
+@media(max-width: 414px) { .workflow-page { padding: 0 12px; margin-top: 24px; } .workflow-panel { padding: 14px; } .workflow-page h1 { font-size: 25px; } }

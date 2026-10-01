@@ -641,6 +641,7 @@ function renderAuthNavbar() {
                 <div class="dropdown-header-email" style="text-overflow:ellipsis;overflow:hidden;white-space:nowrap;">${user.email}</div>
               </div>
             </div>
+${user.vaiTros?.some(r => ['Quản trị hệ thống', 'Tổng biên tập', 'Ban biên tập'].includes(r)) ? '<a href="editorial-workflow.html" class="dropdown-item">Xử lý hồ sơ tòa soạn</a>' : ''}
             <a href="profile.html" class="dropdown-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
               Trang cá nhân &amp; Thống kê
