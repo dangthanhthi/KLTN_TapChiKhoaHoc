@@ -1019,12 +1019,10 @@ function initAuthTriggers() {
 }
 
 // Citation Logic
-function getPublicDoi(value) {
-  const doi = String(value || '').trim().replace(/^https?:\/\/doi\.org\//i, '');
-  if (!/^10\.\d{4,9}\/\S+$/.test(doi)) return '';
-  // Legacy import identifiers and locally generated HUIT identifiers have not been deposited.
-  if (/^10\.58810\/yersin\./i.test(doi) || /^10\.59876\/huit\.jsc\./i.test(doi)) return '';
-  return doi;
+function getPublicDoi(value, verified) {
+  if (verified !== true) return '';
+  const doi = String(value || '').trim().replace(/^https?:\/\/(?:dx\.)?doi\.org\//i, '');
+  return /^10\.\d{4,9}\/[^\s<>"'{}]+$/.test(doi) ? doi : '';
 }
 const citations = {
   apa: '',
@@ -1041,7 +1039,7 @@ function generateArticleCitations(art) {
   const vol = art.tap ? String(art.tap) : '';
   const no = art.so ? String(art.so) : '';
   const pages = art.trangBatDau && art.trangKetThuc ? `${art.trangBatDau}–${art.trangKetThuc}` : '';
-  const doi = getPublicDoi(art.maDOI);
+  const doi = getPublicDoi(art.maDOI, art.doiVerified);
   const doiStr = doi ? ` https://doi.org/${doi}` : '';
   const journalName = art.tenSoTapChi && art.tenSoTapChi.includes('Yersin')
     ? 'Tạp chí Khoa học Yersin'

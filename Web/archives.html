@@ -738,7 +738,7 @@
 <div id="huit-footer"></div>
 
 <script src="journal-layout.js?v=archive-live-counts-20260928"></script>
-<script src="journal-interactions.js?v=archive-live-counts-20260928"></script>
+<script src="journal-interactions.js?v=20261009-doi-archive-live-counts-20260928"></script>
 <script>
   // =========================================================================
   // DỮ LIỆU ĐƯỢC NẠP TRỰC TIẾP TỪ CSDL SQL SERVER (.NET 9 WEB API)
@@ -1117,7 +1117,7 @@
                 issueSlug: a.maSoTapChi ? a.maSoTapChi.toString() : '',
                 soTapChi: issueTitle,
                 ngayDang: pubDate,
-                doi: a.maDOI || '',
+                doi: getPublicDoi(a.maDOI, a.doiVerified),
                 tomTat: a.tomTat || a.tomTatTiengAnh || '—',
                 pdfUrl: a.filePdfUrl || ''
               };

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
 
 namespace HuitJournal.Api.DTOs;
@@ -203,6 +203,7 @@ public class BaiBaoPublicDto
     public string? TomTatTiengAnh { get; set; }
     public string? TuKhoa { get; set; }
     public string? MaDOI { get; set; }
+    public bool DoiVerified { get; set; }
     public DateTime NgayGui { get; set; }
     public DateTime? NgayPhatHanh { get; set; }
     public string ChuyenNganh { get; set; } = null!;

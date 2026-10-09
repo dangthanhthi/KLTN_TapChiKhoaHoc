@@ -71,6 +71,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     catch(error) { report(error.message, true); } finally { buttons.forEach(b => b.disabled = false); }
   };
   document.getElementById('notice').onsubmit = e => { e.preventDefault(); send(e.target, `article/${Number(document.getElementById('notice-article').value)}/publication-notice`, { kind: document.getElementById('notice-kind').value, text: document.getElementById('notice-text').value.trim() }); };
+  document.getElementById('doi-management').onsubmit = async e => {
+    e.preventDefault();
+    const id = Number(document.getElementById('doi-article').value), action = e.submitter.value;
+    const output = document.getElementById('doi-result');
+    const buttons = [...e.target.querySelectorAll('button')]; buttons.forEach(b => b.disabled = true);
+    const states = { Unassigned: 'Chưa cấp', Pending: 'Chờ xác thực', Failed: 'Xác thực thất bại', Verified: 'Đã xác thực' };
+    try {
+      const url = `${API_BASE}/editorial-articles/${id}/doi` + (action === 'verify' ? '/verify' : '');
+      const response = await fetchWithTimeout(url, { method: action === 'status' ? 'GET' : 'POST', headers: { Authorization: 'Bearer ' + localStorage.getItem('journal_token'), 'Content-Type': 'application/json' }, ...(action === 'save' ? { body: JSON.stringify({ maDOI: document.getElementById('doi-code').value.trim() }) } : {}), timeout: 40000 });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.message || 'Không xử lý được DOI.');
+      if (action === 'status') document.getElementById('doi-code').value = result.maDOI || '';
+      output.textContent = (states[result.state] || 'Chưa xác thực') + '. ' + (result.message || '');
+    } catch (error) { output.textContent = error.message; }
+    finally { buttons.forEach(b => b.disabled = false); }
+  };
   try {
     const user = await apiGetProfile();
     if (!user?.vaiTros?.some(r => ['Quản trị hệ thống', 'Tổng biên tập', 'Ban biên tập'].includes(r))) throw new Error('Trang này dành cho tài khoản tòa soạn.');

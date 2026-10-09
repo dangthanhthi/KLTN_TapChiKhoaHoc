@@ -250,6 +250,7 @@ public partial class BaiBaoService : IBaiBaoService
             TomTatTiengAnh = b.TomTatTiengAnh,
             TuKhoa = b.TuKhoa,
             MaDOI = b.MaDOI,
+            DoiVerified = _context.WorkflowRecords.Any(r => r.ArticleId == b.MaBaiBao && r.Kind == "DOI" && r.State == "Verified" && r.Payload == "\"" + b.MaDOI + "\""),
             NgayGui = b.NgayGui,
             NgayPhatHanh = b.SoTapChi?.NgayPhatHanh,
             ChuyenNganh = b.ChuyenNganh.TenChuyenNganh,
@@ -774,12 +775,19 @@ public partial class BaiBaoService : IBaiBaoService
             (dto.TrangBatDau.HasValue && (dto.TrangBatDau < 1 || dto.TrangKetThuc < dto.TrangBatDau)))
             return (false, "Khoảng trang phát hành không hợp lệ.");
 
+        string? normalizedDoi;
+        try { normalizedDoi = DoiTools.Normalize(dto.MaDOI); }
+        catch (ArgumentException e) { return (false, e.Message); }
+        if (normalizedDoi != null && await _context.BaiBaos.AnyAsync(b => b.MaBaiBao != maBaiBao && b.MaDOI == normalizedDoi))
+            return (false, "DOI đã được gán cho bài khác.");
+        if (normalizedDoi != null && normalizedDoi != baiBao.MaDOI && await _context.WorkflowRecords.AnyAsync(r => r.ArticleId == maBaiBao && r.Kind == "DOI" && r.State == "Verified"))
+            return (false, "Không thể thay DOI đã xác thực.");
         baiBao.MaSoTapChi = dto.MaSoTapChi;
         if (dto.TrangBatDau.HasValue) baiBao.TrangBatDau = dto.TrangBatDau.Value;
         if (dto.TrangKetThuc.HasValue) baiBao.TrangKetThuc = dto.TrangKetThuc.Value;
         if (!string.IsNullOrWhiteSpace(dto.MaDOI))
         {
-            baiBao.MaDOI = dto.MaDOI;
+            baiBao.MaDOI = normalizedDoi;
         }
         baiBao.NgayCapNhat = WorkflowTools.VietnamNow;
 

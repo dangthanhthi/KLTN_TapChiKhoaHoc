@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using HuitJournal.Api.Data;
 using HuitJournal.Api.Models;
+using HuitJournal.Api.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -37,9 +38,16 @@ public class EditorialArticleController : ControllerBase
         if (dto.TrangBatDau.HasValue != dto.TrangKetThuc.HasValue ||
             (dto.TrangBatDau.HasValue && (dto.TrangBatDau < 1 || dto.TrangKetThuc < dto.TrangBatDau)))
             return BadRequest(new { message = "Khoảng trang không hợp lệ." });
+        string? doi;
+        try { doi = DoiTools.Normalize(dto.MaDOI); }
+        catch (ArgumentException e) { return BadRequest(new { message = e.Message }); }
+        if (doi != null && await _context.BaiBaos.AnyAsync(b => b.MaBaiBao != id && b.MaDOI == doi))
+            return Conflict(new { message = "DOI đã được gán cho bài khác." });
+        if (doi != article.MaDOI && await _context.WorkflowRecords.AnyAsync(r => r.ArticleId == id && r.Kind == "DOI" && r.State == "Verified"))
+            return Conflict(new { message = "Không thể thay DOI đã xác thực." });
         article.TrangBatDau = dto.TrangBatDau;
         article.TrangKetThuc = dto.TrangKetThuc;
-        article.MaDOI = string.IsNullOrWhiteSpace(dto.MaDOI) ? null : dto.MaDOI.Trim();
+        article.MaDOI = doi;
         article.NgayCapNhat = DateTime.Now;
         await _context.SaveChangesAsync();
         return Ok(new { success = true });
@@ -57,7 +65,7 @@ public class EditorialArticleController : ControllerBase
         article.MaSoTapChi = null;
         article.TrangBatDau = null;
         article.TrangKetThuc = null;
-        article.MaDOI = null;
+        // DOI remains attached to the article when it is removed from an unpublished issue.
         article.TrangThai = "Đang chế bản";
         article.NgayCapNhat = DateTime.Now;
         _context.LichSuTrangThais.Add(new LichSuTrangThaiBaiBao

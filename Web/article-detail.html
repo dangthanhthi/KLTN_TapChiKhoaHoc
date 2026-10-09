@@ -455,7 +455,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         // 8. Siêu dữ liệu xuất bản
         const pubMeta = document.querySelector('.article-pub-meta');
         if (pubMeta) {
-          const doi = typeof getPublicDoi === 'function' ? getPublicDoi(art.maDOI) : '';
+          const doi = typeof getPublicDoi === 'function' ? getPublicDoi(art.maDOI, art.doiVerified) : '';
           const doiUrl = doi ? `https://doi.org/${encodeURIComponent(doi).replace(/%2F/gi, '/')}` : '';
           const doiStatus = art.maDOI && !doi ? 'Chưa xác thực DOI' : 'Chưa được cấp';
           const issueName = art.tenSoTapChi || (art.tap && art.so && art.nam ? `Tập ${art.tap}, Số ${art.so} (${art.nam})` : 'Chưa cập nhật');

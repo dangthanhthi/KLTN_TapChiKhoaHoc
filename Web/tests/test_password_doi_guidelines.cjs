@@ -81,7 +81,7 @@ const server = http.createServer((req, res) => {
 
     assert.equal(await page.evaluate(() => getPublicDoi('10.58810/yersin.2026.a0f8bd')), '');
     assert.equal(await page.evaluate(() => getPublicDoi('10.59876/huit.jsc.2026.42.06_18')), '');
-    assert.equal(await page.evaluate(() => getPublicDoi('10.1038/s41586-024-00000-0')), '10.1038/s41586-024-00000-0');
+    assert.equal(await page.evaluate(() => getPublicDoi('10.1038/s41586-024-00000-0', true)), '10.1038/s41586-024-00000-0');
     assert.equal(await page.evaluate(() => {
       generateArticleCitations({ maBaiBao: 19, tieuDe: 'Bài báo kiểm thử', nam: 2026, maDOI: '10.58810/yersin.2026.a0f8bd' });
       return citations.apa.includes('doi.org') || citations.bibtex.includes('doi={') || citations.ris.includes('DO  - ');

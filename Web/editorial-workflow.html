@@ -212,6 +212,16 @@
         </div>
 
         <!-- KHỐI 4: QUYỀN HẠN TỔNG BIÊN TẬP & QUẢN TRỊ VIÊN -->
+        <section aria-labelledby="doi-heading" style="margin-top:24px;">
+          <h2 id="doi-heading">Quản lý DOI</h2>
+          <p>Đơn vị xuất bản đăng ký DOI và metadata với Crossref. Nhập mã đã đăng ký rồi xác thực trước khi công khai. Nhập một chuỗi vào đây không tự tạo DOI quốc tế.</p>
+          <form id="doi-management" class="workflow-form">
+            <div class="form-field"><label for="doi-article">Mã bài báo</label><input id="doi-article" type="number" min="1" required></div>
+            <div class="form-field"><label for="doi-code">DOI hoặc URL doi.org</label><input id="doi-code" type="text" maxlength="130" placeholder="10.xxxx/mã-bài"><span class="field-hint">Có thể bổ sung sau xuất bản. DOI đã xác thực không được thay thế.</span></div>
+            <div class="workflow-actions"><button type="submit" value="status">Xem trạng thái</button><button type="submit" value="save">Lưu DOI</button><button type="submit" value="verify">Xác thực DOI</button></div>
+            <p id="doi-result" role="status" aria-live="polite"></p>
+          </form>
+        </section>
         <div id="final-work" hidden>
           <div class="sec-heading" style="margin-top:36px;">
             <span>Quyền hạn Tổng biên tập &amp; Quản trị hệ thống</span>
