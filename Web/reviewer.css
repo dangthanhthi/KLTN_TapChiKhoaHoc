@@ -38,7 +38,7 @@ p { margin:10px 0; } .muted,.fine-print { color:var(--ink-500); } .fine-print { 
 label { display:block; font-size:12px; font-weight:600; } input,select,textarea { display:block; width:100%; padding:10px 11px; border:1px solid var(--line); border-radius:4px; margin-top:5px; color:var(--ink-900); background:var(--paper); min-width:0; }
 textarea { resize:vertical; } input::placeholder,textarea::placeholder { color:var(--ink-500); font-weight:400; }
 #list-status { font-size:12px; margin:16px 0 8px; } .assignment { padding:20px 0; border-bottom:1px solid var(--line); }
-.assignment.is-selected { border-left:3px solid var(--action); padding-left:14px; background:var(--sky-050); padding-right:14px; }
+.assignment.is-selected { border-left:3px solid var(--action); padding-left:14px; background:#f1f5f9; padding-right:14px; }
 .assignment-top { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-bottom:9px; font-size:11px; color:var(--ink-500); }
 .assignment h3 button { text-align:left; border:0; background:none; padding:0; font:inherit; color:var(--ink-900); overflow-wrap:anywhere; }
 .assignment .meta { color:var(--ink-500); font-size:12px; } .deadline { color:var(--ink-700); font-size:12px; }
@@ -75,12 +75,12 @@ fieldset { border:1px solid var(--line); padding:16px; margin:20px 0; } legend {
 .paper-keywords-wrap { display: flex; align-items: flex-start; gap: 8px; flex-wrap: wrap; margin-top: 14px; font-size: 12.5px; }
 .keywords-label { font-weight: 600; color: var(--ink-700); padding-top: 2px; }
 .keywords-badges { display: flex; flex-wrap: wrap; gap: 6px; }
-.keyword-badge { display: inline-block; background: var(--sky-050); color: var(--action); border: 1px solid var(--sky-100); padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+.keyword-badge { display: inline-block; background: #f1f5f9; color: #475569; border: none; padding: 3px 10px; border-radius: 4px; font-size: 12px; font-weight: 500; }
 
 /* Manuscript Document Card */
 .manuscript-file-section { margin: 22px 0; padding-top: 18px; border-top: 1px solid var(--line); }
 .manuscript-file-section h3 { font-size: 15px; font-weight: 600; margin-bottom: 12px; color: var(--ink-900); }
-.manuscript-file-card { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 18px; background: var(--sky-050); border: 1px solid var(--sky-100); border-radius: 6px; }
+.manuscript-file-card { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 18px; background: #f1f5f9; border: none; border-radius: 6px; }
 .manuscript-file-main { display: flex; align-items: center; gap: 14px; min-width: 0; }
 .manuscript-file-icon { color: var(--action); flex-shrink: 0; display: flex; align-items: center; }
 .manuscript-file-info { min-width: 0; display: flex; flex-direction: column; gap: 2px; }

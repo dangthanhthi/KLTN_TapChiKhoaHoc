@@ -3,7 +3,7 @@
 Website chính thức và Cổng thông tin điện tử của Tạp chí Khoa học, phục vụ quy trình xuất bản học thuật trực tuyến: giới thiệu, công bố bài báo, kho lưu trữ, nộp bản thảo và bàn làm việc tác giả.
 
 ## 🚀 Các trang tính năng chính
-- **Trang chủ Tạp chí (`UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html`)**: Ấn phẩm mới phát hành, tiêu điểm nghiên cứu, bài báo mới nhất, tra cứu chuyên ngành.
+- **Trang chủ Tạp chí (`index.html`)**: Ấn phẩm mới phát hành, tiêu điểm nghiên cứu, bài báo mới nhất, tra cứu chuyên ngành.
 - **Giới thiệu Tạp chí (`about.html`)**: Tôn chỉ mục đích, mã chuẩn quốc tế ISSN / e-ISSN, định danh DOI CrossRef, chỉ mục dữ liệu Google Scholar, VCI, ACI.
 - **Chính sách xuất bản & Đạo đức (`publishing-policy.html`)**: Bản quyền truy cập mở Open Access CC-BY, quy định liêm chính, chống đạo văn, bình duyệt kín 2 chiều.
 - **Hội đồng biên tập (`editorial-board.html`)**: Danh sách Tổng biên tập, Phó Tổng biên tập, Thư ký tòa soạn và Hội đồng chuyên ngành.

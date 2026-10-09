@@ -7,6 +7,9 @@
 *.bacpac
 
 # Local credentials and private data
+*.publishSettings
+*.publishsettings
+*.pubxml.user
 **/appsettings.Local.json
 **/appsettings.*.local.json
 *.env

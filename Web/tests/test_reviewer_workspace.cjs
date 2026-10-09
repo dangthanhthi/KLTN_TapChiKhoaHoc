@@ -84,15 +84,14 @@ async function pageFor(options={}){
   await test('Evaluation draft, rejected POST preserves draft, successful POST creates history',async()=>{
     const {p,ctx,settings,errors}=await pageFor({submitStatus:400});
     await p.locator('.assignment h3 button').first().click();assert.equal(await p.locator('#detail .detail-actions > button.primary').count(),3);assert.equal(await p.getByText('Tùy chọn khác',{exact:true}).count(),0);await p.getByRole('button',{name:'Mở phiếu nhanh',exact:true}).click();
-    for(const k of C.scoreKeys)await p.locator(`[name=${k}]`).fill('0');
-    await p.locator('[name=nhanXetChoTacGia]').fill('Nhận xét kiểm thử: cần bổ sung phương pháp và dữ liệu.');await p.selectOption('[name=kienNghi]','Từ chối đăng');
+    await p.locator('[name=reviewArgument]').fill('Nhận xét kiểm thử: cần bổ sung phương pháp và dữ liệu.');await p.locator('[name=reviewContentChanges]').fill('Bổ sung số liệu kiểm chứng.');await p.selectOption('[name=kienNghi]','Từ chối đăng');
     await p.click('#close-evaluation');await p.reload();await p.waitForFunction(()=>document.getElementById('list-status').textContent==='2 công việc');
     await p.locator('#assignment-list .assignment h3 button').first().click();await p.getByRole('button',{name:'Mở phiếu nhanh',exact:true}).click();
     await p.getByText('Đã tải bản nháp đã lưu trên hệ thống.',{exact:false}).waitFor();
-    assert.match(await p.locator('[name=nhanXetChoTacGia]').inputValue(),/Nhận xét kiểm thử/);await p.check('#confirm-review');await p.click('#submit-review');
+    assert.match(await p.locator('[name=reviewArgument]').inputValue(),/Nhận xét kiểm thử/);await p.check('#confirm-review');await p.click('#submit-review');
     await p.getByText('Không thể nhận phiếu thử nghiệm.',{exact:true}).waitFor();assert.equal(await p.locator('#evaluation-dialog').isVisible(),true);assert.equal(settings.submitCount,1);assert.equal(settings.drafts.size,1);
     settings.submitStatus=200;await p.click('#submit-review');await p.waitForFunction(()=>!document.getElementById('evaluation-dialog').open);
-    assert.equal(settings.payload.diemTongKet,0);assert.equal(settings.submitCount,2);assert.equal(settings.drafts.size,0);assert.equal(await p.locator('[data-view=history]').getAttribute('aria-pressed'),'true');assert.equal(await p.locator('#count-done').innerText(),'2');assert.deepEqual(errors,[]);await ctx.close();
+    assert.equal(settings.payload.diemTongKet,null);assert.match(settings.payload.nhanXetChoTacGia,/Nhận xét kiểm thử/);assert.match(settings.payload.nhanXetChoTacGia,/Bổ sung số liệu/);assert.equal(settings.submitCount,2);assert.equal(settings.drafts.size,0);assert.equal(await p.locator('[data-view=history]').getAttribute('aria-pressed'),'true');assert.equal(await p.locator('#count-done').innerText(),'2');assert.deepEqual(errors,[]);await ctx.close();
   });
   await test('Untrusted title is rendered as text, not HTML',async()=>{
     const {p,ctx}=await pageFor({list:[{...items[0],tieuDeBaiBao:'<img src=x onerror="window.reviewXss=true">'}]});await p.locator('.assignment h3 button').click();assert.equal(await p.locator('#detail img').count(),0);assert.equal(await p.evaluate(()=>window.reviewXss),undefined);await ctx.close();
@@ -109,7 +108,7 @@ async function pageFor(options={}){
   });
   await test('Expired session during submission denies access without marking complete',async()=>{
     const {p,ctx,settings}=await pageFor({submitStatus:401});await p.locator('.assignment h3 button').first().click();await p.getByRole('button',{name:'Mở phiếu nhanh',exact:true}).click();
-    for(const k of C.scoreKeys)await p.locator(`[name=${k}]`).fill('8');await p.locator('[name=nhanXetChoTacGia]').fill('Nhận xét đầy đủ.');await p.selectOption('[name=kienNghi]','Chỉnh sửa nhỏ');await p.check('#confirm-review');await p.click('#submit-review');await p.waitForFunction(()=>document.getElementById('workspace').hidden);assert.equal(settings.submitCount,1);await ctx.close();
+    await p.locator('[name=reviewArgument]').fill('Nhận xét đầy đủ và cần bổ sung dữ liệu.');await p.selectOption('[name=kienNghi]','Chỉnh sửa nhỏ');await p.check('#confirm-review');await p.click('#submit-review');await p.waitForFunction(()=>document.getElementById('workspace').hidden);assert.equal(settings.submitCount,1);await ctx.close();
   });
   await test('Pending invitation can be accepted and declined through API; form appears only after acceptance',async()=>{
     const pending={...items[0],trangThai:'Chờ phản hồi',hanPhanHoi:day(3)};
@@ -135,7 +134,7 @@ async function pageFor(options={}){
     assert.deepEqual(errors,[]);await ctx.close();
   });
   await test('Responsive layouts and dialog at 320, 375, 768, 1024, 1366; no page errors',async()=>{
-    const {p,ctx,errors}=await pageFor();
+    const {p,ctx,settings,errors}=await pageFor();
     for(const width of [320,375,768,1024,1366]){
       await p.setViewportSize({width,height:1000});await p.locator('.assignment h3 button').first().click();
       const widths=await p.evaluate(()=>({doc:document.documentElement.scrollWidth,body:document.body.scrollWidth,w:innerWidth}));assert(widths.doc<=widths.w && widths.body<=widths.w,JSON.stringify(widths));
@@ -153,8 +152,8 @@ async function pageFor(options={}){
     await p.getByText('Chưa có bản nháp nào được lưu').waitFor();
     assert.equal(await p.locator('#paper-title').innerText(),items[0].tieuDeBaiBao);
     await p.click('#submit-header');assert.equal(settings.submitCount,0);
-    for(const k of C.scoreKeys)await p.locator(`#evaluation-form [name=${k}]`).fill('8');
-    await p.locator('#comment-author').fill('Đề nghị bổ sung số liệu và giải thích phương pháp nghiên cứu.');
+    await p.locator('#evaluation-form [name=reviewArgument]').fill('Đề nghị bổ sung số liệu và giải thích phương pháp nghiên cứu.');
+    await p.locator('#evaluation-form [name=reviewContentChanges]').fill('Bổ sung bảng số liệu.');
     await p.selectOption('#recommendation','Chỉnh sửa nhỏ');
     await p.click('#submit-header');assert.equal(settings.submitCount,0);assert.equal(await p.locator('#submit-confirmation').isVisible(),false);
     await p.check('#confirm-coi');await p.click('#submit-header');
@@ -163,7 +162,7 @@ async function pageFor(options={}){
     await p.click('#cancel-send');await p.locator('#submit-confirmation').waitFor({state:'hidden'});assert.equal(settings.submitCount,0);
     await p.click('#submit-header');await p.click('#confirm-send');
     await p.waitForFunction(()=>location.pathname.endsWith('/reviewer.html'));
-    assert.equal(settings.submitCount,1);assert.equal(settings.payload.diemTongKet,8);assert.deepEqual(errors,[]);
+    assert.equal(settings.submitCount,1);assert.equal(settings.payload.diemTongKet,null);assert.match(settings.payload.nhanXetChoTacGia,/Đề nghị bổ sung số liệu/);assert.deepEqual(errors,[]);
     await ctx.close();
   });
   await test('Dedicated BM-04 fits 320 to 1366 pixels',async()=>{
@@ -178,44 +177,46 @@ async function pageFor(options={}){
     }
     assert.deepEqual(errors,[]);await ctx.close();
   });
-  await test('Dedicated BM-04 rejects out-of-range and over-precision scores while allowing tenths',async()=>{
-    const {p,ctx,errors}=await pageFor();
+  await test('BM-04 follows teacher template, does not require numeric scores, and packs sections for the author',async()=>{
+    const {p,ctx,settings,errors}=await pageFor();
     await p.goto(base+'/reviewer-evaluation.html?id=1');
     await p.getByText('Chưa có bản nháp nào được lưu').waitFor();
-    const score=p.locator('#score-newness');
-    for(const k of C.scoreKeys)await p.locator(`#evaluation-form [name=${k}]`).fill('4');
-    await score.fill('9999999999');
-    assert.equal(await p.locator('#total-score').innerText(),'Kiểm tra điểm / 10');
-    assert.equal(await score.evaluate(el=>el.validity.rangeOverflow),true);
-    await score.fill('-0.1');
-    assert.equal(await score.evaluate(el=>el.validity.rangeUnderflow),true);
-    await score.fill('7.55');
-    assert.equal(await score.evaluate(el=>el.validity.stepMismatch),true);
-    assert.equal(await p.locator('#total-score').innerText(),'Kiểm tra điểm / 10');
-    await score.fill('7.5');
-    assert.equal(await score.evaluate(el=>el.validity.valid),true);
-    assert.equal(await p.locator('#total-score').innerText(),'4.9 / 10');
+    assert.equal(await p.locator('#evaluation-form [name^=diem]').count(),0);
+    await p.locator('#review-title').fill('Tiêu đề phù hợp với nội dung.');
+    await p.locator('#review-novelty').fill('Bài có đóng góp mới ở cách tiếp cận.');
+    await p.locator('#review-argument').fill('Cần giải thích rõ cách chọn mẫu và căn cứ kết luận.');
+    await p.locator('#review-structure').fill('Bố cục hợp lý.');
+    await p.locator('#review-figures').fill('Hình 2 cần tăng độ phân giải.');
+    await p.locator('#review-grammar').fill('Cần hiệu đính một số câu dài.');
+    await p.locator('#review-content-changes').fill('Bổ sung đối chiếu với nghiên cứu gần đây.');
+    await p.locator('#review-format-changes').fill('Chuẩn hóa chú thích hình.');
+    await p.selectOption('#recommendation','Chỉnh sửa nhỏ');
+    await p.check('#confirm-coi');await p.click('#submit-header');
+    assert.equal(await p.locator('#submit-confirmation').isVisible(),true);
+    await p.click('#confirm-send');await p.waitForFunction(()=>location.pathname.endsWith('/reviewer.html'));
+    assert.match(settings.payload.nhanXetChoTacGia,/Tiêu đề bài báo:/);
+    assert.match(settings.payload.nhanXetChoTacGia,/Trình bày hình vẽ, biểu đồ:/);
+    assert.match(settings.payload.nhanXetChoTacGia,/Vấn đề cần chỉnh sửa hoặc bổ sung về hình thức:/);
     assert.deepEqual(errors,[]);await ctx.close();
   });
   await test('Dedicated BM-04 saves edits before returning to the task list',async()=>{
     const {p,ctx,settings,errors}=await pageFor({list:[items[0]]});
     await p.goto(base+'/reviewer-evaluation.html?id=1');
     await p.getByText('Chưa có bản nháp nào được lưu').waitFor();
-    await p.fill('#comment-author','Bản nháp cần đọc lại phương pháp và đối chiếu số liệu.');
+    await p.fill('#review-argument','Bản nháp cần đọc lại phương pháp và đối chiếu số liệu.');
     await p.click('#back-link');
     await p.waitForURL(/reviewer\.html$/,{waitUntil:'commit'});
     assert.match(settings.drafts.get(1).nhanXetChoTacGia,/Bản nháp cần đọc lại/);
     await p.goto(base+'/reviewer-evaluation.html?id=1');
     await p.getByText('Đã nạp bản nháp',{exact:false}).waitFor();
-    assert.match(await p.inputValue('#comment-author'),/Bản nháp cần đọc lại/);
+    assert.match(await p.inputValue('#review-argument'),/Bản nháp cần đọc lại/);
     assert.deepEqual(errors,[]);await ctx.close();
   });
   await test('Final BM-04 submission remains possible when draft storage fails',async()=>{
     const {p,ctx,settings,errors}=await pageFor({list:[items[0]],draftStatus:503});
     await p.goto(base+'/reviewer-evaluation.html?id=1');
     await p.getByText('Chưa có bản nháp nào được lưu').waitFor();
-    for(const k of C.scoreKeys)await p.locator(`#evaluation-form [name=${k}]`).fill('7');
-    await p.fill('#comment-author','Phản biện chính thức với góp ý cụ thể về mẫu khảo sát.');
+    await p.fill('#review-argument','Phản biện chính thức với góp ý cụ thể về mẫu khảo sát.');
     await p.selectOption('#recommendation','Chỉnh sửa lớn và phản biện lại');
     await p.getByText('Chưa lưu được nháp',{exact:false}).waitFor();
     await p.check('#confirm-coi');await p.click('#submit-header');await p.click('#confirm-send');

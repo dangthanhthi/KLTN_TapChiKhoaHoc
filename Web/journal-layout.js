@@ -62,7 +62,7 @@
       <!-- KHỐI BANNER & NAVBAR NỀN XANH (#1da1f2) -->
       <div class="header-bar">
         <header class="masthead wrap" style="position: relative;">
-          <div class="name"><a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">${HUIT_CONFIG.journalNameVi}</a></div>
+          <div class="name"><a href="index.html">${HUIT_CONFIG.journalNameVi}</a></div>
           <div class="tagline">TRƯỜNG ĐẠI HỌC CÔNG THƯƠNG TP. HỒ CHÍ MINH · ${HUIT_CONFIG.journalNameEn.toUpperCase()}</div>
           <div class="banner-issn-text" style="position: absolute; right: 20px; bottom: 12px; text-align: right; color: #ffffff; font-family: 'Inter', system-ui, sans-serif; font-size: 13.5px; font-weight: 700; line-height: 1.45; letter-spacing: 0.03em; text-shadow: 0 1px 2px rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: flex-end; z-index: 10; pointer-events: none;">
             <span>p-ISSN 3030-4113</span>
@@ -72,7 +72,7 @@
 
         <nav class="navbar wrap">
           <div class="nav-links">
-            <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html" class="${isHomeActive ? 'on' : ''}" style="display:inline-flex;align-items:center;gap:4px;">
+            <a href="index.html" class="${isHomeActive ? 'on' : ''}" style="display:inline-flex;align-items:center;gap:4px;">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
               Trang chủ
             </a>

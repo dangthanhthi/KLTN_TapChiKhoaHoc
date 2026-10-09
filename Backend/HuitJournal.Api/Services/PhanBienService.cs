@@ -415,19 +415,18 @@ public class PhanBienService : IPhanBienService
             {
                 var recommendations = new HashSet<string>(StringComparer.Ordinal)
                 { "Chấp nhận đăng", "Chỉnh sửa nhỏ", "Chỉnh sửa lớn và phản biện lại", "Từ chối đăng" };
-                if (dto.DiemTinhMoi is null or < 0 or > 10 || dto.DiemPhuongPhap is null or < 0 or > 10 ||
-                    dto.DiemKetQua is null or < 0 or > 10 || dto.DiemTrinhBay is null or < 0 or > 10 ||
-                    dto.DiemTinhMoi.Value != decimal.Round(dto.DiemTinhMoi.Value, 1) ||
-                    dto.DiemPhuongPhap.Value != decimal.Round(dto.DiemPhuongPhap.Value, 1) ||
-                    dto.DiemKetQua.Value != decimal.Round(dto.DiemKetQua.Value, 1) ||
-                    dto.DiemTrinhBay.Value != decimal.Round(dto.DiemTrinhBay.Value, 1) ||
+                var scores = new[] { dto.DiemTinhMoi, dto.DiemPhuongPhap, dto.DiemKetQua, dto.DiemTrinhBay };
+                var hasAnyScore = scores.Any(score => score.HasValue);
+                var hasAllScores = scores.All(score => score.HasValue);
+                if ((hasAnyScore && (!hasAllScores || scores.Any(score => !score.HasValue || score.Value < 0 || score.Value > 10 || score.Value != decimal.Round(score.Value, 1)))) ||
                     string.IsNullOrWhiteSpace(dto.NhanXetChoTacGia) || dto.NhanXetChoTacGia.Length > 20000 ||
                     dto.NhanXetBaoMat?.Length > 20000 || !recommendations.Contains(dto.KienNghi ?? ""))
                 {
-                    return (false, "Phiếu BM-04 cần điểm từ 0 đến 10 với tối đa một chữ số thập phân, nhận xét và kiến nghị hợp lệ.");
+                    return (false, "Phiếu phản biện cần nhận xét, kiến nghị hợp lệ; nếu gửi điểm theo phiếu cũ thì phải đủ bốn điểm từ 0 đến 10.");
                 }
-                var total = Math.Round((dto.DiemTinhMoi.Value + dto.DiemPhuongPhap.Value +
-                    dto.DiemKetQua.Value + dto.DiemTrinhBay.Value) / 4m, 1, MidpointRounding.AwayFromZero);
+                decimal? total = hasAllScores
+                    ? Math.Round((dto.DiemTinhMoi!.Value + dto.DiemPhuongPhap!.Value + dto.DiemKetQua!.Value + dto.DiemTrinhBay!.Value) / 4m, 1, MidpointRounding.AwayFromZero)
+                    : null;
                 // Tạo mới phiếu đánh giá BM-04
                 var phieu = new PhieuDanhGia
                 {

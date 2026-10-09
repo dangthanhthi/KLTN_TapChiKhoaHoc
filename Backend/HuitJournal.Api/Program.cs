@@ -189,7 +189,7 @@ if (Directory.Exists(webFolder))
     app.UseDefaultFiles(new DefaultFilesOptions
     {
         FileProvider = fileProvider,
-        DefaultFileNames = new List<string> { "UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html", "index.html" }
+        DefaultFileNames = new List<string> { "index.html", "UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html" }
     });
     app.UseStaticFiles(new StaticFileOptions
     {

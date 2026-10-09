@@ -30,7 +30,7 @@ window.submissionDraft = (() => {
       } catch(e) { report('Đã khôi phục nội dung. Có tệp chưa tải được, vui lòng tải lại trang trước khi gửi bài.'); }
     } else {
       const local = JSON.parse(localStorage.getItem(key) || 'null');
-      id = local?.submissionId || crypto.randomUUID(); draftId = local?.draftId || crypto.randomUUID(); report('Bản nháp được lưu riêng cho tài khoản này.');
+      id = local?.submissionId || crypto.randomUUID(); draftId = local?.draftId || crypto.randomUUID();
     }
   }
   function signature(files) { return [...files].map(f => `${f.name}:${f.size}:${f.lastModified}`).join('|'); }

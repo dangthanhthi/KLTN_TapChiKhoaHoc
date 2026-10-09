@@ -355,11 +355,11 @@ button { font-family: inherit; font-size: 13.5px; font-weight: 500; border-radiu
 }
 .keywords-list { display: flex; flex-wrap: wrap; gap: 8px; }
 .keyword-badge {
-  background: var(--sky-050);
-  color: var(--action);
-  border: 1px solid var(--sky-100);
-  padding: 4px 12px;
-  border-radius: 14px;
+  background: #f1f5f9;
+  color: #475569;
+  border: none;
+  padding: 3px 10px;
+  border-radius: 4px;
   font-size: 12px;
   font-weight: 500;
 }
@@ -496,6 +496,20 @@ button { font-family: inherit; font-size: 13.5px; font-weight: 500; border-radiu
 .form-group {
   margin-bottom: 20px;
 }
+.review-section-group {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 14px 16px 2px;
+  margin: 0 0 18px;
+  background: var(--page);
+}
+.review-section-group h3 {
+  margin: 0 0 14px;
+  color: var(--ink-900);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 17px;
+  font-weight: 600;
+}
 .form-group label {
   display: block;
   margin-bottom: 6px;
@@ -574,8 +588,8 @@ button { font-family: inherit; font-size: 13.5px; font-weight: 500; border-radiu
 }
 
 .check-group {
-  background: var(--sky-050);
-  border: 1px solid var(--sky-100);
+  background: #f1f5f9;
+  border: none;
   border-radius: 6px;
   padding: 14px 16px;
   margin: 24px 0;

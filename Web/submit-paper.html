@@ -3,11 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Hệ thống Nộp bài Thông minh · Tạp chí Khoa học</title>
+<title>Nộp bài báo trực tuyến</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="journal-interactions.css">
+<link rel="stylesheet" href="academic-editor.css">
 
 <style>
   :root {
@@ -35,6 +36,7 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: var(--sans); color: var(--ink-900); background: var(--white); line-height: 1.55; -webkit-font-smoothing: antialiased; }
+  #draft-status { display: none !important; }
   a { color: inherit; text-decoration: none; }
   .wrap { max-width: 1360px; margin: 0 auto; padding: 0 20px; }
 
@@ -58,7 +60,7 @@
 
   /* Page Sub-Header */
   .submission-header { background: #fff; border-bottom: 1px solid var(--line); padding: 26px 0; }
-  .submission-header .sub-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--sky-600); background: var(--sky-050); border: 1px solid var(--sky-200); padding: 3px 10px; border-radius: 3px; margin-bottom: 8px; }
+  .submission-header .sub-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: #475569; background: #f1f5f9; border: none; padding: 3px 10px; border-radius: 4px; margin-bottom: 8px; }
   .submission-header h1 { font-family: var(--serif); font-size: 28px; font-weight: 600; color: var(--ink-900); margin-bottom: 6px; }
   .submission-header p { font-size: 13.5px; color: var(--ink-500); }
 
@@ -93,7 +95,7 @@
   .form-group label { display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 600; color: var(--ink-900); margin-bottom: 6px; }
   .form-group label span.req { color: #ef4444; margin-left: 2px; }
   .form-group .hint { font-size: 11.5px; color: var(--ink-500); margin-top: 5px; }
-  .form-control { width: 100%; border: 1px solid var(--sky-200); border-radius: 4px; padding: 10px 14px; font-size: 13.5px; font-family: inherit; color: var(--ink-900); background: #fff; transition: border-color .2s; }
+  .form-control { width: 100%; border: 1px solid var(--line); border-radius: 4px; padding: 10px 14px; font-size: 13.5px; font-family: inherit; color: var(--ink-900); background: #fff; transition: border-color .2s; }
   .form-control:focus { outline: none; border-color: var(--sky-600); box-shadow: 0 0 0 3px rgba(29,161,242,0.15); }
   textarea.form-control { resize: vertical; min-height: 100px; line-height: 1.6; }
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
@@ -105,8 +107,8 @@
   .eb-sub { font-size: 12px; color: #15803d; line-height: 1.5; }
 
   /* Scanning Animation Box */
-  .scanning-box { display: none; background: #fafcff; border: 1px solid var(--sky-200); border-radius: 6px; padding: 24px; text-align: center; margin-top: 16px; }
-  .scan-spinner { width: 36px; height: 36px; border: 3px solid var(--sky-100); border-top-color: var(--sky-600); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
+  .scanning-box { display: none; background: #f1f5f9; border: none; border-radius: 6px; padding: 24px; text-align: center; margin-top: 16px; }
+  .scan-spinner { width: 36px; height: 36px; border: 3px solid #e2e8f0; border-top-color: var(--sky-600); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 12px; }
   @keyframes spin { to { transform: rotate(360deg); } }
   .scan-status-text { font-size: 13px; font-weight: 600; color: var(--ink-900); }
   .scan-sub-text { font-size: 11.5px; color: var(--ink-500); margin-top: 4px; }
@@ -115,18 +117,18 @@
   .writing-helper-card { background: #ffffff; border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; margin-bottom: 18px; }
   .wh-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
   .wh-title { font-size: 12.5px; font-weight: 700; color: var(--ink-900); display: flex; align-items: center; gap: 6px; }
-  .wh-badge { font-size: 10.5px; font-weight: 600; padding: 2px 7px; border-radius: 3px; background: var(--sky-100); color: var(--sky-700); }
+  .wh-badge { font-size: 10.5px; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: #f1f5f9; color: #475569; }
   .wh-tools { display: flex; gap: 8px; }
-  .wh-btn { font-size: 11.5px; color: var(--sky-600); background: none; border: 1px dashed var(--sky-200); border-radius: 3px; padding: 2px 8px; cursor: pointer; font-weight: 600; }
-  .wh-btn:hover { background: var(--sky-050); border-color: var(--sky-600); }
+  .wh-btn { font-size: 11.5px; color: #475569; background: #f1f5f9; border: none; border-radius: 4px; padding: 2px 8px; cursor: pointer; font-weight: 600; }
+  .wh-btn:hover { background: #e2e8f0; color: #1e293b; }
   .wh-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; font-size: 11.5px; color: var(--ink-700); }
   .wh-cell { background: #fff; border: 1px solid var(--line); border-radius: 3px; padding: 6px 8px; }
   .wh-cell strong { display: block; color: var(--ink-900); margin-bottom: 2px; font-size: 11px; }
 
   /* Counter Indicator */
-  .counter-badge { font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 3px; }
-  .counter-badge.valid { background: var(--emerald-bg); color: var(--emerald); border: 1px solid #a7f3d0; }
-  .counter-badge.warn { background: var(--amber-bg); color: var(--amber); border: 1px solid #fde68a; }
+  .counter-badge { font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 4px; }
+  .counter-badge.valid { background: #f1f5f9; color: #047857; border: none; }
+  .counter-badge.warn { background: #f1f5f9; color: #b45309; border: none; }
 
   /* Category / Discipline Chips */
   .chips-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
@@ -143,17 +145,17 @@
   .author-table-scroll .custom-table th:nth-child(6) { min-width: 150px; }
   .author-roles { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
   .author-roles .badge-tag { white-space: nowrap; }
-  .badge-corresponding { background: var(--corresponding-blue); color: var(--white); }
-  .badge-primary { background: var(--sky-100); color: var(--sky-700); }
-  .badge-neutral { background: #f1f5f9; color: var(--ink-700); }
-  .badge-success { background: var(--emerald-bg); color: var(--emerald); }
+  .badge-corresponding { background: #f1f5f9; color: #475569; font-weight: 600; }
+  .badge-primary { background: #f1f5f9; color: #475569; }
+  .badge-neutral { background: #f1f5f9; color: #475569; }
+  .badge-success { background: #f1f5f9; color: #047857; }
   .btn-remove-row { color: #ef4444; background: none; border: none; cursor: pointer; font-size: 12px; font-weight: 600; }
   .btn-remove-row:hover { text-decoration: underline; }
 
   /* Upload & Validation Zone */
-  .upload-box { border: 2px dashed var(--sky-200); background: var(--sky-050); border-radius: 6px; padding: 32px 20px; text-align: center; cursor: pointer; transition: all .2s; position: relative; }
-  .upload-box:hover { border-color: var(--sky-600); background: #eef6fc; }
-  .upload-box svg { width: 44px; height: 44px; stroke: var(--sky-600); stroke-width: 1.8; fill: none; margin-bottom: 12px; }
+  .upload-box { border: 2px dashed #cbd5e1; background: #f8fafc; border-radius: 6px; padding: 32px 20px; text-align: center; cursor: pointer; transition: all .2s; position: relative; }
+  .upload-box:hover { border-color: #94a3b8; background: #f1f5f9; }
+  .upload-box svg { width: 44px; height: 44px; stroke: #64748b; stroke-width: 1.8; fill: none; margin-bottom: 12px; }
   .upload-box .prompt { font-size: 14.5px; font-weight: 700; color: var(--ink-900); }
   .upload-box .sub { font-size: 12px; color: var(--ink-500); margin-top: 6px; }
 
@@ -167,13 +169,13 @@
   .attachment-upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 16px; margin-bottom: 24px; }
   @media (max-width: 900px) { .attachment-upload-grid { grid-template-columns: 1fr; } }
   .attach-card { background: #ffffff; border: 1px solid var(--line); border-radius: 6px; padding: 18px 20px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.02); transition: border-color .15s ease; }
-  .attach-card:hover { border-color: var(--sky-400); }
+  .attach-card:hover { border-color: #cbd5e1; }
   .attach-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
   .attach-card-title { font-family: var(--serif); font-size: 15px; font-weight: 600; color: var(--ink-900); display: flex; align-items: center; gap: 8px; }
   .attach-card-desc { font-size: 12.5px; color: var(--ink-500); line-height: 1.5; margin-bottom: 14px; }
-  .attach-dropzone { border: 2px dashed var(--sky-200); background: var(--sky-050); border-radius: 6px; padding: 22px 16px; text-align: center; cursor: pointer; transition: all .2s; user-select: none; }
-  .attach-dropzone:hover, .attach-dropzone.dragover { border-color: var(--sky-600); background: #eef6fc; }
-  .attach-dropzone svg { width: 32px; height: 32px; stroke: var(--sky-600); stroke-width: 1.8; fill: none; margin-bottom: 8px; display: inline-block; }
+  .attach-dropzone { border: 2px dashed #cbd5e1; background: #f8fafc; border-radius: 6px; padding: 22px 16px; text-align: center; cursor: pointer; transition: all .2s; user-select: none; }
+  .attach-dropzone:hover, .attach-dropzone.dragover { border-color: #94a3b8; background: #f1f5f9; }
+  .attach-dropzone svg { width: 32px; height: 32px; stroke: #64748b; stroke-width: 1.8; fill: none; margin-bottom: 8px; display: inline-block; }
   .attach-dropzone-prompt { font-size: 13.5px; font-weight: 600; color: var(--ink-900); }
   .attach-dropzone-sub { font-size: 11.5px; color: var(--ink-500); margin-top: 4px; }
   .attach-file-card { display: flex; align-items: center; justify-content: space-between; background: var(--emerald-bg); border: 1px solid #a7f3d0; border-radius: 6px; padding: 12px 14px; }
@@ -189,7 +191,7 @@
   .attach-action-btn.danger:hover { background: #fef2f2; }
   .supplement-list-wrap { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
   .supplement-item-card { display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid var(--line); border-radius: 5px; padding: 8px 12px; transition: border-color .15s; }
-  .supplement-item-card:hover { border-color: var(--sky-200); }
+  .supplement-item-card:hover { border-color: #cbd5e1; }
   .supplement-summary-bar { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--ink-700); background: #f1f5f9; border-radius: 4px; padding: 8px 12px; margin-top: 10px; }
 
   /* STEP 5: REVIEW SHEET SECTION CARDS (INSPIRED BY HAUI BUT CLEAN & PROFESSIONAL) */
@@ -208,12 +210,12 @@
 
   /* Fast Templates (Cover Letter) */
   .template-chips { display: flex; gap: 8px; margin-bottom: 8px; }
-  .t-chip { font-size: 11.5px; background: #fff; border: 1px solid var(--sky-200); padding: 4px 10px; border-radius: 3px; cursor: pointer; font-weight: 600; color: var(--sky-600); }
-  .t-chip:hover { background: var(--sky-050); border-color: var(--sky-600); }
+  .t-chip { font-size: 11.5px; background: #f1f5f9; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-weight: 600; color: #475569; }
+  .t-chip:hover { background: #e2e8f0; color: #1e293b; }
 
   /* Commitments */
   .commit-item { background: #fafcff; border: 1px solid var(--line); border-radius: 4px; padding: 14px 16px; margin-bottom: 12px; transition: border-color .15s; }
-  .commit-item:hover { border-color: var(--sky-200); }
+  .commit-item:hover { border-color: #cbd5e1; }
   .commit-item label { display: flex; align-items: flex-start; gap: 12px; font-size: 13px; color: var(--ink-700); cursor: pointer; }
   .commit-item input[type="checkbox"] { margin-top: 3px; accent-color: var(--sky-600); width: 16px; height: 16px; }
   .commit-item strong { color: var(--ink-900); display: block; margin-bottom: 2px; }
@@ -235,11 +237,11 @@
   .check-icon.ok { color: var(--emerald); }
   .check-icon.wait { color: var(--ink-400); }
 
-  .download-card { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: var(--sky-050); border: 1px solid var(--sky-200); border-radius: 4px; margin-bottom: 8px; font-size: 12.5px; }
-  .download-card:hover { background: #e8f3fc; }
+  .download-card { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: #f1f5f9; border: none; border-radius: 4px; margin-bottom: 8px; font-size: 12.5px; }
+  .download-card:hover { background: #e2e8f0; }
   .download-title { font-weight: 600; color: var(--ink-900); }
   .download-sub { font-size: 11px; color: var(--ink-500); }
-  .download-link { color: var(--sky-600); font-weight: 700; font-size: 12px; }
+  .download-link { color: #475569; font-weight: 700; font-size: 12px; }
 
   .editorial-contact { font-size: 12.5px; color: var(--ink-700); line-height: 1.6; }
   .editorial-contact strong { color: var(--ink-900); }
@@ -269,9 +271,8 @@
 <!-- PAGE HEADER -->
 <div class="submission-header">
   <div class="wrap">
-    <div class="sub-badge">Quy trình nộp bài 5 bước tinh gọn · Progressive Academic Workflow</div>
-    <h1>Nộp Bản Thảo &amp; Khởi Tạo Quy Trình Xuất Bản</h1>
-    <p>Tạp chí Khoa học · Tải bản thảo &rarr; Tự động trích xuất &rarr; Tài liệu đính kèm &rarr; Tổng duyệt hồ sơ</p>
+    <h1>Nộp bài báo khoa học trực tuyến</h1>
+    <p>Hệ thống tiếp nhận bản thảo trực tuyến</p>
   </div>
 </div>
 
@@ -323,7 +324,7 @@
 
     <!-- LEFT COLUMN: MAIN STEP FORMS -->
     <main>
-      <p id="draft-status" class="hint" role="status" aria-live="polite"></p>
+      <p id="draft-status" class="hint" role="status" aria-live="polite" style="display:none;"></p>
       <form id="submission-form" class="form-card">
 
         <!-- ================= BƯỚC 1: BẢN THẢO & CHUYÊN NGÀNH ================= -->
@@ -467,8 +468,8 @@
               <span>Tóm tắt (Tiếng Việt) <span class="req">*</span></span>
               <span class="counter-badge warn" id="vi-word-counter">0 / 250 từ (Tối thiểu 150 từ)</span>
             </label>
-            <textarea class="form-control" id="abstract-vi" rows="5" oninput="calculateWords('abstract-vi', 'vi-word-counter')" placeholder="Nhập tóm tắt bài báo bằng tiếng Việt (yêu cầu từ 150 đến 250 từ)..." required></textarea>
-            <div class="hint">Độ dài yêu cầu: 150 – 250 từ. Không trích dẫn tài liệu tham khảo trong tóm tắt.</div>
+            <textarea class="form-control academic-rich-editor" id="abstract-vi" rows="5" oninput="calculateWords('abstract-vi', 'vi-word-counter')" placeholder="Nhập tóm tắt bài báo bằng tiếng Việt (yêu cầu từ 150 đến 250 từ)..." required></textarea>
+            <div class="hint">Độ dài yêu cầu: 150 – 250 từ. Sử dụng thanh công cụ để định dạng kiểu chữ, cỡ chữ, chỉ số học thuật nếu cần.</div>
           </div>
 
           <div class="form-group">
@@ -476,7 +477,7 @@
               <span>Abstract (Tiếng Anh) <span class="req">*</span></span>
               <span class="counter-badge warn" id="en-word-counter">0 / 250 words (Min 150 words)</span>
             </label>
-            <textarea class="form-control" id="abstract-en" rows="5" oninput="calculateWords('abstract-en', 'en-word-counter')" placeholder="Enter English abstract (150 to 250 words required)..." required></textarea>
+            <textarea class="form-control academic-rich-editor" id="abstract-en" rows="5" oninput="calculateWords('abstract-en', 'en-word-counter')" placeholder="Enter English abstract (150 to 250 words required)..." required></textarea>
           </div>
 
           <div class="grid-2">
@@ -489,6 +490,14 @@
               <label>Keywords (Tiếng Anh) <span class="req">*</span></label>
               <input type="text" class="form-control" id="keywords-en" placeholder="Example: Artificial Intelligence, Computer Vision, Image Processing (separated by comma)" required>
             </div>
+          </div>
+
+          <div class="form-group">
+            <label>
+              <span>Tài liệu tham khảo (References)</span>
+            </label>
+            <textarea class="form-control academic-rich-editor" id="references-text" rows="4" placeholder="Cung cấp danh mục tài liệu tham khảo theo chuẩn trích dẫn (ví dụ: IEEE, APA). Mỗi tài liệu tham khảo bắt đầu trên một dòng mới..."></textarea>
+            <div class="hint">Cung cấp danh mục tài liệu tham khảo theo chuẩn trích dẫn (ví dụ: IEEE, APA). Mỗi tài liệu tham khảo bắt đầu trên một dòng mới.</div>
           </div>
 
           <div class="form-actions">
@@ -732,6 +741,10 @@
               <div class="rm-label">Từ khóa chuyên ngành:</div>
               <div class="rm-value" id="rv-keywords" style="font-size:12.5px;font-weight:600;color:var(--sky-700);">Chưa nhập từ khóa</div>
             </div>
+            <div style="margin-top:10px;" id="rv-references-wrap">
+              <div class="rm-label">Tài liệu tham khảo (References):</div>
+              <div class="rm-value" id="rv-references" style="font-size:12.5px;color:var(--ink-700);line-height:1.6;text-align:justify;">Chưa cung cấp tài liệu tham khảo</div>
+            </div>
           </div>
 
           <!-- PHẦN 2: THÔNG TIN TÁC GIẢ -->
@@ -896,7 +909,7 @@
 
       <div class="side-widget">
         <div class="widget-head">Sơ đồ Quy trình Xuất bản</div>
-        <div style="border:1px solid var(--sky-200);border-radius:4px;overflow:hidden;background:#fff;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+        <div style="border:1px solid var(--line);border-radius:4px;overflow:hidden;background:#fff;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,0.05);">
           <img src="assets/images/So_Do_1_Quy_Trinh_Xuat_Ban_Tong_The.png" alt="Sơ đồ quy trình 6 giai đoạn" style="width:100%;height:140px;object-fit:cover;object-position:top;display:block;">
         </div>
         <div style="font-size:12px;color:var(--ink-500);line-height:1.45;margin-bottom:8px;">
@@ -965,10 +978,11 @@
 <!-- KHỐI FOOTER CHUNG (SHARED LAYOUT) -->
 <div id="huit-footer"></div>
 
-<script src="journal-layout.js"></script>
-<script src="journal-interactions.js"></script>
-<script src="workflow-client.js"></script>
-<script src="submission-draft.js"></script>
+<script src="journal-layout.js?v=20261009_1205"></script>
+<script src="journal-interactions.js?v=20261009_1205"></script>
+<script src="workflow-client.js?v=20261009_1205"></script>
+<script src="submission-draft.js?v=20261009_1205"></script>
+<script src="academic-editor.js?v=20261009_1205"></script>
 <script>
   let currentStep = 1;
   let authorCount = 1;
@@ -1045,7 +1059,7 @@
   function authorRoleBadges(author) {
     const role = author.isMain ? 'Tác giả chính' : 'Đồng tác giả';
     const corresponding = author.isCorresponding
-      ? '<span class="badge-tag badge-corresponding">✉ Tác giả liên hệ</span>'
+      ? '<span class="badge-tag badge-corresponding"><span style="color:#1da1f2;margin-right:3px;">✉</span>Tác giả liên hệ</span>'
       : '';
     return `<div class="author-roles"><span class="badge-tag badge-neutral">${role}</span>${corresponding}</div>`;
   }
@@ -1057,9 +1071,14 @@
     document.getElementById('rv-major-cat').innerText = document.getElementById('major-category-select').selectedOptions[0]?.text || '—';
     document.getElementById('rv-lang').innerText = document.getElementById('paper-lang-select').value;
     document.getElementById('rv-title-vi').innerText = document.getElementById('title-vi').value || 'Chưa nhập tiêu đề tiếng Việt';
-    document.getElementById('rv-title-en').innerText = document.getElementById('title-en').value || 'Chưa nhập tiêu đề tiếng Anh';
-    document.getElementById('rv-abstract-vi').innerText = document.getElementById('abstract-vi').value || 'Chưa nhập tóm tắt';
+    const absViVal = document.getElementById('abstract-vi').value;
+    document.getElementById('rv-abstract-vi').innerHTML = absViVal ? absViVal : 'Chưa nhập tóm tắt';
     document.getElementById('rv-keywords').innerText = document.getElementById('keywords-vi').value || 'Chưa nhập từ khóa';
+    const refVal = document.getElementById('references-text')?.value;
+    const rvRef = document.getElementById('rv-references');
+    if (rvRef) {
+      rvRef.innerHTML = refVal ? refVal : '<span style="color:var(--ink-400);font-style:italic;">Không cung cấp</span>';
+    }
 
     // 2. Tác giả liên hệ & Bảng nhóm tác giả
     const user = getCurrentUser() || {};
@@ -1086,8 +1105,8 @@
       const newTr = document.createElement('tr');
       const isLinked = !!author.userId;
       const linkedBadge = isLinked
-        ? `<span class="badge-tag" style="background:#ecfdf5;color:#059669;border:1px solid #a7f3d0;font-size:11px;">✓ Tài khoản hệ thống (#${author.userId})</span>`
-        : `<span class="badge-tag" style="background:#f8fafc;color:#64748b;border:1px dashed #cbd5e1;font-size:11px;">Tác giả khách</span>`;
+        ? `<span class="badge-tag" style="background:#f1f5f9;color:#475569;font-size:11px;font-weight:600;"><span style="color:#059669;margin-right:3px;">✓</span>Tài khoản hệ thống (#${author.userId})</span>`
+        : `<span class="badge-tag" style="background:#f1f5f9;color:#64748b;font-size:11px;">Tác giả khách</span>`;
 
       newTr.innerHTML = `
         <td>${author.order || (idx + 1)}</td>
@@ -1121,11 +1140,12 @@
     }
   }
 
-  // Đếm từ realtime cho tóm tắt
+  // Đếm từ realtime cho tóm tắt (Loại bỏ thẻ HTML và khoảng trắng thừa để đếm từ học thuật chính xác)
   function calculateWords(textareaId, counterId) {
     const el = document.getElementById(textareaId);
-    const text = el ? el.value.trim() : '';
-    const words = text ? text.split(/\s+/).length : 0;
+    let rawText = el ? el.value : '';
+    const cleanText = rawText.replace(/<[^>]*>/g, ' ').replace(/&nbsp;/gi, ' ').trim();
+    const words = cleanText ? cleanText.split(/\s+/).filter(Boolean).length : 0;
     const counter = document.getElementById(counterId);
     if (!counter) return;
     const isEn = counterId.includes('en');
@@ -1145,10 +1165,12 @@
     }
 
     // Cập nhật trạng thái tóm tắt ở sidebar
-    const viText = (document.getElementById('abstract-vi')?.value || '').trim();
-    const enText = (document.getElementById('abstract-en')?.value || '').trim();
-    const viWords = viText ? viText.split(/\s+/).length : 0;
-    const enWords = enText ? enText.split(/\s+/).length : 0;
+    const viRaw = document.getElementById('abstract-vi')?.value || '';
+    const enRaw = document.getElementById('abstract-en')?.value || '';
+    const viClean = viRaw.replace(/<[^>]*>/g, ' ').replace(/&nbsp;/gi, ' ').trim();
+    const enClean = enRaw.replace(/<[^>]*>/g, ' ').replace(/&nbsp;/gi, ' ').trim();
+    const viWords = viClean ? viClean.split(/\s+/).filter(Boolean).length : 0;
+    const enWords = enClean ? enClean.split(/\s+/).filter(Boolean).length : 0;
     const absStatus = document.getElementById('sidebar-abs-status');
     const chkAbs = document.getElementById('chk-abs');
     if (absStatus) {
@@ -1169,11 +1191,14 @@
     }
   }
 
-  // Chèn sườn mẫu tóm tắt IMRaD
+  // Chèn sườn mẫu tóm tắt IMRaD với định dạng in đậm chuẩn xuất bản
   function insertIMRaDTemplate() {
-    const template = "Mục tiêu: [Nêu mục tiêu và câu hỏi nghiên cứu.]\nPhương pháp: [Mô tả thiết kế nghiên cứu, dữ liệu và phương pháp phân tích.]\nKết quả: [Trình bày kết quả thực tế bằng số liệu đã kiểm chứng.]\nKết luận: [Nêu kết luận phù hợp với kết quả và giới hạn nghiên cứu.]";
-    document.getElementById('abstract-vi').value = template;
-    calculateWords('abstract-vi', 'vi-word-counter');
+    const htmlTemplate = "<p><strong>Mục tiêu:</strong> [Nêu mục tiêu nghiên cứu và câu hỏi khoa học cốt lõi.]</p><p><strong>Phương pháp:</strong> [Mô tả thiết kế nghiên cứu, nguồn dữ liệu, thực nghiệm và mô hình định lượng.]</p><p><strong>Kết quả:</strong> [Trình bày kết quả nghiên cứu chính kèm theo các số liệu định lượng đã kiểm chứng.]</p><p><strong>Kết luận:</strong> [Nêu kết luận chính, hàm ý học thuật và khả năng ứng dụng thực tiễn.]</p>";
+    const viTextarea = document.getElementById('abstract-vi');
+    if (viTextarea) {
+      viTextarea.value = htmlTemplate;
+      calculateWords('abstract-vi', 'vi-word-counter');
+    }
     showToast('Đã áp dụng cấu trúc khung sườn IMRaD chuẩn!');
   }
 
@@ -1218,8 +1243,8 @@
       const tr = document.createElement('tr');
       const isLinked = !!author.userId;
       const linkedBadge = isLinked
-        ? `<span class="badge-tag" style="background:#ecfdf5;color:#059669;border:1px solid #a7f3d0;font-weight:600;" title="Đã liên kết tài khoản ID #${author.userId}">✓ Tài khoản hệ thống</span>`
-        : `<span class="badge-tag" style="background:#f8fafc;color:#64748b;border:1px dashed #cbd5e1;" title="Đồng tác giả ngoài hệ thống, lưu dữ liệu snapshot (MaNguoiDung = NULL)">Tác giả khách</span>`;
+        ? `<span class="badge-tag" style="background:#f1f5f9;color:#475569;font-weight:600;" title="Đã liên kết tài khoản ID #${author.userId}"><span style="color:#059669;margin-right:3px;">✓</span>Tài khoản hệ thống</span>`
+        : `<span class="badge-tag" style="background:#f1f5f9;color:#64748b;" title="Đồng tác giả ngoài hệ thống, lưu dữ liệu snapshot (MaNguoiDung = NULL)">Tác giả khách</span>`;
 
       const orcidDisplay = (author.orcid && author.orcid !== 'Chưa liên kết')
         ? `<a href="https://orcid.org/${encodeURIComponent(author.orcid)}" target="_blank" rel="noopener" style="color:#a6ce39;font-weight:600;display:inline-flex;align-items:center;gap:3px;" title="Xem hồ sơ ORCID">
@@ -1897,6 +1922,7 @@
         abstractEn: document.getElementById('abstract-en')?.value || '',
         keywordsVi: document.getElementById('keywords-vi')?.value || '',
         keywordsEn: document.getElementById('keywords-en')?.value || '',
+        referencesText: document.getElementById('references-text')?.value || '',
         majorCategory: document.getElementById('major-category-select')?.value || '',
         paperType: document.getElementById('paper-type-select')?.value || '',
         paperLang: document.getElementById('paper-lang-select')?.value || '',
@@ -1922,6 +1948,10 @@
       if (draft.abstractEn) document.getElementById('abstract-en').value = draft.abstractEn;
       if (draft.keywordsVi) document.getElementById('keywords-vi').value = draft.keywordsVi;
       if (draft.keywordsEn) document.getElementById('keywords-en').value = draft.keywordsEn;
+      if (draft.referencesText) {
+        const refEl = document.getElementById('references-text');
+        if (refEl) refEl.value = draft.referencesText;
+      }
       if (draft.majorCategory) {
         const sel = document.getElementById('major-category-select');
         if (sel) {
@@ -2019,7 +2049,7 @@
     try { await submissionDraft.init(); restoreDraftFromStorage(); } catch (error) { showToast(error.message, "error"); }
 
     // Lắng nghe thay đổi form để tự động lưu nháp
-    const textInputs = ['title-vi', 'title-en', 'abstract-vi', 'abstract-en', 'keywords-vi', 'keywords-en'];
+    const textInputs = ['title-vi', 'title-en', 'abstract-vi', 'abstract-en', 'keywords-vi', 'keywords-en', 'references-text'];
     textInputs.forEach(id => {
       const el = document.getElementById(id);
       if (el) {

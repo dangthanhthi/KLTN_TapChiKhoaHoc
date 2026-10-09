@@ -4,21 +4,21 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>Không gian phản biện học thuật · HUIT Journal</title>
+  <title>Phiếu phản biện BM-04</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="journal-interactions.css">
-  <link rel="stylesheet" href="reviewer-evaluation.css?v=20261001_2245">
-  <script src="reviewer-core.js?v=20261001_2245" defer></script>
-  <script src="reviewer-evaluation.js?v=20261001_2245" defer></script>
+  <link rel="stylesheet" href="reviewer-evaluation.css?v=20261009_1100">
+  <script src="reviewer-core.js?v=20261009_1100" defer></script>
+  <script src="reviewer-evaluation.js?v=20261009_1100" defer></script>
 </head>
 <body class="evaluation-workspace-body">
   <header class="eval-topbar">
     <div class="eval-topbar-left">
-      <a id="back-link" href="reviewer.html" class="back-link" title="Quay lại bàn làm việc phản biện">
+      <a id="back-link" href="reviewer.html" class="back-link" title="Quay lại nơi làm việc phản biện">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-        <span>Bàn làm việc</span>
+        <span>Nơi làm việc</span>
       </a>
       <div class="eval-paper-heading">
         <span class="paper-badge" id="paper-badge">BÀI BÁO · VÒNG 1</span>
@@ -98,50 +98,34 @@
     <aside class="pane-evaluation" aria-label="Phiếu nhận xét BM-04">
       <div class="eval-pane-header">
         <div>
-          <span class="eyebrow">BIỂU MẪU ĐÁNH GIÁ CHUẨN</span>
-          <h2>Phiếu nhận xét BM-04</h2>
+          <span class="eyebrow">BIỂU MẪU PHẢN BIỆN · BM-04</span>
+          <h2>Phiếu phản biện</h2>
         </div>
         <div class="deadline-pill" id="deadline-pill">Hạn: —</div>
       </div>
 
       <form id="evaluation-form" class="evaluation-form" novalidate>
-        <fieldset class="score-fieldset">
-          <legend>Đánh giá theo tiêu chuẩn học thuật (Thang 0 – 10)</legend>
-          <div class="score-grid">
-            <div class="score-field">
-              <label for="score-newness">1. Tính mới &amp; Sáng tạo</label>
-              <input id="score-newness" name="diemTinhMoi" type="number" min="0" max="10" step="0.1" inputmode="decimal" required placeholder="0 - 10">
-            </div>
-            <div class="score-field">
-              <label for="score-method">2. Phương pháp nghiên cứu</label>
-              <input id="score-method" name="diemPhuongPhap" type="number" min="0" max="10" step="0.1" inputmode="decimal" required placeholder="0 - 10">
-            </div>
-            <div class="score-field">
-              <label for="score-result">3. Kết quả &amp; Thảo luận</label>
-              <input id="score-result" name="diemKetQua" type="number" min="0" max="10" step="0.1" inputmode="decimal" required placeholder="0 - 10">
-            </div>
-            <div class="score-field">
-              <label for="score-presentation">4. Quy chuẩn trình bày</label>
-              <input id="score-presentation" name="diemTrinhBay" type="number" min="0" max="10" step="0.1" inputmode="decimal" required placeholder="0 - 10">
-            </div>
-          </div>
-          <p class="score-hint" id="score-hint">Mỗi tiêu chí từ 0 đến 10; cho phép điểm thập phân đến một chữ số, ví dụ 7,5.</p>
-          <div class="total-score-row">
-            <span>Điểm tổng kết (Trung bình 4 tiêu chí):</span>
-            <strong id="total-score">— / 10</strong>
-          </div>
-        </fieldset>
+        <section class="review-section-group" aria-labelledby="review-content-heading">
+          <h3 id="review-content-heading">Nhận xét về nội dung</h3>
+          <div class="form-group"><label for="review-title"><strong>Tiêu đề bài báo</strong><span class="hint">Đánh giá mức độ phù hợp với nội dung; đề xuất tiêu đề mới nếu cần.</span></label><textarea id="review-title" name="reviewTitle" rows="3" maxlength="2500"></textarea></div>
+          <div class="form-group"><label for="review-novelty"><strong>Những điểm mới trong nội dung</strong><span class="hint">Nêu rõ đóng góp mới của bài báo.</span></label><textarea id="review-novelty" name="reviewNovelty" rows="3" maxlength="3000"></textarea></div>
+          <div class="form-group"><label for="review-argument"><strong>Vấn đề đặt ra, luận cứ, luận điểm và kết luận</strong><span class="hint">Nhận xét tính đầy đủ, logic và mức độ đáp ứng chuẩn mực nghiên cứu hiện hành.</span></label><textarea id="review-argument" name="reviewArgument" rows="4" maxlength="4000"></textarea></div>
+        </section>
 
-          <div class="form-group">
-          <label for="comment-author">
-            <strong>Nhận xét gửi tác giả</strong>
-            <span class="hint">Nêu rõ các ưu điểm, các thiếu sót cụ thể về số liệu, phương pháp và hướng dẫn chỉnh sửa chi tiết.</span>
-          </label>
-          <textarea id="comment-author" name="nhanXetChoTacGia" rows="8" maxlength="20000" required placeholder="Ghi nhận xét chi tiết gửi tác giả (tối đa 20.000 ký tự)..."></textarea>
-          <div class="field-meta">
-            <span id="author-comment-counter" class="char-counter">0 / 20.000 ký tự (tối thiểu 10 ký tự)</span>
-          </div>
-        </div>
+        <section class="review-section-group" aria-labelledby="review-form-heading">
+          <h3 id="review-form-heading">Nhận xét về hình thức</h3>
+          <div class="form-group"><label for="review-structure"><strong>Bố cục</strong></label><textarea id="review-structure" name="reviewStructure" rows="3" maxlength="2000"></textarea></div>
+          <div class="form-group"><label for="review-figures"><strong>Trình bày hình vẽ, biểu đồ</strong></label><textarea id="review-figures" name="reviewFigures" rows="3" maxlength="2000"></textarea></div>
+          <div class="form-group"><label for="review-grammar"><strong>Văn phạm</strong></label><textarea id="review-grammar" name="reviewGrammar" rows="3" maxlength="2000"></textarea></div>
+        </section>
+
+        <section class="review-section-group" aria-labelledby="review-changes-heading">
+          <h3 id="review-changes-heading">Những vấn đề cần chỉnh sửa hoặc bổ sung</h3>
+          <div class="form-group"><label for="review-content-changes"><strong>Về nội dung</strong></label><textarea id="review-content-changes" name="reviewContentChanges" rows="4" maxlength="3500"></textarea></div>
+          <div class="form-group"><label for="review-format-changes"><strong>Về hình thức</strong></label><textarea id="review-format-changes" name="reviewFormatChanges" rows="3" maxlength="2500"></textarea></div>
+          <p class="score-hint">Tổng nhận xét gửi tác giả tối đa 20.000 ký tự. Các mục không có góp ý có thể để trống.</p>
+          <div class="field-meta"><span id="author-comment-counter" class="char-counter">0 / 20.000 ký tự</span></div>
+        </section>
 
         <div class="form-group">
           <label for="comment-editor">
@@ -158,10 +142,10 @@
           <label for="recommendation"><strong>Kiến nghị của chuyên gia</strong></label>
           <select id="recommendation" name="kienNghi" required>
             <option value="">-- Chọn kiến nghị xuất bản --</option>
-            <option value="Chấp nhận đăng">Chấp nhận đăng (Không cần sửa đổi)</option>
-            <option value="Chỉnh sửa nhỏ">Chỉnh sửa nhỏ (Tác giả sửa theo góp ý)</option>
-            <option value="Chỉnh sửa lớn và phản biện lại">Chỉnh sửa lớn và phản biện lại (Cần vòng 2)</option>
-            <option value="Từ chối đăng">Từ chối đăng (Không đạt chuẩn xuất bản)</option>
+            <option value="Chấp nhận đăng">Được đăng</option>
+            <option value="Từ chối đăng">Không được đăng</option>
+            <option value="Chỉnh sửa lớn và phản biện lại">Sửa lại để có thể đăng</option>
+            <option value="Chỉnh sửa nhỏ">Sửa lại và không cần gửi phản biện</option>
           </select>
           <div id="academic-consistency-warning" class="consistency-warning" hidden>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
@@ -189,7 +173,6 @@
   <dialog id="submit-confirmation" class="submit-confirmation" aria-labelledby="confirmation-title">
     <h2 id="confirmation-title">Xác nhận gửi phiếu BM-04</h2>
     <p>Phiếu sẽ được chuyển đến tòa soạn để xử lý chính thức.</p>
-    <div class="confirmation-summary"><span>Điểm tổng kết</span><strong id="confirm-score">—</strong></div>
     <div class="confirmation-summary"><span>Kiến nghị</span><strong id="confirm-recommendation">—</strong></div>
     <div class="confirmation-summary"><span>Độ dài nhận xét</span><strong id="confirm-comment-length">—</strong></div>
     <div id="confirm-warning-row" class="confirmation-summary warning-row" hidden>

@@ -55,7 +55,7 @@
     state.selectionVersion++; state.items=[]; state.selected=null;
     $('workspace').hidden=true; $('access-state').hidden=false;
     if($('evaluation-dialog').open)$('evaluation-dialog').close();
-    $('access-state').replaceChildren(el('h2',login?'Cần đăng nhập':'Chưa thể mở bàn làm việc'),el('p',message));
+    $('access-state').replaceChildren(el('h2',login?'Cần đăng nhập':'Chưa thể mở nơi làm việc'),el('p',message));
     const link=el('a',login?'Đăng nhập để tiếp tục':'Về trang cá nhân'); link.href=login?'login.html?next=reviewer.html':'profile.html';
     $('access-state').append(link,button('Thử lại',()=>location.reload()));
   }
@@ -172,7 +172,8 @@
       localOnly = !!saved;
     }
     if (saved) {
-      for (const [k, v] of Object.entries(saved)) {
+      const decoded = C.unpackReview(saved.nhanXetChoTacGia || '');
+      for (const [k, v] of Object.entries({...saved, ...decoded})) {
         const input = $('evaluation-form').elements.namedItem(k);
         if (!input || v == null) continue;
         if (C.scoreKeys.includes(k)) {
@@ -395,9 +396,9 @@
     const content=['BẢN GHI ĐÁNH GIÁ CÁ NHÂN',a.tieuDeBaiBao,`Phân công: ${a.maPhanCong} · Vòng: ${a.soVong}`,`Điểm: ${a.diemTongKet??'—'}/10`,`Kiến nghị: ${a.kienNghi||'—'}`,'Nhận xét gửi tác giả:',review?.nhanXetChoTacGia||'Chưa có nội dung phiếu từ tòa soạn.','', 'Bản xuất không bao gồm nhận xét bảo mật.'].join('\n');
     download('\uFEFF'+content,`Danh-gia-${a.maPhanCong}.txt`,'text/plain;charset=utf-8');
   }
-  function formData() { const data=Object.fromEntries(new FormData($('evaluation-form'))); data.maPhanCong=state.selected.maPhanCong; return data; }
-  function updateTotal() { const d=formData(); $('total-score').textContent=C.scoreKeys.every(k=>d[k]!==''&&Number.isFinite(Number(d[k])))?C.total(d).toFixed(1):'—'; }
-  function hasDraftContent(data) { return [...C.scoreKeys,'nhanXetChoTacGia','nhanXetBaoMat','kienNghi'].some(k=>String(data[k]??'').trim()!==''); }
+  function formData() { const data=Object.fromEntries(new FormData($('evaluation-form'))); data.nhanXetChoTacGia=C.packReview(data); data.maPhanCong=state.selected.maPhanCong; return data; }
+  function updateTotal() {}
+  function hasDraftContent(data) { return ['nhanXetChoTacGia','nhanXetBaoMat','kienNghi'].some(k=>String(data[k]??'').trim()!==''); }
   function setEvaluationLoading(loading) {
     $('evaluation-form').querySelectorAll('input,textarea,select,button').forEach(control=>{
       if(control.id!=='close-evaluation')control.disabled=loading;
@@ -408,17 +409,8 @@
     clearTimeout(draftTimer);
     try {
       assertSession(); const a=state.selected; const version=++state.draftVersion; const data=formData();
-      const invalidScore = C.scoreKeys.some(k => {
-        const input = $('evaluation-form').elements.namedItem(k);
-        const val = input.value.trim().replace(',', '.');
-        return val !== '' && (isNaN(Number(val)) || Number(val) < 0 || Number(val) > 10 || !input.validity.valid);
-      });
-      if (invalidScore) {
-        $('draft-status').textContent = 'Điểm chưa hợp lệ (0–10, tối đa 1 chữ số thập phân). Chưa lưu lên hệ thống.';
-        return;
-      }
       const normalized={};
-      C.scoreKeys.forEach(k=>normalized[k]=data[k]===''?null:Number(data[k]));
+      C.scoreKeys.forEach(k=>normalized[k]=null);
       normalized.nhanXetChoTacGia=data.nhanXetChoTacGia?.trim()||null;
       normalized.nhanXetBaoMat=data.nhanXetBaoMat?.trim()||null;
       normalized.kienNghi=data.kienNghi||null;
@@ -456,7 +448,7 @@
   async function submit(event) {
     event.preventDefault(); if($('submit-review').disabled)return;
     const raw=formData(); const error=C.validate(raw); if(error) { $('form-error').textContent=error; return; }
-    const a=state.selected; const data={...raw}; C.scoreKeys.forEach(k=>data[k]=Number(data[k])); data.diemTongKet=C.total(data); data.nhanXetChoTacGia=data.nhanXetChoTacGia.trim();
+    const a=state.selected; const data={...raw}; C.scoreKeys.forEach(k=>data[k]=null); data.diemTongKet=null; data.nhanXetChoTacGia=data.nhanXetChoTacGia.trim();
     $('submit-review').disabled=true; $('close-evaluation').disabled=true; $('submit-review').textContent='Đang gửi…'; $('form-error').textContent='';
     try {
       assertSession(); if(!C.canEvaluate(a))throw new Error('Cần nhận lời mời trước khi đánh giá. Vui lòng làm mới.');

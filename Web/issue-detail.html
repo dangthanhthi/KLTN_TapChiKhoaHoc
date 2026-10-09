@@ -6,7 +6,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title id="htmlPageTitle">Chi tiết số tạp chí · Tạp chí Khoa học Đại học Công Thương</title>
+<title id="htmlPageTitle">Chi tiết số tạp chí</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -127,7 +127,7 @@
   .sibling-issues-list { display: flex; flex-direction: column; gap: 8px; font-size: 13px; }
   .sibling-issue-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border: 1px solid #E2E8F0; border-radius: 3px; color: #1E293B; font-weight: 600; transition: all .2s; text-decoration: none; }
   .sibling-issue-item:hover { border-color: #1da1f2; color: #1da1f2; background: #F8FAFC; }
-  .sibling-issue-item.active { background: #E0F2FE; border-color: #0284C7; color: #0284C7; font-weight: 700; }
+  .sibling-issue-item.active { background: #f1f5f9; border-color: #cbd5e1; color: var(--ink-900); font-weight: 700; }
 
   /* THÔNG TIN HƯỚNG DẪN KHÔNG BULLET POINT */
   .sidebar-nav-links { display: flex; flex-direction: column; gap: 8px; font-size: 13px; line-height: 1.6; }
@@ -147,7 +147,7 @@
 <!-- THANH ĐIỀU HƯỚNG BREADCRUMB -->
 <div class="breadcrumb-bar">
   <div class="wrap">
-    <a href="UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html">Trang chủ</a>
+    <a href="index.html">Trang chủ</a>
     <span class="sep">/</span>
     <a href="archives.html">Lưu trữ</a>
     <span class="sep">/</span>
@@ -372,7 +372,7 @@
     const issueDesc = liveIssue.moTa || 'Thông tin chuyên đề chưa được cập nhật.';
 
     // Cập nhật tiêu đề trang & breadcrumb
-    document.title = issueTitle + ' · Tạp chí Khoa học Đại học Công Thương';
+    document.title = issueTitle;
     const bcTitle = document.getElementById('breadcrumbIssueTitle');
     if (bcTitle) bcTitle.textContent = issueTitle;
 

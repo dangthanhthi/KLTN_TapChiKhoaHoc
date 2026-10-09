@@ -23,19 +23,15 @@ public class PhieuDanhGiaDto
     [Range(1, int.MaxValue)]
     public int MaPhanCong { get; set; }
 
-    [Required]
     [Range(0, 10)]
     public decimal? DiemTinhMoi { get; set; }
 
-    [Required]
     [Range(0, 10)]
     public decimal? DiemPhuongPhap { get; set; }
 
-    [Required]
     [Range(0, 10)]
     public decimal? DiemKetQua { get; set; }
 
-    [Required]
     [Range(0, 10)]
     public decimal? DiemTrinhBay { get; set; }
 

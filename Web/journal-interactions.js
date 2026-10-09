@@ -686,7 +686,7 @@ function renderAuthNavbar() {
             ${hasReviewerRole(user) ? `
             <a href="reviewer.html" class="dropdown-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><path d="m9 14 2 2 4-4"></path></svg>
-              Bàn làm việc phản biện
+              Nơi làm việc phản biện
             </a>` : ''}
             <a href="submit-paper.html" class="dropdown-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
@@ -747,7 +747,7 @@ function handleUserLogout() {
   const path = window.location.pathname.toLowerCase();
   if (path.includes('profile') || path.includes('submit-paper') || path.includes('reviewer')) {
     setTimeout(() => {
-      window.location.href = 'UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html';
+      window.location.href = 'index.html';
     }, 600);
   }
 }

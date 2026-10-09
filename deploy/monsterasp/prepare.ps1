@@ -1,5 +1,7 @@
 param(
-    [string]$OutputRoot
+    [string]$OutputRoot,
+    [switch]$SkipArchive,
+    [switch]$PassThru
 )
 
 $ErrorActionPreference = 'Stop'
@@ -14,7 +16,7 @@ $publishPath = Join-Path $OutputRoot "api-$stamp"
 $archivePath = Join-Path $OutputRoot "api-$stamp.zip"
 New-Item -ItemType Directory -Path $publishPath -Force | Out-Null
 
-& dotnet publish $projectPath --configuration Release --output $publishPath
+& dotnet publish $projectPath --configuration Release --output $publishPath | Out-Host
 if ($LASTEXITCODE -ne 0) {
     throw "dotnet publish thất bại (exit code $LASTEXITCODE)."
 }
@@ -37,9 +39,15 @@ if (-not [string]::IsNullOrWhiteSpace($publicSettings.Jwt.Key) -or
     throw 'appsettings.json trong bản phát hành chứa khóa hoặc mật khẩu. Hãy chuyển chúng sang Environment Variables.'
 }
 
+if ($SkipArchive) {
+    Write-Host "Thư mục phát hành: $publishPath"
+    if ($PassThru) { return [pscustomobject]@{ PublishPath = $publishPath; ArchivePath = $null } }
+    return
+}
 Compress-Archive -Path (Join-Path $publishPath '*') -DestinationPath $archivePath -CompressionLevel Optimal
 $checksum = (Get-FileHash -LiteralPath $archivePath -Algorithm SHA256).Hash.ToLowerInvariant()
 Set-Content -LiteralPath "$archivePath.sha256.txt" -Value "$checksum  $(Split-Path -Leaf $archivePath)"
+if ($PassThru) { return [pscustomobject]@{ PublishPath = $publishPath; ArchivePath = $archivePath; Sha256 = $checksum } }
 Write-Output "Thư mục phát hành: $publishPath"
 Write-Output "Gói tải lên hosting: $archivePath"
 Write-Output "SHA256: $checksum"

@@ -513,8 +513,8 @@
   font-weight: 600;
 }
 .field-menu-item:hover .badge-count {
-  background: #e0f2fe;
-  color: #0284c7;
+  background: #e2e8f0;
+  color: #1e293b;
 }
 .fields-menu-divider {
   height: 1px;
@@ -767,8 +767,8 @@
 }
 
 .nav-fields-menu a:hover .badge-count {
-  background: #e0f2fe !important;
-  color: #0284c7 !important;
+  background: #e2e8f0 !important;
+  color: #1e293b !important;
 }
 
 .nav-fields-menu .fields-menu-all,
@@ -905,8 +905,8 @@ footer .flinks a:hover {
 .current-issue-cover-wrap {
   border-radius: 4px;
   overflow: hidden;
-  border: 1px solid #C9DFF4;
-  box-shadow: 0 4px 14px rgba(0, 102, 179, 0.15);
+  border: 1px solid var(--line, #e2e8f0);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   background: #f8fafc;
   transition: transform .2s ease;
 }
@@ -1023,17 +1023,18 @@ footer .flinks a:hover {
   gap: 4px;
   font-size: 12px;
   font-weight: 700;
-  background: #E4EFFA;
-  color: #1da1f2;
+  background: #f1f5f9;
+  color: #475569;
+  border: none;
   padding: 4px 10px;
-  border-radius: 3px;
+  border-radius: 4px;
   text-decoration: none;
   transition: all .15s;
 }
 
 .toc-btn-pdf:hover {
-  background: #1da1f2;
-  color: #ffffff;
+  background: #e2e8f0;
+  color: #1e293b;
 }
 
 /* 2. KHỐI SỐ MỚI NHẤT (RECENT ISSUES - THEO HÌNH 1) */
@@ -1638,18 +1639,18 @@ main, aside, article, section, figure {
   line-height: 1.4;
 }
 .pass-policy-notice {
-  background: #f0f9ff;
-  border: 1px solid #bae6fd;
-  border-radius: 5px;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 6px;
   padding: 10px 12px;
   font-size: 11.5px;
-  color: #0369a1;
+  color: #475569;
   line-height: 1.55;
   margin-top: 14px;
   margin-bottom: 6px;
 }
 .pass-policy-notice strong {
-  color: #0c4a6e;
+  color: #1e293b;
 }
 .modal-box-edit.pass-modal-box {
   max-width: 480px;

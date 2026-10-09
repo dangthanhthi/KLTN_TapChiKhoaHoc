@@ -14,6 +14,6 @@ export const config = {
       { source: '/api/:path*', destination: `${apiOrigin}/api/:path*` },
       { source: '/uploads/avatars/:path*', destination: `${apiOrigin}/uploads/avatars/:path*` }
     ] : []),
-    { source: '/', destination: '/UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html' }
+    { source: '/', destination: '/index.html' }
   ]
 };

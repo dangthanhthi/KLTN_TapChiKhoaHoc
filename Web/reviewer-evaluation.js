@@ -116,6 +116,7 @@
     const form = $('evaluation-form');
     const fd = new FormData(form);
     const data = Object.fromEntries(fd);
+    data.nhanXetChoTacGia = C.packReview(data);
     data.maPhanCong = state.assignmentId;
     return data;
   }
@@ -123,8 +124,8 @@
   function updateCharCounters() {
     const authorEl = $('comment-author');
     const authorCounter = $('author-comment-counter');
-    if (authorEl && authorCounter) {
-      const len = authorEl.value.length;
+    if (authorCounter) {
+      const len = getFormData().nhanXetChoTacGia.length;
       authorCounter.textContent = `${len.toLocaleString('vi-VN')} / 20.000 ký tự (tối thiểu 10 ký tự)`;
       if (len > 0 && len < 10) {
         authorCounter.classList.add('has-min-error');
@@ -168,47 +169,6 @@
   }
 
   function updateTotal() {
-    const form = $('evaluation-form');
-    const inputs = C.scoreKeys.map(k => form.elements.namedItem(k));
-    let hasInvalid = false;
-    let allFilled = true;
-
-    inputs.forEach(input => {
-      const raw = input.value.trim().replace(',', '.');
-      const isEmpty = raw === '';
-      const valid = !isEmpty && isScoreValid(raw) && input.validity.valid;
-
-      if (!isEmpty && !valid) {
-        hasInvalid = true;
-        input.setAttribute('aria-invalid', 'true');
-        input.classList.add('is-invalid');
-        input.title = 'Điểm phải từ 0 đến 10 và tối đa một chữ số thập phân (ví dụ: 1.2, 7.5, 10).';
-      } else {
-        input.setAttribute('aria-invalid', 'false');
-        input.classList.remove('is-invalid');
-        input.title = '';
-      }
-
-      if (isEmpty) {
-        allFilled = false;
-      }
-    });
-
-    let currentTotal = null;
-    if (hasInvalid) {
-      $('total-score').textContent = 'Kiểm tra điểm / 10';
-      $('total-score').classList.add('is-invalid-total');
-    } else if (allFilled) {
-      const data = getFormData();
-      currentTotal = C.total(data);
-      $('total-score').textContent = currentTotal.toFixed(1) + ' / 10';
-      $('total-score').classList.remove('is-invalid-total');
-    } else {
-      $('total-score').textContent = '— / 10';
-      $('total-score').classList.remove('is-invalid-total');
-    }
-
-    updateConsistencyWarning(currentTotal);
     updateCharCounters();
   }
 
@@ -459,19 +419,8 @@
     const version = ++state.draftVersion;
     const editVersion = state.editVersion;
     const data = getFormData();
-    const invalidScore = C.scoreKeys.some(k => {
-      const input = $('evaluation-form').elements.namedItem(k);
-      const val = input.value.trim().replace(',', '.');
-      return val !== '' && (!isScoreValid(val) || !input.validity.valid);
-    });
-    if (invalidScore) {
-      saveSessionDraft(data);
-      setSyncStatus('error', 'Điểm chưa hợp lệ nên chỉ giữ trong tab này; hãy nhập từ 0 đến 10, tối đa một chữ số thập phân.');
-      if (showToast) toast('Chưa đồng bộ nháp vì có điểm ngoài giới hạn hoặc sai bước 0,1.');
-      return;
-    }
     const normalized = {};
-    C.scoreKeys.forEach(k => normalized[k] = data[k] === '' ? null : Number(data[k]));
+    C.scoreKeys.forEach(k => normalized[k] = null);
     normalized.nhanXetChoTacGia = data.nhanXetChoTacGia?.trim() || null;
     normalized.nhanXetBaoMat = data.nhanXetBaoMat?.trim() || null;
     normalized.kienNghi = data.kienNghi || null;
@@ -526,7 +475,8 @@
       const saved = await request(`/phanbien/assignments/${a.maPhanCong}/evaluation-draft`);
       if (saved && !state.dirty) {
         const form = $('evaluation-form');
-        for (const [k, v] of Object.entries(saved)) {
+      const decodedReview = C.unpackReview(saved.nhanXetChoTacGia || '');
+      for (const [k, v] of Object.entries({...saved, ...decodedReview})) {
           setDraftValue(form, k, v);
         }
         updateTotal();
@@ -617,13 +567,6 @@
   }
 
   function validateDetailedForm(raw) {
-    const scoreFields = [
-      { key: 'diemTinhMoi', id: 'score-newness', name: '1. Tính mới & Sáng tạo' },
-      { key: 'diemPhuongPhap', id: 'score-method', name: '2. Phương pháp nghiên cứu' },
-      { key: 'diemKetQua', id: 'score-result', name: '3. Kết quả & Thảo luận' },
-      { key: 'diemTrinhBay', id: 'score-presentation', name: '4. Quy chuẩn trình bày' }
-    ];
-
     // Clear previous error styles
     $('form-error-msg').textContent = '';
     const form = $('evaluation-form');
@@ -632,45 +575,22 @@
       el.setAttribute('aria-invalid', 'false');
     });
 
-    // Check criteria scores
-    for (const sf of scoreFields) {
-      const val = raw[sf.key];
-      const el = $(sf.id);
-      if (val === '' || val == null) {
-        if (el) {
-          el.classList.add('is-invalid');
-          el.setAttribute('aria-invalid', 'true');
-          el.focus();
-        }
-        return `Vui lòng nhập điểm cho tiêu chí: ${sf.name} (thang điểm 0 – 10).`;
-      }
-      const num = Number(val);
-      if (isNaN(num) || num < 0 || num > 10 || Math.abs(num * 10 - Math.round(num * 10)) > 1e-8) {
-        if (el) {
-          el.classList.add('is-invalid');
-          el.setAttribute('aria-invalid', 'true');
-          el.focus();
-        }
-        return `Điểm tiêu chí "${sf.name}" không hợp lệ. Phải từ 0 đến 10, tối đa một chữ số thập phân.`;
-      }
-    }
-
     // Check author comments
     const authorComments = raw.nhanXetChoTacGia?.trim() || '';
-    const authorEl = $('comment-author');
+    const authorEl = $('review-argument');
     if (!authorComments) {
       if (authorEl) {
         authorEl.classList.add('is-invalid');
         authorEl.focus();
       }
-      return 'Vui lòng nhập nhận xét chi tiết gửi tác giả.';
+      return 'Vui lòng nhập nhận xét theo các mục của biểu mẫu.';
     }
-    if (authorComments.length < 10) {
+    if (C.reviewTextLength(raw) < 10) {
       if (authorEl) {
         authorEl.classList.add('is-invalid');
         authorEl.focus();
       }
-      return 'Nhận xét gửi tác giả cần tối thiểu 10 ký tự học thuật để nêu rõ ý kiến góp ý.';
+      return 'Nhận xét gửi tác giả cần tối thiểu 10 ký tự.';
     }
     if (authorComments.length > 20000) {
       if (authorEl) {
@@ -727,22 +647,10 @@
     }
 
     $('form-error-msg').textContent = '';
-    const total = C.total(raw);
-    $('confirm-score').textContent = total.toFixed(1) + ' / 10';
     $('confirm-recommendation').textContent = raw.kienNghi;
     $('confirm-comment-length').textContent = `${raw.nhanXetChoTacGia.trim().length.toLocaleString('vi-VN')} ký tự`;
 
-    const consistencyMsg = updateConsistencyWarning(total);
-    const warnRow = $('confirm-warning-row');
-    const warnText = $('confirm-warning-text');
-    if (warnRow && warnText) {
-      if (consistencyMsg) {
-        warnText.textContent = consistencyMsg;
-        warnRow.hidden = false;
-      } else {
-        warnRow.hidden = true;
-      }
-    }
+    $('confirm-warning-row').hidden = true;
 
     $('submit-confirmation').showModal();
   }
@@ -764,8 +672,8 @@
 
     const a = state.assignment;
     const data = { ...raw };
-    C.scoreKeys.forEach(k => data[k] = Number(data[k]));
-    data.diemTongKet = C.total(data);
+    C.scoreKeys.forEach(k => data[k] = null);
+    data.diemTongKet = null;
     data.nhanXetChoTacGia = data.nhanXetChoTacGia.trim();
 
     btnSubmit.disabled = true;
@@ -848,7 +756,7 @@
     const params = new URLSearchParams(location.search);
     const id = Number(params.get('id') || params.get('maPhanCong'));
     if (!id || isNaN(id)) {
-      alert('Không tìm thấy mã phân công đánh giá. Hệ thống sẽ quay lại Bàn làm việc.');
+      alert('Không tìm thấy mã phân công đánh giá. Hệ thống sẽ quay lại Nơi làm việc.');
       location.href = 'reviewer.html';
       return;
     }
@@ -876,7 +784,7 @@
       // Render Header
       $('paper-badge').textContent = `BÀI #${a.maBaiBao} · VÒNG ${a.soVong}`;
       $('paper-title').textContent = a.tieuDeBaiBao;
-      document.title = `Đánh giá bài #${a.maBaiBao} · ${a.tieuDeBaiBao} · HUIT Journal`;
+      document.title = `Phiếu phản biện #${a.maBaiBao}: ${a.tieuDeBaiBao}`;
 
       // Deadline
       const isOverdue = C.deadline(a) === 'overdue';

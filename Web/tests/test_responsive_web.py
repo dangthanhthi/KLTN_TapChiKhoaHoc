@@ -17,7 +17,7 @@ if sys.platform == "win32":
 PORT = 8089
 WEB_DIR = Path(__file__).resolve().parents[1]
 PAGES = [
-    "UI_Mockup_He_Thong_Tap_Chi_Khoa_Hoc.html",
+    "index.html",
     "about.html",
     "publishing-policy.html",
     "editorial-board.html",
